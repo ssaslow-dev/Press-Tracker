@@ -1,5 +1,6 @@
 """Tests for `saver.py` init / confirm / preview that do not need a full pipeline run (the full run is tests/replay.py).
-The pipeline folder is a copy of the runsave fixture's (needed for PIPELINE.sha256 and for sheet_task --check-only).
+The pipeline folder is a copy of the runsave fixture's, or of the repository's code/ folder when the fixture is absent (needed for PIPELINE.sha256
+and for sheet_task --check-only). SAVER_FIXTURE=<folder> points at the fixture.
 SAVER_SLOW=1 also runs the tamper test (a full preview of the runsave fixture, about two minutes).
 
     python3 -I -m unittest discover -s L/work/saver/tests -t L/work/saver/tests"""
@@ -21,9 +22,9 @@ sys.path.insert(0, str(SRC))
 sys.path.insert(0, str(HERE))
 import saver as SV          # noqa: E402
 import saver_steps as ST    # noqa: E402
-from wbhelp import make_wb, base_sheets   # noqa: E402
+from wbhelp import make_wb, base_sheets, fixture_dir, have_fixture, pipeline_source, SKIP_NO_FIXTURE   # noqa: E402
 
-FIXTURE = SAVER_DIR.parent.parent.parent / 'runsave'     # L/../runsave
+FIXTURE = fixture_dir()     # SAVER_FIXTURE, else <repo>/../runsave (not in this repository)
 SAVER = SRC / 'saver.py'
 TMP = tempfile.TemporaryDirectory()
 ROOT = Path(TMP.name)
@@ -31,7 +32,7 @@ PIPE = ROOT / 'pipeline'
 
 
 def setUpModule():
-    shutil.copytree(FIXTURE / 'pipeline', PIPE, ignore=shutil.ignore_patterns('docs', '__pycache__', '*.pyc'))
+    shutil.copytree(pipeline_source(), PIPE, ignore=shutil.ignore_patterns('docs', '__pycache__', '*.pyc'))
     subprocess.run([sys.executable, '-I', str(SAVER_DIR / 'tools' / 'pipeline_sha.py'), str(PIPE)], check=True, capture_output=True)
 
 
@@ -211,14 +212,7 @@ class Refusals(unittest.TestCase):
         shutil.rmtree(e.d / 'copies')
         self.assertEqual(e.preview()[0], 4)
 
-    def test_save_is_not_built(self):
-        e = Env()
-        code, res = cli('save', '--workbook', e.master, '--db', e.db, '--pipeline', PIPE, '--copies', e.d / 'copies', '--library', e.d / 'library',
-                        '--backups', e.d / 'backups', '--out', e.out, '--state', e.state)
-        self.assertEqual(code, 4)
-        self.assertFalse(res['written'])
-        self.assertEqual(list((e.d / 'backups').iterdir()), [])
-        self.assertFalse(e.out.exists())
+    # test_save_is_not_built was retired when `save` was built; its checks (exit code, no backup, no write) live in test_saver_save.py
 
 
 class NothingQueued(unittest.TestCase):
@@ -325,6 +319,7 @@ class Helpers(unittest.TestCase):
 
 
 @unittest.skipUnless(os.environ.get('SAVER_SLOW') == '1', 'set SAVER_SLOW=1 (a full preview of the runsave fixture, about two minutes)')
+@unittest.skipUnless(have_fixture(), SKIP_NO_FIXTURE)
 class Slow(unittest.TestCase):
     def test_tampered_output_is_refused_as_overwrite(self):
         sys.path.insert(0, str(HERE))

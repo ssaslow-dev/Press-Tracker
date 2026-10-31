@@ -1,20 +1,28 @@
 #!/usr/bin/env python3
 """saver.py: "save the last run to the sheet" as one program (SAVER_SPEC.md, SAVE_RULES.md).
 
-PART 1 of the build: `init`, `confirm` and `preview`. `save` (backup, atomic swap, library moves, ledger entry, rebuild) is NOT built yet;
-`save` exits 4 with a refusal-shaped result and writes nothing.
+Verbs: `init` and `confirm` (the checksum ledger), `preview` (spec section 3 steps 1 to 9, writes nothing outside --out and --state) and
+`save` (steps 1 to 14: the same steps 1 to 9, then token check, backup, atomic swap of the master, add-only library pages, removals moved to
+_to_delete/, ledger entry, log, rebuild). `save` holds the process lock from step 2 to the end, with no gap between the preview part and the commit.
 
-preview runs spec section 3 steps 1 to 9 and writes only under --out and --state/logs (plus the process lock in --state). It never writes
-the master, its folder, the library or the backups folder. It has no network code; the pipeline subprocesses run with their proxies pointed
-at a dead port (saver_steps.offline_env), so the one place the pipeline can fetch (photos of new saves) cannot.
+What save writes, and where: the backup copy (--backups), the master (os.replace of a uniquely named staged file beside it), library pages
+(add-only), moved library files (LIB/_to_delete/), LIB/.sheet_task.lock (moved to LIB/_to_delete/ at the end), --state (ledger, logs, lock),
+--out. Nothing is ever deleted; backups beyond the newest 3 the saver made are MOVED to --backups/_to_delete/.
+
+Preview has no network code and the pipeline subprocesses run with their proxies pointed at a dead port (saver_steps.offline_env), so the one
+place the pipeline can fetch (photos of new saves) cannot. The writeback bundle (O/writeback.json) is composed here and applied by the adapter;
+the saver never writes a run document. Exit codes: 0 done, 2 refused (nothing written, except an already-made backup), 3 nothing queued,
+4 bad arguments, 5 written but the rebuild failed, 6 written but the result or log could not be written.
 
 Python 3.11+, pathlib, no shell-outs (subprocess only runs sys.executable on pipeline scripts)."""
 from __future__ import annotations
 
 import argparse
+import base64
 import datetime as dt
 import json
 import os
+import re
 import shutil
 import socket
 import sys
@@ -25,7 +33,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import saver_diff as D       # noqa: E402
 import saver_steps as S      # noqa: E402
 
-EXIT_OK, EXIT_REFUSED, EXIT_NOTHING, EXIT_BAD = 0, 2, 3, 4
+EXIT_OK, EXIT_REFUSED, EXIT_NOTHING, EXIT_BAD, EXIT_REBUILD, EXIT_POSTWRITE = 0, 2, 3, 4, 5, 6
+KEEP_BACKUPS = 3
 LOCK_MINUTES = 30
 TOKEN_MINUTES = 30
 JUDGMENT_CAP = 200
@@ -227,6 +236,78 @@ class ProcessLock:
         return bool(info and info.get('token') == self.token)
 
 
+def la_stamp() -> str:
+    """YYYY-MM-DD HHMM in America/Los_Angeles (backup names)"""
+    try:
+        from zoneinfo import ZoneInfo
+        n = dt.datetime.now(ZoneInfo('America/Los_Angeles'))
+    except Exception:
+        u = dt.datetime.now(dt.timezone.utc)
+        n = u - (dt.timedelta(hours=7) if _us_dst(u) else dt.timedelta(hours=8))
+    return n.strftime('%Y-%m-%d %H%M')
+
+
+def unique_path(p: Path) -> Path:
+    """p if nothing is there, else 'name (2).ext', 'name (3).ext' ...: used wherever a file must never be overwritten"""
+    if not p.exists():
+        return p
+    n = 2
+    while True:
+        q = p.with_name(f'{p.stem} ({n}){p.suffix}')
+        if not q.exists():
+            return q
+        n += 1
+
+
+def move_unique(src: Path, dst: Path) -> Path:
+    dst.parent.mkdir(parents=True, exist_ok=True)
+    target = unique_path(dst)
+    shutil.move(str(src), str(target))
+    return target
+
+
+class LibLock:
+    """LIB/.sheet_task.lock of the manual procedure ('<run id> <UTC time>'): written at step 2 of a save, moved to
+    LIB/_to_delete/.sheet_task.lock.<run id> at the end whatever the outcome (never deleted). Only a lock holding our own text is moved."""
+
+    def __init__(self, lib: Path, run):
+        self.lib, self.run, self.path, self.text = lib, run, lib / '.sheet_task.lock', None
+
+    def _body(self):
+        return f'{self.run or "pending"} {iso(utc_now())}'
+
+    def write(self):
+        try:
+            fd = os.open(str(self.path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            # preview-part checks already refused a fresh lock; this one is stale (30+ minutes): set it aside, then take our own
+            move_unique(self.path, self.lib / '_to_delete' / f'.sheet_task.lock.stale.{iso(utc_now()).replace(":", "")}')
+            fd = os.open(str(self.path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        self.text = self._body()
+        with os.fdopen(fd, 'w', encoding='utf-8') as f:
+            f.write(self.text)
+
+    def ours(self) -> bool:
+        try:
+            return self.text is not None and self.path.read_text(encoding='utf-8') == self.text
+        except OSError:
+            return False
+
+    def set_run(self, run):
+        self.run = run
+        if self.ours():
+            self.text = self._body()
+            self.path.write_text(self.text, encoding='utf-8')
+
+    def release(self):
+        if self.text is None:
+            return
+        ours = self.ours()
+        self.text = None
+        if ours:
+            move_unique(self.path, self.lib / '_to_delete' / f'.sheet_task.lock.{self.run or "refresh"}')
+
+
 # ---------------------------------------------------------------- the preview
 
 
@@ -246,7 +327,8 @@ def build_parser():
     p.add_argument('--note', default='')
 
     for verb in ('preview', 'save'):
-        p = sub.add_parser(verb, help='what a save would do, writing nothing' if verb == 'preview' else 'NOT BUILT in part 1')
+        p = sub.add_parser(verb, help='what a save would do, writing nothing' if verb == 'preview' else
+                         'run the preview steps, then back up and replace the master, add library pages, move removed files, record the checksum, rebuild')
         p.add_argument('--workbook', required=True)
         p.add_argument('--db', required=True)
         p.add_argument('--queue')
@@ -263,13 +345,15 @@ def build_parser():
         p.add_argument('--img-cache')
         p.add_argument('--json')
         if verb == 'save':
-            p.add_argument('--token')
-            p.add_argument('--master-is-local', action='store_true')
-            p.add_argument('--no-rebuild', action='store_true')
+            p.add_argument('--token', help='preview token; save refuses (TOKEN_STALE) unless its own fresh diff gives the same token')
+            p.add_argument('--master-is-local', action='store_true', help='--workbook is the master itself: the ledger entry is confirmed at once')
+            p.add_argument('--no-rebuild', action='store_true', help='skip step 14 (rebuild into OUT/site)')
     return ap
 
 
-def emit(result: dict, json_path, code: int) -> int:
+def emit(result: dict, json_path, code: int, post_commit=False) -> int:
+    """write the result file, print it as the last stdout line. After the master was replaced (post_commit) a result file that cannot be
+    written makes the exit code 6: the adapter must read the result from stdout."""
     result['exit_code'] = code
     try:
         if json_path:
@@ -277,6 +361,8 @@ def emit(result: dict, json_path, code: int) -> int:
             write_json(Path(json_path), result)
     except OSError as e:
         result['json_write_error'] = repr(e)[:200]
+        if post_commit:
+            code = result['exit_code'] = EXIT_POSTWRITE
     print(json.dumps(result, ensure_ascii=False, default=str))
     return code
 
@@ -451,8 +537,12 @@ def photo_attempts(result) -> int:
     return n
 
 
-def run_preview(a) -> tuple:
-    """returns (result dict, exit code). Raises Refuse for anything that stops the run."""
+def run_preview(a, keep_lock=False) -> tuple:
+    """Spec section 3 steps 1 to 9. Returns (result dict, exit code); raises Refuse for anything that stops the run. The process lock is
+    released before returning or raising.
+    keep_lock=True is the save path: the library lock file is written too, and on success the call returns (result, exit code, lock, ctx) with
+    both locks still held so that save runs steps 10 to 14 under the same lock; the caller must release them. On any exception the locks are
+    released here."""
     run = a.run
     today = a.today or la_today()
     w = Path(a.workbook)
@@ -487,7 +577,9 @@ def run_preview(a) -> tuple:
     a._out_ready = True
 
     lock = ProcessLock(state, run)
+    liblock = LibLock(lib, run)
     result = None
+    handed_over = False
     try:
         # --- step 2: process lock; the library lock of the manual procedure (read only here)
         lock.acquire()
@@ -505,7 +597,10 @@ def run_preview(a) -> tuple:
             if age < LOCK_MINUTES:
                 raise Refuse('LOCKED', f'another save was writing (library lock {age:.0f} min old); ask me to save again in a few minutes.',
                              {'lock': str(libl)})
-            warnings.append(f'stale library lock {libl.name} ({age:.0f} min old) ignored; preview does not move it')
+            warnings.append(f'stale library lock {libl.name} ({age:.0f} min old) ignored; ' +
+                            ('it is set aside under _to_delete/' if keep_lock else 'preview does not move it'))
+        if keep_lock:
+            liblock.write()
         # --- step 3: Excel
         check_excel(w)
         # --- step 4: identity
@@ -542,6 +637,7 @@ def run_preview(a) -> tuple:
         db = read_json(out / 'db.json')
         run = pick_run(db, a.run, fns)
         lock.set_run(run)
+        liblock.set_run(run)
         queued = S.json_of(st) or {}
         base = {'verb': 'preview', 'ok': True, 'run': run, 'at': iso(utc_now()), 'today': today, 'written': False, 'confirmed': False,
                 'refusal': None, 'warnings': warnings,
@@ -552,6 +648,9 @@ def run_preview(a) -> tuple:
         if st.rc == 3 and not a.refresh:
             base.update(line='Nothing new to write.', nothing_queued=True)
             base['writeback'] = {'runs': {run: {'sheet': {'at': base['at'], 'written': True, 'line': 'Nothing new to write.'}}} if run else {}}
+            if keep_lock:
+                handed_over = True
+                return base, EXIT_NOTHING, lock, {'liblock': liblock, 'out': out, 'state': state, 'run': run}
             return base, EXIT_NOTHING
 
         # --- copies
@@ -682,12 +781,22 @@ def run_preview(a) -> tuple:
         })
         if not a.queue and res['queue']['queue_applied']:
             raise Refuse('VERIFY_FAILED', 'queue items were applied although no --queue was given', {})
+        if keep_lock:
+            handed_over = True
+            ctx = {'liblock': liblock, 'w': w, 'lib': lib, 'backups': Path(a.backups), 'state': state, 'out': out, 'pipe': pipe, 'run': run,
+                   'today': today, 'out_xlsx': out_xlsx, 'out_name': out_name, 'before_sha': before_sha, 'after_sha': after_sha,
+                   'pages': pages, 'removed_files': removed_files, 'result': result, 'result2': result2, 'token': token,
+                   'rows_before': rep.rows_before.get('Coverage'), 'rows_after': rep.rows_after.get('Coverage'),
+                   'rows_added': summ['rows_added'].get('Coverage', 0), 'cells_filled': sum(summ['cells_filled'].values())}
+            return res, EXIT_OK, lock, ctx
         return res, EXIT_OK
     finally:
-        try:
-            lock.release()
-        except OSError:
-            pass
+        if not handed_over:
+            for rel in (liblock.release, lock.release):
+                try:
+                    rel()
+                except OSError:
+                    pass
 
 
 def cmd_preview(a) -> int:
@@ -717,10 +826,281 @@ def _log(a, res):
         pass
 
 
+# ---------------------------------------------------------------- the save: steps 10 to 14
+
+
+def backup_name(w: Path, run) -> str:
+    return f'{w.stem} BACKUP before run {run or "refresh"} {la_stamp()}.xlsx'
+
+
+def saver_backup_re(w: Path):
+    return re.compile(re.escape(w.stem) + r' BACKUP before run .+ (\d{4}-\d\d-\d\d \d{4})(?: \((\d+)\))?\.xlsx$')
+
+
+def trim_backups(w: Path, backups: Path, state: Path, keep: int = KEEP_BACKUPS) -> list:
+    """SAVE_RULES answer 5: keep the newest `keep` backups the saver made, MOVE the older ones to backups/_to_delete/ (the project never deletes).
+    A backup counts as the saver's own only if its name matches the saver's pattern for this workbook AND a save entry of the ledger names it:
+    the manual procedure used the same naming convention, and those files are not touched here."""
+    own = {e.get('backup') for e in read_ledger(state) if e.get('verb') == 'save' and e.get('backup')}
+    rx = saver_backup_re(w)
+    found = []
+    for f in backups.iterdir() if backups.is_dir() else []:
+        m = rx.match(f.name)
+        if f.is_file() and m and f.name in own:
+            found.append((m.group(1), int(m.group(2) or 1), f))
+    found.sort(key=lambda t: (t[0], t[1]))
+    moved = []
+    for _, _, f in found[:-keep] if keep else found:
+        moved.append(move_unique(f, backups / '_to_delete' / f.name).name)
+    return moved
+
+
+def commit(job: dict, lock: ProcessLock) -> dict:
+    """Steps 11 and 12 (spec section 3). `job` keys: w, out_xlsx, out_name, before_sha, after_sha, run, today, lib, backups, pages_dir, pages,
+    removed_files. Raises Refuse before the master is touched (a backup already made stays, SPEC 11) or for COMMIT_FAILED after the swap.
+    Returns {'backup', 'library': {...}} once the master is verified; library trouble is reported in library.partial, never raised (the master
+    is not rolled back: that would be a second overwrite)."""
+    w, lib = job['w'], job['lib']
+    before_sha, after_sha, run = job['before_sha'], job['after_sha'], job['run']
+    if job['out_name'] == w.name or not job['out_name']:
+        raise Refuse('COMMIT_FAILED', 'the staged file would carry the master\'s own name. Nothing was written.', {})
+    lock.check_owned()
+    # nothing has been written yet: the master must still be the file the diff was made against
+    pre_sha = S.sha256_file(w)
+    if pre_sha != before_sha:
+        raise Refuse('SHA_MISMATCH', f'the workbook changed while the save was running (expected {sha_short(before_sha)}, found {sha_short(pre_sha)}). '
+                     'Nothing was written.', {'before_sha': before_sha, 'found': pre_sha})
+    # step 11: backup
+    backups = job['backups']
+    backups.mkdir(parents=True, exist_ok=True)
+    bpath = unique_path(backups / backup_name(w, run))
+    try:
+        shutil.copy2(w, bpath)
+        bsha = S.sha256_file(bpath)
+    except OSError as e:
+        raise Refuse('BACKUP_FAILED', f'the backup could not be made ({e!r}). The master was not touched.'[:300], {'backup': str(bpath)})
+    if bsha != before_sha:
+        raise Refuse('BACKUP_FAILED', f'the backup\'s checksum ({sha_short(bsha)}) is not the master\'s ({sha_short(before_sha)}). The master was not touched.',
+                     {'backup': str(bpath), 'backup_sha': bsha, 'before_sha': before_sha})
+    # just before the swap: still the same file, still closed, lock still ours
+    lock.check_owned()
+    check_excel(w)
+    now_sha = S.sha256_file(w)
+    if now_sha != before_sha:
+        raise Refuse('SHA_MISMATCH', f'the workbook changed while the save was running (expected {sha_short(before_sha)}, found {sha_short(now_sha)}). '
+                     'The master was not touched.', {'before_sha': before_sha, 'found': now_sha, 'backup': bpath.name})
+    # step 12: commit
+    lock.check_owned()
+    tmp = w.parent / job['out_name']
+    if tmp.exists():
+        raise Refuse('COMMIT_FAILED', f'{tmp.name} already exists beside the master; it is never overwritten. The master was not touched.',
+                     {'staged': str(tmp), 'backup': bpath.name})
+    try:
+        shutil.copy2(job['out_xlsx'], tmp)
+        tsha = S.sha256_file(tmp)
+    except OSError as e:
+        raise Refuse('COMMIT_FAILED', f'the staged workbook could not be copied beside the master ({e!r}). The master was not touched.'[:300],
+                     {'backup': bpath.name})
+    if tsha != after_sha:
+        move_unique(tmp, job['out_xlsx'].parent / ('rejected ' + tmp.name))
+        raise Refuse('COMMIT_FAILED', f'the staged copy\'s checksum ({sha_short(tsha)}) is not the output\'s ({sha_short(after_sha)}). '
+                     'The master was not touched.', {'backup': bpath.name})
+    try:
+        os.replace(tmp, w)
+    except OSError as e:
+        raise Refuse('COMMIT_FAILED', f'the master could not be replaced ({e!r}). It was not changed.'[:300], {'backup': bpath.name, 'staged': str(tmp)})
+    final = S.sha256_file(w)
+    if final != after_sha:
+        raise Refuse('COMMIT_FAILED', f'after the swap the master\'s checksum is {sha_short(final)}, not {sha_short(after_sha)}. Do not save again: '
+                     f'restore from the backup "{bpath.name}" (checksum {sha_short(before_sha)}).',
+                     {'backup': str(bpath), 'found_sha': final, 'expected_sha': after_sha, 'master_state': 'unverified'})
+    return {'backup': bpath.name, 'backup_path': str(bpath), 'size_after': w.stat().st_size, 'library': commit_library(job)}
+
+
+def commit_library(job: dict) -> dict:
+    """pages add-only, then removals moved to LIB/_to_delete/. Never raises: every failure is listed and sets partial."""
+    lib, run, today = job['lib'], job['run'], job['today']
+    out = {'pages_added': [], 'pages_collided': [], 'pages_failed': [], 'removed_moved': [], 'removed_missing': [], 'removed_failed': [], 'partial': False}
+    for rel in job['pages']:
+        dst = lib / Path(*rel.split('/'))
+        try:
+            if dst.exists():
+                out['pages_collided'].append(rel)       # SAVE_RULES answer 3: skipped and listed
+                continue
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(job['pages_dir'] / Path(*rel.split('/')), dst)
+            out['pages_added'].append(rel)
+        except OSError as e:
+            out['pages_failed'].append({'file': rel, 'error': repr(e)[:150]})
+    tsv = lib / '_to_delete' / f'_moves_{today}.tsv'
+    for item in job['removed_files']:
+        for rel in list(item.get('files') or []) + list(item.get('originals') or []):
+            src = lib / Path(*rel.split('/'))
+            try:
+                if not src.is_file():
+                    out['removed_missing'].append({'aid': item.get('aid'), 'file': rel})
+                    continue
+                target = move_unique(src, lib / '_to_delete' / Path(*rel.split('/')))
+                out['removed_moved'].append({'aid': item.get('aid'), 'from': rel, 'to': target.relative_to(lib).as_posix()})
+                with open(tsv, 'a', encoding='utf-8', newline='\n') as f:
+                    f.write('\t'.join([iso(utc_now()), str(run or 'refresh'), str(item.get('aid')), rel, target.relative_to(lib).as_posix()]) + '\n')
+            except OSError as e:
+                out['removed_failed'].append({'aid': item.get('aid'), 'file': rel, 'error': repr(e)[:150]})
+    out['partial'] = bool(out['pages_failed'] or out['removed_failed'])
+    return out
+
+
+# rebuild (prompt step 6). It needs these files in the pipeline folder (the published pipeline has them; the repository's code/ folder does not).
+REBUILD_NEEDS = ('tabs_data.py', 'assemble.py', 'shell.html', 'tracker.js', 'tabs')
+
+
+def rebuild_site(out: Path, out_name: str, master_name: str) -> dict:
+    """prompt step 6 into OUT/site/: tabs_data --only releases, assemble, data/sheet.json. Writes nothing under --pipeline or beside the master."""
+    missing = [n for n in REBUILD_NEEDS if not (out / 'pipeline' / n).exists()]
+    if missing:
+        raise RuntimeError(f'the pipeline folder lacks {missing}, which the rebuild reads')
+    logs = out / 'logs'
+    for label, script, args in (('tabs_data', 'pipeline/tabs_data.py', [out_name, 'blocks', 'pipeline/tabs', '--only', 'releases']),
+                                ('assemble', 'pipeline/assemble.py', ['pipeline/shell.html', 'blocks/', 'pipeline/tracker.js', 'site/index.html'])):
+        if label == 'assemble':
+            (out / 'site' / 'data').mkdir(parents=True, exist_ok=True)
+        r = S.run_script(out, script, args, 'rebuild_' + label, logs)
+        if r.rc != 0:
+            raise RuntimeError(f'{script} failed (exit {r.rc}): {r.tail(300)}')
+    write_json(out / 'site' / 'data' / 'sheet.json',
+               {'filename': master_name, 'b64': base64.b64encode((out / out_name).read_bytes()).decode('ascii')})
+    return {'index_html': str(out / 'site' / 'index.html'), 'sheet_json': str(out / 'site' / 'data' / 'sheet.json')}
+
+
+def pipeline_files_changed(out: Path, pipe: Path) -> dict:
+    """publish.pipeline_files: the conditional pipeline files of prompt step 7, with their shas and whether the run changed them"""
+    pairs = {'lookup_cache.json': (out / 'lookup_cache.out.json', pipe / 'lookup_cache.json'),
+             'outlets.json': (out / 'pipeline' / 'outlets.json', pipe / 'outlets.json'),
+             'gabriel_bills_leginfo.json': (out / 'pipeline' / 'gabriel_bills_leginfo.json', pipe / 'gabriel_bills_leginfo.json'),
+             'release_texts.json': (out / 'pipeline' / 'release_texts.json', pipe / 'release_texts.json'),
+             'release_related.json': (out / 'pipeline' / 'release_related.json', pipe / 'release_related.json')}
+    res = {}
+    for name, (new, old) in pairs.items():
+        if not new.is_file():
+            res[name] = {'changed': False}
+            continue
+        ns = S.sha256_file(new)
+        res[name] = {'path': str(new), 'sha': ns, 'changed': (not old.is_file()) or S.sha256_file(old) != ns}
+    return res
+
+
+def write_save_log(state: Path, res: dict) -> Path:
+    logs = state / 'logs'
+    logs.mkdir(parents=True, exist_ok=True)
+    p = logs / f"save-{res.get('run') or 'refresh'}-{res['at'].replace(':', '')}.log"
+    p.write_text(json.dumps({k: res.get(k) for k in ('run', 'at', 'today', 'line', 'written', 'confirmed', 'diff', 'workbook', 'library', 'refusal',
+                                                      'site_rebuilt', 'rebuild_error', 'backups_moved')}, indent=1, default=str) + '\n', encoding='utf-8')
+    return p
+
+
+def release_all(lock, liblock):
+    for rel in (liblock.release if liblock else None, lock.release if lock else None):
+        if rel:
+            try:
+                rel()
+            except OSError:
+                pass
+
+
 def cmd_save(a) -> int:
-    e = Refuse('BAD_ARGS', 'save is not built yet (part 1 builds init, confirm and preview). Nothing was changed.', {}, EXIT_BAD)
-    res = refusal_result('save', a.run, a.today or la_today(), e)
-    return emit(res, a.json, EXIT_BAD)
+    today = a.today or la_today()
+
+    def jp():
+        return a.json or (str(Path(a.out) / 'saver_result.json') if getattr(a, '_out_ready', False) else None)
+    try:
+        res, code, lock, ctx = run_preview(a, keep_lock=True)
+    except Refuse as e:
+        return emit(refusal_result('save', a.run, today, e), jp(), e.exit_code)
+    except Exception as e:
+        return emit(refusal_result('save', a.run, today, Refuse('BAD_ARGS', f'unexpected error: {e!r}'[:300], {}, EXIT_BAD)), jp(), EXIT_BAD)
+    liblock, out, state = ctx['liblock'], ctx['out'], ctx['state']
+    res['verb'] = 'save'
+    committed = False
+    try:
+        if code == EXIT_NOTHING:      # prompt step 1: only the "Nothing new to write." writeback; no backup, no workbook
+            write_json(out / 'writeback.json', res['writeback'])
+            res['writeback'] = str(out / 'writeback.json')
+            _log_save(state, res)
+            return emit(res, jp(), EXIT_NOTHING)
+        # step 10: token (a preview's token is reproduced by save's own fresh diff, so validity is a match; no clock)
+        if a.token and a.token != ctx['token']:
+            raise Refuse('TOKEN_STALE', 'what a save would do now is not what the preview showed (the token differs). Run the preview again.',
+                         {'given': a.token, 'now': ctx['token']})
+        wbk = res['workbook']
+        job = {'w': ctx['w'], 'out_xlsx': ctx['out_xlsx'], 'out_name': ctx['out_name'], 'before_sha': ctx['before_sha'], 'after_sha': ctx['after_sha'],
+               'run': ctx['run'], 'today': ctx['today'], 'lib': ctx['lib'], 'backups': ctx['backups'], 'pages_dir': out / 'pages',
+               'pages': ctx['pages'], 'removed_files': ctx['removed_files']}
+        done = commit(job, lock)       # steps 11 and 12
+        committed = True
+        at = iso(utc_now())
+        rec = {'at': at, 'verb': 'save', 'run': ctx['run'], 'before_sha': ctx['before_sha'], 'after_sha': ctx['after_sha'], 'backup': done['backup'],
+               'out_name': ctx['out_name'], 'rows_before': ctx['rows_before'], 'rows_after': ctx['rows_after'], 'rows_added': ctx['rows_added'],
+               'cells_filled': ctx['cells_filled'], 'confirmed': bool(a.master_is_local), 'confirmed_at': at if a.master_is_local else None}
+        post_error = None
+        try:
+            append_ledger(state, rec)  # step 13 (right after the master is verified, so a crash in the library step cannot leave it unrecorded)
+        except OSError as e:
+            post_error = f'ledger entry not written: {e!r}'[:200]
+        res['written'] = True        # the saver's result only; the run documents' `written: true` is in writeback.json, applied by the adapter
+        res['confirmed'] = bool(a.master_is_local)
+        res['at'] = at
+        res['workbook'] = dict(wbk, backup=done['backup'], size_after=done['size_after'])
+        res['library'] = done['library']
+        res['backups_moved'] = []
+        try:
+            res['backups_moved'] = trim_backups(ctx['w'], ctx['backups'], state)
+        except OSError as e:
+            res['backups_moved_error'] = repr(e)[:200]
+        res['publish']['pipeline_files'] = pipeline_files_changed(out, ctx['pipe'])
+        res['publish']['lookup_cache_out'] = str(out / 'lookup_cache.out.json') if (out / 'lookup_cache.out.json').is_file() else None
+        if done['library']['partial']:
+            res['line'] += ' LIBRARY PARTIAL: see library.pages_failed / removed_failed.'
+        # step 14: rebuild
+        code = EXIT_OK
+        res['site_rebuilt'] = False
+        if not a.no_rebuild:
+            try:
+                res['publish'].update(rebuild_site(out, ctx['out_name'], ctx['w'].name))
+                res['site_rebuilt'] = True
+            except Exception as e:
+                res['rebuild_error'] = repr(e)[:400]
+                res['line'] += ' The page files were not rebuilt (' + str(e)[:150] + ').'
+                code = EXIT_REBUILD
+        # log and result
+        try:
+            res['log'] = str(write_save_log(state, res))
+        except OSError as e:
+            post_error = (post_error or '') + f' log not written: {e!r}'[:200]
+        if post_error:
+            res['post_commit_error'] = post_error.strip()
+            code = EXIT_POSTWRITE
+        return emit(res, jp(), code, post_commit=True)
+    except Refuse as e:
+        r = refusal_result('save', ctx.get('run'), today, e)
+        r['workbook'] = {'path': str(ctx.get('w')), 'before_sha': ctx.get('before_sha')}
+        if e.detail.get('backup'):
+            r['workbook']['backup'] = Path(str(e.detail['backup'])).name
+        return emit(r, jp(), e.exit_code, post_commit=committed)
+    except Exception as e:
+        if committed:
+            res['written'] = True
+            res['post_commit_error'] = repr(e)[:300]
+            return emit(res, jp(), EXIT_POSTWRITE, post_commit=True)
+        return emit(refusal_result('save', ctx.get('run'), today, Refuse('BAD_ARGS', f'unexpected error: {e!r}'[:300], {}, EXIT_BAD)), jp(), EXIT_BAD)
+    finally:
+        release_all(lock, liblock)
+
+
+def _log_save(state, res):
+    try:
+        write_save_log(state, res)
+    except OSError:
+        pass
 
 
 def cmd_init(a) -> int:

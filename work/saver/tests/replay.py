@@ -28,7 +28,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 SAVER_DIR = HERE.parent
 L = SAVER_DIR.parent.parent
-DEFAULT_FIXTURE = L.parent / 'runsave'
+import os   # noqa: E402
+DEFAULT_FIXTURE = Path(os.environ['SAVER_FIXTURE']) if os.environ.get('SAVER_FIXTURE') else L.parent / 'runsave'
 SAVER = SAVER_DIR / 'src' / 'saver.py'
 PIPELINE_SHA_TOOL = SAVER_DIR / 'tools' / 'pipeline_sha.py'
 
@@ -167,6 +168,10 @@ def main(argv=None) -> int:
     ap.add_argument('--literal-copies', action='store_true', help='diagnostic: copy copies_out the way the manual run did (nested copies/articles/articles)')
     a = ap.parse_args(argv)
     fx = Path(a.fixture)
+    if not (fx / 'in.xlsx').is_file() or not list(fx.glob('*STAGED*.xlsx')):
+        print(f'SKIPPED: the replay fixture is not at {fx} (it holds the workbook and is not in this repository). '
+              'Set SAVER_FIXTURE=<folder> or pass --fixture.')
+        return 0
     staged = next(fx.glob('*STAGED*.xlsx'))
     exp1 = json.loads((fx / 'result.json').read_text(encoding='utf-8'))
     today = exp1['at'][:10]

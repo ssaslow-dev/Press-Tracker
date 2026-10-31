@@ -38,3 +38,30 @@ def make_wb(path, sheets, links):
                 c.hyperlink = url
     wb.save(str(path))
     return Path(path)
+
+
+# ---- replay fixture location (the fixture holds the workbook, so it is NOT in this repository)
+import os as _os
+
+REPO = Path(__file__).resolve().parent.parent.parent.parent
+
+
+def fixture_dir():
+    """SAVER_FIXTURE if set, else <repo>/../runsave (where the old workspace kept it)"""
+    env = _os.environ.get('SAVER_FIXTURE')
+    return Path(env) if env else REPO.parent / 'runsave'
+
+
+def have_fixture():
+    f = fixture_dir()
+    return (f / 'in.xlsx').is_file() and (f / 'pipeline').is_dir()
+
+
+def pipeline_source():
+    """the pipeline files for tests: the fixture's if present, else the repository's code/ folder"""
+    f = fixture_dir() / 'pipeline'
+    return f if f.is_dir() else REPO / 'code'
+
+
+SKIP_NO_FIXTURE = ('the replay fixture is not available (it holds the workbook and is not in this repository): '
+                   'set SAVER_FIXTURE=<folder with in.xlsx, db/, queue/, pipeline/, copies/, img_cache/>')
