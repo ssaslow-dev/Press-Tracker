@@ -404,3 +404,6 @@ The new project's tracker looks and feels the same as the current artifact track
 - SAMELOOK-v1: leaving the Update button out of the new tracker is temporary; it is to come back later.
 - SAVERHOLD-v1: the save program (work/saver/) is on hold after part 2 (save path built, 95 tests pass). No replays, Fable review or live save until Sammy lifts the hold.
 - NOWATCH-v1: no weekly watch and no monthly sweep. Closes that open decision.
+
+## LOCALAPP-v1 (Sammy, 2026-10-31)
+The point of the new project: make the existing tracker self-contained local software. It will connect to Claude and TinyFish only for the Update button, nothing else. Saves, the page and the data all run locally. Replaces the "browser-only" assumption in CLAUDE.md. work/desktop_plan/PLAN.md is the closest existing plan, except that its Claude Desktop connector for saves does not fit this decision. Open: which computer, and whether IT allows it.

@@ -9,7 +9,7 @@ Press-coverage database for CA Assemblymember Jesse Gabriel (AD-46), kept by Sam
 - `code/`: tracker page sources (`code/tracker/NN_*.js`), the save pipeline (`sheet_task.py` plus rule modules), reference data (`outlets.json`, `reporters.json`, `reporter_employment.csv`, `outlet_rules.json`, `lookup_cache.json`), `make_viewer.py` (shared copy), and `sheet_task_prompt.md` (today's manual save procedure).
 - `build/`: build scripts (`apply_all_patches.py`, `build.sh`), tab sources (`build/tabs/`) and tests (`build/tests/run_all.sh`, about 5 min; TABS harness in `build/tests/tabs/`).
 - `work/saver/`: the save program in progress (see Current work).
-- `work/desktop_plan/`: Fable's Windows plan (PLAN.md, BUILD_NOTES.md). It's on hold because IT probably won't allow local installs.
+- `work/desktop_plan/`: Fable's Windows plan (PLAN.md, BUILD_NOTES.md). The closest existing plan for LOCALAPP-v1 (portable zip, embeddable Python, local page in the browser). Its Claude Desktop connector for saves does not fit LOCALAPP-v1.
 - `work/update_review/`: the Update-button review (REPORT.md) and its patches.
 
 Docs written before the move refer to the old workspace root `L = /tmp/.../scratchpad/lib`. In this repository, that root is the repo itself (`L/code` = `code/`, `L/DECISIONS.md` = `docs/DECISIONS.md`).
@@ -81,11 +81,13 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
    - Fable: the three checkpoints plus at most one more, for an unexplained replay mismatch.
 5. **The 256 MB artifact cap** (Sammy: "do what you think is best"): keep the current tracker's design for now, with saved copies in per-year files. Revisit only if the new tracker gets near the cap. A browser page can't read a private GitHub repo without credentials, so the copies can't simply be loaded from here.
 6. **Look and feel** (SAMELOOK-v1): the new tracker looks and feels the same as the current one, minus the Update button functionality. Leaving out the Update button is temporary; it comes back later.
+7. **Local software** (LOCALAPP-v1): the new project turns the existing tracker into self-contained software that runs locally. Its only outside connections, later, are Claude and TinyFish, and only for the Update button.
 
 ## Open decisions for Sammy (don't assume answers)
 
-- **When to switch over** from the old tracker to the new project (see NEWPROJECT-v1). The new project is browser-only: the office PC can open claude.ai, and IT probably won't allow local installs. Google Drive was ruled out because its connector can't carry or replace the workbook.
+- **When to switch over** from the old tracker to the new project (see NEWPROJECT-v1). The new project is self-contained local software (LOCALAPP-v1). Google Drive was ruled out because its connector can't carry or replace the workbook.
 - **How new stories reach the new project after switch-over,** until it has its own Update button.
+- **Which computer the local software runs on** (office Windows PC or the Mac), and whether IT allows an unzipped portable app there.
 - **From earlier work:**
   - A5 wire-blend pickups;
   - 4 unsettled F7 rows (09721, 01734, 06948, 06949);
