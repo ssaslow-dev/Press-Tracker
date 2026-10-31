@@ -63,9 +63,27 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
   5. First supervised live save.
 - **Known bug from the 2026-10-30 manual save:** article shards were copied into `copies/articles/articles/`, nested one level too deep, so relmatch read stale shards. Two `release_related.json` entries are `bill` where they should be `text`. The next save fixes them.
 
+## Build decisions (Sammy, 2026-10-31, NEWPROJECT-v1)
+
+1. **This repository is an entirely new project.** It must not change anything about the artifact-based tracker: the live tracker, the shared copy, their databases, the Mac master or the library. The old tracker keeps running exactly as now, and its saves keep going to the Mac master until Sammy decides to switch over.
+   - The workbook and library move into this repository as a **snapshot copy** for building and testing.
+   - At switch-over, the snapshot is replaced with the then-current Mac master and library, with every file's checksum verified. Until then the copy here is not a master and is never written back anywhere.
+2. **Hand edits:** Sammy downloads the workbook, edits it in Excel and uploads it back; the save program accepts it as the new baseline (SAVE_RULES answer 2).
+3. **No Update button in the new app yet.** During the build, new stories still come only from the old tracker. The new project's save program is built and tested on the snapshot; there are no live saves in the new project until switch-over.
+4. **Autonomy** (Sammy: "do what you think is best"):
+   - Commit and push code freely.
+   - Build and test only on copies.
+   - Never publish or modify the old tracker's artifacts or databases.
+   - A new artifact for the new tracker may be created, private, for testing.
+   - Never write the Mac master or library.
+   - The first real save and the switch-over need Sammy present.
+   - Fable: the three checkpoints plus at most one more, for an unexplained replay mismatch.
+5. **The 256 MB artifact cap** (Sammy: "do what you think is best"): keep the current tracker's design for now, with saved copies in per-year files. Revisit only if the new tracker gets near the cap. A browser page can't read a private GitHub repo without credentials, so the copies can't simply be loaded from here.
+
 ## Open decisions for Sammy (don't assume answers)
 
-- **Where the master workbook and library should live.** GitHub is recommended. Google Drive can't carry the workbook: its connector passes files through the conversation as base64 and can't replace a file's contents. A private artifact is the fallback. The office PC can open claude.ai, and IT probably won't allow local installs, so the plan is browser-only.
+- **When to switch over** from the old tracker to the new project (see NEWPROJECT-v1). The new project is browser-only: the office PC can open claude.ai, and IT probably won't allow local installs. Google Drive was ruled out because its connector can't carry or replace the workbook.
+- **How new stories reach the new project after switch-over,** until it has its own Update button.
 - **From earlier work:**
   - weekly watch plus a monthly sweep;
   - A5 wire-blend pickups;
