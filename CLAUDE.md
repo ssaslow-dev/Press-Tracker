@@ -81,13 +81,13 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
    - Fable: the three checkpoints plus at most one more, for an unexplained replay mismatch.
 5. **The 256 MB artifact cap** (Sammy: "do what you think is best"): keep the current tracker's design for now, with saved copies in per-year files. Revisit only if the new tracker gets near the cap. A browser page can't read a private GitHub repo without credentials, so the copies can't simply be loaded from here.
 6. **Look and feel** (SAMELOOK-v1): the new tracker looks and feels the same as the current one, minus the Update button functionality. Leaving out the Update button is temporary; it comes back later.
-7. **Local software** (LOCALAPP-v1): the new project turns the existing tracker into self-contained software that runs locally. Its only outside connections, later, are Claude and TinyFish, and only for the Update button.
+7. **Local software** (LOCALAPP-v1): the new project turns the existing tracker into self-contained software that runs locally. Its only outside connections, later, are Claude and TinyFish, and only for the Update button. Target: the office Windows PC, with nothing installed (portable folder only).
 
 ## Open decisions for Sammy (don't assume answers)
 
 - **When to switch over** from the old tracker to the new project (see NEWPROJECT-v1). The new project is self-contained local software (LOCALAPP-v1). Google Drive was ruled out because its connector can't carry or replace the workbook.
 - **How new stories reach the new project after switch-over,** until it has its own Update button.
-- **Which computer the local software runs on** (office Windows PC or the Mac), and whether IT allows an unzipped portable app there.
+- **Whether the office PC lets an unzipped portable program run** (LOCALAPP-v1: Windows PC, no installs). Untested.
 - **From earlier work:**
   - A5 wire-blend pickups;
   - 4 unsettled F7 rows (09721, 01734, 06948, 06949);
