@@ -399,3 +399,8 @@ Save rules for the saver program (work/saver/SAVE_RULES.md, spec SAVER_SPEC.md).
 
 ## SAMELOOK-v1 (Sammy, 2026-10-31)
 The new project's tracker looks and feels the same as the current artifact tracker (code/tracker/NN_*.js), minus the Update button functionality (40_update_outlets.js, 41_update_search.js, 42_update_buttons.js, 43_update_log.js and what they drive). Still open: how new stories reach the new project after switch-over.
+
+## SAMELOOK-v1 amended, SAVERHOLD-v1, NOWATCH-v1 (Sammy, 2026-10-31)
+- SAMELOOK-v1: leaving the Update button out of the new tracker is temporary; it is to come back later.
+- SAVERHOLD-v1: the save program (work/saver/) is on hold after part 2 (save path built, 95 tests pass). No replays, Fable review or live save until Sammy lifts the hold.
+- NOWATCH-v1: no weekly watch and no monthly sweep. Closes that open decision.

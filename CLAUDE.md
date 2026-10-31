@@ -57,7 +57,7 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
   - Fable's review (`work/saver/REVIEW_1.md`) findings are fixed; all 25 tests in `work/saver/tests/review/` pass.
   - Part 2 is built (2026-10-31): `save` (backup, checked swap, pages add-only, removals moved to `_to_delete/`, ledger, keep 3 saver backups, rebuild). 95 saver tests pass. See `work/saver/README.md`.
   - Not yet run: a replay against a real past save (the fixture is not in this repo), and the rebuild against the real published pipeline (only stubs so far; use `--no-rebuild` until it has run once).
-  - Claude recommended (2026-10-31) parking the next steps until Sammy decides on switch-over and how stories arrive; not yet decided.
+  - **On hold** (Sammy, 2026-10-31, SAVERHOLD-v1). Do not continue the steps below until Sammy lifts the hold.
 - **Next steps:**
   1. Replay more past saves.
   2. Fable reviews the whole program.
@@ -80,14 +80,13 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
    - The first real save and the switch-over need Sammy present.
    - Fable: the three checkpoints plus at most one more, for an unexplained replay mismatch.
 5. **The 256 MB artifact cap** (Sammy: "do what you think is best"): keep the current tracker's design for now, with saved copies in per-year files. Revisit only if the new tracker gets near the cap. A browser page can't read a private GitHub repo without credentials, so the copies can't simply be loaded from here.
-6. **Look and feel** (SAMELOOK-v1): the new tracker looks and feels the same as the current one, minus the Update button functionality.
+6. **Look and feel** (SAMELOOK-v1): the new tracker looks and feels the same as the current one, minus the Update button functionality. Leaving out the Update button is temporary; it comes back later.
 
 ## Open decisions for Sammy (don't assume answers)
 
 - **When to switch over** from the old tracker to the new project (see NEWPROJECT-v1). The new project is browser-only: the office PC can open claude.ai, and IT probably won't allow local installs. Google Drive was ruled out because its connector can't carry or replace the workbook.
 - **How new stories reach the new project after switch-over,** until it has its own Update button.
 - **From earlier work:**
-  - weekly watch plus a monthly sweep;
   - A5 wire-blend pickups;
   - 4 unsettled F7 rows (09721, 01734, 06948, 06949);
   - 8 medium-confidence date fixes;
