@@ -1,0 +1,60 @@
+9th Circuit blocks moderation law
+September 6, 2024 | San Francisco Chronicle (CA)
+Author: Bob Egelko Section: A 716 Words
+Page: A006
+OpenURL Link
+
+A 2022 California law requiring major social media companies to disclose their policies on posting and removing
+content such as hate speech, harassment and disinformation was blocked Wednesday by a federal appeals court,
+which said it appears to violate freedom of expression.
+The law's edicts "require a company to recast its content-moderation practices in language prescribed by the State,
+implicitly opining on whether and how certain controversial categories of content should be moderated," said the
+9th U.S. Circuit Court of Appeals. The court told a federal judge in Sacramento, who had previously left the law in
+place, to issue an injunction against the main parts of the law and to decide whether any of it could be preserved.
+The bill, AB587 by Assembly Member Jesse Gabriel, D-Encino (Los Angeles County), sailed through the Legislature
+on nearly unanimous votes in 2022 and was signed by Gov. Gavin Newsom.
+It required social media companies with at least $100 million a year in revenue to disclose their terms of service
+and their policies for allowing, barring or "flagging" -- posting warning labels -- for their content. The law also
+required the companies to issue reports every six months on how they handled certain categories of content,
+including hate speech or racism, extremism, disinformation, harassment and foreign political interference.
+It was challenged in court by Elon Musk's platform X, formerly known as Twitter. U.S. District Judge William Shubb
+denied an injunction last December, saying the law only required the companies to reveal their content-moderation
+policies, disclosures he described as "purely factual" and "uncontroversial."
+But the appeals court said Wednesday that AB587 is more far-reaching and requires major social media platforms
+to "reveal (their) policy opinion about contentious issues, such as what constitutes hate speech or misinformation,"
+and whether to allow such expression, with or without warning labels.
+"No matter how a social media company chooses to moderate such content, the company will face backlash from
+its users and the public," Judge Milan Smith wrote in the 3-0 ruling.
+He said the disclosure requirements are "more extensive than necessary to serve the State's purported goal of
+'requiring social media companies to be transparent about their content-moderation policies and practices so that
+consumers can make informed decisions about where they consume and disseminate news and information,'"
+quoting from the law.
+Smith, appointed by President George W. Bush, was joined by Judges Mark Bennett, appointed by President Donald
+Trump, and Anthony Johnstone, appointed by President Joe Biden. They said Shubb should now decide whether less
+contentious sections of the law, such as the requirement to disclose terms of service, should be reinstated.
+Last month, the same appeals court panel upheld most of another federal judge's decision to block a state law that
+would require online businesses to protect users younger than 18 from harmful information or other content. The
+court said the law, due to take effect this past July, violates the First Amendment by requiring companies to decide
+whether youngsters may be harmed by material they encounter online and to take steps to shield them from harm.
+Musk, angered by California's liberal policies -- such as a law banning schools from requiring teachers to inform
+parents of their student's change in gender identity -- announced in July that he was moving the headquarters of X
+from California to Texas.
+
+His lawsuit against AB587 drew support from a variety of advocates, including the conservative Washington Legal
+Foundation, the liberal Electronic Frontier Foundation and the business-sponsored U.S. Chamber of Commerce.
+"Across the political spectrum, there was concern that California was trying to compel disclosure of platforms' views
+on topics that are the center of our dialogue about compelled speech," Aaron Mackey, an attorney for the Electronic
+Frontier Foundation who took part in its legal filing in the case, said Wednesday.
+California was joined by 17 other states and the District of Columbia in defense of the challenged law.
+"Enabling consumers to inform themselves about platforms' own content-moderation processes ... without ever
+dictating what those content-moderation processes must be -- enables consumers to make the best decisions for
+themselves and for their children," Attorney General Rob Bonta's office said in a court filing.
+Reach Bob Egelko: begelko@sfchronicle.com; Twitter: @BobEgelko
+(c) San Francisco Chronicle 2024
+
+Citation (apa Style)
+Egelko, B. (2024, September 6). 9th Circuit blocks moderation law.San Francisco Chronicle (CA), p. A006. Available from NewsBank:
+Access World News – Historical and Current: https://infoweb.newsbank.com/apps/news/document-view?
+p=WORLDNEWS&docref=news/19B6AE0AF6494338.
+
+
