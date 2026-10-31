@@ -4,3 +4,5 @@ __pycache__/
 ~$*
 scratch/
 !data/*.xlsx
+!build/tests/**/*.xlsx
+!work/saver/fixtures/**/*.xlsx

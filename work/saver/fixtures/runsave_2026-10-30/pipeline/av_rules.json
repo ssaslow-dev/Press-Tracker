@@ -1,0 +1,176 @@
+{
+ "_about": "AVPREVIEW-v1 rules for av_display_clean.py (agent-previewclean draft, Sammy comment de9c2baa). AV copies only.",
+ "header": [
+  "Saved \\d{4}-\\d{2}-\\d{2}.*",
+  "https?://\\S+",
+  ".{2,120} · (\\d{4}(-\\d{2}(-\\d{2})?)?|undated)"
+ ],
+ "fields": {
+  "Platform URL(s)": {
+   "do": "drop"
+  },
+  "Exa library ID": {
+   "do": "drop"
+  },
+  "Source": {
+   "do": "drop"
+  },
+  "Excerpt rule": {
+   "do": "drop"
+  },
+  "Note": {
+   "do": "drop"
+  },
+  "Gabriel role": {
+   "do": "drop"
+  },
+  "Transcript": {
+   "do": "drop"
+  },
+  "Date": {
+   "do": "rewrite",
+   "re": "\\s*\\(published [^)]*\\)",
+   "to": ""
+  },
+  "Duration": {
+   "do": "rewrite",
+   "re": "(\\d+:\\d{2})\\.\\d+",
+   "to": "\\1"
+  }
+ },
+ "note": "Machine-generated transcript, excerpted: each passage that mentions him, with surrounding context. […] marks omitted stretches.",
+ "strip": [
+  {
+   "id": "leading_url_before_copyright",
+   "re": "^\\s*https?://\\S+\\s+(?=[^\\n]*©)",
+   "to": ""
+  },
+  {
+   "id": "turn_ms_range",
+   "re": "(\\d{1,3}:\\d{2})\\.\\d{1,3}\\s*[–-]\\s*\\d{1,3}:\\d{2}\\.\\d{1,3}",
+   "to": "\\1"
+  },
+  {
+   "id": "bracket_timecode",
+   "re": "\\[\\d{1,2}:\\d{2}:\\d{2}\\]\\s*",
+   "to": ""
+  },
+  {
+   "id": "start_end_marker",
+   "re": "^\\s*Start:\\s*\\d{1,2}:\\d{2}\\s*End:\\s*\\d{1,2}:\\d{2}\\s*",
+   "to": ""
+  },
+  {
+   "id": "shortcode",
+   "re": "(?-i:\\[(?:[a-z]+_[a-z_]+|activecampaign|fusebox)(?:\\s[^\\]]*)?\\])",
+   "to": ""
+  },
+  {
+   "id": "viq_copyright_tail",
+   "re": "\\s*(?:END\\s+)?Content and (?:p|P)rogramming (?:c|C)opyright.*$",
+   "to": ""
+  },
+  {
+   "id": "iso_timestamp",
+   "re": "(\\d{4}-\\d{2}-\\d{2})T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d+)?(?:Z|[+-]\\d{2}:?\\d{2})",
+   "to": "\\1"
+  },
+  {
+   "id": "genre_tag",
+   "re": "\\s+Genre\\s+[A-Z][\\w &]+$",
+   "to": ""
+  },
+  {
+   "id": "jammed_date_time",
+   "re": "(\\b(?:19|20)\\d{2})(\\d{1,2}:\\d{2}(?:\\s?[AP]M(?:\\s?[A-Z]{2,3})?)?)\\b",
+   "to": "\\1 · \\2"
+  },
+  {
+   "id": "ia_title_label",
+   "re": "\\s*\\((?:segment on [^)]*;\\s*)?Internet Archive TV News\\)",
+   "to": ""
+  },
+  {
+   "id": "ia_source_label",
+   "re": "^Closed-caption transcript of the segment \\(Internet Archive TV News Archive\\)$",
+   "to": "Closed-caption transcript"
+  },
+  {
+   "id": "caption_u_junk",
+   "re": "(?:(?<=\\s)|(?<=^)|(?<=[a-z]))ú(?=[a-z])",
+   "to": " ",
+   "lang": "English",
+   "gate": "\\((?:MyNetworkTV|FOX|ABC|CBS|NBC|PBS|CW|Independent)[^()]*\\([A-Z]{3,4}\\)\\)</h1>|Closed-caption transcript"
+  }
+ ],
+ "kill": [
+  {
+   "id": "time_marker",
+   "re": "\\d{1,2}:\\d{2}(?::\\d{2})?(?:\\s?[ap]\\.?m\\.?)?"
+  },
+  {
+   "id": "return_to_transcripts",
+   "re": "Return to Transcripts main page"
+  },
+  {
+   "id": "rush_transcript",
+   "re": "THIS IS A RUSH TRANSCRIPT\\. THIS COPY MAY NOT BE IN ITS FINAL FORM AND MAY BE UPDATED\\."
+  },
+  {
+   "id": "empty_label",
+   "re": "(?:From|By|Transcript|Series|\\.)"
+  },
+  {
+   "id": "lone_paren",
+   "re": "[()]"
+  },
+  {
+   "id": "player_ui",
+   "re": "(?:podcast playback|Show transcript|Skip to main content|Or, listen on Spotify|WATCH NOW!|Use Left/Right to seek, Home/End to jump to start or end\\. Hold shift to jump forward or backward\\.)"
+  },
+  {
+   "id": "app_banner",
+   "re": "(?:CBS News App Open Chrome Safari Continue|Add CBS News on Google)"
+  },
+  {
+   "id": "tweets_by",
+   "re": "Tweets by @?\\w+"
+  },
+  {
+   "id": "npr_footer",
+   "re": "(?:Copyright © \\d{4} NPR\\..*|Accuracy and availability of NPR transcripts may vary\\..*|NPR does not offer or accept money for coverage or interviews\\.|Anyone who makes such an offer or request is not an NPR employee and does not represent NPR\\.)",
+   "allow_long": true
+  },
+  {
+   "id": "kpcc_archive_notice",
+   "re": "This archival content was originally written for and published on KPCC\\.org\\..*",
+   "allow_long": true
+  },
+  {
+   "id": "substack_paid",
+   "re": "If you sign up as a paid subscriber \\(which I hope you will\\).*",
+   "allow_long": true
+  }
+ ],
+ "tail": [
+  {
+   "id": "mitu_footer",
+   "re": "Contact UsAbout UsTerms of Service.*"
+  },
+  {
+   "id": "commune_footer",
+   "re": "Try Membership Free for \\d+ Days"
+  },
+  {
+   "id": "commune_about",
+   "re": "About the Commune Podcast"
+  }
+ ],
+ "section": [
+  {
+   "id": "sponsor_reads",
+   "head": "This show is made possible by:",
+   "item": "(?:\\buse code\\b|\\.com/|\\bGo to\\b|% off|free .* with any purchase)"
+  }
+ ]
+}

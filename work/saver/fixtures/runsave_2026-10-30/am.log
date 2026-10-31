@@ -1,0 +1,30 @@
+{
+ "related_cols": {
+  "copies_cells": 0,
+  "related_cells": 9,
+  "releases": 244,
+  "links": 1258,
+  "state": "RELRELATED-v4",
+  "columns": true
+ },
+ "queue": {
+  "nearcopy": 0,
+  "billtags": 0,
+  "merge": 0,
+  "outlet": 0
+ },
+ "verify": {
+  "ok": true,
+  "problems": [],
+  "rows_before": 8193,
+  "rows_after": 8193,
+  "originals": 4097,
+  "tabs_checked": [
+   "Bills",
+   "Press releases",
+   "Audio & video details",
+   "Removed",
+   "Unlinked print pages"
+  ]
+ }
+}

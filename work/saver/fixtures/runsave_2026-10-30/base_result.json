@@ -1,0 +1,1025 @@
+{
+ "at": "2026-10-30T22:25:16Z",
+ "runs": {
+  "run-mvvcnrpbuuz": {
+   "ids": {
+    "sNEW-run-mvvcnrpbuuz-10": "s00327",
+    "sNEW-run-mvvcnrpbuuz-1": "s04929",
+    "NEW-run-mvvcnrpbuuz-1": "10650",
+    "sNEW-run-mvvcnrpbuuz-2": "s04930",
+    "NEW-run-mvvcnrpbuuz-2": "10651",
+    "sNEW-run-mvvcnrpbuuz-3": "s04931",
+    "NEW-run-mvvcnrpbuuz-3": "10652",
+    "sNEW-run-mvvcnrpbuuz-4": "s04932",
+    "NEW-run-mvvcnrpbuuz-4": "10653",
+    "sNEW-run-mvvcnrpbuuz-8": "s04933",
+    "NEW-run-mvvcnrpbuuz-9": "10654",
+    "NEW-run-mvvcnrpbuuz-14": "01859",
+    "sNEW-run-mvvcnrpbuuz-12": "s00523",
+    "sNEW-run-mvvcnrpbuuz-13": "s04934",
+    "NEW-run-mvvcnrpbuuz-15": "10655",
+    "sNEW-run-mvvcnrpbuuz-14": "s04935",
+    "NEW-run-mvvcnrpbuuz-16": "10656",
+    "sNEW-run-mvvcnrpbuuz-15": "s04936",
+    "NEW-run-mvvcnrpbuuz-17": "10657",
+    "NEW-run-mvvcnrpbuuz-7": "10658",
+    "NEW-run-mvvcnrpbuuz-8": "10659",
+    "NEW-run-mvvcnrpbuuz-12": "10660",
+    "NEW-run-mvvcnrpbuuz-13": "10661",
+    "NEW-run-mvvcnrpbuuz-18": "10662",
+    "NEW-run-mvvcnrpbuuz-19": "10663"
+   },
+   "added": [
+    "10650",
+    "10651",
+    "10652",
+    "10653",
+    "10654",
+    "10655",
+    "10656",
+    "10657",
+    "10658",
+    "10659",
+    "10660",
+    "10661",
+    "10662",
+    "10663"
+   ]
+  }
+ },
+ "conflicts": [],
+ "applied": [
+  {
+   "aid": "10652",
+   "column": "Saved Copy?",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10652",
+   "column": "File type",
+   "value": "HTML",
+   "from": "pages"
+  },
+  {
+   "aid": "10652",
+   "column": "File name",
+   "value": "ws10652o-s04931.html",
+   "from": "pages"
+  },
+  {
+   "aid": "10652",
+   "column": "Word count",
+   "value": "1304",
+   "from": "pages"
+  },
+  {
+   "aid": "10652",
+   "column": "Mention depth",
+   "value": "Featured",
+   "from": "pages"
+  },
+  {
+   "aid": "10652",
+   "column": "Quoted",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10658",
+   "column": "Saved Copy?",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10658",
+   "column": "File type",
+   "value": "HTML",
+   "from": "pages"
+  },
+  {
+   "aid": "10658",
+   "column": "File name",
+   "value": "ws10658r-s02206.html",
+   "from": "pages"
+  },
+  {
+   "aid": "10658",
+   "column": "Word count",
+   "value": "637",
+   "from": "pages"
+  },
+  {
+   "aid": "10658",
+   "column": "Mention depth",
+   "value": "Featured",
+   "from": "pages"
+  },
+  {
+   "aid": "10658",
+   "column": "Quoted",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10661",
+   "column": "Saved Copy?",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10661",
+   "column": "File type",
+   "value": "HTML",
+   "from": "pages"
+  },
+  {
+   "aid": "10661",
+   "column": "File name",
+   "value": "ws10661r-s02746.html",
+   "from": "pages"
+  },
+  {
+   "aid": "10661",
+   "column": "Word count",
+   "value": "1002",
+   "from": "pages"
+  },
+  {
+   "aid": "10661",
+   "column": "Mention depth",
+   "value": "Named",
+   "from": "pages"
+  },
+  {
+   "aid": "10650",
+   "column": "Saved Copy?",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10650",
+   "column": "File type",
+   "value": "HTML",
+   "from": "pages"
+  },
+  {
+   "aid": "10650",
+   "column": "File name",
+   "value": "ws10650o-s04929.html",
+   "from": "pages"
+  },
+  {
+   "aid": "10650",
+   "column": "Word count",
+   "value": "700",
+   "from": "pages"
+  },
+  {
+   "aid": "10650",
+   "column": "Mention depth",
+   "value": "Named",
+   "from": "pages"
+  },
+  {
+   "aid": "10653",
+   "column": "Saved Copy?",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10653",
+   "column": "File type",
+   "value": "HTML",
+   "from": "pages"
+  },
+  {
+   "aid": "10653",
+   "column": "File name",
+   "value": "ws10653o-s04932.html",
+   "from": "pages"
+  },
+  {
+   "aid": "10653",
+   "column": "Word count",
+   "value": "683",
+   "from": "pages"
+  },
+  {
+   "aid": "10653",
+   "column": "Mention depth",
+   "value": "Featured",
+   "from": "pages"
+  },
+  {
+   "aid": "10653",
+   "column": "Quoted",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10651",
+   "column": "Saved Copy?",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10651",
+   "column": "File type",
+   "value": "HTML",
+   "from": "pages"
+  },
+  {
+   "aid": "10651",
+   "column": "File name",
+   "value": "ws10651o-s04930.html",
+   "from": "pages"
+  },
+  {
+   "aid": "10651",
+   "column": "Word count",
+   "value": "504",
+   "from": "pages"
+  },
+  {
+   "aid": "10651",
+   "column": "Mention depth",
+   "value": "Featured",
+   "from": "pages"
+  },
+  {
+   "aid": "10651",
+   "column": "Quoted",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10662",
+   "column": "Saved Copy?",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10662",
+   "column": "File type",
+   "value": "HTML",
+   "from": "pages"
+  },
+  {
+   "aid": "10662",
+   "column": "File name",
+   "value": "ws10662r-s02381.html",
+   "from": "pages"
+  },
+  {
+   "aid": "10662",
+   "column": "Word count",
+   "value": "1063",
+   "from": "pages"
+  },
+  {
+   "aid": "10662",
+   "column": "Mentions \"Gabriel\" in text",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10662",
+   "column": "Mention depth",
+   "value": "Featured",
+   "from": "pages"
+  },
+  {
+   "aid": "10662",
+   "column": "Quoted",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10663",
+   "column": "Saved Copy?",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10663",
+   "column": "File type",
+   "value": "HTML",
+   "from": "pages"
+  },
+  {
+   "aid": "10663",
+   "column": "File name",
+   "value": "ws10663r-s00044.html",
+   "from": "pages"
+  },
+  {
+   "aid": "10663",
+   "column": "Word count",
+   "value": "1258",
+   "from": "pages"
+  },
+  {
+   "aid": "10663",
+   "column": "Mentions \"Gabriel\" in text",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10663",
+   "column": "Mention depth",
+   "value": "Quoted",
+   "from": "pages"
+  },
+  {
+   "aid": "10663",
+   "column": "Quoted",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "10653",
+   "column": "Press release",
+   "value": "Yes",
+   "from": "release text rule"
+  }
+ ],
+ "duplicates": [
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-14",
+   "existing": "01859",
+   "link": "https://qa5-web-vercel.telegraph.co.uk/us/news/2024/09/29/california-bans-hot-chips-fruity-cereal-schools-adhd-fears/"
+  }
+ ],
+ "unsupported": [],
+ "removals_requested": [],
+ "unknown_story": [
+  {
+   "collection": "pages",
+   "id": "jg-ae0b44"
+  }
+ ],
+ "edits_clear": [],
+ "edits_keep": [],
+ "reprint_counts": {
+  "s00044": {
+   "old": 43,
+   "new": 44,
+   "new_outlets": [
+    "yeshiva world"
+   ]
+  },
+  "s02206": {
+   "old": 0,
+   "new": 2,
+   "new_outlets": [
+    "kfi am 640",
+    "kiis fm"
+   ]
+  },
+  "s02381": {
+   "old": 3,
+   "new": 4,
+   "new_outlets": [
+    "keyt"
+   ]
+  },
+  "s02746": {
+   "old": 0,
+   "new": 1,
+   "new_outlets": [
+    "hankyung"
+   ]
+  }
+ },
+ "pages": [
+  {
+   "page": "jg-736bcc",
+   "aid": "10652",
+   "file": "2026/ws10652o-s04931.html",
+   "url": "https://capitolweekly.net/can-more-organized-sports-inside-prison-walls-reduce-recidivism/",
+   "source": "clean",
+   "status": "cleaned",
+   "flags": [],
+   "removed": 3,
+   "words": [
+    1355,
+    1304
+   ],
+   "header_conflicts": [],
+   "photos": {
+    "embedded": 0,
+    "dropped": 0,
+    "fetched": 0,
+    "failed": []
+   },
+   "original": "_original_html/2026/ws10652o-s04931.html"
+  },
+  {
+   "page": "jg-9329eb",
+   "aid": "10658",
+   "file": "2026/ws10658r-s02206.html",
+   "url": "https://kiisfm.iheart.com/featured/la-local-news/content/2026-03-25-california-bill-targets-ultraprocessed-foods-at-the-grocery-store/",
+   "source": "clean",
+   "status": "cleaned",
+   "flags": [],
+   "removed": 0,
+   "words": [
+    637,
+    637
+   ],
+   "header_conflicts": [],
+   "photos": {
+    "embedded": 0,
+    "dropped": 0,
+    "fetched": 0,
+    "failed": []
+   },
+   "original": "_original_html/2026/ws10658r-s02206.html"
+  },
+  {
+   "page": "jg-c7011b",
+   "aid": "10661",
+   "file": "2024/ws10661r-s02746.html",
+   "url": "https://plus.hankyung.com/apps/newsinside.view?aid=202412039560i&category=&sns=y",
+   "source": "clean",
+   "status": "cleaned",
+   "flags": [],
+   "removed": 0,
+   "words": [
+    1002,
+    1002
+   ],
+   "header_conflicts": [],
+   "photos": {
+    "embedded": 0,
+    "dropped": 0,
+    "fetched": 0,
+    "failed": []
+   },
+   "original": "_original_html/2024/ws10661r-s02746.html"
+  },
+  {
+   "page": "jg-cef552",
+   "aid": "10650",
+   "file": "2026/ws10650o-s04929.html",
+   "url": "https://www.independent.co.uk/news/world/americas/new-food-labels-states-b3059033.html",
+   "source": "clean",
+   "status": "cleaned",
+   "flags": [],
+   "removed": 5,
+   "words": [
+    743,
+    700
+   ],
+   "header_conflicts": [],
+   "photos": {
+    "embedded": 0,
+    "dropped": 0,
+    "fetched": 0,
+    "failed": []
+   },
+   "original": "_original_html/2026/ws10650o-s04929.html"
+  },
+  {
+   "page": "jg-d8dd0b",
+   "aid": "10653",
+   "file": "2026/ws10653o-s04932.html",
+   "url": "https://www.vannuysnewspress.com/california-steps-up-for-faith-communities-enacts-law-to-prevent-public-meetings-and-graduations-from-being-scheduled-on-important-religious-and-cultural-holidays/",
+   "source": "clean",
+   "status": "cleaned",
+   "flags": [],
+   "removed": 0,
+   "words": [
+    683,
+    683
+   ],
+   "header_conflicts": [],
+   "photos": {
+    "embedded": 0,
+    "dropped": 0,
+    "fetched": 0,
+    "failed": []
+   },
+   "original": "_original_html/2026/ws10653o-s04932.html"
+  },
+  {
+   "page": "jg-e7a9d3",
+   "aid": "10651",
+   "file": "2026/ws10651o-s04930.html",
+   "url": "https://www.vannuysnewspress.com/assembly-budget-chair-jesse-gabriel-delivers-2-5-million-to-the-mid-valley-family-ymca-for-infrastructure-improvements/",
+   "source": "clean",
+   "status": "cleaned",
+   "flags": [],
+   "removed": 0,
+   "words": [
+    504,
+    504
+   ],
+   "header_conflicts": [],
+   "photos": {
+    "embedded": 0,
+    "dropped": 0,
+    "fetched": 0,
+    "failed": []
+   },
+   "original": "_original_html/2026/ws10651o-s04930.html"
+  },
+  {
+   "page": "rp-12a3fa6bec0e",
+   "aid": "10662",
+   "file": "2025/ws10662r-s02381.html",
+   "url": "https://keyt.com/health/cnn-health/2025/10/08/california-enacts-nations-first-law-to-define-and-ban-ultraprocessed-foods/",
+   "source": "clean",
+   "status": "cleaned",
+   "flags": [],
+   "removed": 0,
+   "words": [
+    1063,
+    1063
+   ],
+   "header_conflicts": [],
+   "photos": {
+    "embedded": 0,
+    "dropped": 0,
+    "fetched": 0,
+    "failed": []
+   },
+   "original": "_original_html/2025/ws10662r-s02381.html"
+  },
+  {
+   "page": "rp-6804e611264c",
+   "aid": "10663",
+   "file": "2026/ws10663r-s00044.html",
+   "url": "https://www.theyeshivaworld.com/news/headlines-breaking-stories/2600754/new-laws-trigger-a-fresh-legal-fight-over-nazi-looted-art-in-los-angeles-and-auschwitz-museums.html",
+   "source": "clean",
+   "status": "cleaned",
+   "flags": [],
+   "removed": 8,
+   "words": [
+    1302,
+    1275
+   ],
+   "header_conflicts": [],
+   "photos": {
+    "embedded": 0,
+    "dropped": 0,
+    "fetched": 0,
+    "failed": []
+   },
+   "original": "_original_html/2026/ws10663r-s00044.html"
+  }
+ ],
+ "counts": {
+  "rows_added": 14,
+  "cells_filled": 49,
+  "conflicts": 0,
+  "duplicates": 1,
+  "removals_requested": 0,
+  "pages": 8,
+  "reprint_counts_changed": 4,
+  "originals": 4096,
+  "next_aid": "10664",
+  "next_s": "s04937",
+  "tracker_stories": 3680,
+  "skipped": 3,
+  "pages_error": 0,
+  "pages_skipped": 0,
+  "pages_flagged": 0,
+  "press_releases": 0,
+  "gabriel_unclear": 0,
+  "authors_split": 3,
+  "bills_new": 0,
+  "date_fixes": 0,
+  "date_review": 3,
+  "av_rows": 4,
+  "pages_drop": 1,
+  "reprint_failed": 0,
+  "reprint_untested": 2,
+  "origin_added": 0,
+  "origin_unverified": 0,
+  "held": 0,
+  "outlet_unresolved": 0,
+  "removed": 0,
+  "edits_reported": 0,
+  "red_rows": 1,
+  "av_date_review": 0,
+  "origin_wanted": 0,
+  "reprint_check": 2,
+  "reprint_check_low": 0,
+  "reprint_check_order": 0,
+  "reach_changed": 0
+ },
+ "skipped": [
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-5",
+   "story": "sNEW-run-mvvcnrpbuuz-5",
+   "code": "jg-71077c",
+   "outlet": "Colion Noir",
+   "link": "https://mrcolionnoir.com/california-fires-back-at-doj-over-glock-ban-lawsuit/",
+   "why": "single-author gun-rights advocacy blog (Colion Noir): not coverage (NOBLOGS-v1)"
+  },
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-10",
+   "story": "sNEW-run-mvvcnrpbuuz-9",
+   "code": "jg-39290e",
+   "outlet": "Tistory",
+   "link": "https://why4416.tistory.com/m/15991236",
+   "why": "personal blog platform; not press (REQ-12)"
+  },
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-11",
+   "story": "sNEW-run-mvvcnrpbuuz-10",
+   "code": "jg-f7b0fe",
+   "outlet": "Marin Independent Journal",
+   "link": "https://www.marinij.com/2025/06/30/california-poised-to-approve-most-significant-environmental-law-rollbacks-in-decades-2/",
+   "why": "same story and outlet as 10539 (headline): another link to an article already in the sheet (an edition, Web + Print)"
+  }
+ ],
+ "pages_error": [],
+ "pages_skipped": [],
+ "pages_flagged": [],
+ "press_releases": [],
+ "reprint_check": [
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-13",
+   "code": "jg-c7011b",
+   "outlet": "Hankyung",
+   "link": "https://plus.hankyung.com/apps/newsinside.view?aid=202412039560i&category=&sns=y",
+   "headline": "캘리포니아, 트럼프와 2차전 돌입…\"소송 위해 최대 2500만달러\"",
+   "story": "s02746",
+   "original": "08031",
+   "original_outlet": "Korea Economic Daily",
+   "mode": "text",
+   "conf": "high",
+   "coverage": 0.959,
+   "cell": "reprint: same text (text)"
+  },
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-7",
+   "code": "jg-9329eb",
+   "outlet": "KIIS FM",
+   "link": "https://kiisfm.iheart.com/featured/la-local-news/content/2026-03-25-california-bill-targets-ultraprocessed-foods-at-the-grocery-store/",
+   "headline": "California Bill Targets Ultraprocessed Foods at the Grocery Store",
+   "story": "s02206",
+   "original": "07423",
+   "original_outlet": "Patriot LA",
+   "mode": "text",
+   "conf": "high",
+   "coverage": 1.0,
+   "cell": "reprint: same text (text)"
+  }
+ ],
+ "reach": [],
+ "authors_split": [
+  {
+   "run": "run-mvvcnrpbuuz",
+   "key": "NEW-run-mvvcnrpbuuz-1",
+   "byline": "Julia Musto",
+   "authors": [
+    "Julia Musto"
+   ],
+   "title": "",
+   "confidence": "high"
+  },
+  {
+   "run": "run-mvvcnrpbuuz",
+   "key": "NEW-run-mvvcnrpbuuz-3",
+   "byline": "Rich Ehisen",
+   "authors": [
+    "Rich Ehisen"
+   ],
+   "title": "",
+   "confidence": "high"
+  },
+  {
+   "run": "run-mvvcnrpbuuz",
+   "key": "NEW-run-mvvcnrpbuuz-13",
+   "byline": "송영찬",
+   "authors": [
+    "송영찬"
+   ],
+   "title": "",
+   "confidence": "high"
+  }
+ ],
+ "gabriel_unclear": [],
+ "bills_new": [],
+ "date_fixes": [],
+ "date_review": [
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-1",
+   "aid": "10650",
+   "outlet": "Independent, The",
+   "link": "https://www.independent.co.uk/news/world/americas/new-food-labels-states-b3059033.html",
+   "date": "",
+   "was": "2028-06-01",
+   "why": "future date; page text misread (blanked)"
+  },
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-2",
+   "aid": "10651",
+   "outlet": "Van Nuys News Press",
+   "link": "https://www.vannuysnewspress.com/assembly-budget-chair-jesse-gabriel-delivers-2-5-million-to-the-mid-valley-family-ymca-for-infrastructure-improvements/",
+   "date": "2026-10-28",
+   "why": "check 2: Date within 3 days of the fetch day with Date source \"search snippet (converted)\"",
+   "target": ""
+  },
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-4",
+   "aid": "10653",
+   "outlet": "Van Nuys News Press",
+   "link": "https://www.vannuysnewspress.com/california-steps-up-for-faith-communities-enacts-law-to-prevent-public-meetings-and-graduations-from-being-scheduled-on-important-religious-and-cultural-holidays/",
+   "date": "2026-10-27",
+   "why": "check 2: Date within 3 days of the fetch day with Date source \"search snippet (converted)\"",
+   "target": ""
+  }
+ ],
+ "print_pages": [
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-6",
+   "outlet": "Sing Tao Daily",
+   "link": "https://epaper.singtaousa.com/flippingbook/epaper_chicago/2026/20260702/3/",
+   "date": "2026-07-02",
+   "headline": "07_02_2026星島日報（美東版） - 全美星島電子報",
+   "why": "e-paper / flipbook page: print coverage, needs clipping (Unlinked print pages), not a story row"
+  }
+ ],
+ "backfill_finds": [],
+ "releases_new": [],
+ "releases_flagged": [
+  {
+   "aid": "10653",
+   "story": "s04932",
+   "release": "California Steps Up for Faith Communities, Enacts Law to Prevent Public Meetings and Graduations from Being Scheduled on Important Religious and Cultural Holidays",
+   "url": "https://gabriel.asmdc.org/press-releases/20260930-california-steps-faith-communities-enacts-law-prevent-public-meetings-and",
+   "mode": "text",
+   "conf": "high",
+   "pct": 96.5
+  }
+ ],
+ "releases_skipped": [],
+ "releases_untestable": [
+  {
+   "aid": "10656",
+   "outlet": "National Law Review, The",
+   "release": "California State Assembly Passes Landmark Legislation to Ban Use of Dangerous Chemicals in Food and Beverages",
+   "url": "https://gabriel.asmdc.org/press-releases/20230515-california-state-assembly-passes-landmark-legislation-ban-use-dangerous",
+   "why": "no saved text"
+  }
+ ],
+ "releases_review": [],
+ "releases_unmarked": [],
+ "releases_dual": [],
+ "related_cols": {
+  "copies_cells": 0,
+  "related_cells": 0,
+  "releases": 244,
+  "links": 1254,
+  "state": "RELRELATED-v4",
+  "columns": true
+ },
+ "queue": {
+  "nearcopy": [],
+  "billtags": []
+ },
+ "relmatch": {
+  "releases": [],
+  "stories": [
+   "s04929",
+   "s04930",
+   "s04931",
+   "s04932",
+   "s04933",
+   "s04934",
+   "s04935",
+   "s04936"
+  ]
+ },
+ "pages_drop": [
+  "jg-71077c"
+ ],
+ "reprint_untested": [
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-8",
+   "outlet": "KFI AM 640",
+   "link": "https://kfiam640.iheart.com/content/2026-03-25-california-bill-targets-ultraprocessed-foods-at-the-grocery-store/",
+   "headline": "California Bill Targets Ultraprocessed Foods at the Grocery Store",
+   "story": "sNEW-run-mvvcnrpbuuz-7",
+   "original": "NEW-run-mvvcnrpbuuz-7",
+   "original_outlet": "KIIS FM",
+   "why": "no text to compare (its page was not saved) and no byline to match: kept as a reprint, check it"
+  },
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-12",
+   "outlet": "Santa Cruz Sentinel",
+   "link": "https://www.santacruzsentinel.com/2025/07/01/california-poised-to-approve-most-significant-environmental-law-rollbacks-in-decades/",
+   "headline": "California poised to approve most significant environmental law rollbacks in decades",
+   "story": "sNEW-run-mvvcnrpbuuz-10",
+   "original": "NEW-run-mvvcnrpbuuz-11",
+   "original_outlet": "Marin Independent Journal",
+   "why": "no text to compare (its page was not saved, the story has no saved copy) and no byline to match: kept as a reprint, check it"
+  }
+ ],
+ "reprint_failed": [],
+ "origin_added": [],
+ "origin_unverified": [],
+ "outlet_unresolved": [],
+ "held": [],
+ "removed": [],
+ "removal_failed": [],
+ "edits_reported": [],
+ "red_rows": [
+  "10653"
+ ],
+ "av_date_review": [],
+ "tones_skipped": [],
+ "origin_swaps": [],
+ "outlet_untyped": [
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-13",
+   "outlet": "Hankyung",
+   "type": "foreign",
+   "how": "language/name: non-English or foreign-based",
+   "why": "outlet not in outlet_rules.json types: classified by rule, add it to the table"
+  }
+ ],
+ "origin_nocopy": [],
+ "origin_wanted": [],
+ "outlet_new": [
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-13",
+   "key": "hankyung",
+   "outlet": "Hankyung",
+   "host": "plus.hankyung.com",
+   "link": "https://plus.hankyung.com/apps/newsinside.view?aid=202412039560i&category=&sns=y",
+   "proposed": {
+    "name": "Hankyung",
+    "type": "foreign",
+    "publisher": "",
+    "city": "",
+    "county": "",
+    "state": "",
+    "country": "",
+    "medium": "",
+    "language": "Korean",
+    "reach": ""
+   },
+   "why": "rule: no basis (country/state unknown)"
+  }
+ ],
+ "reach_review": [],
+ "queue_applied": [],
+ "queue_conflicts": [],
+ "outlets_changed": false,
+ "nocopy_filled": [],
+ "origin_merge": [
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-11",
+   "outlet": "Marin Independent Journal",
+   "origin": "https://www.marinij.com/2025/06/30/california-poised-to-approve-most-significant-environmental-law-rollbacks-in-decades-2/",
+   "existing": "01191",
+   "story": "s00327"
+  }
+ ],
+ "nocopy_finds": [
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-11",
+   "outlet": "Marin Independent Journal",
+   "link": "https://www.marinij.com/2025/06/30/california-poised-to-approve-most-significant-environmental-law-rollbacks-in-decades-2/"
+  }
+ ],
+ "reprint_confirmed": [
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-18",
+   "outlet": "KEYT",
+   "link": "https://keyt.com/health/cnn-health/2025/10/08/california-enacts-nations-first-law-to-define-and-ban-ultraprocessed-foods/",
+   "headline": "California enacts nation's first law to define and ban ultraprocessed foods",
+   "story": "s02381",
+   "original": "07616",
+   "original_outlet": "CNN",
+   "coverage": 0.943,
+   "cell": "reprint: same text (text)",
+   "mode": "text",
+   "conf": "high"
+  },
+  {
+   "run": "run-mvvcnrpbuuz",
+   "placeholder": "NEW-run-mvvcnrpbuuz-19",
+   "outlet": "Yeshiva World, The",
+   "link": "https://www.theyeshivaworld.com/news/headlines-breaking-stories/2600754/new-laws-trigger-a-fresh-legal-fight-over-nazi-looted-art-in-los-angeles-and-auschwitz-museums.html",
+   "headline": "New Laws Trigger A Fresh Legal Fight Over Nazi-Looted Art In Los Angeles And Auschwitz Museums",
+   "story": "s00044",
+   "original": "00133",
+   "original_outlet": "Associated Press News Service, The",
+   "coverage": 0.857,
+   "cell": "reprint: same text (text-edge)",
+   "mode": "text-edge",
+   "conf": "low"
+  }
+ ],
+ "agg_origin": [],
+ "headline_review": [
+  {
+   "placeholder": "NEW-run-mvvcnrpbuuz-14",
+   "outlet": "Telegraph, The",
+   "other": "01859",
+   "other_outlet": "Daily Telegraph, The/The Sunday Telegraph",
+   "jaccard": 1.0,
+   "days": 0,
+   "recurring": false,
+   "note": "possible duplicate of 01859 (Daily Telegraph, The/The Sunday Telegraph, 2024-09-29): similar headline (1.00), different outlet house; not merged"
+  }
+ ],
+ "av_rows": [
+  {
+   "aid": "10658",
+   "type": "Web story",
+   "role": "",
+   "transcript": "",
+   "channel": "KIIS FM",
+   "show": ""
+  },
+  {
+   "aid": "10659",
+   "type": "Web story",
+   "role": "",
+   "transcript": "",
+   "channel": "KFI AM 640",
+   "show": ""
+  },
+  {
+   "aid": "10662",
+   "type": "Web story",
+   "role": "",
+   "transcript": "",
+   "channel": "KEYT",
+   "show": ""
+  },
+  {
+   "aid": "07500",
+   "type": "Web story",
+   "role": "",
+   "transcript": "",
+   "channel": "NBC News",
+   "show": ""
+  }
+ ],
+ "av_skipped": [],
+ "fetch_plan": {
+  "fetch": [],
+  "answered": {}
+ },
+ "lookups_new": 5,
+ "copies_changed": [
+  "articles/2026.json",
+  "articles/manifest.json"
+ ],
+ "verify": {
+  "ok": true,
+  "problems": [],
+  "rows_before": 8177,
+  "rows_after": 8191,
+  "originals": 4096,
+  "tabs_checked": [
+   "Bills",
+   "Press releases",
+   "Audio & video details",
+   "Removed",
+   "Unlinked print pages"
+  ]
+ },
+ "sheet_stories": [
+  "s00044",
+  "s00327",
+  "s02206",
+  "s02381",
+  "s02746",
+  "s04929",
+  "s04930",
+  "s04931",
+  "s04932",
+  "s04933",
+  "s04934",
+  "s04935",
+  "s04936"
+ ],
+ "sheet_line": "14 rows added, 49 cells filled, 3 finds skipped (California Files, listing pages, other Gabriels or Gabriel only outside the article), 2 finds written as reprints (same text as another story), 2 reprints with no text to test (see review), 1 rows near a release with no saved text to test (see review), 3 dates to check (see review), 4 rows on the Audio & video details tab."
+}

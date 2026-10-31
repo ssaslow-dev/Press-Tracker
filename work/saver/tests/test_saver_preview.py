@@ -23,7 +23,7 @@ import saver as SV          # noqa: E402
 import saver_steps as ST    # noqa: E402
 from wbhelp import make_wb, base_sheets   # noqa: E402
 
-FIXTURE = SAVER_DIR.parent.parent.parent / 'runsave'     # L/../runsave
+FIXTURE = SAVER_DIR / 'fixtures' / 'runsave_2026-10-30'
 SAVER = SRC / 'saver.py'
 TMP = tempfile.TemporaryDirectory()
 ROOT = Path(TMP.name)

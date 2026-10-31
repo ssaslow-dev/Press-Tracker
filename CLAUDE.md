@@ -14,6 +14,8 @@ Press-coverage database for CA Assemblymember Jesse Gabriel (AD-46), kept by Sam
 
 Docs written before the move refer to the old workspace root `L = /tmp/.../scratchpad/lib`. In this repository, that root is the repo itself (`L/code` = `code/`, `L/DECISIONS.md` = `docs/DECISIONS.md`).
 
+**Snapshot data in this repository** (`data/`, see `data/README.md`): a copy of the workbook (sha256 `bc21c9fb…`) and the library (12,637 files, with `data/library_manifest.sha256`), taken 2026-10-31. It is for building and testing only; it is not a master and is never written back.
+
 **Not in this repository:**
 - Master workbook: `~/Desktop/Tracker library/AJG Coverage - NewsBank.xlsx` on Sammy's Mac. It is the single source of truth. Current sha256 starts `bc21c9fb` (2026-10-30 save).
 - Article library: `~/Desktop/Tracker library/<year>/`, `_original_html/<year>/`, `Press releases/<year>/`, and `Backups/`, all on the Mac. It is add-only.
@@ -32,7 +34,7 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 - **Fill blanks only**, unless a recorded decision says otherwise.
 - **The library is add-only.** Files that must go are moved to `_to_delete/`, never deleted, unless Sammy asks.
 - **One writer at a time.** Every master write follows rule 7: back up first, write a uniquely named staged file, commit, verify the sha256 where the master lives. Excel must be closed.
-- **No Exa.** Never put full saved article text behind a public link. Don't commit the workbook or library text to this repository unless Sammy decides it should live here.
+- **No Exa.** Never put full saved article text behind a public link. This repository must stay private (it holds the library snapshot). Sammy decided to keep it private on 2026-10-31.
 - **Report permission denials plainly.** Never route around them.
 - **Tab work** (TABKEEP-v1) only tweaks existing behavior.
 
@@ -53,8 +55,8 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 - **Rules:** `work/saver/SAVE_RULES.md`. Sammy approved them on 2026-10-31 (SAVER-RULES-v1); his answers are at the end of that file and override SAVER_SPEC.md.
 - **Spec:** `work/saver/SAVER_SPEC.md`, about 20 Sonnet hours in total.
 - **Status:**
-  - Part 1 is built: `saver_diff.py` and the preview path. The replay of the 2026-10-30 save matches cell for cell. The replay fixture (in.xlsx, the staged result, db/) is not in this repo because it contains the workbook.
-  - Fable's review (`work/saver/REVIEW_1.md`, failing tests in `work/saver/tests/review/`) said fix first. Five gaps were found: hyperlink targets, identity checks on new rows of the A&V and Removed tabs, removed_move on pre-existing rows, links on moved and header rows, and a lock-takeover race. A Sonnet fix was in progress at handoff; check the latest commit.
+  - Part 1 is built: `saver_diff.py` and the preview path. The replay of the 2026-10-30 save matches cell for cell. The replay fixture is in `work/saver/fixtures/runsave_2026-10-30/` (in.xlsx, the staged result, db/, pipeline/). `python3 -I work/saver/tests/replay.py` reproduces the staged workbook cell for cell. It also reports 6 result-file differences, all explained: photo counts from the image cache, related_cols counts, and the two release_related `bill`/`text` entries from the known nesting bug.
+  - Fable's review (`work/saver/REVIEW_1.md`, failing tests in `work/saver/tests/review/`) said fix first. Five gaps were found: hyperlink targets, identity checks on new rows of the A&V and Removed tabs, removed_move on pre-existing rows, links on moved and header rows, and a lock-takeover race. A Sonnet fix was still running in the old claude.ai session at handoff. If it finishes there, its work is pushed to the branch `saver-review-fixes`; check for that branch before redoing the fixes.
 - **Next steps:**
   1. Finish the fixes so all review tests pass.
   2. Build `save`, the write path.
@@ -98,7 +100,9 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 
 ## Working conventions
 
-- Run Python with `-I`. Tests: `bash build/tests/run_all.sh`; saver tests: `cd work/saver && python3 -I -m pytest tests -q`.
+- Run Python with `-I`. Tests: `bash build/tests/run_all.sh`. Saver tests: pytest isn't installed, so run each file directly, e.g. `cd work/saver/tests && python3 -I test_saver_diff.py`; add `SAVER_SLOW=1` for the slow tamper test.
+- **Not yet verified from this repository:** a full tracker rebuild (`build/build.sh`). The published build outputs (`build/pub/`, shell, blocks, insights) and the live artifact's article shards were left out of the repo. The first session that rebuilds should check what's missing and regenerate it from `data/`.
+- **Only the old claude.ai Project can** publish or read the live tracker's artifacts and database, and reach Sammy's Mac. This repository's sessions don't need to (NEWPROJECT-v1).
 - Building the tracker:
   1. `python3 -I code/apply_all_patches.py`;
   2. `bash build/build.sh`;

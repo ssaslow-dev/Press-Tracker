@@ -28,7 +28,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 SAVER_DIR = HERE.parent
 L = SAVER_DIR.parent.parent
-DEFAULT_FIXTURE = L.parent / 'runsave'
+DEFAULT_FIXTURE = SAVER_DIR / 'fixtures' / 'runsave_2026-10-30'
 SAVER = SAVER_DIR / 'src' / 'saver.py'
 PIPELINE_SHA_TOOL = SAVER_DIR / 'tools' / 'pipeline_sha.py'
 

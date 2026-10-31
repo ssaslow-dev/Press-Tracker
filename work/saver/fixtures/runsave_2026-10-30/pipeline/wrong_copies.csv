@@ -1,0 +1,5 @@
+aid,file_hint,reason,evidence,found_by
+07052,html,saved copy is the Los Angeles Times ProQuest print text; the row is Chinese in LA (a Chinese rewrite),queue-rec-2 2026-10-28 (origin-052): the LAT ProQuest text sits on the Chinese-language row,queue-rec-2
+08080,html,saved copy is KTLA's 2024-12-01 page; the row is AP's 2024-11-07 special-session story,queue-rec-2 2026-10-28 (origin-058): apnews.com page = Nov 7 story; copy = KTLA Dec 1 advance text; 10029-10038 / 08081 / 08055 belong to s00479,queue-rec-2
+02347,nb,NewsBank stub headed "Jesse Gabriel" (7% of the text); the story is AP's 2024-04-11 deficit piece,queue-rec-2 2026-10-28 (credit-only group c),queue-rec-2
+02348,nb,NewsBank stub headed "Jesse Gabriel"; same AP deficit story,queue-rec-2 2026-10-28 (credit-only group c),queue-rec-2
