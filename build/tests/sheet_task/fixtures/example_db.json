@@ -1,0 +1,56 @@
+{
+ "runs": {
+  "run-example1": {
+   "at": "2026-10-27T10:00:00Z",
+   "mode": "find",
+   "rows": [
+    {
+     "Article ID": "NEW-run-example1-1",
+     "Story ID": "sNEW-run-example1-1",
+     "Original or reprint": "Original",
+     "Data Source": "Web search (TinyFish)",
+     "Date": "2026-10-25",
+     "Outlet": "Test Gazette",
+     "Headline": "Gabriel bill test story one",
+     "Publisher link": "https://www.testgazette.com/news/gabriel-one/",
+     "Link status": "Publisher URL"
+    },
+    {
+     "Article ID": "NEW-run-example1-2",
+     "Story ID": "sNEW-run-example1-1",
+     "Original or reprint": "Reprint",
+     "Data Source": "Web search (TinyFish)",
+     "Outlet": "Echo Times",
+     "Publisher link": "https://echotimes.com/gabriel-one"
+    },
+    {
+     "Article ID": "NEW-run-example1-3",
+     "Story ID": "s00037",
+     "Original or reprint": "Reprint",
+     "Data Source": "Web search (TinyFish)",
+     "Outlet": "Reprint Weekly",
+     "Publisher link": "https://reprintweekly.com/x"
+    }
+   ]
+  }
+ },
+ "tones": {
+  "sNEW-run-example1-1": {
+   "tone": "Neutral",
+   "why": "tone for new story",
+   "rated": "2026-10-27",
+   "by": "Claude"
+  }
+ },
+ "pages": {
+  "NEW-run-example1-1": {
+   "url": "https://www.testgazette.com/news/gabriel-one/",
+   "title": "Gabriel bill test story one",
+   "scoped": "<html><head><title>Gabriel bill test story one</title></head><body><h1>Gabriel bill test story one</h1><p>Paragraph 0: Assemblymember Jesse Gabriel said the bill would help families across the state, and lawmakers debated the measure for several hours before the vote on Monday afternoon in Sacramento.</p><p>Paragraph 1: Assemblymember Jesse Gabriel said the bill would help families across the state, and lawmakers debated the measure for several hours before the vote on Monday afternoon in Sacramento.</p><p>Paragraph 2: Assemblymember Jesse Gabriel said the bill would help families across the state, and lawmakers debated the measure for several hours before the vote on Monday afternoon in Sacramento.</p><p>Paragraph 3: Assemblymember Jesse Gabriel said the bill would help families across the state, and lawmakers debated the measure for several hours before the vote on Monday afternoon in Sacramento.</p><p>Paragraph 4: Assemblymember Jesse Gabriel said the bill would help families across the state, and lawmakers debated the measure for several hours before the vote on Monday afternoon in Sacramento.</p><p>Paragraph 5: Assemblymember Jesse Gabriel said the bill would help families across the state, and lawmakers debated the measure for several hours before the vote on Monday afternoon in Sacramento.</p></body></html>"
+  }
+ },
+ "edits": {},
+ "authors": {},
+ "translations": {},
+ "reprints": {}
+}

@@ -1,0 +1,24 @@
+# agent-reviewweb — 2026-10-28
+
+Task (Sammy): "use the internet to make determinations on the coverage review queue where possible" + "use your own logic and my decision history as well".
+Queue: https://claude.ai/artifact/8yp4a5q8A8PcrQFdYcXPuB. Helpers: work/tmp_agent-reviewweb/.
+
+## Log
+- Read README, DECISIONS, TONE_GUIDE, CONTRACT (queue), status agent-newoutlets/queueprune/queuerefresh/decide-pr/decide-regroup/autodecide/review-multi.
+- Queue read: 16 items docs, 1,089 decisions (36 Sammy's, none overridden). Undecided: 172 newoutlet (17-newoutlet, 17-newoutlet-2) + 54 older.
+- Precedent file: work/tmp_agent-reviewweb/precedents.md (P1..P22).
+- Method: the 172 newoutlet pages were already fetched today by agent-newoutlets (TinyFish, saved in tmp_agent-newoutlets/pages); per DECISIONS "never read the same material twice" I ran the text rule on those saved copies instead of re-fetching them, and used the web (WebSearch/WebFetch/TinyFish, 26 calls, under 20/min) only where the saved page could not settle an item. No Exa. No blocks/paywalls worked around (Haaretz x2, Detroit News, Pantagraph noted as paywalled).
+- Text rule (code/reprint_rule.py measure, 90-day window) of every item vs every sheet story with text (analyze.py, wideall.py, decide.py). Several existing stories are splits of the same wire text (e.g. s03331/s04670, s00430/s04372, s04661/s02817/s02828); a find that passes several goes to the earliest Original dated on/before it, the others are named in the decision note for the queued 90-day re-match.
+- Queue writes: 224 decision docs (5 atomic batches, create-only, by "Claude (web check, 2026-10-28)"), then 4 withdrawn (nogab-007/018/019/020: DECISIONS 81 says NewsBank text alone is not grounds; no web copy) and 2 revised (nogab-014 -> Keep: the LA Times copy 04983 names him in the photo caption; newout-436 note -> s01778). Items 3-nogabriel (v5) and 16-checks (v2) marked "Needs Sammy: …" on 6 items.
+- Sheet change builder: build_rw.py (dry run on 42ac14f1: 167 new rows = 159 Reprints + 8 Originals; 3 link fills; 2 unverified rows filled; 08224 link fix; 4 rows moved to Removed; 87 derived reprint counts; diffcheck 0 unexpected). Story IDs s04741-s04748 reserved in work/clip/next_sid.txt (4741 -> 4749).
+- Waiting for agent-chrome-a's write (coordinator: it writes before me), then token.
+- 01:18Z token taken (agent-reviewweb) after agent-chrome-a FINAL (master f4391c78…be2e).
+- WRITE DONE (rule 7): token taken after agent-chrome-a FINAL; staged master f4391c78…be2e = Mac, no lock. Backup "Backups/AJG Coverage - NewsBank BACKUP before review web decisions 2026-10-28.xlsx" (Mac sha f4391c78…be2e). build_rw.py on the staged copy + diffcheck: 0 unexpected differences (Coverage 9,634→9,797; Originals 4,511→4,515; Removed +4; other tabs identical). Committed with expectedMtimeMs 1793150238693, 0 rejected; Mac sha 5ea9aa39681e4ef2c19f056fa9fb0adc0dc98761a172cab096ac277c03b3b246 = output. work/coverage_current.xlsx = new (previous kept as work/coverage_pre_reviewweb.xlsx). Token back to "none".
+- Library: 169 pages (+169 _original_html) via _to_delete/reviewweb_pages_2026-10-28.tar extracted with tar -xk, sha256 -c all 338 OK (tar + .sha256.txt can be deleted). library_adds.csv +338 lines. Dropped rows' PDFs (00793, 05197, 05200) mv'd to _to_delete/ (logged in _to_delete/_cleanrows_moved_2026-10-28.txt); 08627 had no file. work/html_clean got the 169 cleaned copies.
+- DECISIONS line added. Change list: work/out/review_web_changes.csv (392 lines).
+- Final queue check: items unchanged; undecided = the 6 "Needs Sammy" items only.
+- Notes for coordinator: (1) newoutlets' language field said "en" for all finds; 6 of my items were Spanish (set Spanish); its 185 committed rows may carry the same error. (2) Existing stories that are splits of the same wire text are listed in the decision notes ("also passes …") for the queued 90-day re-match. (3) 06919/04660 now have verified copies but stay "Reprint (unverified)" (no rule to relabel). (4) newout-340 SD Voice (2025-03-10) predates its story's Original s04367 (2025-03-12).
+FINAL
+- SECOND WRITE (Sammy's answers): token; staged 5ea9aa39 = Mac; backup '…BACKUP before review answers 2026-10-28.xlsx'; build_answers.py + diff (0 unexpected: Coverage 9,797→9,790, Originals 4,515→4,510, Removed +7, Word count 245 Coverage / 209 Originals); committed expectedMtimeMs 1793150365243; Mac sha 573e3c8574d8a446ecca69cc6e8c88df2e717734a2588865c74e1414d34ffdcc = output; 6 PDFs → _to_delete; coverage_current updated (prev = coverage_pre_reviewanswers.xlsx); token none; DECISIONS line added.
+- Queue: Sammy's answers recorded as decision docs nogab-007/015/018/019/020 and checks-M (by 'Sammy (2026-10-28, via coordinator)' / 'Coordinator for Sammy'). No open items left. Sent main the new sha.
+FINAL

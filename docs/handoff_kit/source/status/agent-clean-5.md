@@ -1,0 +1,9 @@
+# agent-clean-5 (T32 bucket 5) — DONE 2026-10-27
+350 files / 62 outlets. Workflow per playbook: staged all originals once, built/tested in container (L/work/tmp_agent-clean-5: clean5.py, rules.json, process.py), one Mac dry run (sha256 digest identical to container: 3f24bd31…), then in-place run.
+- Result: 254 cleaned, 96 unchanged, 0 review-kept, 0 errors. Live Mac files re-hashed = container output (0 mismatches). Backups: 254 originals in Tracker library/_original_html/<year>/ (digest matches staged originals). Scratch on Mac only in $HOME/mnt/outputs/c5.
+- 8 files exceeded 35% removal and were manually read and approved (pure clutter): KCRA ws-02115, ws-01650 (unrelated WNBA next-story article); Nutraceuticals ws-01449, ws-01519 (site menu + login modal); Oakland Post nb-03262 (next posts); Yahoo zh ws-02032, ws-03034, ws-02911 (unrelated "others are watching" lists). Other forced (prose ≥40) removals were reader comments (Contra Costa), next posts (Oakland Post), Latest News teasers (Guns.com) — read and verified.
+- Header metadata: 144 lines removed in 78 files (outlet+date or URL matched sheet); "Saved …" lines kept; conflicts kept + listed.
+- Outputs: L/work/out/html_clean_log_5.csv, html_checks_5.csv (63 rows), html_meta_fills_5.csv (80 rows); cleaned copies in L/work/html_clean/ (all 350). No library_new overlaps.
+- Not recorded as discrepancies (counted only): 156 files show no visible date matching the sheet (mostly Yahoo/KCRA saves without dates); 63 files where the saved copy has no byline (Yahoo saves strip bylines).
+- Spot check: 10 random cleaned files rendered with Playwright — articles intact, clutter gone (screens in tmp_agent-clean-5/shots). Nutraceuticals copies never had a visible headline (title only).
+Questions for Sammy: see final report (KCRA header URLs pointing to a grenade story; Twoday ws-02396 sheet says Hebrew; Bao California sheet says Portuguese; Vistazo ws-02294 is about Gabriel Ugarte).

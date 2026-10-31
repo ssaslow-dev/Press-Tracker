@@ -1,0 +1,4583 @@
+{
+  "list": [
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "129 stories · national news/press-release wire service (no existing example)",
+      "id": "reach-000",
+      "key": "Targeted News Service",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Targeted News Service"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "36 stories · Armenian-American weekly in Glendale (cf. Asbarez = Spanish-language & ethnic)",
+      "id": "reach-001",
+      "key": "California Courier, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "The California Courier"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "35 stories · national news/press-release wire service (no existing example)",
+      "id": "reach-002",
+      "key": "US Fed News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "US Fed News"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "30 stories · existing tracker mapping (majority Statewide California)",
+      "id": "reach-003",
+      "key": "The Sacramento Bee",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Statewide California",
+      "title": "The Sacramento Bee"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "28 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-004",
+      "key": "East Bay Times",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "East Bay Times"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "23 stories · existing mapping split: OC Register 15 regional vs 6 statewide",
+      "id": "reach-005",
+      "key": "Orange County Register, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Orange County Register"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "19 stories · Jewish community newspaper",
+      "id": "reach-006",
+      "key": "Columbus Jewish News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Jewish press",
+      "title": "Columbus Jewish News"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "19 stories · national college newswire (U-Wire)",
+      "id": "reach-007",
+      "key": "U-Wire",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "U-Wire"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "18 stories · existing tracker mapping (majority Statewide California)",
+      "id": "reach-008",
+      "key": "CALmatters",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Statewide California",
+      "title": "CALmatters"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "18 stories · UK national outlet (cf. The Independent, The Guardian mapped National)",
+      "id": "reach-009",
+      "key": "MailOnline",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "MailOnline"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "17 stories · legal trade publication (Mondaq)",
+      "id": "reach-010",
+      "key": "Mondaq.com",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Mondaq.com"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "17 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-011",
+      "key": "Lake County Record Bee",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Lake County Record Bee"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "16 stories · existing tracker mapping (majority Statewide California)",
+      "id": "reach-012",
+      "key": "San Francisco Chronicle",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Statewide California",
+      "title": "San Francisco Chronicle"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "15 stories · CE Noticias Financieras/LATAM Latin-American wire; Spanish/Portuguese-language origin",
+      "id": "reach-013",
+      "key": "CE Noticias Financieras: English",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "CE Noticias Financieras: English"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "12 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-014",
+      "key": "Marin Independent Journal",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Marin Independent Journal"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "10 stories · existing mapping: San Fernando Valley Sun = District & Valley",
+      "id": "reach-015",
+      "key": "San Fernando Valley Sun, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "District & Valley",
+      "title": "The San Fernando Valley Sun"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "9 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-016",
+      "key": "Del Norte Triplicate",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Del Norte Triplicate"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "8 stories · existing mapping majority National (AP national feeds / Courthouse News)",
+      "id": "reach-017",
+      "key": "Associated Press News Service, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "The Associated Press News Service"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "8 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-018",
+      "key": "Santa Monica Mirror",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Santa Monica Mirror"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "8 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-019",
+      "key": "Lake County News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Lake County News"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "8 stories · existing tracker mapping (majority Statewide California)",
+      "id": "reach-020",
+      "key": "Los Angeles Times",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Statewide California",
+      "title": "Los Angeles Times"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "8 stories · existing mapping split (5 National, 3 CA); feed is California-focused, Statewide arguably better",
+      "id": "reach-021",
+      "key": "Associated Press State Wire: California",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Associated Press State Wire: California"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "7 stories · Spanish-language press-release wire",
+      "id": "reach-022",
+      "key": "Hispanic PR Newswire",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "Hispanic PR Newswire"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "6 stories · press-release wire (PR distribution)",
+      "id": "reach-023",
+      "key": "PR Newswire",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "PR Newswire"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "6 stories · Latino-focused Los Angeles outlet (CALÓ News)",
+      "id": "reach-024",
+      "key": "CALO NEWS",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "CALO NEWS"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "6 stories · existing mapping majority National (AP national feeds / Courthouse News)",
+      "id": "reach-025",
+      "key": "Associated Press: US Politics & Government Online",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Associated Press: US Politics & Government Online"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "6 stories · Israel National News = Arutz Sheva, mapped Jewish press",
+      "id": "reach-026",
+      "key": "Israel National News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Jewish press",
+      "title": "Israel National News"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "5 stories · Spanish-language California paper",
+      "id": "reach-027",
+      "key": "El Sol del Valle de San Fernando",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "El Sol del Valle de San Fernando"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "5 stories · existing tracker mapping: Spectrum News 1 mostly Statewide California",
+      "id": "reach-028",
+      "key": "Spectrum News 1",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Statewide California",
+      "title": "Spectrum News 1"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "5 stories · national US outlet",
+      "id": "reach-029",
+      "key": "Newsmax.com",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Newsmax.com"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "5 stories · advocacy/lifestyle site (vegan)",
+      "id": "reach-030",
+      "key": "One Green Planet",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "One Green Planet"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "5 stories · news aggregator wire, no closer category",
+      "id": "reach-031",
+      "key": "ForeignAffairs",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "ForeignAffairs"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "4 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-032",
+      "key": "San Jose Spotlight",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "San Jose Spotlight"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "4 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-033",
+      "key": "Long Beach Press-Telegram",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Long Beach Press-Telegram"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "4 stories · business monitoring/aggregator wire",
+      "id": "reach-034",
+      "key": "TendersInfo - News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "TendersInfo - News"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "4 stories · KFF/Kaiser Health News, national health newsroom",
+      "id": "reach-035",
+      "key": "Kaiser Health News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Kaiser Health News"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "4 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-036",
+      "key": "Pasadena Independent",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Pasadena Independent"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "4 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-037",
+      "key": "Idyllwild Town Crier",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Idyllwild Town Crier"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "4 stories · existing mapping tied (1 each National/regional/out-of-state); national AP feed",
+      "id": "reach-038",
+      "key": "Associated Press: US News Online",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Associated Press: US News Online"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "4 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-039",
+      "key": "Santa Monica Observer",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Santa Monica Observer"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "4 stories · Jewish community newspaper",
+      "id": "reach-040",
+      "key": "Cleveland Jewish News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Jewish press",
+      "title": "Cleveland Jewish News"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "3 stories · existing mapping: Denver Gazette 5 National vs 2 Out-of-state local",
+      "id": "reach-041",
+      "key": "Denver Gazette, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "The Denver Gazette"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "3 stories · League of California Cities: advocacy/association newsletter",
+      "id": "reach-042",
+      "key": "League of California Cities",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "League of California Cities"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "3 stories · Jewish community newspaper",
+      "id": "reach-043",
+      "key": "Jewish Journal: North Broward",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Jewish press",
+      "title": "Jewish Journal: North Broward"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "3 stories · CE Noticias Financieras/LATAM Latin-American wire; Spanish/Portuguese-language origin",
+      "id": "reach-044",
+      "key": "CE Noticias Financieras: Portuguese",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "CE Noticias Financieras: Portuguese"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "3 stories · local newspaper/TV station outside California",
+      "id": "reach-045",
+      "key": "Deseret News, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Deseret News"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "3 stories · local newspaper/TV station outside California",
+      "id": "reach-046",
+      "key": "Gazette, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Gazette"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "3 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-047",
+      "key": "Reporter, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Reporter"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "3 stories · local newspaper/TV station outside California",
+      "id": "reach-048",
+      "key": "Cherokee Tribune",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Cherokee Tribune"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "3 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-049",
+      "key": "Mendocino Voice, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Mendocino Voice"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "3 stories · LA Westside local site",
+      "id": "reach-050",
+      "key": "Westside Today",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Westside Today"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "3 stories · foreign national outlet; no closer category",
+      "id": "reach-051",
+      "key": "Times of India, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "The Times of India"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "3 stories · regional business journal (trade press); California regional & local possible",
+      "id": "reach-052",
+      "key": "North Bay Business Journal",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "North Bay Business Journal"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "3 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-053",
+      "key": "Mountain Democrat",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Mountain Democrat"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "3 stories · California college student newspaper; no existing example, treated as local",
+      "id": "reach-054",
+      "key": "Daily Californian, The: University of California - Berkeley",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Daily Californian, The: University of California - Berkeley"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "3 stories · national religion wire",
+      "id": "reach-055",
+      "key": "Religion News Service",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Religion News Service"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "3 stories · Tribune Content Agency (TCA News Service is mapped Statewide California in the tracker)",
+      "id": "reach-056",
+      "key": "Tribune Content Agency News Service Special Sections",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Statewide California",
+      "title": "Tribune Content Agency News Service Special Sections"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "3 stories · local newspaper/TV station outside California",
+      "id": "reach-057",
+      "key": "ABC - 6 WJBF",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "ABC - 6 WJBF"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "3 stories · local newspaper/TV station outside California",
+      "id": "reach-058",
+      "key": "FOX - 2 WJBK",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "FOX - 2 WJBK"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "3 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-059",
+      "key": "Monterey County Herald, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Monterey County Herald"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "3 stories · Armenian outlet (cf. Asbarez, ANCA mapped ethnic)",
+      "id": "reach-060",
+      "key": "PanARMENIAN.Net",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "PanARMENIAN.Net"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "3 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-061",
+      "key": "Ventura County Reporter",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Ventura County Reporter"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-062",
+      "key": "Noozhawk",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Noozhawk"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-063",
+      "key": "Inland Valley Daily Bulletin",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Inland Valley Daily Bulletin"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · local newspaper/TV station outside California",
+      "id": "reach-064",
+      "key": "South Marion Citizen",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "South Marion Citizen"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · food-industry trade press (cf. FoodNavigator-USA, Food Safety News)",
+      "id": "reach-065",
+      "key": "Food Navigator",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Food Navigator"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "2 stories · CNN show anchored in LA covering California politics",
+      "id": "reach-066",
+      "key": "Story Is with Elex Michaelson, The [CNN]",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Statewide California",
+      "title": "Story Is with Elex Michaelson, The [CNN]"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-067",
+      "key": "Madera Tribune",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Madera Tribune"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-068",
+      "key": "Los Angeles Downtown News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Los Angeles Downtown News"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "2 stories · foreign national outlet; no closer category",
+      "id": "reach-069",
+      "key": "South Africa News Gazette",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "South Africa News Gazette"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · national US outlet",
+      "id": "reach-070",
+      "key": "WorldNetDaily",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "WorldNetDaily"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "2 stories · UK national outlet (cf. The Independent, The Guardian mapped National)",
+      "id": "reach-071",
+      "key": "Daily Telegraph, The/The Sunday Telegraph",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Daily Telegraph, The/The Sunday Telegraph"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "2 stories · CE Noticias Financieras/LATAM Latin-American wire; Spanish/Portuguese-language origin",
+      "id": "reach-072",
+      "key": "CE Noticias Financieras: Spanish",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "CE Noticias Financieras: Spanish"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-073",
+      "key": "Tribune, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Tribune"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "2 stories · press-release wire (PR distribution)",
+      "id": "reach-074",
+      "key": "California Newswire",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "California Newswire"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "2 stories · California college student newspaper; no existing example, treated as local",
+      "id": "reach-075",
+      "key": "Orion, The: California State University - Chico",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Orion, The: California State University - Chico"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "2 stories · foreign national outlet; no closer category",
+      "id": "reach-076",
+      "key": "Hindustan Times",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Hindustan Times"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-077",
+      "key": "Canyon News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Canyon News"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · local newspaper/TV station outside California",
+      "id": "reach-078",
+      "key": "CBS - 3 WTKR",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "CBS - 3 WTKR"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-079",
+      "key": "Bakersfield Californian, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Bakersfield Californian"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "2 stories · Tampa TV station (Spanish-language segment); Spanish-language & ethnic possible",
+      "id": "reach-080",
+      "key": "NBC - 8 WFLA",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "NBC - 8 WFLA"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "2 stories · Los Angeles local site",
+      "id": "reach-081",
+      "key": "L.A. TACO",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "L.A. TACO"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "2 stories · press-release wire (PR distribution)",
+      "id": "reach-082",
+      "key": "Business Wire",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Business Wire"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-083",
+      "key": "San Clemente Times",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "San Clemente Times"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · local newspaper/TV station outside California",
+      "id": "reach-084",
+      "key": "Arkansas Democrat-Gazette",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Arkansas Democrat-Gazette"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · local newspaper/TV station outside California",
+      "id": "reach-085",
+      "key": "FOX - 13 KSTU",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "FOX - 13 KSTU"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · food-industry trade press (cf. FoodNavigator-USA, Food Safety News)",
+      "id": "reach-086",
+      "key": "Food Safety Tech",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Food Safety Tech"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "2 stories · foreign national outlet; no closer category",
+      "id": "reach-087",
+      "key": "Paradise, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "The Paradise"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-088",
+      "key": "Camarillo Acorn",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Camarillo Acorn"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "2 stories · news aggregator wire, no closer category",
+      "id": "reach-089",
+      "key": "CE Think Tank Newswire: English",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "CE Think Tank Newswire: English"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-090",
+      "key": "Willits News, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Willits News"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "2 stories · national AP feed",
+      "id": "reach-091",
+      "key": "Associated Press: Financial News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Associated Press: Financial News"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "2 stories · Compton community weekly; ethnic-community press likely, could be regional",
+      "id": "reach-092",
+      "key": "Compton Bulletin, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "The Compton Bulletin"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-093",
+      "key": "Oakland Tribune, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Oakland Tribune"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-094",
+      "key": "Daily Post",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Daily Post"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "2 stories · California college student newspaper; no existing example, treated as local",
+      "id": "reach-095",
+      "key": "Golden Gate Xpress: San Francisco State University",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Golden Gate Xpress: San Francisco State University"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · Jewish community newspaper",
+      "id": "reach-096",
+      "key": "Jewish Journal: North Palm Beach",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Jewish press",
+      "title": "Jewish Journal: North Palm Beach"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · Spanish-language California paper",
+      "id": "reach-097",
+      "key": "Vida en el Valle",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "Vida en el Valle"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "2 stories · LAist (KPCC) is mapped California regional & local",
+      "id": "reach-098",
+      "key": "LAist - 89.3 FM AirTalk: Audio",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "LAist - 89.3 FM AirTalk: Audio"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · existing mapping split: FOX40 12 regional vs 9 statewide",
+      "id": "reach-099",
+      "key": "FOX40",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "FOX40"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · California college student newspaper; no existing example, treated as local",
+      "id": "reach-100",
+      "key": "University Times: California State University - Los Angeles",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "University Times: California State University - Los Angeles"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · foreign Spanish-language outlet (cf. El País, Infobae, El Mundo mapped Spanish-language & ethnic)",
+      "id": "reach-101",
+      "key": "Clarín",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "Clarín"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-102",
+      "key": "Record Gazette",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Record Gazette"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · food & environment nonprofit newsroom (cf. The New Lede)",
+      "id": "reach-103",
+      "key": "Food & Environment Reporting Network",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Food & Environment Reporting Network"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-104",
+      "key": "Daily Gazette, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Daily Gazette"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · food-industry trade press (cf. FoodNavigator-USA, Food Safety News)",
+      "id": "reach-105",
+      "key": "Global Data - Food",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Global Data - Food"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-106",
+      "key": "Walnut Creek Journal",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Walnut Creek Journal"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-107",
+      "key": "Daily Record, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Daily Record"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-108",
+      "key": "Moorpark Acorn",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Moorpark Acorn"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-109",
+      "key": "Mammoth Times",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Mammoth Times"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · California college student newspaper; no existing example, treated as local",
+      "id": "reach-110",
+      "key": "Collegian, The: San Joaquin Delta College",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Collegian, The: San Joaquin Delta College"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-111",
+      "key": "Daily Press",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Daily Press"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-112",
+      "key": "Akron Beacon Journal",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Akron Beacon Journal"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · national US outlet",
+      "id": "reach-113",
+      "key": "Atlantic",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Atlantic"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · existing mapping majority regional (4 vs 1 Spanish)",
+      "id": "reach-114",
+      "key": "Santa Barbara Independent",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Santa Barbara Independent"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · food-industry trade press (cf. FoodNavigator-USA, Food Safety News)",
+      "id": "reach-115",
+      "key": "Beef Site, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "The Beef Site"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · Indian-American ethnic newspaper",
+      "id": "reach-116",
+      "key": "India West",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "India West"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-117",
+      "key": "Mohave Valley Daily News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Mohave Valley Daily News"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · national US outlet",
+      "id": "reach-118",
+      "key": "NPR",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "NPR"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-119",
+      "key": "Needles Desert Star",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Needles Desert Star"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · UK national outlet (cf. The Independent, The Guardian mapped National)",
+      "id": "reach-120",
+      "key": "Times, The/Sunday Times, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "The Times, The/Sunday Times"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · existing mapping majority National (AP national feeds / Courthouse News)",
+      "id": "reach-121",
+      "key": "Courthouse News Service",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Courthouse News Service"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · UK national outlet (cf. The Independent, The Guardian mapped National)",
+      "id": "reach-122",
+      "key": "Week, The: UK Edition",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Week, The: UK Edition"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · Moment magazine, mapped Jewish press",
+      "id": "reach-123",
+      "key": "Moment Magazine",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Jewish press",
+      "title": "Moment Magazine"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · trade press",
+      "id": "reach-124",
+      "key": "Musical America",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Musical America"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-125",
+      "key": "Daily Democrat, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Daily Democrat"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-126",
+      "key": "Oakland Press, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Oakland Press"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-127",
+      "key": "Buffalo News, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Buffalo News"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · national US outlet",
+      "id": "reach-128",
+      "key": "Morning Edition [NPR]",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Morning Edition [NPR]"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · national US outlet",
+      "id": "reach-129",
+      "key": "International Business Times",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "International Business Times"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-130",
+      "key": "Morgan County Citizen",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Morgan County Citizen"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · trade press",
+      "id": "reach-131",
+      "key": "Legal Newsline",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Legal Newsline"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-132",
+      "key": "Blade, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Blade"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-133",
+      "key": "Culver City Observer",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Culver City Observer"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-134",
+      "key": "Bartlesville Examiner-Enterprise",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Bartlesville Examiner-Enterprise"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · trade press",
+      "id": "reach-135",
+      "key": "Northern California Record",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Northern California Record"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · foreign Spanish-language outlet (cf. El País, Infobae, El Mundo mapped Spanish-language & ethnic)",
+      "id": "reach-136",
+      "key": "El Imparcial",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "El Imparcial"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-137",
+      "key": "CBS - 7 WHIO",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "CBS - 7 WHIO"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · foreign Spanish-language outlet (cf. El País, Infobae, El Mundo mapped Spanish-language & ethnic)",
+      "id": "reach-138",
+      "key": "La República",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "La República"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-139",
+      "key": "Concord Transcript",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Concord Transcript"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-140",
+      "key": "Redlands Community News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Redlands Community News"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-141",
+      "key": "Malone Telegram, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Malone Telegram"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-142",
+      "key": "CBS - 11 WJHL",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "CBS - 11 WJHL"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · opinion blog",
+      "id": "reach-143",
+      "key": "American Thinker",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "American Thinker"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · press-release wire (PR distribution)",
+      "id": "reach-144",
+      "key": "M2 Presswire",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "M2 Presswire"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · Israeli daily (cf. Times of Israel, Jerusalem Post mapped Jewish press)",
+      "id": "reach-145",
+      "key": "Haaretz",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Jewish press",
+      "title": "Haaretz"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-146",
+      "key": "Monrovia Weekly, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Monrovia Weekly"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "1 stories · business monitoring/aggregator wire",
+      "id": "reach-147",
+      "key": "Legal Monitor Worldwide",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Legal Monitor Worldwide"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "1 stories · existing mapping tied trade/regional; YIMBY advocacy group",
+      "id": "reach-148",
+      "key": "California YIMBY",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "California YIMBY"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-149",
+      "key": "Billings Gazette, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Billings Gazette"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-150",
+      "key": "Daytona Beach News-Journal, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Daytona Beach News-Journal"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · national US outlet",
+      "id": "reach-151",
+      "key": "Week, The: US Edition",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Week, The: US Edition"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · trade press",
+      "id": "reach-152",
+      "key": "Clinical Pain Advisor",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Clinical Pain Advisor"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-153",
+      "key": "Fayetteville Observer, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Fayetteville Observer"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-154",
+      "key": "Miami Herald, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Miami Herald"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · foreign Spanish-language outlet (cf. El País, Infobae, El Mundo mapped Spanish-language & ethnic)",
+      "id": "reach-155",
+      "key": "Metro Puerto Rico",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "Metro Puerto Rico"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · trade press",
+      "id": "reach-156",
+      "key": "Cancer Therapy Advisor",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Cancer Therapy Advisor"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-157",
+      "key": "NBC - 3 KYTV",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "NBC - 3 KYTV"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · foreign Spanish-language outlet (cf. El País, Infobae, El Mundo mapped Spanish-language & ethnic)",
+      "id": "reach-158",
+      "key": "Expansion",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "Expansion"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-159",
+      "key": "ABC - 11 WHAS",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "ABC - 11 WHAS"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-160",
+      "key": "Post and Courier, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Post and Courier"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · Black-owned Philadelphia daily (cf. LA Sentinel, Our Weekly mapped ethnic); Out-of-state local possible",
+      "id": "reach-161",
+      "key": "Philadelphia Tribune, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "The Philadelphia Tribune"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · UK national outlet (cf. The Independent, The Guardian mapped National)",
+      "id": "reach-162",
+      "key": "Daily Mirror, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "The Daily Mirror"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-163",
+      "key": "Herald-Standard",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Herald-Standard"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-164",
+      "key": "CBS - 12 WJTV",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "CBS - 12 WJTV"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-165",
+      "key": "Westerly Sun, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Westerly Sun"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-166",
+      "key": "Yucaipa-Calimesa News Mirror",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Yucaipa-Calimesa News Mirror"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · trade press",
+      "id": "reach-167",
+      "key": "Datamonitor",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Datamonitor"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · foreign Spanish-language outlet (cf. El País, Infobae, El Mundo mapped Spanish-language & ethnic)",
+      "id": "reach-168",
+      "key": "NotiPress",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "NotiPress"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "1 stories · foreign national outlet; no closer category",
+      "id": "reach-169",
+      "key": "Ecns.cn - China News Service (CNS): English",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Ecns.cn - China News Service (CNS): English"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · national US outlet",
+      "id": "reach-170",
+      "key": "Mashable.com",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Mashable.com"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · national US outlet",
+      "id": "reach-171",
+      "key": "Daily Beast, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "The Daily Beast"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-172",
+      "key": "Kern Valley Sun",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Kern Valley Sun"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · Jewish community newspaper",
+      "id": "reach-173",
+      "key": "Jewish Star, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Jewish press",
+      "title": "The Jewish Star"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-174",
+      "key": "Wave, The: Orange County Register weekly",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Wave, The: Orange County Register weekly"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-175",
+      "key": "Chattanooga Times Free Press",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Chattanooga Times Free Press"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "1 stories · foreign national outlet; no closer category",
+      "id": "reach-176",
+      "key": "Eurasia Review",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Eurasia Review"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-177",
+      "key": "FOX - 8 WJW",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "FOX - 8 WJW"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-178",
+      "key": "CBS - 13 WBTW",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "CBS - 13 WBTW"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-179",
+      "key": "Eagle-Tribune, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Eagle-Tribune"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-180",
+      "key": "ABC - 8 WFAA",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "ABC - 8 WFAA"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-181",
+      "key": "Record-Journal",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Record-Journal"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "1 stories · foreign national outlet; no closer category",
+      "id": "reach-182",
+      "key": "BruDirect",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "BruDirect"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · California college student newspaper; no existing example, treated as local",
+      "id": "reach-183",
+      "key": "Poly Post, The: California State Polytechnic University - Pomona",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Poly Post, The: California State Polytechnic University - Pomona"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-184",
+      "key": "Daily Item, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Daily Item"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "1 stories · business monitoring/aggregator wire",
+      "id": "reach-185",
+      "key": "Chemicals Monitor Worldwide",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Chemicals Monitor Worldwide"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-186",
+      "key": "Columbus Telegram, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Columbus Telegram"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-187",
+      "key": "Courier of Montgomery County, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Courier of Montgomery County"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-188",
+      "key": "Lake City Reporter",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Lake City Reporter"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-189",
+      "key": "Tyler Morning Telegraph",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Tyler Morning Telegraph"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-190",
+      "key": "Watertown Daily Times",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Watertown Daily Times"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-191",
+      "key": "Bellingham Herald, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Bellingham Herald"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · foreign Spanish-language outlet (cf. El País, Infobae, El Mundo mapped Spanish-language & ethnic)",
+      "id": "reach-192",
+      "key": "Diario Ojo",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "Diario Ojo"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · trade press",
+      "id": "reach-193",
+      "key": "ProactiveInvestors Canada",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "ProactiveInvestors Canada"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-194",
+      "key": "Plain Dealer, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Plain Dealer"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · national US outlet",
+      "id": "reach-195",
+      "key": "Tucker Carlson Tonight [Fox News]",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Tucker Carlson Tonight [Fox News]"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · national US outlet",
+      "id": "reach-196",
+      "key": "Mornings with Maria [Fox Business]",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Mornings with Maria [Fox Business]"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · UK national outlet (cf. The Independent, The Guardian mapped National)",
+      "id": "reach-197",
+      "key": "Express, The/The Express on Sunday",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Express, The/The Express on Sunday"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-198",
+      "key": "Arcadia Weekly, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Arcadia Weekly"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · Jewish community newspaper",
+      "id": "reach-199",
+      "key": "Jewish Times",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Jewish press",
+      "title": "Jewish Times"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "1 stories · business monitoring/aggregator wire",
+      "id": "reach-200",
+      "key": "Real Estate Monitor Worldwide",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Real Estate Monitor Worldwide"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · press-release wire (PR distribution)",
+      "id": "reach-201",
+      "key": "GlobeNewswire",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "GlobeNewswire"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · US Spanish-language paper outside CA (ethnic press; Out-of-state local possible)",
+      "id": "reach-202",
+      "key": "La Noticia",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "La Noticia"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · Armenian outlet (cf. Asbarez, ANCA mapped ethnic)",
+      "id": "reach-203",
+      "key": "Armenpress News Agency",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "Armenpress News Agency"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · press-release wire (PR distribution)",
+      "id": "reach-204",
+      "key": "PR.com",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "PR.com"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-205",
+      "key": "Free Press, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Free Press"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-206",
+      "key": "Ukiah Daily Journal",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Ukiah Daily Journal"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-207",
+      "key": "North County News-Tribune",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "North County News-Tribune"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-208",
+      "key": "Mill Valley Herald",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Mill Valley Herald"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-209",
+      "key": "Enterprise-Record",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Enterprise-Record"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · Jewish community newspaper",
+      "id": "reach-210",
+      "key": "Jewish News",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Jewish press",
+      "title": "Jewish News"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-211",
+      "key": "Napa Valley Register",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Napa Valley Register"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-212",
+      "key": "Times-Herald",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Times-Herald"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · legal blog",
+      "id": "reach-213",
+      "key": "Above the Law",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "Above the Law"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-214",
+      "key": "Riverbank News, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Riverbank News"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · trade press",
+      "id": "reach-215",
+      "key": "Imprint, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "The Imprint"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · trade press",
+      "id": "reach-216",
+      "key": "American Banker",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "American Banker"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-217",
+      "key": "San Gabriel Valley Tribune",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "San Gabriel Valley Tribune"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-218",
+      "key": "SF Weekly",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "SF Weekly"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · California college student newspaper; no existing example, treated as local",
+      "id": "reach-219",
+      "key": "California Aggie: University of California - Davis",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "California Aggie: University of California - Davis"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · press-release wire (PR distribution)",
+      "id": "reach-220",
+      "key": "ENP Newswire",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Trade, advocacy & blogs",
+      "title": "ENP Newswire"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-221",
+      "key": "Del Mar Times",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Del Mar Times"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-222",
+      "key": "Las Vegas Review-Journal",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Las Vegas Review-Journal"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-223",
+      "key": "Daily Nonpareil, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Daily Nonpareil"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "1 stories · existing mapping majority regional (6/9); this row is a Spanish-language AP feed — Spanish-language & ethnic possible",
+      "id": "reach-224",
+      "key": "Associated Press",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Associated Press"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · national AP feed",
+      "id": "reach-225",
+      "key": "Associated Press: Governmental News Report",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "Associated Press: Governmental News Report"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · California college student newspaper; no existing example, treated as local",
+      "id": "reach-226",
+      "key": "State Hornet, The: California State University-Sacramento",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "State Hornet, The: California State University-Sacramento"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-227",
+      "key": "Philadelphia Inquirer, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The Philadelphia Inquirer"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-228",
+      "key": "St. Paul Pioneer Press",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "St. Paul Pioneer Press"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · Indian-American ethnic newspaper",
+      "id": "reach-229",
+      "key": "News India-Times",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "News India-Times"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · US Spanish-language paper outside CA (ethnic press; Out-of-state local possible)",
+      "id": "reach-230",
+      "key": "La Voz de Houston",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "La Voz de Houston"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-231",
+      "key": "Owensboro Messenger-Inquirer",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Owensboro Messenger-Inquirer"
+    },
+    {
+      "cat": "reach",
+      "conf": "low",
+      "detail": "1 stories · CE Noticias Financieras/LATAM Latin-American wire; Spanish/Portuguese-language origin",
+      "id": "reach-232",
+      "key": "LATAM",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "LATAM"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-233",
+      "key": "Tulsa World",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Tulsa World"
+    },
+    {
+      "cat": "reach",
+      "conf": "medium",
+      "detail": "1 stories · foreign Spanish-language outlet (cf. El País, Infobae, El Mundo mapped Spanish-language & ethnic)",
+      "id": "reach-234",
+      "key": "El Universal",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Spanish-language & ethnic",
+      "title": "El Universal"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-235",
+      "key": "Californian, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "The Californian"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · national US outlet",
+      "id": "reach-236",
+      "key": "Christian Science Monitor, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "National",
+      "title": "The Christian Science Monitor"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-237",
+      "key": "Contra Costa Times",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Contra Costa Times"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-238",
+      "key": "Las Vegas Sun",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "Las Vegas Sun"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · local newspaper/TV station outside California",
+      "id": "reach-239",
+      "key": "News-Gazette, The",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "Out-of-state local",
+      "title": "The News-Gazette"
+    },
+    {
+      "cat": "reach",
+      "conf": "high",
+      "detail": "1 stories · California local newspaper/site (city in CA), per the tracker's convention for local CA outlets",
+      "id": "reach-240",
+      "key": "Alameda Times-Star",
+      "options": [
+        "California regional & local",
+        "Statewide California",
+        "National",
+        "Trade, advocacy & blogs",
+        "Jewish press",
+        "Spanish-language & ethnic",
+        "District & Valley",
+        "Out-of-state local"
+      ],
+      "proposed": "California regional & local",
+      "title": "Alameda Times-Star"
+    }
+  ]
+}

@@ -1,0 +1,147 @@
+{
+  "list": [
+    {
+      "cat": "headline",
+      "conf": "",
+      "detail": "jg-00084 · nb-00169 · section label, not a headline ('LEGISLATIVE OFFICES'); Language 'Spanish' looks wrong for a Sacramento Bee listing",
+      "id": "hl-000",
+      "key": "nb-00169",
+      "options": [
+        "Fix by hand",
+        "Leave as is"
+      ],
+      "proposed": "Fix by hand",
+      "title": "jg-00084"
+    },
+    {
+      "cat": "headline",
+      "conf": "",
+      "detail": "jg-00275 · nb-00650 · likely a section label ('Regalos' = 'Gifts'), not a headline",
+      "id": "hl-001",
+      "key": "nb-00650",
+      "options": [
+        "Fix by hand",
+        "Leave as is"
+      ],
+      "proposed": "Fix by hand",
+      "title": "jg-00275"
+    },
+    {
+      "cat": "headline",
+      "conf": "",
+      "detail": "jg-00493 · nb-01228 · outlet suffix '– The Orion' kept as in original",
+      "id": "hl-002",
+      "key": "nb-01228",
+      "options": [
+        "Fix by hand",
+        "Leave as is"
+      ],
+      "proposed": "Fix by hand",
+      "title": "jg-00493"
+    },
+    {
+      "cat": "headline",
+      "conf": "",
+      "detail": "jg-01087 · nb-02843 · headline already in English; Language 'Spanish' may be mislabeled",
+      "id": "hl-003",
+      "key": "nb-02843",
+      "options": [
+        "Fix by hand",
+        "Leave as is"
+      ],
+      "proposed": "Fix by hand",
+      "title": "jg-01087"
+    },
+    {
+      "cat": "headline",
+      "conf": "",
+      "detail": "jg-01199 · nb-03052 · headline already in English (press release); Language 'Spanish' may be mislabeled",
+      "id": "hl-004",
+      "key": "nb-03052",
+      "options": [
+        "Fix by hand",
+        "Leave as is"
+      ],
+      "proposed": "Fix by hand",
+      "title": "jg-01199"
+    },
+    {
+      "cat": "headline",
+      "conf": "",
+      "detail": "jg-01292 · nb-03211 · headline already in English; Language 'Spanish' may be mislabeled",
+      "id": "hl-005",
+      "key": "nb-03211",
+      "options": [
+        "Fix by hand",
+        "Leave as is"
+      ],
+      "proposed": "Fix by hand",
+      "title": "jg-01292"
+    },
+    {
+      "cat": "headline",
+      "conf": "",
+      "detail": "jg-01437 · nb-03483 · section label ('Features'), not a headline; Language 'Spanish' looks wrong",
+      "id": "hl-006",
+      "key": "nb-03483",
+      "options": [
+        "Fix by hand",
+        "Leave as is"
+      ],
+      "proposed": "Fix by hand",
+      "title": "jg-01437"
+    },
+    {
+      "cat": "headline",
+      "conf": "",
+      "detail": "jg-01438 · nb-03485 · section label ('News'), not a headline; Language 'Spanish' looks wrong",
+      "id": "hl-007",
+      "key": "nb-03485",
+      "options": [
+        "Fix by hand",
+        "Leave as is"
+      ],
+      "proposed": "Fix by hand",
+      "title": "jg-01438"
+    },
+    {
+      "cat": "headline",
+      "conf": "",
+      "detail": "jg-01479 · nb-03557 · section label ('ELECTION RESULTS'), not a headline; Language 'Spanish' looks wrong",
+      "id": "hl-008",
+      "key": "nb-03557",
+      "options": [
+        "Fix by hand",
+        "Leave as is"
+      ],
+      "proposed": "Fix by hand",
+      "title": "jg-01479"
+    },
+    {
+      "cat": "headline",
+      "conf": "",
+      "detail": "jg-01621 · nb-03870 · section label ('News'), not a headline; Language 'Spanish' looks wrong",
+      "id": "hl-009",
+      "key": "nb-03870",
+      "options": [
+        "Fix by hand",
+        "Leave as is"
+      ],
+      "proposed": "Fix by hand",
+      "title": "jg-01621"
+    },
+    {
+      "cat": "headline",
+      "conf": "",
+      "detail": "jg-01722 · nb-04042 · headline already in English; Language 'Hebrew' may be mislabeled",
+      "id": "hl-010",
+      "key": "nb-04042",
+      "options": [
+        "Fix by hand",
+        "Leave as is"
+      ],
+      "proposed": "Fix by hand",
+      "title": "jg-01722"
+    }
+  ]
+}

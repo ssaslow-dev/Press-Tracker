@@ -1,0 +1,1301 @@
+{
+ "written": {
+  "Tone": 1176,
+  "Tone note": 1176,
+  "Tone rated by": 1176,
+  "Topic": 1098,
+  "Bills": 377,
+  "Translated Headline": 75,
+  "Story in English": 70,
+  "Author / byline": 31,
+  "Page": 233,
+  "Word count": 30,
+  "Section": 28,
+  "Language": 88,
+  "Outlet city": 62,
+  "Medium": 41,
+  "Publisher": 41,
+  "Outlet county": 3,
+  "Outlet state": 3
+ },
+ "skipped_nonblank": 17357,
+ "held": [
+  "jg-02347",
+  "jg-04043"
+ ],
+ "flagged": [
+  {
+   "sid": "jg-00073",
+   "aid": "nb-00136",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01634",
+   "aid": "nb-03889",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01311",
+   "aid": "nb-03236",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01442",
+   "aid": "nb-03495",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01633",
+   "aid": "nb-03888",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01635",
+   "aid": "nb-03891",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01731",
+   "aid": "nb-04052",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01742",
+   "aid": "nb-04063",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01238",
+   "aid": "nb-03118",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01733",
+   "aid": "nb-04054",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-00587",
+   "aid": "nb-01446",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-00868",
+   "aid": "nb-02175",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01548",
+   "aid": "nb-03698",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01767",
+   "aid": "nb-04093",
+   "flag": "possibly a different Jesse Gabriel (Oak Park High junior in 1999); verify"
+  },
+  {
+   "sid": "jg-01513",
+   "aid": "nb-03618",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01551",
+   "aid": "nb-03709",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01710",
+   "aid": "nb-04028",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01736",
+   "aid": "nb-04057",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-00222",
+   "aid": "nb-00478",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-00260",
+   "aid": "nb-00626",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01426",
+   "aid": "nb-03464",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01776",
+   "aid": "ws-01276",
+   "flag": "fetch failed: publisher returned 403 (blocked); no copy saved, not rated"
+  },
+  {
+   "sid": "jg-01796",
+   "aid": "ws-01309",
+   "flag": "video page only: the saved text is a 2-sentence caption that doesn't name Gabriel (\"one local lawmaker\"); no transcript, so not saved or rated"
+  },
+  {
+   "sid": "jg-01925",
+   "aid": "ws-01454",
+   "flag": "fetch failed: Bloomberg Law login required; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-01938",
+   "aid": "ws-01469",
+   "flag": "fetch failed: site blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-01908",
+   "aid": "ws-01433",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02004",
+   "aid": "ws-01551",
+   "flag": "fetch failed: crbcnews.com (the Just Food link) blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02026",
+   "aid": "ws-01578",
+   "flag": "fetch failed: Politico blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02056",
+   "aid": "ws-01613",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02066",
+   "aid": "ws-01624",
+   "flag": "paywalled: State Affairs Pro returned only the headline and a photo caption naming Gabriel; no body, not saved or rated"
+  },
+  {
+   "sid": "jg-02075",
+   "aid": "ws-01636",
+   "flag": "fetch failed: SF Chronicle returned a bot challenge page; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02124",
+   "aid": "ws-01694",
+   "flag": "fetch failed: Davis Vanguard blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02130",
+   "aid": "ws-01704",
+   "flag": "paywalled: Politico Pro returned only its login navigation; not saved or rated"
+  },
+  {
+   "sid": "jg-02227",
+   "aid": "ws-01814",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02238",
+   "aid": "ws-01827",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02248",
+   "aid": "ws-01838",
+   "flag": "paywalled: Politico Pro returned only its login navigation; not saved or rated"
+  },
+  {
+   "sid": "jg-02262",
+   "aid": "ws-01854",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02268",
+   "aid": "ws-01862",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02333",
+   "aid": "ws-01930",
+   "flag": "fetch failed: mixedtimes.com blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02386",
+   "aid": "ws-01997",
+   "flag": "fetch failed twice: TinyFish reports invalid_url for the nycfoodpolicy.org page (a search confirmed the same URL); no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02390",
+   "aid": "ws-02001",
+   "flag": "partial page: Politico returned only the first 4 paragraphs, which don't name Gabriel; not saved or rated"
+  },
+  {
+   "sid": "jg-02412",
+   "aid": "ws-02027",
+   "flag": "fetch failed: thegoldreport.com unreachable; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02454",
+   "aid": "ws-02072",
+   "flag": "fetch failed: Politico returned only the page title; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02480",
+   "aid": "ws-02096",
+   "flag": "paywalled: Politico Pro returned only its login navigation; not saved or rated"
+  },
+  {
+   "sid": "jg-02498",
+   "aid": "ws-02121",
+   "flag": "fetch failed: soybrandon.com unreachable; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02501",
+   "aid": "ws-02124",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02559",
+   "aid": "ws-02193",
+   "flag": "dead link: gunnewsdaily.com returned 404, and a search found no page with this exact headline from that outlet; not saved or rated"
+  },
+  {
+   "sid": "jg-02575",
+   "aid": "ws-02212",
+   "flag": "dead link: survivalworld.com returned 404, and a search found no page with this exact headline from that outlet; not saved or rated"
+  },
+  {
+   "sid": "jg-02582",
+   "aid": "ws-02218",
+   "flag": "not fetched: Politico Pro paywall (every Pro link in this batch returned only its login navigation); not saved or rated"
+  },
+  {
+   "sid": "jg-02614",
+   "aid": "ws-02254",
+   "flag": "partial page: Politico returned only the first 4 paragraphs, which don't name Gabriel; not saved or rated"
+  },
+  {
+   "sid": "jg-02684",
+   "aid": "ws-02324",
+   "flag": "fetch failed: Politico blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02706",
+   "aid": "ws-02350",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02786",
+   "aid": "pq-00131",
+   "flag": "no publisher link (only a Google search link); a TinyFish search for the exact headline found no Southern California Record page; not saved or rated"
+  },
+  {
+   "sid": "jg-03082",
+   "aid": "ws-02746",
+   "flag": "fetch failed: jweekly.com returned 403 (blocked); no copy saved, not rated"
+  },
+  {
+   "sid": "jg-03169",
+   "aid": "ws-02836",
+   "flag": "partial page: Jewish Insider returned only the newsletter's first sections, which don't name Gabriel; not saved or rated"
+  },
+  {
+   "sid": "jg-03160",
+   "aid": "ws-02829",
+   "flag": "bot_blocked (ABC10)"
+  },
+  {
+   "sid": "jg-03326",
+   "aid": "ws-02975",
+   "flag": "login_required (Bloomberg Tax)"
+  },
+  {
+   "sid": "jg-03404",
+   "aid": "ws-03063",
+   "flag": "login_required (OC Register)"
+  },
+  {
+   "sid": "jg-03487",
+   "aid": "ws-03164",
+   "flag": "http_403 (jweekly)"
+  },
+  {
+   "sid": "jg-03595",
+   "aid": "ws-03283",
+   "flag": "login_required (Bloomberg Law, no text)"
+  },
+  {
+   "sid": "jg-03720",
+   "aid": "ws-03399",
+   "flag": "http_403 (jweekly)"
+  },
+  {
+   "sid": "jg-03950",
+   "aid": "ws-03635",
+   "flag": "http_403 (jweekly)"
+  },
+  {
+   "sid": "jg-03998",
+   "aid": "ws-03685",
+   "flag": "http_403 (jweekly)"
+  },
+  {
+   "sid": "jg-04007",
+   "aid": "ws-03694",
+   "flag": "bot_blocked (Politico)"
+  },
+  {
+   "sid": "jg-04068",
+   "aid": "ws-03755",
+   "flag": "not fetched: Politico Pro subscriber paywall"
+  },
+  {
+   "sid": "jg-01777",
+   "aid": "ws-01277",
+   "flag": "YouTube video page: no article text or transcript fetched, nothing saved"
+  },
+  {
+   "sid": "jg-01795",
+   "aid": "ws-01308",
+   "flag": "NBC Boston video page: only site navigation fetched (no transcript), nothing saved"
+  },
+  {
+   "sid": "jg-01823",
+   "aid": "ws-01334",
+   "flag": "State Affairs Pro paywall: only headline/byline fetched, nothing saved"
+  },
+  {
+   "sid": "jg-01909",
+   "aid": "ws-01435",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-01971",
+   "aid": "ws-01506",
+   "flag": "State Affairs Pro paywall: only photo caption naming Gabriel fetched, nothing saved"
+  },
+  {
+   "sid": "jg-01976",
+   "aid": "ws-01512",
+   "flag": "SFGate served a bot challenge page; nothing saved"
+  },
+  {
+   "sid": "jg-01995",
+   "aid": "ws-01537",
+   "flag": "Politico returned only the first paragraphs (Gabriel not in fetched part); nothing saved"
+  },
+  {
+   "sid": "jg-01997",
+   "aid": "ws-01540",
+   "flag": "SFGate served a bot challenge page; nothing saved"
+  },
+  {
+   "sid": "jg-01926",
+   "aid": "ws-01455",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02024",
+   "aid": "ws-01576",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02057",
+   "aid": "ws-01614",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02079",
+   "aid": "ws-01640",
+   "flag": "CRBC News blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02106",
+   "aid": "ws-01677",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02115",
+   "aid": "ws-01686",
+   "flag": "Politico returned only the opening paragraphs (Gabriel not in fetched part); nothing saved"
+  },
+  {
+   "sid": "jg-02126",
+   "aid": "ws-01697",
+   "flag": "Politico blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02136",
+   "aid": "ws-01713",
+   "flag": "Politico returned only the opening paragraphs (Gabriel not in fetched part); nothing saved"
+  },
+  {
+   "sid": "jg-02159",
+   "aid": "ws-01738",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02217",
+   "aid": "ws-01803",
+   "flag": "Politico blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02273",
+   "aid": "ws-01867",
+   "flag": "Politico blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02288",
+   "aid": "ws-01881",
+   "flag": "Politico blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02302",
+   "aid": "ws-01893",
+   "flag": "SF Chronicle served a bot challenge page; nothing saved"
+  },
+  {
+   "sid": "jg-02342",
+   "aid": "ws-01940",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02372",
+   "aid": "ws-01975",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02391",
+   "aid": "ws-02002",
+   "flag": "Politico blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02418",
+   "aid": "ws-02033",
+   "flag": "Politico returned only the page title; nothing saved"
+  },
+  {
+   "sid": "jg-02456",
+   "aid": "ws-02073",
+   "flag": "Politico blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02476",
+   "aid": "ws-02092",
+   "flag": "Jewish Insider returned only the opening sections (Gabriel not in fetched part); nothing saved"
+  },
+  {
+   "sid": "jg-02538",
+   "aid": "ws-02169",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02580",
+   "aid": "ws-02216",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-02626",
+   "aid": "ws-02265",
+   "flag": "Politico returned only the opening paragraphs (Gabriel not in fetched part); nothing saved"
+  },
+  {
+   "sid": "jg-02693",
+   "aid": "ws-02334",
+   "flag": "Fetched NBC LA page (NBC News FDA Red No. 3 story) does not mention Gabriel; nothing saved \u2014 check the row"
+  },
+  {
+   "sid": "jg-02723",
+   "aid": "ws-02367",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03168",
+   "aid": "ws-02835",
+   "flag": "Troib News blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-03239",
+   "aid": "ws-02894",
+   "flag": "Fetched Sacramento Bee page does not mention Gabriel (names AB 418 only); nothing saved \u2014 check the row"
+  },
+  {
+   "sid": "jg-03525",
+   "aid": "ws-03203",
+   "flag": "Daily News required a login (login_required); nothing saved"
+  },
+  {
+   "sid": "jg-03666",
+   "aid": "ws-03346",
+   "flag": "Univision syndicator link could not be fetched (invalid_url); nothing saved"
+  },
+  {
+   "sid": "jg-03813",
+   "aid": "ws-03497",
+   "flag": "Only a photo caption names Gabriel; the column itself (on the gas-engine ban) never mentions him; nothing saved \u2014 check the row"
+  },
+  {
+   "sid": "jg-03973",
+   "aid": "ws-03660",
+   "flag": "Fetched CalMatters page is only the live-results shell; it does not mention Gabriel; nothing saved"
+  },
+  {
+   "sid": "jg-02232",
+   "aid": "ws-01820",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02519",
+   "aid": "ws-02143",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02710",
+   "aid": "ws-02353",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02242",
+   "aid": "ws-01831",
+   "flag": "SFGate served a bot challenge page; nothing saved"
+  },
+  {
+   "sid": "jg-02500",
+   "aid": "ws-02123",
+   "flag": "State Affairs Pro paywall: only headline/photo caption naming Gabriel fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02772",
+   "aid": "ws-02421",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-03030",
+   "aid": "ws-02701",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-03052",
+   "aid": "ws-02723",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03213",
+   "aid": "ws-02875",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03644",
+   "aid": "ws-03327",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03698",
+   "aid": "ws-03378",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03734",
+   "aid": "ws-03414",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03849",
+   "aid": "ws-03535",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03933",
+   "aid": "ws-03619",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-04024",
+   "aid": "ws-03708",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-04080",
+   "aid": "ws-03764",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03457",
+   "aid": "ws-03130",
+   "flag": "SF Chronicle served a bot challenge page; nothing saved"
+  },
+  {
+   "sid": "jg-00073",
+   "aid": "nb-00136",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01634",
+   "aid": "nb-03889",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01311",
+   "aid": "nb-03236",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01442",
+   "aid": "nb-03495",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01633",
+   "aid": "nb-03888",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01635",
+   "aid": "nb-03891",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01731",
+   "aid": "nb-04052",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01742",
+   "aid": "nb-04063",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01238",
+   "aid": "nb-03118",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01733",
+   "aid": "nb-04054",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-00587",
+   "aid": "nb-01446",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-00868",
+   "aid": "nb-02175",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01548",
+   "aid": "nb-03698",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01767",
+   "aid": "nb-04093",
+   "flag": "possibly a different Jesse Gabriel (Oak Park High junior in 1999); verify"
+  },
+  {
+   "sid": "jg-01513",
+   "aid": "nb-03618",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01551",
+   "aid": "nb-03709",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01710",
+   "aid": "nb-04028",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01736",
+   "aid": "nb-04057",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-00222",
+   "aid": "nb-00478",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-00260",
+   "aid": "nb-00626",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01426",
+   "aid": "nb-03464",
+   "flag": "no Jesse Gabriel mention"
+  },
+  {
+   "sid": "jg-01776",
+   "aid": "ws-01276",
+   "flag": "fetch failed: publisher returned 403 (blocked); no copy saved, not rated"
+  },
+  {
+   "sid": "jg-01796",
+   "aid": "ws-01309",
+   "flag": "video page only: the saved text is a 2-sentence caption that doesn't name Gabriel (\"one local lawmaker\"); no transcript, so not saved or rated"
+  },
+  {
+   "sid": "jg-01925",
+   "aid": "ws-01454",
+   "flag": "fetch failed: Bloomberg Law login required; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-01938",
+   "aid": "ws-01469",
+   "flag": "fetch failed: site blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-01908",
+   "aid": "ws-01433",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02004",
+   "aid": "ws-01551",
+   "flag": "fetch failed: crbcnews.com (the Just Food link) blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02026",
+   "aid": "ws-01578",
+   "flag": "fetch failed: Politico blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02056",
+   "aid": "ws-01613",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02066",
+   "aid": "ws-01624",
+   "flag": "paywalled: State Affairs Pro returned only the headline and a photo caption naming Gabriel; no body, not saved or rated"
+  },
+  {
+   "sid": "jg-02075",
+   "aid": "ws-01636",
+   "flag": "fetch failed: SF Chronicle returned a bot challenge page; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02124",
+   "aid": "ws-01694",
+   "flag": "fetch failed: Davis Vanguard blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02130",
+   "aid": "ws-01704",
+   "flag": "paywalled: Politico Pro returned only its login navigation; not saved or rated"
+  },
+  {
+   "sid": "jg-02227",
+   "aid": "ws-01814",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02238",
+   "aid": "ws-01827",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02248",
+   "aid": "ws-01838",
+   "flag": "paywalled: Politico Pro returned only its login navigation; not saved or rated"
+  },
+  {
+   "sid": "jg-02262",
+   "aid": "ws-01854",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02268",
+   "aid": "ws-01862",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02333",
+   "aid": "ws-01930",
+   "flag": "fetch failed: mixedtimes.com blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02386",
+   "aid": "ws-01997",
+   "flag": "fetch failed twice: TinyFish reports invalid_url for the nycfoodpolicy.org page (a search confirmed the same URL); no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02390",
+   "aid": "ws-02001",
+   "flag": "partial page: Politico returned only the first 4 paragraphs, which don't name Gabriel; not saved or rated"
+  },
+  {
+   "sid": "jg-02412",
+   "aid": "ws-02027",
+   "flag": "fetch failed: thegoldreport.com unreachable; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02454",
+   "aid": "ws-02072",
+   "flag": "fetch failed: Politico returned only the page title; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02480",
+   "aid": "ws-02096",
+   "flag": "paywalled: Politico Pro returned only its login navigation; not saved or rated"
+  },
+  {
+   "sid": "jg-02498",
+   "aid": "ws-02121",
+   "flag": "fetch failed: soybrandon.com unreachable; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02501",
+   "aid": "ws-02124",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02559",
+   "aid": "ws-02193",
+   "flag": "dead link: gunnewsdaily.com returned 404, and a search found no page with this exact headline from that outlet; not saved or rated"
+  },
+  {
+   "sid": "jg-02575",
+   "aid": "ws-02212",
+   "flag": "dead link: survivalworld.com returned 404, and a search found no page with this exact headline from that outlet; not saved or rated"
+  },
+  {
+   "sid": "jg-02582",
+   "aid": "ws-02218",
+   "flag": "not fetched: Politico Pro paywall (every Pro link in this batch returned only its login navigation); not saved or rated"
+  },
+  {
+   "sid": "jg-02614",
+   "aid": "ws-02254",
+   "flag": "partial page: Politico returned only the first 4 paragraphs, which don't name Gabriel; not saved or rated"
+  },
+  {
+   "sid": "jg-02684",
+   "aid": "ws-02324",
+   "flag": "fetch failed: Politico blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02706",
+   "aid": "ws-02350",
+   "flag": "fetch failed: ABC10 blocks bots; no copy saved, not rated"
+  },
+  {
+   "sid": "jg-02786",
+   "aid": "pq-00131",
+   "flag": "no publisher link (only a Google search link); a TinyFish search for the exact headline found no Southern California Record page; not saved or rated"
+  },
+  {
+   "sid": "jg-03082",
+   "aid": "ws-02746",
+   "flag": "fetch failed: jweekly.com returned 403 (blocked); no copy saved, not rated"
+  },
+  {
+   "sid": "jg-03169",
+   "aid": "ws-02836",
+   "flag": "partial page: Jewish Insider returned only the newsletter's first sections, which don't name Gabriel; not saved or rated"
+  },
+  {
+   "sid": "jg-03160",
+   "aid": "ws-02829",
+   "flag": "bot_blocked (ABC10)"
+  },
+  {
+   "sid": "jg-03326",
+   "aid": "ws-02975",
+   "flag": "login_required (Bloomberg Tax)"
+  },
+  {
+   "sid": "jg-03404",
+   "aid": "ws-03063",
+   "flag": "login_required (OC Register)"
+  },
+  {
+   "sid": "jg-03487",
+   "aid": "ws-03164",
+   "flag": "http_403 (jweekly)"
+  },
+  {
+   "sid": "jg-03595",
+   "aid": "ws-03283",
+   "flag": "login_required (Bloomberg Law, no text)"
+  },
+  {
+   "sid": "jg-03720",
+   "aid": "ws-03399",
+   "flag": "http_403 (jweekly)"
+  },
+  {
+   "sid": "jg-03950",
+   "aid": "ws-03635",
+   "flag": "http_403 (jweekly)"
+  },
+  {
+   "sid": "jg-03998",
+   "aid": "ws-03685",
+   "flag": "http_403 (jweekly)"
+  },
+  {
+   "sid": "jg-04007",
+   "aid": "ws-03694",
+   "flag": "bot_blocked (Politico)"
+  },
+  {
+   "sid": "jg-04068",
+   "aid": "ws-03755",
+   "flag": "not fetched: Politico Pro subscriber paywall"
+  },
+  {
+   "sid": "jg-01777",
+   "aid": "ws-01277",
+   "flag": "YouTube video page: no article text or transcript fetched, nothing saved"
+  },
+  {
+   "sid": "jg-01795",
+   "aid": "ws-01308",
+   "flag": "NBC Boston video page: only site navigation fetched (no transcript), nothing saved"
+  },
+  {
+   "sid": "jg-01823",
+   "aid": "ws-01334",
+   "flag": "State Affairs Pro paywall: only headline/byline fetched, nothing saved"
+  },
+  {
+   "sid": "jg-01909",
+   "aid": "ws-01435",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-01971",
+   "aid": "ws-01506",
+   "flag": "State Affairs Pro paywall: only photo caption naming Gabriel fetched, nothing saved"
+  },
+  {
+   "sid": "jg-01976",
+   "aid": "ws-01512",
+   "flag": "SFGate served a bot challenge page; nothing saved"
+  },
+  {
+   "sid": "jg-01995",
+   "aid": "ws-01537",
+   "flag": "Politico returned only the first paragraphs (Gabriel not in fetched part); nothing saved"
+  },
+  {
+   "sid": "jg-01997",
+   "aid": "ws-01540",
+   "flag": "SFGate served a bot challenge page; nothing saved"
+  },
+  {
+   "sid": "jg-01926",
+   "aid": "ws-01455",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02024",
+   "aid": "ws-01576",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02057",
+   "aid": "ws-01614",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02079",
+   "aid": "ws-01640",
+   "flag": "CRBC News blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02106",
+   "aid": "ws-01677",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02115",
+   "aid": "ws-01686",
+   "flag": "Politico returned only the opening paragraphs (Gabriel not in fetched part); nothing saved"
+  },
+  {
+   "sid": "jg-02126",
+   "aid": "ws-01697",
+   "flag": "Politico blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02136",
+   "aid": "ws-01713",
+   "flag": "Politico returned only the opening paragraphs (Gabriel not in fetched part); nothing saved"
+  },
+  {
+   "sid": "jg-02159",
+   "aid": "ws-01738",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02217",
+   "aid": "ws-01803",
+   "flag": "Politico blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02273",
+   "aid": "ws-01867",
+   "flag": "Politico blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02288",
+   "aid": "ws-01881",
+   "flag": "Politico blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02302",
+   "aid": "ws-01893",
+   "flag": "SF Chronicle served a bot challenge page; nothing saved"
+  },
+  {
+   "sid": "jg-02342",
+   "aid": "ws-01940",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02372",
+   "aid": "ws-01975",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02391",
+   "aid": "ws-02002",
+   "flag": "Politico blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02418",
+   "aid": "ws-02033",
+   "flag": "Politico returned only the page title; nothing saved"
+  },
+  {
+   "sid": "jg-02456",
+   "aid": "ws-02073",
+   "flag": "Politico blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02476",
+   "aid": "ws-02092",
+   "flag": "Jewish Insider returned only the opening sections (Gabriel not in fetched part); nothing saved"
+  },
+  {
+   "sid": "jg-02538",
+   "aid": "ws-02169",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-02580",
+   "aid": "ws-02216",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-02626",
+   "aid": "ws-02265",
+   "flag": "Politico returned only the opening paragraphs (Gabriel not in fetched part); nothing saved"
+  },
+  {
+   "sid": "jg-02693",
+   "aid": "ws-02334",
+   "flag": "Fetched NBC LA page (NBC News FDA Red No. 3 story) does not mention Gabriel; nothing saved \u2014 check the row"
+  },
+  {
+   "sid": "jg-02723",
+   "aid": "ws-02367",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03168",
+   "aid": "ws-02835",
+   "flag": "Troib News blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-03239",
+   "aid": "ws-02894",
+   "flag": "Fetched Sacramento Bee page does not mention Gabriel (names AB 418 only); nothing saved \u2014 check the row"
+  },
+  {
+   "sid": "jg-03525",
+   "aid": "ws-03203",
+   "flag": "Daily News required a login (login_required); nothing saved"
+  },
+  {
+   "sid": "jg-03666",
+   "aid": "ws-03346",
+   "flag": "Univision syndicator link could not be fetched (invalid_url); nothing saved"
+  },
+  {
+   "sid": "jg-03813",
+   "aid": "ws-03497",
+   "flag": "Only a photo caption names Gabriel; the column itself (on the gas-engine ban) never mentions him; nothing saved \u2014 check the row"
+  },
+  {
+   "sid": "jg-03973",
+   "aid": "ws-03660",
+   "flag": "Fetched CalMatters page is only the live-results shell; it does not mention Gabriel; nothing saved"
+  },
+  {
+   "sid": "jg-02232",
+   "aid": "ws-01820",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02519",
+   "aid": "ws-02143",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02710",
+   "aid": "ws-02353",
+   "flag": "Politico Pro paywall: only navigation fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02242",
+   "aid": "ws-01831",
+   "flag": "SFGate served a bot challenge page; nothing saved"
+  },
+  {
+   "sid": "jg-02500",
+   "aid": "ws-02123",
+   "flag": "State Affairs Pro paywall: only headline/photo caption naming Gabriel fetched, nothing saved"
+  },
+  {
+   "sid": "jg-02772",
+   "aid": "ws-02421",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-03030",
+   "aid": "ws-02701",
+   "flag": "ABC10 blocked the fetch (bot_blocked); nothing saved"
+  },
+  {
+   "sid": "jg-03052",
+   "aid": "ws-02723",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03213",
+   "aid": "ws-02875",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03644",
+   "aid": "ws-03327",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03698",
+   "aid": "ws-03378",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03734",
+   "aid": "ws-03414",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03849",
+   "aid": "ws-03535",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03933",
+   "aid": "ws-03619",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-04024",
+   "aid": "ws-03708",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-04080",
+   "aid": "ws-03764",
+   "flag": "J. Weekly refused the fetch (HTTP 403); nothing saved"
+  },
+  {
+   "sid": "jg-03457",
+   "aid": "ws-03130",
+   "flag": "SF Chronicle served a bot challenge page; nothing saved"
+  },
+  {
+   "sid": "jg-00084",
+   "aid": "nb-00169",
+   "flag": "section label, not a headline ('LEGISLATIVE OFFICES'); Language 'Spanish' looks wrong for a Sacramento Bee listing"
+  },
+  {
+   "sid": "jg-00275",
+   "aid": "nb-00650",
+   "flag": "likely a section label ('Regalos' = 'Gifts'), not a headline"
+  },
+  {
+   "sid": "jg-00493",
+   "aid": "nb-01228",
+   "flag": "outlet suffix '\u2013 The Orion' kept as in original"
+  },
+  {
+   "sid": "jg-01087",
+   "aid": "nb-02843",
+   "flag": "headline already in English; Language 'Spanish' may be mislabeled"
+  },
+  {
+   "sid": "jg-01199",
+   "aid": "nb-03052",
+   "flag": "headline already in English (press release); Language 'Spanish' may be mislabeled"
+  },
+  {
+   "sid": "jg-01292",
+   "aid": "nb-03211",
+   "flag": "headline already in English; Language 'Spanish' may be mislabeled"
+  },
+  {
+   "sid": "jg-01437",
+   "aid": "nb-03483",
+   "flag": "section label ('Features'), not a headline; Language 'Spanish' looks wrong"
+  },
+  {
+   "sid": "jg-01438",
+   "aid": "nb-03485",
+   "flag": "section label ('News'), not a headline; Language 'Spanish' looks wrong"
+  },
+  {
+   "sid": "jg-01479",
+   "aid": "nb-03557",
+   "flag": "section label ('ELECTION RESULTS'), not a headline; Language 'Spanish' looks wrong"
+  },
+  {
+   "sid": "jg-01621",
+   "aid": "nb-03870",
+   "flag": "section label ('News'), not a headline; Language 'Spanish' looks wrong"
+  },
+  {
+   "sid": "jg-01722",
+   "aid": "nb-04042",
+   "flag": "headline already in English; Language 'Hebrew' may be mislabeled"
+  }
+ ],
+ "remapped": 0,
+ "reprint_fills": {
+  "rows_in_csv": 238,
+  "written": {
+   "Language": 88,
+   "Outlet city": 62,
+   "Medium": 41,
+   "Publisher": 41,
+   "Outlet county": 3,
+   "Outlet state": 3
+  },
+  "skipped_nonblank": 0,
+  "held": 0,
+  "not_reprint_list_row": 0,
+  "unknown_aid": 0
+ },
+ "Coverage_existing_changed": 0,
+ "Originals_existing_changed": 0
+}

@@ -1,0 +1,5 @@
+1. tone_batch_1: 115 input stories, 115 output lines in work/out/tone_batch_1.out.jsonl (no dups, no missing, all need_* fields honored, all tones/topics/bills validated against allowed lists).
+2. Tone (107 rated): Neutral 73, Positive 25, Negative 7, Very positive 1 (jg-00569 SWC), Very negative 1 (jg-00640 CAIR "pro-genocide"); 6 needed no tone; 2 rated "from article excerpt" (jg-01047, jg-01269, truncated releases).
+3. Topic (108 assigned): Food safety 18, Antisemitism/Jewish community 14, Elections 10, State budget 9, Housing 9, Other/roundup 9, Guns 7, Public safety 5, Social media/tech 5, Education 5, Restaurants 4, Immigration 3, Wildfire 3, Leadership 3, Energy/env 2, Health/labor 2.
+4. Flags "no Jesse Gabriel mention": jg-00073 (Strickland op-ed), jg-01634 (2018 wildfire package). Pre-legislature items (ASUC, attorney, Federation) rated per addendum; translations done for jg-00015, jg-00252, jg-00962, jg-01704.
+5. other_bills (addendum, applied from jg-01444 on): AB 3308, AB 521, AB 1320, AB 542. Not backfilled on earlier lines: AB 592 (jg-00252), ABx1-4 (jg-00424), AB 2835 (jg-00557), AB 2683/AB 2520 (jg-01151), AB 1911 (jg-01269).

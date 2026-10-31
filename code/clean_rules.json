@@ -1,0 +1,6130 @@
+{
+ "version": 1,
+ "note": "Learned by agent-code (T37) from the 10 cleaning buckets; see build/clean_playbook.md. Patterns are regex sources matched against a whole text block (JS-compatible).",
+ "limits": {
+  "max_removed_frac": 0.35,
+  "long_block_words": 40
+ },
+ "gabriel": "(?<![A-Za-z])(?<![Ss][Aa][Nn] )[Gg][Aa](?:-\\s*)?[Bb][Rr][Ii][Ee][Ll](?![A-Za-z])|가브리엘|Габриэл|Габриел|גבריאל|加布里埃[尔爾]|加布尔|加布里爾|加布里尔|蓋博|盖博|جسی گابریل|گابریل|Ջեսի Գաբրիել|Գաբրիել",
+ "generic": {
+  "kill": [
+   "ADVERTISEMENT",
+   "Bluesky",
+   "Donate",
+   "ELECTION RESULTSSenate House Governors",
+   "Email",
+   "Leave a comment",
+   "Link copied",
+   "LinkedIn",
+   "Login",
+   "MIRA AQUÍ GRATIS",
+   "NOW PLAYING",
+   "Next Up",
+   "No Result",
+   "Print",
+   "Recommended for you",
+   "Reddit",
+   "SHARE",
+   "Share",
+   "Skip To Content",
+   "Suggest a Correction",
+   "Twitter",
+   "View All Result",
+   "\\d+ Comments",
+   "광고",
+   "Share options",
+   "Share: ?Facebook Twitter WhatsApp",
+   "Linked[Ii]n",
+   "email",
+   "Telegram",
+   "Add Us On Google",
+   "Sign up for our eNewsletters",
+   "Continue watching .{0,80} after the ad.{0,300}",
+   "Press Alt\\+1 for screen-reader mode, Alt\\+0 to cancel",
+   "Accessibility Screen-Reader Guide, Feedback, and Issue Reporting \\| New window"
+  ],
+  "tail": [
+   "About Our Ads",
+   "How do you feel about this article\\?"
+  ],
+  "strip": [],
+  "section": [],
+  "cut": [],
+  "drop": [],
+  "lkill": [],
+  "ltail": []
+ },
+ "sites": {
+  "163.com": {
+   "hosts": [
+    "163.com"
+   ],
+   "outlets": [
+    "NetEase"
+   ],
+   "kill": [
+    "\\d+ 分享至",
+    "分享至好友和朋友圈",
+    "用微信扫码二维码",
+    "0 分享至"
+   ],
+   "tail": [
+    "\\/阅读下一篇\\/",
+    "/ ?阅读下一篇 ?/"
+   ]
+  },
+  "2urbangirls.com": {
+   "hosts": [
+    "2urbangirls.com"
+   ]
+  },
+  "52hrtt.com": {
+   "hosts": [
+    "52hrtt.com"
+   ]
+  },
+  "7kanal.co.il": {
+   "hosts": [
+    "7kanal.co.il"
+   ]
+  },
+  "981thebreeze.iheart.com": {
+   "hosts": [
+    "981thebreeze.iheart.com"
+   ]
+  },
+  "a44.asmdc.org": {
+   "hosts": [
+    "a44.asmdc.org"
+   ],
+   "outlets": [
+    "TCA News Service"
+   ],
+   "kill": [
+    "We Want To Hear From You.*",
+    "Do you have a question or comment for the KFF Health News team\\?.*"
+   ]
+  },
+  "abasto.com": {
+   "hosts": [
+    "abasto.com"
+   ]
+  },
+  "abc10.com": {
+   "hosts": [
+    "abc10.com"
+   ],
+   "outlets": [
+    "ABC10",
+    "CALmatters"
+   ],
+   "tail": [
+    "ABC\\d+: Watch, Download, Read",
+    "WATCH ALSO:"
+   ]
+  },
+  "abc12.com": {
+   "hosts": [
+    "abc12.com"
+   ]
+  },
+  "abc30.com": {
+   "hosts": [
+    "abc30.com"
+   ],
+   "outlets": [
+    "ABC30 Fresno",
+    "Press Democrat, The"
+   ],
+   "kill": [
+    "Report a correction or typo"
+   ]
+  },
+  "abc7.com": {
+   "hosts": [
+    "abc7.com"
+   ],
+   "outlets": [
+    "ABC7 Los Angeles",
+    "ABC7 San Francisco",
+    "City News Service"
+   ],
+   "kill": [
+    "Copyright © \\d+ KABC Television, LLC\\. All rights reserved\\.",
+    "Follow ABC\\d+ on Google",
+    "Top Stories"
+   ],
+   "tail": [
+    "Copyright © \\d+ KABC Television, LLC\\. All rights reserved\\."
+   ]
+  },
+  "abc7news.com": {
+   "hosts": [
+    "abc7news.com"
+   ],
+   "outlets": [
+    "ABC7 San Francisco",
+    "Associated Press: US Politics & Government Online"
+   ],
+   "kill": [
+    "Copyright © \\d+ KABC Television, LLC\\. All rights reserved\\.",
+    "MORE: Flamin' Hot Cheetos, Doritos, and Takis could be banned in California public schools under new bill",
+    "MORE: Newsom asks state legislature for \\$\\d+M legal defense fund before Trump takes office",
+    "MORE: USDA announces changes to school meals: What to know"
+   ]
+  },
+  "abc7ny.com": {
+   "hosts": [
+    "abc7ny.com"
+   ]
+  },
+  "abcnews.com": {
+   "hosts": [
+    "abcnews.com"
+   ],
+   "outlets": [
+    "ABC News"
+   ],
+   "kill": [
+    "Popular Reads"
+   ]
+  },
+  "abcnews4.com": {
+   "hosts": [
+    "abcnews4.com"
+   ]
+  },
+  "aboluowang.com": {
+   "hosts": [
+    "aboluowang.com"
+   ]
+  },
+  "actionnewsnow.com": {
+   "hosts": [
+    "actionnewsnow.com"
+   ],
+   "outlets": [
+    "Action News Now"
+   ],
+   "tail": [
+    "(Wellness Wednesday|Features) Updated .{0,600}",
+    "Recommended for you"
+   ]
+  },
+  "adrianelliot.medium.com": {
+   "hosts": [
+    "adrianelliot.medium.com"
+   ]
+  },
+  "agri-pulse.com": {
+   "hosts": [
+    "agri-pulse.com"
+   ],
+   "outlets": [
+    "Agri-Pulse"
+   ],
+   "kill": [
+    "Cut through the clutter! We deliver the news you need to stay informed about farm, food and rural issues\\. Sign up for a FREE month of Agri-Pulse here\\.",
+    "Post a comment to this article",
+    "Cut through the clutter!.{0,200}"
+   ],
+   "tail": [
+    "Post a comment to this article",
+    "Stay in the loop for upcoming Agri-Pulse webinars and events! Join our mailing list here: http:\\/\\/eepurl\\.com\\/iIjchw"
+   ]
+  },
+  "agrolatam.com": {
+   "hosts": [
+    "agrolatam.com"
+   ]
+  },
+  "alamy.com": {
+   "hosts": [
+    "alamy.com"
+   ],
+   "outlets": [
+    "Alamy"
+   ],
+   "tail": [
+    "Captions are provided by our contributors\\."
+   ]
+  },
+  "alcoholjustice.org": {
+   "hosts": [
+    "alcoholjustice.org"
+   ]
+  },
+  "alfredtwu.medium.com": {
+   "hosts": [
+    "alfredtwu.medium.com"
+   ],
+   "outlets": [
+    "alfredtwu.medium.com"
+   ],
+   "kill": [
+    "Press enter or click to view image in full size",
+    "Get Alfred Twu’s stories in your inbox",
+    "Join Medium for free to get updates from this writer\\.",
+    "Remember me for faster sign in"
+   ]
+  },
+  "algemeiner.com": {
+   "hosts": [
+    "algemeiner.com"
+   ],
+   "outlets": [
+    "Algemeiner, The"
+   ],
+   "kill": [
+    "About Us",
+    "Algemeiner\\.com",
+    "Contact Us",
+    "Epaper",
+    "Error: Contact form not found\\.",
+    "Follow @Algemeiner",
+    "Send a news tip",
+    "Subscribe",
+    "Wednesday, October \\d+st \\| \\d+ Heshvan \\d+",
+    "\\d+",
+    "×",
+    "About Us Contact Us( Epaper)?",
+    "Send a news tip( Subscribe)?( Donate)?",
+    "\\w+day, \\w+ \\d+\\w\\w \\| \\d+ \\w+ \\d{4}",
+    "0"
+   ],
+   "tail": [
+    "Share this Story:"
+   ],
+   "head": "h1"
+  },
+  "alphanews.am": {
+   "hosts": [
+    "alphanews.am"
+   ]
+  },
+  "alston.com": {
+   "hosts": [
+    "alston.com"
+   ]
+  },
+  "altadena-now.com": {
+   "hosts": [
+    "altadena-now.com"
+   ],
+   "outlets": [
+    "Altadena Now"
+   ],
+   "kill": [
+    "Altadena Now encourages solicitation of events information, news items, announcements, photographs and videos\\.",
+    "Altadena Now is published daily and will host archives of Timothy Rutt's Altadena blog and his later Altadena Point sites\\.",
+    "Candice Merrill, Events",
+    "David Alvarado, Advertising",
+    "James Macpherson, Editor",
+    "Megan Hole, Lifestyles",
+    "Please email to: Editor@Altadena-Now\\.com"
+   ],
+   "tail": [
+    "Altadena Calendar of Events"
+   ]
+  },
+  "altapolicywonk.substack.com": {
+   "hosts": [
+    "altapolicywonk.substack.com"
+   ]
+  },
+  "alumni.berkeley.edu": {
+   "hosts": [
+    "alumni.berkeley.edu"
+   ]
+  },
+  "amedpost.com": {
+   "hosts": [
+    "amedpost.com"
+   ]
+  },
+  "americancommunitymedia.org": {
+   "hosts": [
+    "americancommunitymedia.org"
+   ]
+  },
+  "ammoland.com": {
+   "hosts": [
+    "ammoland.com"
+   ],
+   "outlets": [
+    "AmmoLand"
+   ],
+   "tail": [
+    "Subscribe"
+   ]
+  },
+  "amp.seoul.co.kr": {
+   "hosts": [
+    "amp.seoul.co.kr"
+   ],
+   "outlets": [
+    "Seoul Shinmun"
+   ],
+   "kill": [
+    "구글에서 서울신문 먼저 보기",
+    "글씨 크기 조절",
+    "기사 소리로 듣기",
+    "다시듣기",
+    "닫기",
+    "이미지 확대"
+   ],
+   "tail": [
+    "원본 이미지입니다\\."
+   ]
+  },
+  "anca.org": {
+   "hosts": [
+    "anca.org"
+   ]
+  },
+  "andrewzimmern.substack.com": {
+   "hosts": [
+    "andrewzimmern.substack.com"
+   ]
+  },
+  "angelenodaily.com": {
+   "hosts": [
+    "angelenodaily.com"
+   ]
+  },
+  "antiwar.com": {
+   "hosts": [
+    "antiwar.com"
+   ]
+  },
+  "aol.com": {
+   "hosts": [
+    "aol.com"
+   ],
+   "outlets": [
+    "AOL"
+   ],
+   "kill": [
+    "Advertisement"
+   ]
+  },
+  "apnews.com": {
+   "hosts": [
+    "apnews.com"
+   ],
+   "outlets": [
+    "(unknown)",
+    "Associated Press",
+    "Associated Press News Service, The",
+    "Associated Press State Wire: California",
+    "Associated Press: US News Online",
+    "Associated Press: US Politics & Government Online"
+   ],
+   "kill": [
+    "Advertisement",
+    "Connie Weiss said:",
+    "Contributed family friendly accessible rsvp required Sponsored",
+    "Dave Cohen said:",
+    "Facebook",
+    "Flipboard",
+    "Molly O's Irish Pub & Restaurant",
+    "Pinterest",
+    "Related Stories",
+    "Report",
+    "Thursday, November \\d+th, \\d+ @ \\d+:\\d+ pm – \\d+:\\d+ pm",
+    "View more",
+    "X",
+    "\\$\\d+",
+    "\\d+Mon"
+   ]
+  },
+  "arktimes.com": {
+   "hosts": [
+    "arktimes.com"
+   ]
+  },
+  "armenianweekly.com": {
+   "hosts": [
+    "armenianweekly.com"
+   ]
+  },
+  "arstechnica.com": {
+   "hosts": [
+    "arstechnica.com"
+   ]
+  },
+  "artists4democracy.substack.com": {
+   "hosts": [
+    "artists4democracy.substack.com"
+   ],
+   "outlets": [
+    "artists4democracy.substack.com"
+   ],
+   "tail": [
+    "Thanks for reading the Artists \\d+ Democracy Newsletter\\. Artists \\d+ Democracy promotes democratic and civic engagement by mobilizing artists to get involved in political action\\. Through voter registration drives, fundraisers, and events we seek to foster and protect our participatory democracy\\."
+   ]
+  },
+  "artnews.com": {
+   "hosts": [
+    "artnews.com"
+   ]
+  },
+  "asamnews.com": {
+   "hosts": [
+    "asamnews.com"
+   ]
+  },
+  "asbarez.com": {
+   "hosts": [
+    "asbarez.com"
+   ],
+   "outlets": [
+    "Asbarez"
+   ],
+   "kill": [
+    "NEWSLETTER ՀԱՅ",
+    "Wednesday, October \\d+, \\d+",
+    "ՀԱՅ"
+   ],
+   "tail": [
+    "Comments \\d+",
+    "Connect with us",
+    "Leave a Reply Cancel reply",
+    "Next Post"
+   ],
+   "head": "h1"
+  },
+  "asianjournal.com": {
+   "hosts": [
+    "asianjournal.com"
+   ]
+  },
+  "astroclub.ir": {
+   "hosts": [
+    "astroclub.ir"
+   ]
+  },
+  "asumag.com": {
+   "hosts": [
+    "asumag.com"
+   ]
+  },
+  "audacy.com": {
+   "hosts": [
+    "audacy.com"
+   ],
+   "outlets": [
+    "KNX News"
+   ],
+   "kill": [
+    "Follow KNX News \\d+\\.\\d+ FM",
+    "Want to get caught up on what's happening in SoCal every weekday afternoon\\? Click to follow The L\\.A\\. Local wherever you get podcasts\\."
+   ],
+   "tail": [
+    "Follow KNX News \\d+\\.\\d+ FM"
+   ]
+  },
+  "aurascan.app": {
+   "hosts": [
+    "aurascan.app"
+   ],
+   "outlets": [
+    "Aura Scan"
+   ],
+   "kill": [
+    "Every article is checked against primary sources before publication\\. How we review",
+    "See what is really in the food you buy\\.",
+    "Try Aurascan"
+   ],
+   "tail": [
+    "In this series"
+   ]
+  },
+  "autos.yahoo.com": {
+   "hosts": [
+    "autos.yahoo.com"
+   ],
+   "outlets": [
+    "Insider"
+   ],
+   "kill": [
+    "Advertisement"
+   ]
+  },
+  "avpress.com": {
+   "hosts": [
+    "avpress.com"
+   ],
+   "outlets": [
+    "Antelope Valley Press"
+   ],
+   "tail": [
+    "Post a comment as anonymous"
+   ]
+  },
+  "axios.com": {
+   "hosts": [
+    "axios.com"
+   ]
+  },
+  "bakersfield.com": {
+   "hosts": [
+    "bakersfield.com"
+   ]
+  },
+  "bakingbusiness.com": {
+   "hosts": [
+    "bakingbusiness.com"
+   ]
+  },
+  "baocalitoday.com": {
+   "hosts": [
+    "baocalitoday.com"
+   ],
+   "outlets": [
+    "Bao Cali Today",
+    "Bao California Today"
+   ],
+   "kill": [
+    "A password will be e-mailed to you\\.",
+    "Bình luận chính trị",
+    "Khám phá thêm",
+    "Password recovery",
+    "Recover your password",
+    "Sign in",
+    "Tin",
+    "Tin tức Hoa Kỳ",
+    "Tin tức Việt Nam",
+    "Tin tức kinh tế",
+    "Tin tức quốc tế",
+    "Tin tức xã hội",
+    "Tra cứu bản đồ",
+    "Tra cứu luật",
+    "Welcome! Log into your account",
+    "Xem Tin Tức",
+    "Đọc Tin Tức",
+    "Đọc báo mới",
+    "Đọc tin chính sách",
+    "Đọc tin chính trị",
+    "Tra cứu bản đồ|Tra cứu luật|Tra dịch vụ công|Đọc báo mới|Đọc Sách Thời Sự|Quản lý tài chính|Đọc tin chính trị|Đọc tin chính sách|Xem Tin Tức|Đọc Tin Tức"
+   ],
+   "lkill": [
+    "sign in",
+    "welcome! log into your account",
+    "password recovery",
+    "recover your password",
+    "a password will be e-mailed to you\\."
+   ]
+  },
+  "baomonamcali.com": {
+   "hosts": [
+    "baomonamcali.com"
+   ]
+  },
+  "baptistpress.com": {
+   "hosts": [
+    "baptistpress.com"
+   ],
+   "outlets": [
+    "Baptist Press"
+   ],
+   "kill": [
+    "Metadata:",
+    "Share this post:"
+   ],
+   "tail": [
+    "Browse the Archives:"
+   ]
+  },
+  "bayareatelegraph.com": {
+   "hosts": [
+    "bayareatelegraph.com"
+   ],
+   "outlets": [
+    "Bay Area Telegraph"
+   ],
+   "kill": [
+    "Facebook",
+    "Nextdoor",
+    "Related",
+    "Share this:"
+   ]
+  },
+  "bdp.lmi.net": {
+   "hosts": [
+    "bdp.lmi.net"
+   ]
+  },
+  "beachcomber.news": {
+   "hosts": [
+    "beachcomber.news"
+   ],
+   "outlets": [
+    "Beachcomber"
+   ],
+   "tail": [
+    "Category:"
+   ]
+  },
+  "bearingarms.com": {
+   "hosts": [
+    "bearingarms.com"
+   ],
+   "outlets": [
+    "Bearing Arms"
+   ],
+   "kill": [
+    "Advertisement",
+    "Join the conversation as a VIP Member",
+    "Sponsored"
+   ]
+  },
+  "beverlyhillsstandard.com": {
+   "hosts": [
+    "beverlyhillsstandard.com"
+   ],
+   "outlets": [
+    "Beverly Hills Standard",
+    "beverlyhillsstandard.com"
+   ],
+   "kill": [
+    "Advertisement",
+    "Followers",
+    "Posts",
+    "The Beverly Hills Standard covers the city of Beverly Hills with a focus on local government, public safety, and community issues\\. Guided by our editorial principle, Setting the Record Straight, we deliver clear, factual, locally grounded reporting\\.",
+    "\\d+"
+   ],
+   "lkill": [
+    "#",
+    "posts",
+    "followers",
+    "the beverly hills standard covers the city of beverly hills.{0,250}"
+   ],
+   "ltail": [
+    "comments"
+   ]
+  },
+  "beverlypress.com": {
+   "hosts": [
+    "beverlypress.com"
+   ],
+   "outlets": [
+    "Beverly Press"
+   ],
+   "tail": [
+    "Next Post",
+    "Previous Post"
+   ]
+  },
+  "blog.naver.com": {
+   "hosts": [
+    "blog.naver.com"
+   ],
+   "outlets": [
+    "Naver Blog"
+   ],
+   "kill": [
+    "글씨 축소 A 글씨 크기 초기화 글씨 확대"
+   ]
+  },
+  "blogs.timesofisrael.com": {
+   "hosts": [
+    "blogs.timesofisrael.com"
+   ],
+   "outlets": [
+    "Times of Israel, The"
+   ],
+   "kill": [
+    "Homepage",
+    "home page",
+    "0:00 / 0:00",
+    "Promoted: .{0,80}",
+    "Help us report truthfully on social media",
+    "As a multimedia journalist, my job is to take the quality, fact-based journalism produced by The Times of Israel newsroom and make it accessible across every platform — from Instagram posts to podcasts to short-form videos\\.",
+    "This is how many, especially young people, consume news these days\\. But misinformation is rampant on social media\\. Our team at ToI produces accurate, responsible short-form reporting on Israel and the Jewish world\\.",
+    "If you believe in the importance of factual social media journalism ?, please consider joining our reader support group, The Times of Israel Community\\. ?Your financial support is essential to sustain responsible multimedia reporting\\.",
+    "— Gabriella Jacobs, multimedia journalist",
+    "If you’d like to comment, join The Times of Israel Community\\.?.{0,60}",
+    "Get The Times of Israel's Daily Edition.{0,120}"
+   ],
+   "tail": [
+    "read more:",
+    "comments"
+   ],
+   "strip": [
+    "Support our work Support our work Already a member\\? Sign in to stop seeing this",
+    "JOIN THE TOI COMMUNITY Already a member\\? Log in here",
+    "\\bAdvertisement\\b"
+   ]
+  },
+  "bluevoterguide.org": {
+   "hosts": [
+    "bluevoterguide.org"
+   ],
+   "outlets": [
+    "Blue Voter Guide"
+   ],
+   "kill": [
+    "Blue Voter Guide helps you make quick, informed, pro-democracy choices of candidates and propositions by showing what's on your ballot, with endorsements from trusted, forward-looking organizations\\.",
+    "Want more info on how Blue Voter Guide works\\?",
+    "Watch this brief video!",
+    "Blue Voter Guide helps you make quick.*",
+    "Want more info on how Blue Voter Guide works.*",
+    "Watch this brief video.*",
+    "Muốn biết thêm thông tin về cách Blue Voter Guide.*",
+    "Hãy xem video ngắn này.*",
+    "Blue Voter Guide giúp bạn.*"
+   ]
+  },
+  "bondbuyer.com": {
+   "hosts": [
+    "bondbuyer.com"
+   ]
+  },
+  "bradyunited.medium.com": {
+   "hosts": [
+    "bradyunited.medium.com"
+   ]
+  },
+  "breitbart.com": {
+   "hosts": [
+    "breitbart.com"
+   ]
+  },
+  "businessinsider.com": {
+   "hosts": [
+    "businessinsider.com"
+   ]
+  },
+  "buzzsprout.com": {
+   "hosts": [
+    "buzzsprout.com"
+   ]
+  },
+  "c-r-n.com": {
+   "hosts": [
+    "c-r-n.com"
+   ],
+   "outlets": [
+    "Chinese Restaurant Communication"
+   ],
+   "lkill": [
+    "微信公众平台：.*"
+   ]
+  },
+  "c-span.org": {
+   "hosts": [
+    "c-span.org"
+   ]
+  },
+  "ca.finance.yahoo.com": {
+   "hosts": [
+    "ca.finance.yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "ca.news.yahoo.com": {
+   "hosts": [
+    "ca.news.yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "kill": [
+    "Advertisement"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "ca.style.yahoo.com": {
+   "hosts": [
+    "ca.style.yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "kill": [
+    "Advertisement"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "caanet.org": {
+   "hosts": [
+    "caanet.org"
+   ],
+   "outlets": [
+    "California Apartment Association"
+   ],
+   "kill": [
+    "This resource contains member-only content"
+   ]
+  },
+  "cabassa.substack.com": {
+   "hosts": [
+    "cabassa.substack.com"
+   ]
+  },
+  "cafecoado.substack.com": {
+   "hosts": [
+    "cafecoado.substack.com"
+   ]
+  },
+  "cagazette.com": {
+   "hosts": [
+    "cagazette.com"
+   ]
+  },
+  "californiaconstructionnews.com": {
+   "hosts": [
+    "californiaconstructionnews.com"
+   ]
+  },
+  "californiacurrent.org": {
+   "hosts": [
+    "californiacurrent.org"
+   ]
+  },
+  "californiafiles.org": {
+   "hosts": [
+    "californiafiles.org"
+   ]
+  },
+  "californiaglobe.com": {
+   "hosts": [
+    "californiaglobe.com"
+   ],
+   "outlets": [
+    "California Globe"
+   ],
+   "kill": [
+    "Author",
+    "CriticalDfence\\d+ says:",
+    "How the DMV Enabled Voter Fraud in California - October \\d+, \\d+",
+    "Latest posts by Evan Gahr \\(see all\\)",
+    "Latest posts by Evan Symon \\(see all\\)",
+    "Latest posts by Katy Grimes \\(see all\\)",
+    "Latest posts by Megan Barth \\(see all\\)",
+    "Name \\*",
+    "Pronoun Police at the University of California Were Just Sidelined - September \\d+, \\d+",
+    "Recent Posts",
+    "Rioting for More… It’s Never Enough - October \\d+, \\d+",
+    "Spread the news:",
+    "showandtell says:"
+   ],
+   "tail": [
+    "Latest posts by Chris Micheli \\(see all\\)"
+   ]
+  },
+  "californiahealthline.org": {
+   "hosts": [
+    "californiahealthline.org"
+   ]
+  },
+  "californiatoday.com": {
+   "hosts": [
+    "californiatoday.com"
+   ],
+   "outlets": [
+    "California Today"
+   ],
+   "tail": [
+    "Read More"
+   ],
+   "kill": [
+    "More November 2026 California Election Guides.*",
+    ".{0,120}\\| (Editor|Reporter) [A-Z][a-z]+ \\d{1,2}, \\d{4}"
+   ]
+  },
+  "calmatters.org": {
+   "hosts": [
+    "calmatters.org"
+   ],
+   "outlets": [
+    "(unknown)",
+    "CALmatters",
+    "CalMatters Voter Guide",
+    "CalMatters en Español",
+    "Korea Times",
+    "LAist",
+    "News From The States"
+   ],
+   "kill": [
+    "A Message from our Sponsor",
+    "A subscription to our digital content is so much more than just access to our valuable content\\. It means you’re helping to support a local community institution that has, from its very start, supported the betterment of our society\\. Thank you very much!",
+    "Advertisement",
+    "By subscribing, you agree to Patch's Privacy Policy and Terms of Use\\.",
+    "CalMatters commentary is now California Voices, with a fresh look and new features\\. Check it out\\.",
+    "Facebook",
+    "Find out what's happening in Sacramentofor free with the latest updates from Patch\\.",
+    "Focus on inequality: Each Friday, the California Divide team delivers a newsletter that focuses on the politics and policy of inequality\\. Read the latest edition here and subscribe here\\.",
+    "More by Lynn La",
+    "Next Next Up",
+    "Post a comment as Guest",
+    "Previous",
+    "Report",
+    "Siga nuestro canal RSS para artículos en español\\.",
+    "Sponsored message",
+    "Síganos en Twitter y Facebook\\.",
+    "Thank you for visiting the Daily Journal\\.",
+    "To continue, please log in, or sign up for a new account\\.",
+    "Watch this discussion\\.",
+    "We offer one free story view per month\\. If you register for an account, you will get two additional story views\\. After those three total views, we ask that you support us with a subscription\\.",
+    "WhatsApp"
+   ],
+   "tail": [
+    "Follow me on Twitter: @emily_hoeven",
+    "Want to join the discussion\\?"
+   ],
+   "section": [
+    [
+     "(?i)read next",
+     25
+    ]
+   ],
+   "ltail": [
+    "read more from calmatters",
+    "nonpartisan, independent california news for all",
+    "about the author"
+   ],
+   "lkill": [
+    "share this:",
+    "share on (x|facebook|whatsapp|email|linkedin|reddit|bluesky|threads|print) \\(opens in new window\\) ?\\w*",
+    "be prepared for california.s (general|primary) election: sign up for our .{0,200}",
+    "election #",
+    "# voter guide",
+    "get ready for california.s .{0,80}election\\.? this voter guide .{0,120}",
+    "just the right amount of news",
+    "get california.s most essential headlines without feeling overwhelmed\\.",
+    "by clicking subscribe, you agree to the terms\\.",
+    "δ",
+    "we want to hear from you.{0,300}",
+    "about calmatters",
+    "most popular",
+    "email address"
+   ],
+   "note": "v20-photos 2026-10-28: READ NEXT section, promo/newsletter boxes, tail at author-box/donation/republish footer (rootfix B).",
+   "cut": [
+    [
+     "(?i)read next",
+     "(?i)read more from calmatters",
+     true
+    ]
+   ]
+  },
+  "calonews.com": {
+   "hosts": [
+    "calonews.com"
+   ],
+   "outlets": [
+    "Calaveras Enterprise",
+    "California Local News"
+   ],
+   "kill": [
+    "Log In",
+    "More from this section",
+    "Post a comment as anonymous",
+    "Report",
+    "Watch this discussion\\. Stop watching this discussion\\.",
+    "Welcome to the discussion\\.",
+    "\\(\\d+\\) comments"
+   ],
+   "strip": [
+    "Share\\s*with\\s*Us\\."
+   ]
+  },
+  "calstuff.blogspot.com": {
+   "hosts": [
+    "calstuff.blogspot.com"
+   ]
+  },
+  "cambio16.com": {
+   "hosts": [
+    "cambio16.com"
+   ],
+   "outlets": [
+    "Cambio16"
+   ],
+   "kill": [
+    "Conforme a los criterios de",
+    "Productos",
+    "Propósito",
+    "Quienes Somos",
+    "ROBA_\\d+",
+    "Saber más",
+    "Servicios"
+   ]
+  },
+  "canyoncrestguide.com": {
+   "hosts": [
+    "canyoncrestguide.com"
+   ]
+  },
+  "capitalandmain.com": {
+   "hosts": [
+    "capitalandmain.com"
+   ],
+   "outlets": [
+    "Capital & Main"
+   ],
+   "kill": [
+    "Join our email list to get the stories that mainstream news is overlooking\\.",
+    "Sign up for Capital & Main’s newsletter\\."
+   ],
+   "tail": [
+    "Column - State of InequalityOctober \\d+, \\d+"
+   ]
+  },
+  "capitolweekly.net": {
+   "hosts": [
+    "capitolweekly.net"
+   ],
+   "outlets": [
+    "Capitol Weekly"
+   ],
+   "kill": [
+    "Twitter Facebook Email",
+    "Want to see more stories like this\\? Sign up for The Roundup, the free daily newsletter about California politics from the editors of Capitol Weekly\\. Stay up to date on the news you need to know\\."
+   ],
+   "tail": [
+    "Want to see more stories like this\\? Sign up for The Roundup, the free daily newsletter about California politics from the editors of Capitol Weekly\\. Stay up to date on the news you need to know\\."
+   ]
+  },
+  "capradio.org": {
+   "hosts": [
+    "capradio.org"
+   ],
+   "outlets": [
+    "CapRadio"
+   ],
+   "kill": [
+    "Listen"
+   ],
+   "tail": [
+    "Follow us for more stories like this"
+   ]
+  },
+  "carolkocivar.substack.com": {
+   "hosts": [
+    "carolkocivar.substack.com"
+   ]
+  },
+  "cayimby.org": {
+   "hosts": [
+    "cayimby.org"
+   ]
+  },
+  "cbsaustin.com": {
+   "hosts": [
+    "cbsaustin.com"
+   ]
+  },
+  "cbsnews.com": {
+   "hosts": [
+    "cbsnews.com"
+   ],
+   "outlets": [
+    "CBS Evening News",
+    "CBS Los Angeles",
+    "CBS News",
+    "CBS News Sacramento",
+    "Press Democrat, The"
+   ],
+   "kill": [
+    "Watch CBS News",
+    "Videos",
+    "View CBS News In"
+   ]
+  },
+  "ccarbon.info": {
+   "hosts": [
+    "ccarbon.info"
+   ],
+   "outlets": [
+    "CCarbon"
+   ],
+   "kill": [
+    "News",
+    "Your Current Membership Does not Include this Content"
+   ]
+  },
+  "centerforhealthjournalism.org": {
+   "hosts": [
+    "centerforhealthjournalism.org"
+   ]
+  },
+  "childrenshealthdefense.org": {
+   "hosts": [
+    "childrenshealthdefense.org"
+   ]
+  },
+  "chineseinla.com": {
+   "hosts": [
+    "chineseinla.com"
+   ]
+  },
+  "cityhallpass.com": {
+   "hosts": [
+    "cityhallpass.com"
+   ]
+  },
+  "citymatters.hivebrite.com": {
+   "hosts": [
+    "citymatters.hivebrite.com"
+   ]
+  },
+  "citywatchla.com": {
+   "hosts": [
+    "citywatchla.com"
+   ],
+   "outlets": [
+    "CityWatch LA"
+   ],
+   "kill": [
+    "Saturday, October \\d+, \\d+"
+   ],
+   "tail": [
+    "Featured CityWatch Stories"
+   ],
+   "img": [
+    "f0e15c2134d5"
+   ]
+  },
+  "cjac.org": {
+   "hosts": [
+    "cjac.org"
+   ]
+  },
+  "cleanpoweralliance.org": {
+   "hosts": [
+    "cleanpoweralliance.org"
+   ]
+  },
+  "clevelandjewishnews.com": {
+   "hosts": [
+    "clevelandjewishnews.com"
+   ]
+  },
+  "cnbc.com": {
+   "hosts": [
+    "cnbc.com"
+   ]
+  },
+  "cnn.com": {
+   "hosts": [
+    "cnn.com"
+   ],
+   "outlets": [
+    "CNN",
+    "CNN Wire Service"
+   ],
+   "kill": [
+    "Get inspired by a weekly roundup on living well, made simple\\. Sign up for CNN’s Life, But Better newsletter for information and tools designed to improve your well-being\\."
+   ]
+  },
+  "cnnespanol.cnn.com": {
+   "hosts": [
+    "cnnespanol.cnn.com"
+   ]
+  },
+  "codepink.substack.com": {
+   "hosts": [
+    "codepink.substack.com"
+   ]
+  },
+  "committeetounleashprosperity.com": {
+   "hosts": [
+    "committeetounleashprosperity.com"
+   ]
+  },
+  "commonsensemedia.org": {
+   "hosts": [
+    "commonsensemedia.org"
+   ]
+  },
+  "connectopod.podbean.com": {
+   "hosts": [
+    "connectopod.podbean.com"
+   ]
+  },
+  "conservativenewsbriefing.com": {
+   "hosts": [
+    "conservativenewsbriefing.com"
+   ],
+   "outlets": [
+    "Conservative News Briefing"
+   ],
+   "kill": [
+    "Access Services"
+   ]
+  },
+  "consumed.substack.com": {
+   "hosts": [
+    "consumed.substack.com"
+   ]
+  },
+  "consumeraffairs.com": {
+   "hosts": [
+    "consumeraffairs.com"
+   ],
+   "outlets": [
+    "ConsumerAffairs"
+   ],
+   "kill": [
+    "Read Full Bio"
+   ]
+  },
+  "consumerreports.org": {
+   "hosts": [
+    "consumerreports.org"
+   ]
+  },
+  "consumerwatchdog.org": {
+   "hosts": [
+    "consumerwatchdog.org"
+   ]
+  },
+  "contracosta.news": {
+   "hosts": [
+    "contracosta.news"
+   ],
+   "outlets": [
+    "Contra Costa News"
+   ],
+   "kill": [
+    "Previous stories:",
+    "Related",
+    "\\d+ comment \\d+ FacebookTwitterPinterestEmail",
+    "\\d+ comments \\d+ FacebookTwitterPinterestEmail",
+    "\\d+K",
+    "\\d+\\.\\d+K",
+    "[\\d.]+K",
+    "\\d+ comments? \\d*"
+   ],
+   "tail": [
+    "You may also like"
+   ]
+  },
+  "counterpunch.org": {
+   "hosts": [
+    "counterpunch.org"
+   ]
+  },
+  "courthousenews.com": {
+   "hosts": [
+    "courthousenews.com"
+   ],
+   "outlets": [
+    "Courthouse News Service"
+   ],
+   "tail": [
+    "Subscribe to our free newsletters"
+   ],
+   "strip": [
+    "Link\\s*copied"
+   ]
+  },
+  "crispy.news": {
+   "hosts": [
+    "crispy.news"
+   ]
+  },
+  "criticalreport.substack.com": {
+   "hosts": [
+    "criticalreport.substack.com"
+   ]
+  },
+  "cronkitenews.azpbs.org": {
+   "hosts": [
+    "cronkitenews.azpbs.org"
+   ]
+  },
+  "crpa.org": {
+   "hosts": [
+    "crpa.org"
+   ]
+  },
+  "currently.att.yahoo.com": {
+   "hosts": [
+    "currently.att.yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "kill": [
+    "Advertisement"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "dailybruin.com": {
+   "hosts": [
+    "dailybruin.com"
+   ],
+   "outlets": [
+    "Daily Bruin",
+    "Daily Bruin: University of California-Los Angeles"
+   ],
+   "strip": [
+    "Share\\s*this\\s*story:FacebookTwitterRedditEmail"
+   ]
+  },
+  "dailycal.org": {
+   "hosts": [
+    "dailycal.org"
+   ]
+  },
+  "dailycaller.com": {
+   "hosts": [
+    "dailycaller.com"
+   ],
+   "outlets": [
+    "Daily Caller, The"
+   ],
+   "lkill": [
+    "font size:"
+   ]
+  },
+  "dailyjournal.com": {
+   "hosts": [
+    "dailyjournal.com"
+   ],
+   "outlets": [
+    "Daily Journal"
+   ],
+   "kill": [
+    "Enewsletter Sign-up",
+    "For reprint rights or to purchase a copy of your Daily Journal photo, email Jeremy_Ellis@dailyjournal\\.com for prices or call \\d+-\\d+-\\d+\\. To buy more copies, call \\d+-\\d+-\\d+ or email subscribe@dailyjournal\\.com",
+    "Oct\\. 14, 2026",
+    "Search Is Currently Unavailable",
+    "See more\\.\\.\\.",
+    "The Daily Journal search functionality is currently unavailable\\. We will have this back up as soon as possible\\.",
+    "Trending"
+   ],
+   "tail": [
+    "For reprint rights or to order a copy of your photo:",
+    "Submit your own column for publication to Diana Bosetti"
+   ]
+  },
+  "dailymail.com": {
+   "hosts": [
+    "dailymail.com"
+   ],
+   "outlets": [
+    "Daily Mail"
+   ],
+   "kill": [
+    "READ MORE: Candies are packed with dangerous red dye no\\.\\d+ in the US",
+    "e-mail",
+    "READ MORE:.*"
+   ],
+   "tail": [
+    "Most watched News videos"
+   ]
+  },
+  "dailynews.com": {
+   "hosts": [
+    "dailynews.com"
+   ]
+  },
+  "dailyrepublic.com": {
+   "hosts": [
+    "dailyrepublic.com"
+   ],
+   "outlets": [
+    "Daily Republic"
+   ],
+   "tail": [
+    "Recommended for you",
+    "Tags"
+   ]
+  },
+  "dairyprocessing.com": {
+   "hosts": [
+    "dairyprocessing.com"
+   ],
+   "outlets": [
+    "Dairy Processing"
+   ],
+   "kill": [
+    "source on Google"
+   ],
+   "head": "h1",
+   "strip": [
+    "Add\\s*as\\s*a\\s*preferred"
+   ]
+  },
+  "datastream.substack.com": {
+   "hosts": [
+    "datastream.substack.com"
+   ]
+  },
+  "davisenterprise.com": {
+   "hosts": [
+    "davisenterprise.com"
+   ]
+  },
+  "davisvanguard.org": {
+   "hosts": [
+    "davisvanguard.org"
+   ],
+   "outlets": [
+    "Davis Vanguard"
+   ],
+   "tail": [
+    "Categories:"
+   ],
+   "kill": [
+    "Follow the Vanguard on Social Media.*",
+    "To sign up for our new newsletter – Everyday Injustice – .*",
+    "Support our work – to become a sustaining at .*"
+   ]
+  },
+  "deadline.com": {
+   "hosts": [
+    "deadline.com"
+   ]
+  },
+  "dealmoon.com": {
+   "hosts": [
+    "dealmoon.com"
+   ],
+   "outlets": [
+    "Dealmoon"
+   ],
+   "kill": [
+    "DealMoon 北美省钱快报 美国攻略",
+    "Dealmoon User",
+    "English",
+    "\\d+",
+    "\\d+ \\d+ \\d+ \\d+",
+    "下载 DealMoon App",
+    "二手",
+    "体验更多精彩",
+    "信用卡",
+    "信用卡 购物娱乐 变美",
+    "到美必看",
+    "医疗药品",
+    "变美",
+    "商家导航",
+    "大牌折扣实时更新、本地攻略实用干货、社区分享同城好物，订阅推送 \\+ 小编选品，让每一分钱都花得值！",
+    "实用英文",
+    "家有宠物",
+    "我的收藏",
+    "我的爆料",
+    "我的评论",
+    "我的长文章",
+    "房屋家居 生育养娃 生活",
+    "扫码下载 App",
+    "折扣爆料",
+    "抢好货",
+    "时尚穿搭",
+    "求职 教育",
+    "汽车交通",
+    "点击排行",
+    "登录",
+    "社区",
+    "美国保险",
+    "美国攻略",
+    "联系我们 下载App",
+    "获取 DealMoon 应用程序",
+    "账号设置",
+    "退出登录",
+    "金融报税",
+    "饭团外卖",
+    "首页",
+    "首页 旅游 移民 美食 保险报税",
+    "🇺🇸美国"
+   ],
+   "tail": [
+    "最新评论 \\d+"
+   ],
+   "head": "h1"
+  },
+  "deloitte.wsj.com": {
+   "hosts": [
+    "deloitte.wsj.com"
+   ]
+  },
+  "deltacollegian.net": {
+   "hosts": [
+    "deltacollegian.net"
+   ]
+  },
+  "denvergazette.com": {
+   "hosts": [
+    "denvergazette.com"
+   ],
+   "outlets": [
+    "Denver Gazette",
+    "Denver Gazette, The"
+   ],
+   "kill": [
+    "CLICK HERE TO READ MORE FROM THE WASHINGTON EXAMINER",
+    "Washington Examiner Videos"
+   ],
+   "tail": [
+    "Washington Examiner Videos"
+   ]
+  },
+  "desertsun.com": {
+   "hosts": [
+    "desertsun.com"
+   ],
+   "outlets": [
+    "Desert Sun, The"
+   ],
+   "kill": [
+    "Featured Weekly Ad"
+   ]
+  },
+  "diasporanews.com": {
+   "hosts": [
+    "diasporanews.com"
+   ]
+  },
+  "digital-dev.ktla.com": {
+   "hosts": [
+    "digital-dev.ktla.com"
+   ]
+  },
+  "digital-release.fox5sandiego.com": {
+   "hosts": [
+    "digital-release.fox5sandiego.com"
+   ]
+  },
+  "digital-release.ktla.com": {
+   "hosts": [
+    "digital-release.ktla.com"
+   ]
+  },
+  "diyatvusa.com": {
+   "hosts": [
+    "diyatvusa.com"
+   ]
+  },
+  "dnyuz.com": {
+   "hosts": [
+    "dnyuz.com"
+   ]
+  },
+  "doinggoodtogether.substack.com": {
+   "hosts": [
+    "doinggoodtogether.substack.com"
+   ]
+  },
+  "dougporter.substack.com": {
+   "hosts": [
+    "dougporter.substack.com"
+   ],
+   "outlets": [
+    "dougporter.substack.com"
+   ],
+   "lkill": [
+    "subscribing to words & deeds is free\\. just click the blue button\\."
+   ]
+  },
+  "e.jewishinsider.com": {
+   "hosts": [
+    "e.jewishinsider.com"
+   ],
+   "outlets": [
+    "Jewish Insider"
+   ],
+   "kill": [
+    "Please log in if you already have a subscription, or subscribe to access the latest updates\\.",
+    "Recent Daily Kickoff Newsletters"
+   ],
+   "strip": [
+    "Add JewishInsider on Google"
+   ]
+  },
+  "eastcountytoday.net": {
+   "hosts": [
+    "eastcountytoday.net"
+   ],
+   "outlets": [
+    "East County Today"
+   ],
+   "kill": [
+    "AG Shares Tips to Help Consumers Avoid Scams\\.\\.\\.",
+    "Nov \\d+, \\d+",
+    "Spare the Air Alert Issued for Friday Due\\.\\.\\.",
+    "You may also like",
+    "\\d+ comments"
+   ],
+   "strip": [
+    "FacebookTwitterPinterestLinkedinRedditEmail"
+   ]
+  },
+  "eater.com": {
+   "hosts": [
+    "eater.com"
+   ]
+  },
+  "ebar.com": {
+   "hosts": [
+    "ebar.com"
+   ]
+  },
+  "ecjlaw.com": {
+   "hosts": [
+    "ecjlaw.com"
+   ],
+   "outlets": [
+    "Ervin Cohen & Jessup LLP"
+   ],
+   "tail": [
+    "Subscribe"
+   ]
+  },
+  "ecuavisa.com": {
+   "hosts": [
+    "ecuavisa.com"
+   ]
+  },
+  "edhat.com": {
+   "hosts": [
+    "edhat.com"
+   ],
+   "outlets": [
+    "Edhat",
+    "edhat"
+   ],
+   "kill": [
+    "By Lauren Bray • October \\d+, \\d+",
+    "Leave a Comment",
+    "Leave a Review or Comment",
+    "October \\d+, \\d+",
+    "Share This Article",
+    "VOR lets see some facts dude\\. I’ve researched this before i posted\\. Show me mass shootings in other nations\\. Show me mass shootings in other nations at the quantity and frequency we have\\. Please do\\.",
+    "You May Also Like",
+    "You must be logged in to post a comment\\.",
+    "because it’s an AR\\d+\\. Not a glock\\."
+   ],
+   "tail": [
+    "\\d+ comments?",
+    "Trusted by local businesses"
+   ]
+  },
+  "edsource.org": {
+   "hosts": [
+    "edsource.org"
+   ],
+   "outlets": [
+    "EdSource"
+   ],
+   "tail": [
+    "More News Briefs"
+   ]
+  },
+  "edweek.org": {
+   "hosts": [
+    "edweek.org"
+   ],
+   "outlets": [
+    "Education Week"
+   ],
+   "lkill": [
+    "see also:"
+   ]
+  },
+  "eenews.net": {
+   "hosts": [
+    "eenews.net"
+   ]
+  },
+  "ejewishphilanthropy.com": {
+   "hosts": [
+    "ejewishphilanthropy.com"
+   ],
+   "outlets": [
+    "eJewishPhilanthropy"
+   ],
+   "kill": [
+    "Follow us on Whatsapp Follow us on Telegram",
+    "Subscribe now to",
+    "Your Daily Phil",
+    "Subscribe now to Your Daily Phil"
+   ],
+   "img": [
+    "f5ed73e60802"
+   ]
+  },
+  "eldiariony.com": {
+   "hosts": [
+    "eldiariony.com"
+   ]
+  },
+  "election.org": {
+   "hosts": [
+    "election.org"
+   ]
+  },
+  "elpais.com": {
+   "hosts": [
+    "elpais.com"
+   ]
+  },
+  "enewspaper.latimes.com": {
+   "hosts": [
+    "enewspaper.latimes.com"
+   ]
+  },
+  "engadget.com": {
+   "hosts": [
+    "engadget.com"
+   ]
+  },
+  "english.elpais.com": {
+   "hosts": [
+    "english.elpais.com"
+   ]
+  },
+  "envirovoters.org": {
+   "hosts": [
+    "envirovoters.org"
+   ],
+   "outlets": [
+    "California Environmental Voters",
+    "Environmental Voters"
+   ],
+   "kill": [
+    "Shopping Basket",
+    "Get the latest climate and environmental news and opportunities to take action\\."
+   ]
+  },
+  "epaper.singtaousa.com": {
+   "hosts": [
+    "epaper.singtaousa.com"
+   ],
+   "outlets": [
+    "Sing Tao Daily"
+   ],
+   "kill": [
+    "RkJQdWJsaXNoZXIy MTIyMjc\\d+OQ==",
+    "RkJQdWJsaXNoZXIy ODc\\d+MTYz"
+   ],
+   "tail": [
+    "Made with FlippingBook"
+   ]
+  },
+  "epochtimes.com": {
+   "hosts": [
+    "epochtimes.com"
+   ],
+   "outlets": [
+    "Epoch Times, The"
+   ],
+   "kill": [
+    "人氣：\\d+",
+    "正体 简体"
+   ],
+   "tail": [
+    "相关专题: topshow \\/ 旧金山首页",
+    "相关新闻",
+    "相關新聞"
+   ]
+  },
+  "es-us.finanzas.yahoo.com": {
+   "hosts": [
+    "es-us.finanzas.yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "es-us.noticias.yahoo.com": {
+   "hosts": [
+    "es-us.noticias.yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "kill": [
+    "Publicidad"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "es-us.vida-estilo.yahoo.com": {
+   "hosts": [
+    "es-us.vida-estilo.yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "kill": [
+    "Publicidad"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "es.theepochtimes.com": {
+   "hosts": [
+    "es.theepochtimes.com"
+   ],
+   "outlets": [
+    "Epoch Times, The"
+   ],
+   "kill": [
+    "Compartir ahora",
+    "Copiar enlace"
+   ],
+   "tail": [
+    "Únase a nuestro canal de Telegram para recibir las últimas noticias al instante haciendo click aquí"
+   ]
+  },
+  "escondidograpevine.com": {
+   "hosts": [
+    "escondidograpevine.com"
+   ],
+   "outlets": [
+    "Escondido Grapevine"
+   ],
+   "kill": [
+    "Related"
+   ]
+  },
+  "etnews.com": {
+   "hosts": [
+    "etnews.com"
+   ],
+   "outlets": [
+    "Electronic Times"
+   ],
+   "kill": [
+    "가"
+   ]
+  },
+  "eurweb.com": {
+   "hosts": [
+    "eurweb.com"
+   ]
+  },
+  "excelsiorcalifornia.com": {
+   "hosts": [
+    "excelsiorcalifornia.com"
+   ],
+   "outlets": [
+    "Excelsior California",
+    "Excelsior: Orange County Register weekly"
+   ],
+   "kill": [
+    "Getting your Trinity Audio player ready\\.\\.\\."
+   ]
+  },
+  "fa.norcalpublicmedia.org": {
+   "hosts": [
+    "fa.norcalpublicmedia.org"
+   ]
+  },
+  "farmprogress.com": {
+   "hosts": [
+    "farmprogress.com"
+   ]
+  },
+  "fdiforum.net": {
+   "hosts": [
+    "fdiforum.net"
+   ],
+   "outlets": [
+    "Food & Drink International"
+   ],
+   "kill": [
+    "Facebook",
+    "Linkedin",
+    "X"
+   ]
+  },
+  "ferra.ru": {
+   "hosts": [
+    "ferra.ru"
+   ]
+  },
+  "finance.yahoo.com": {
+   "hosts": [
+    "finance.yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "flavorist.com": {
+   "hosts": [
+    "flavorist.com"
+   ]
+  },
+  "fnnews.com": {
+   "hosts": [
+    "fnnews.com"
+   ]
+  },
+  "food-safety.com": {
+   "hosts": [
+    "food-safety.com"
+   ],
+   "outlets": [
+    "Food Safety Magazine"
+   ],
+   "kill": [
+    "Ask",
+    "KEYWORDS: generally recognized as safe",
+    "Looking for quick answers on food safety topics\\?",
+    "NewsContamination ControlFood TypeRegulatoryChemical ControlIngredients",
+    "Share This Story",
+    "Try Ask FSM, our new smart AI search tool\\. Ask FSM →"
+   ],
+   "tail": [
+    "Recommended Content",
+    "See More Products"
+   ],
+   "head": "h1",
+   "img": [
+    "d339537e0dfe"
+   ]
+  },
+  "foodandwine.com": {
+   "hosts": [
+    "foodandwine.com"
+   ]
+  },
+  "foodbev.com": {
+   "hosts": [
+    "foodbev.com"
+   ],
+   "outlets": [
+    "FoodBev Media"
+   ],
+   "kill": [
+    "Access more as a FoodBev subscriber",
+    "Sign up to FoodBev and unlock more insights from the international food and beverage industry\\. Subscribers have access to webinars, newsletters, publications and more\\.\\.\\."
+   ],
+   "tail": [
+    "Related posts"
+   ]
+  },
+  "foodbible.com": {
+   "hosts": [
+    "foodbible.com"
+   ],
+   "outlets": [
+    "FoodBible"
+   ],
+   "kill": [
+    "Advert",
+    "Choose your content:",
+    "Topics:.*"
+   ]
+  },
+  "foodbusinessmea.com": {
+   "hosts": [
+    "foodbusinessmea.com"
+   ]
+  },
+  "foodbusinessnews.net": {
+   "hosts": [
+    "foodbusinessnews.net"
+   ]
+  },
+  "fooddive.com": {
+   "hosts": [
+    "fooddive.com"
+   ],
+   "outlets": [
+    "Food Dive"
+   ],
+   "kill": [
+    "An article from",
+    "This audio is auto-generated\\. Please let us know if you have feedback\\."
+   ],
+   "img": [
+    "20b12ef6013f"
+   ]
+  },
+  "foodnavigator-usa.com": {
+   "hosts": [
+    "foodnavigator-usa.com"
+   ],
+   "outlets": [
+    "FoodNavigator-USA"
+   ],
+   "kill": [
+    "Explore related questions"
+   ]
+  },
+  "foodnavigator.com": {
+   "hosts": [
+    "foodnavigator.com"
+   ]
+  },
+  "foodpolitics.com": {
+   "hosts": [
+    "foodpolitics.com"
+   ],
+   "outlets": [
+    "Food Politics by Marion Nestle"
+   ],
+   "kill": [
+    "Search this site"
+   ],
+   "tail": [
+    "Share"
+   ]
+  },
+  "foodprocessing.com": {
+   "hosts": [
+    "foodprocessing.com"
+   ],
+   "outlets": [
+    "Food Processing"
+   ],
+   "kill": [
+    "Add Us On Google",
+    "Skip to main content"
+   ],
+   "tail": [
+    "Show more"
+   ]
+  },
+  "foodsafetynews.com": {
+   "hosts": [
+    "foodsafetynews.com"
+   ],
+   "outlets": [
+    "Food Safety News"
+   ],
+   "kill": [
+    "Get the free version of our newsletter\\. No spam ever, unsubscribe anytime\\.",
+    "\\(To sign up for a free subscription to Food Safety News, click here\\)",
+    "\\(To sign up for a free subscription to Food Safety News, click here\\.\\)",
+    "\\(To sign up for a free subscription to Food Safety News,\\.\\)"
+   ],
+   "tail": [
+    "All articles"
+   ]
+  },
+  "foodservicedirector.com": {
+   "hosts": [
+    "foodservicedirector.com"
+   ]
+  },
+  "forumdaily.com": {
+   "hosts": [
+    "forumdaily.com"
+   ]
+  },
+  "forward.com": {
+   "hosts": [
+    "forward.com"
+   ],
+   "outlets": [
+    "Forward, The"
+   ],
+   "kill": [
+    "A weekly newsletter where the Forward's journalists reflect on what it means to be Jewish in America today\\.",
+    "Add a noindex tag in Google search",
+    "Are you one of the \\d+% of readers who support us\\?",
+    "But did you know that only \\d+% of Forward readers donate to support us\\?",
+    "Don’t just read the Forward — invest in it\\. Support our work today!",
+    "Explore",
+    "Never miss a story! The Forward's daily newsletter gives you the most essential Jewish news you need to start your day\\. Sign up for Forwarding the News here\\.",
+    "Please read before republishing",
+    "Preserve our canonical link in Google search",
+    "Reader support is the only way that we are able to do this work\\. If you find value in what we do, please support our nonprofit newsroom\\.",
+    "Republish Article",
+    "Republish This Story",
+    "Share on Facebook",
+    "Share on X",
+    "Sign up for Looking Forward",
+    "Support the Forward",
+    "We believe that there shouldn’t be any barriers to quality, independent Jewish news\\. That’s why we invite millions to read and share our journalism without a paywall or subscription\\.",
+    "\\d+ m READ"
+   ],
+   "tail": [
+    "Copied to clipboard"
+   ],
+   "strip": [
+    "While\\s*the\\s*Forward\\s*is\\s*free\\s*to\\s*read,\\s*it\\s*isn’t\\s*free\\s*to\\s*produce\\."
+   ],
+   "img": [
+    "9dacfb5b7943"
+   ]
+  },
+  "fox40.com": {
+   "hosts": [
+    "fox40.com"
+   ],
+   "outlets": [
+    "FOX40"
+   ],
+   "kill": [
+    "Add as preferred source on Google",
+    "More Videos",
+    "Read next > Read next > Next Read next > Next story in Read next > Next story in"
+   ],
+   "tail": [
+    "More Videos"
+   ]
+  },
+  "foxandhoundsdaily.com": {
+   "hosts": [
+    "foxandhoundsdaily.com"
+   ]
+  },
+  "foxbusiness.com": {
+   "hosts": [
+    "foxbusiness.com"
+   ],
+   "outlets": [
+    "Fox Business"
+   ],
+   "kill": [
+    "GET FOX BUSINESS ON THE GO BY CLICKING HERE"
+   ]
+  },
+  "foxla.com": {
+   "hosts": [
+    "foxla.com"
+   ]
+  },
+  "foxnews.com": {
+   "hosts": [
+    "foxnews.com"
+   ],
+   "outlets": [
+    "Charleston Gazette-Mail",
+    "Fox News"
+   ],
+   "kill": [
+    "CLICK HERE TO GET THE FOX NEWS APP",
+    "CLICK TO GET THE FOX NEWS APP",
+    "Fox News Flash top headlines are here\\. Check out what's clicking on Foxnews\\.com\\.",
+    "Fox News Flash top headlines for September \\d+",
+    "NEWYou can now listen to Fox News articles!"
+   ]
+  },
+  "fplglaw.com": {
+   "hosts": [
+    "fplglaw.com"
+   ],
+   "outlets": [
+    "For Purpose Law Group"
+   ],
+   "tail": [
+    "Download Blog Post"
+   ]
+  },
+  "fr.timesofisrael.com": {
+   "hosts": [
+    "fr.timesofisrael.com"
+   ],
+   "outlets": [
+    "Times of Israel, The"
+   ],
+   "kill": [
+    "Accueil",
+    "Homepage",
+    "home page",
+    "0:00 / 0:00",
+    "Promoted: .{0,80}",
+    "Help us report truthfully on social media",
+    "As a multimedia journalist, my job is to take the quality, fact-based journalism produced by The Times of Israel newsroom and make it accessible across every platform — from Instagram posts to podcasts to short-form videos\\.",
+    "This is how many, especially young people, consume news these days\\. But misinformation is rampant on social media\\. Our team at ToI produces accurate, responsible short-form reporting on Israel and the Jewish world\\.",
+    "If you believe in the importance of factual social media journalism ?, please consider joining our reader support group, The Times of Israel Community\\. ?Your financial support is essential to sustain responsible multimedia reporting\\.",
+    "— Gabriella Jacobs, multimedia journalist",
+    "If you’d like to comment, join The Times of Israel Community\\.?.{0,60}",
+    "Get The Times of Israel's Daily Edition.{0,120}"
+   ],
+   "tail": [
+    "Ce qui se passe en Israël vous importe \\.\\.\\.",
+    "read more:",
+    "comments"
+   ],
+   "strip": [
+    "Support our work Support our work Already a member\\? Sign in to stop seeing this",
+    "JOIN THE TOI COMMUNITY Already a member\\? Log in here",
+    "\\bAdvertisement\\b"
+   ]
+  },
+  "fresnobee.com": {
+   "hosts": [
+    "fresnobee.com"
+   ]
+  },
+  "frumnews.com": {
+   "hosts": [
+    "frumnews.com"
+   ]
+  },
+  "gastronomiaycia.com": {
+   "hosts": [
+    "gastronomiaycia.com"
+   ]
+  },
+  "gatdaily.com": {
+   "hosts": [
+    "gatdaily.com"
+   ],
+   "outlets": [
+    "GAT Daily"
+   ],
+   "kill": [
+    "Advertisement — Continue Reading Below"
+   ]
+  },
+  "gazetametro.ru": {
+   "hosts": [
+    "gazetametro.ru"
+   ]
+  },
+  "gazette.com": {
+   "hosts": [
+    "gazette.com"
+   ]
+  },
+  "geekspin.co": {
+   "hosts": [
+    "geekspin.co"
+   ]
+  },
+  "gizmodo.com": {
+   "hosts": [
+    "gizmodo.com"
+   ]
+  },
+  "glasnarod.ru": {
+   "hosts": [
+    "glasnarod.ru"
+   ]
+  },
+  "golden-state.org": {
+   "hosts": [
+    "golden-state.org"
+   ]
+  },
+  "goldencoastjournal.com": {
+   "hosts": [
+    "goldencoastjournal.com"
+   ]
+  },
+  "goldengatexpress.org": {
+   "hosts": [
+    "goldengatexpress.org"
+   ]
+  },
+  "goldenstatereport.substack.com": {
+   "hosts": [
+    "goldenstatereport.substack.com"
+   ]
+  },
+  "goldrushcam.com": {
+   "hosts": [
+    "goldrushcam.com"
+   ]
+  },
+  "goodmorningamerica.com": {
+   "hosts": [
+    "goodmorningamerica.com"
+   ]
+  },
+  "governing.com": {
+   "hosts": [
+    "governing.com"
+   ],
+   "outlets": [
+    "Governing"
+   ],
+   "kill": [
+    "Facebook",
+    "Tags:"
+   ],
+   "tail": [
+    "Related Articles"
+   ]
+  },
+  "grantspasstribune.com": {
+   "hosts": [
+    "grantspasstribune.com"
+   ]
+  },
+  "greenmemag.com": {
+   "hosts": [
+    "greenmemag.com"
+   ]
+  },
+  "greenqueen.com.hk": {
+   "hosts": [
+    "greenqueen.com.hk"
+   ]
+  },
+  "gtlaw.com": {
+   "hosts": [
+    "gtlaw.com"
+   ]
+  },
+  "gunownersca.com": {
+   "hosts": [
+    "gunownersca.com"
+   ]
+  },
+  "guns.com": {
+   "hosts": [
+    "guns.com"
+   ],
+   "outlets": [
+    "Guns.com"
+   ],
+   "tail": [
+    "SEE DEALS ON CALIFORNIA COMPLIANT GUNS"
+   ]
+  },
+  "gvwire.com": {
+   "hosts": [
+    "gvwire.com"
+   ],
+   "outlets": [
+    "GV Wire"
+   ],
+   "kill": [
+    "DON'T MISS",
+    "UP NEXT",
+    "\\[activecampaign[^\\]]*\\]"
+   ],
+   "lkill": [
+    "related topics:",
+    "don't miss",
+    "up next",
+    "share",
+    "published .{3,60} on",
+    "more from .{3,40}"
+   ],
+   "ltail": [
+    "you may like"
+   ]
+  },
+  "habr.com": {
+   "hosts": [
+    "habr.com"
+   ]
+  },
+  "hanbitdaily.com": {
+   "hosts": [
+    "hanbitdaily.com"
+   ]
+  },
+  "hawaiitribune-herald.com": {
+   "hosts": [
+    "hawaiitribune-herald.com"
+   ],
+   "outlets": [
+    "TCA News Service"
+   ],
+   "kill": [
+    "We Want To Hear From You.*",
+    "Do you have a question or comment for the KFF Health News team\\?.*"
+   ]
+  },
+  "healthday.com": {
+   "hosts": [
+    "healthday.com"
+   ]
+  },
+  "healthtips.kr": {
+   "hosts": [
+    "healthtips.kr"
+   ]
+  },
+  "healthxmagazine.com": {
+   "hosts": [
+    "healthxmagazine.com"
+   ]
+  },
+  "hebrewnews.com": {
+   "hosts": [
+    "hebrewnews.com"
+   ]
+  },
+  "heysocal.com": {
+   "hosts": [
+    "heysocal.com"
+   ],
+   "outlets": [
+    "HeySoCal"
+   ],
+   "tail": [
+    "Add a comment",
+    "Keep Up to Date with the Most Important News"
+   ]
+  },
+  "highpointdigest.com": {
+   "hosts": [
+    "highpointdigest.com"
+   ]
+  },
+  "highschool.latimes.com": {
+   "hosts": [
+    "highschool.latimes.com"
+   ]
+  },
+  "himalayanvoice.com": {
+   "hosts": [
+    "himalayanvoice.com"
+   ]
+  },
+  "hk.aboluowang.com": {
+   "hosts": [
+    "hk.aboluowang.com"
+   ]
+  },
+  "hk.news.yahoo.com": {
+   "hosts": [
+    "hk.news.yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "homelessstrategy.com": {
+   "hosts": [
+    "homelessstrategy.com"
+   ]
+  },
+  "homeroom.astartingpoint.com": {
+   "hosts": [
+    "homeroom.astartingpoint.com"
+   ]
+  },
+  "hongparkblog.com": {
+   "hosts": [
+    "hongparkblog.com"
+   ]
+  },
+  "hoodline.com": {
+   "hosts": [
+    "hoodline.com"
+   ],
+   "outlets": [
+    "Hoodline"
+   ],
+   "kill": [
+    "Politics & Govt in \\.\\.\\."
+   ]
+  },
+  "houstonpublicmedia.org": {
+   "hosts": [
+    "houstonpublicmedia.org"
+   ]
+  },
+  "hsjchronicle.com": {
+   "hosts": [
+    "hsjchronicle.com"
+   ]
+  },
+  "httv.us": {
+   "hosts": [
+    "httv.us"
+   ]
+  },
+  "huntbums.com": {
+   "hosts": [
+    "huntbums.com"
+   ]
+  },
+  "hunton.com": {
+   "hosts": [
+    "hunton.com"
+   ]
+  },
+  "hypebeast.kr": {
+   "hosts": [
+    "hypebeast.kr"
+   ]
+  },
+  "hyperallergic.com": {
+   "hosts": [
+    "hyperallergic.com"
+   ]
+  },
+  "ibtimes.com": {
+   "hosts": [
+    "ibtimes.com"
+   ]
+  },
+  "iheart.com": {
+   "hosts": [
+    "iheart.com"
+   ]
+  },
+  "ijpr.org": {
+   "hosts": [
+    "ijpr.org"
+   ],
+   "outlets": [
+    "Jefferson Public Radio"
+   ],
+   "kill": [
+    "Facebook"
+   ]
+  },
+  "independent.co.uk": {
+   "hosts": [
+    "independent.co.uk"
+   ],
+   "outlets": [
+    "Independent, The",
+    "Independent, The/The Independent on Sunday"
+   ],
+   "kill": [
+    "Become an Independent member to bookmark this article",
+    "Join our commenting forum",
+    "Join thought-provoking conversations, follow other Independent readers and see their replies",
+    "Want to bookmark your favourite articles and stories to read or reference later\\? Start your Independent Membership today\\."
+   ]
+  },
+  "independent.com": {
+   "hosts": [
+    "independent.com"
+   ],
+   "outlets": [
+    "Santa Barbara Independent"
+   ],
+   "tail": [
+    "Premier Events"
+   ],
+   "ltail": [
+    "premier events"
+   ]
+  },
+  "independent.org": {
+   "hosts": [
+    "independent.org"
+   ]
+  },
+  "indexbox.io": {
+   "hosts": [
+    "indexbox.io"
+   ],
+   "outlets": [
+    "IndexBox"
+   ],
+   "tail": [
+    "Рекомендуемые публикации"
+   ]
+  },
+  "indivisibleventura.org": {
+   "hosts": [
+    "indivisibleventura.org"
+   ],
+   "outlets": [
+    "Indivisible Ventura"
+   ],
+   "kill": [
+    "Back to Top"
+   ],
+   "tail": [
+    "Share this:"
+   ]
+  },
+  "infobae.com": {
+   "hosts": [
+    "infobae.com"
+   ],
+   "outlets": [
+    "Infobae"
+   ],
+   "kill": [
+    "Compartir nota:",
+    "PUBLICIDAD",
+    "Temas Relacionados"
+   ],
+   "tail": [
+    "Compartir nota:"
+   ]
+  },
+  "inlandvalleynews.com": {
+   "hosts": [
+    "inlandvalleynews.com"
+   ]
+  },
+  "inn.co.il": {
+   "hosts": [
+    "inn.co.il"
+   ]
+  },
+  "inproximity.substack.com": {
+   "hosts": [
+    "inproximity.substack.com"
+   ]
+  },
+  "insideepa.com": {
+   "hosts": [
+    "insideepa.com"
+   ]
+  },
+  "insider.govtech.com": {
+   "hosts": [
+    "insider.govtech.com"
+   ],
+   "outlets": [
+    "Government Technology"
+   ],
+   "lkill": [
+    "wrong turn! only industry insider.{0,60}",
+    "already an insider\\? log in here ?\\.?"
+   ]
+  },
+  "insurancejournal.com": {
+   "hosts": [
+    "insurancejournal.com"
+   ],
+   "outlets": [
+    "insurancejournal.com"
+   ],
+   "kill": [
+    "Advertisement"
+   ]
+  },
+  "insurancenewsnet.com": {
+   "hosts": [
+    "insurancenewsnet.com"
+   ],
+   "outlets": [
+    "TCA News Service"
+   ],
+   "kill": [
+    "We Want To Hear From You.*",
+    "Do you have a question or comment for the KFF Health News team\\?.*"
+   ]
+  },
+  "israeliweek.com": {
+   "hosts": [
+    "israeliweek.com"
+   ]
+  },
+  "israelnationalnews.com": {
+   "hosts": [
+    "israelnationalnews.com"
+   ]
+  },
+  "issuepress.kr": {
+   "hosts": [
+    "issuepress.kr"
+   ],
+   "outlets": [
+    "Issue Press"
+   ],
+   "lkill": [
+    "댓글을 달기 위해서는 로그인해야합니다\\.",
+    "답글 남기기 응답 취소"
+   ],
+   "ltail": [
+    "답글 남기기 응답 취소"
+   ]
+  },
+  "ivpressonline.com": {
+   "hosts": [
+    "ivpressonline.com"
+   ],
+   "outlets": [
+    "Adelante Valle",
+    "Imperial Valley Press"
+   ],
+   "tail": [
+    "Recommended for you",
+    "Tags"
+   ],
+   "strip": [
+    "Manage your lists"
+   ]
+  },
+  "jbiznews.com": {
+   "hosts": [
+    "jbiznews.com"
+   ]
+  },
+  "jdsupra.com": {
+   "hosts": [
+    "jdsupra.com"
+   ]
+  },
+  "jeffkrasno.substack.com": {
+   "hosts": [
+    "jeffkrasno.substack.com"
+   ]
+  },
+  "jewish.ru": {
+   "hosts": [
+    "jewish.ru"
+   ]
+  },
+  "jewishcal.org": {
+   "hosts": [
+    "jewishcal.org"
+   ]
+  },
+  "jewishchronicle.timesofisrael.com": {
+   "hosts": [
+    "jewishchronicle.timesofisrael.com"
+   ],
+   "outlets": [
+    "Times of Israel, The"
+   ],
+   "kill": [
+    "Homepage",
+    "home page",
+    "0:00 / 0:00",
+    "Promoted: .{0,80}",
+    "Help us report truthfully on social media",
+    "As a multimedia journalist, my job is to take the quality, fact-based journalism produced by The Times of Israel newsroom and make it accessible across every platform — from Instagram posts to podcasts to short-form videos\\.",
+    "This is how many, especially young people, consume news these days\\. But misinformation is rampant on social media\\. Our team at ToI produces accurate, responsible short-form reporting on Israel and the Jewish world\\.",
+    "If you believe in the importance of factual social media journalism ?, please consider joining our reader support group, The Times of Israel Community\\. ?Your financial support is essential to sustain responsible multimedia reporting\\.",
+    "— Gabriella Jacobs, multimedia journalist",
+    "If you’d like to comment, join The Times of Israel Community\\.?.{0,60}",
+    "Get The Times of Israel's Daily Edition.{0,120}"
+   ],
+   "tail": [
+    "read more:",
+    "comments"
+   ],
+   "strip": [
+    "Support our work Support our work Already a member\\? Sign in to stop seeing this",
+    "JOIN THE TOI COMMUNITY Already a member\\? Log in here",
+    "\\bAdvertisement\\b"
+   ]
+  },
+  "jewishfed.org": {
+   "hosts": [
+    "jewishfed.org"
+   ]
+  },
+  "jewishinsider.com": {
+   "hosts": [
+    "jewishinsider.com"
+   ],
+   "outlets": [
+    "Jewish Insider"
+   ],
+   "kill": [
+    "Add JewishInsider on Google",
+    "Facebook",
+    "Please log in if you already have a subscription, or subscribe to access the latest updates\\.",
+    "Share options",
+    "Telegram",
+    "WhatsApp",
+    "Recent Daily Kickoff Newsletters"
+   ],
+   "strip": [
+    "Add JewishInsider on Google"
+   ]
+  },
+  "jewishjournal.com": {
+   "hosts": [
+    "jewishjournal.com"
+   ],
+   "outlets": [
+    "(unknown)",
+    "Jewish Journal",
+    "Jewish Journal of Greater Los Angeles, The"
+   ],
+   "kill": [
+    "Want to be in Movers & Shakers\\? Send us your highlights, events, honors and simchas\\. Email ryant@jewishjournal\\.com\\.",
+    "Want to be in Movers & Shakers\\? Send us.*",
+    "Moving and Shaking highlights events, honors and simchas\\. Got a tip.*"
+   ]
+  },
+  "jewishwebsite.com": {
+   "hosts": [
+    "jewishwebsite.com"
+   ]
+  },
+  "jns.org": {
+   "hosts": [
+    "jns.org"
+   ],
+   "outlets": [
+    "JNS",
+    "Jewish News Syndicate"
+   ],
+   "kill": [
+    "Copy"
+   ],
+   "img": [
+    "408e4d7957c1",
+    "6067ad5cdcc9"
+   ]
+  },
+  "joeguzzardi.substack.com": {
+   "hosts": [
+    "joeguzzardi.substack.com"
+   ]
+  },
+  "jpost.com": {
+   "hosts": [
+    "jpost.com"
+   ],
+   "outlets": [
+    "Jerusalem Post, The"
+   ],
+   "kill": [
+    "Follow us on Google"
+   ]
+  },
+  "jta.org": {
+   "hosts": [
+    "jta.org"
+   ],
+   "outlets": [
+    "Jewish Telegraphic Agency"
+   ],
+   "kill": [
+    "Advertisement",
+    "Getting your Trinity Audio player ready\\.\\.\\."
+   ]
+  },
+  "just-food.com": {
+   "hosts": [
+    "just-food.com"
+   ],
+   "outlets": [
+    "Just Food"
+   ],
+   "ltail": [
+    "access deeper industry intelligence"
+   ]
+  },
+  "jweekly.com": {
+   "hosts": [
+    "jweekly.com"
+   ],
+   "outlets": [
+    "J. The Jewish News of Northern California",
+    "Jewish Bulletin of Northern California"
+   ],
+   "kill": [
+    "J\\. covers our community better than any other source and provides news you can't find elsewhere\\. Support local Jewish journalism and give to J\\. today\\. Your donation will help J\\. survive and thrive!",
+    "More by Niva Ashkenazi",
+    "Related",
+    "Support J\\.",
+    "Sign up for Weekday J and get the latest on what's happening in the Jewish Bay Area\\."
+   ],
+   "lkill": [
+    "related",
+    "j\\. covers our community better than any other source.{0,250}",
+    "support j\\.",
+    "more by .{3,40}",
+    "sign up for weekday j.{0,120}"
+   ],
+   "drop": [
+    {
+     "attr": "class",
+     "re": "(^|\\s)cky-"
+    },
+    {
+     "tag": "nav"
+    }
+   ]
+  },
+  "jww.org": {
+   "hosts": [
+    "jww.org"
+   ],
+   "outlets": [
+    "Jewish World Watch"
+   ],
+   "kill": [
+    "Share this article:"
+   ]
+  },
+  "k12dive.com": {
+   "hosts": [
+    "k12dive.com"
+   ]
+  },
+  "kabc.com": {
+   "hosts": [
+    "kabc.com"
+   ],
+   "outlets": [
+    "KABC 790 AM"
+   ],
+   "tail": [
+    "On Air Now"
+   ]
+  },
+  "kapital.kz": {
+   "hosts": [
+    "kapital.kz"
+   ],
+   "outlets": [
+    "Kapital.kz"
+   ],
+   "kill": [
+    "Реклама"
+   ]
+  },
+  "kathleenwillcox.substack.com": {
+   "hosts": [
+    "kathleenwillcox.substack.com"
+   ]
+  },
+  "katv.com": {
+   "hosts": [
+    "katv.com"
+   ]
+  },
+  "kcbx.org": {
+   "hosts": [
+    "kcbx.org"
+   ],
+   "outlets": [
+    "KCBX"
+   ],
+   "kill": [
+    "Facebook"
+   ]
+  },
+  "kcra.com": {
+   "hosts": [
+    "kcra.com"
+   ],
+   "outlets": [
+    "KCRA 3"
+   ],
+   "kill": [
+    "Advertisement",
+    "See more coverage of top California stories here \\| Download our app \\|",
+    "See more coverage of top California stories here \\| Download our app \\| \\| Find us on YouTube here and subscribe to our channel",
+    "Sorry, this video is not available, please check back later\\.",
+    "See more coverage of top California stories here.{0,200}",
+    "Sorry, this video is not available, please check back later\\.?",
+    "Top Picks"
+   ],
+   "tail": [
+    "See more coverage of top California stories here \\| Download our app \\| \\| Find us on YouTube here and subscribe to our channel"
+   ],
+   "img": [
+    "b386ddef1e44"
+   ]
+  },
+  "kelleydrye.com": {
+   "hosts": [
+    "kelleydrye.com"
+   ]
+  },
+  "kellyjohnston.substack.com": {
+   "hosts": [
+    "kellyjohnston.substack.com"
+   ]
+  },
+  "keyt.com": {
+   "hosts": [
+    "keyt.com"
+   ]
+  },
+  "kffhealthnews.org": {
+   "hosts": [
+    "kffhealthnews.org"
+   ],
+   "outlets": [
+    "KFF Health News",
+    "TCA News Service"
+   ],
+   "kill": [
+    "We Want To Hear From You.*",
+    "Do you have a question or comment for the KFF Health News team\\?.*"
+   ]
+  },
+  "kfiam640.iheart.com": {
+   "hosts": [
+    "kfiam640.iheart.com"
+   ]
+  },
+  "kfn.one": {
+   "hosts": [
+    "kfn.one"
+   ]
+  },
+  "kget.com": {
+   "hosts": [
+    "kget.com"
+   ],
+   "outlets": [
+    "kget.com"
+   ],
+   "kill": [
+    "Advertisement"
+   ]
+  },
+  "khan.co.kr": {
+   "hosts": [
+    "khan.co.kr"
+   ]
+  },
+  "kiisfm.iheart.com": {
+   "hosts": [
+    "kiisfm.iheart.com"
+   ]
+  },
+  "kitsapsun.com": {
+   "hosts": [
+    "kitsapsun.com"
+   ]
+  },
+  "kjhou.com": {
+   "hosts": [
+    "kjhou.com"
+   ],
+   "outlets": [
+    "Korean Journal"
+   ],
+   "kill": [
+    "\\(구\\)코리안저널",
+    "광고문의",
+    "구인\\/구직\\/매매",
+    "데일리",
+    "로컬",
+    "업소록",
+    "칼럼",
+    "타운"
+   ]
+  },
+  "knewsla.com": {
+   "hosts": [
+    "knewsla.com"
+   ]
+  },
+  "knock-la.com": {
+   "hosts": [
+    "knock-la.com"
+   ],
+   "outlets": [
+    "Knock LA"
+   ],
+   "kill": [
+    "Back to Top",
+    "In \"News\"",
+    "Related"
+   ]
+  },
+  "ko.shuangmachemical.com": {
+   "hosts": [
+    "ko.shuangmachemical.com"
+   ]
+  },
+  "kogo.iheart.com": {
+   "hosts": [
+    "kogo.iheart.com"
+   ]
+  },
+  "koreadaily.com": {
+   "hosts": [
+    "koreadaily.com"
+   ]
+  },
+  "koreadailytimes.com": {
+   "hosts": [
+    "koreadailytimes.com"
+   ]
+  },
+  "koreatimes.com": {
+   "hosts": [
+    "koreatimes.com"
+   ],
+   "outlets": [
+    "Korea Times"
+   ],
+   "kill": [
+    "close",
+    "글꼴 크게 작게 인쇄 facebook twitter 구글"
+   ],
+   "img": [
+    "dd205dbf0b04"
+   ]
+  },
+  "koreatowndaily.com": {
+   "hosts": [
+    "koreatowndaily.com"
+   ]
+  },
+  "kormedi.com": {
+   "hosts": [
+    "kormedi.com"
+   ],
+   "outlets": [
+    "Kormedi"
+   ],
+   "lkill": [
+    "댓글 #"
+   ]
+  },
+  "kpbs.org": {
+   "hosts": [
+    "kpbs.org"
+   ],
+   "outlets": [
+    "CALmatters",
+    "KPBS"
+   ],
+   "kill": [
+    "Advertisement",
+    "Facebook",
+    "January \\d+, \\d+January \\d+, \\d+",
+    "WhatsApp"
+   ]
+  },
+  "kqed.org": {
+   "hosts": [
+    "kqed.org"
+   ],
+   "outlets": [
+    "KQED",
+    "KQED Political Breakdown"
+   ],
+   "kill": [
+    "Related Article",
+    "Related Stories",
+    "upper waypoint"
+   ]
+  },
+  "krcrtv.com": {
+   "hosts": [
+    "krcrtv.com"
+   ],
+   "outlets": [
+    "KRCR"
+   ],
+   "kill": [
+    "Report a correction or typo\\.",
+    "\\d+VIEW ALL PHOTOS",
+    "\\{sd-embed contenteditable=\"false\" \\}<=\"\" sd-embed=\"\">\\{\\/sd-embed\\}"
+   ]
+  },
+  "ksby.com": {
+   "hosts": [
+    "ksby.com"
+   ],
+   "outlets": [
+    "KSBY",
+    "San Diego Union-Tribune"
+   ],
+   "kill": [
+    "Actions",
+    "Prev Next",
+    "Tweet"
+   ],
+   "lkill": [
+    "actions",
+    "prev next"
+   ]
+  },
+  "ksl.com": {
+   "hosts": [
+    "ksl.com"
+   ],
+   "outlets": [
+    "Philadelphia Tribune",
+    "Philadelphia Tribune, The"
+   ],
+   "kill": [
+    "Estimated read time: \\d+-\\d+ minutes"
+   ]
+  },
+  "ktla.com": {
+   "hosts": [
+    "ktla.com"
+   ],
+   "outlets": [
+    "Associated Press",
+    "KTLA"
+   ],
+   "tail": [
+    "Two days after two dozen people were arrested in a federal voter fraud raid, there are new questions about some of those arrested in a highly publicized enforcement action just weeks before the coming elections\\. KTLA’s Carlos Saucedo reports\\."
+   ],
+   "img": [
+    "ad3829780eac",
+    "6465d8ee0a44",
+    "899394696e40",
+    "fe110cde1882",
+    "9d4096f43eb9",
+    "9ac8594c3f5f",
+    "029bdc35b42d",
+    "316d62fca57d",
+    "c392fe8a70fe",
+    "ba9cfc64e00e",
+    "06473a53261f",
+    "02d328980e99"
+   ]
+  },
+  "ktvu.com": {
+   "hosts": [
+    "ktvu.com"
+   ],
+   "outlets": [
+    "KTVU FOX 2"
+   ],
+   "kill": [
+    "article"
+   ]
+  },
+  "kvia.com": {
+   "hosts": [
+    "kvia.com"
+   ]
+  },
+  "la.eater.com": {
+   "hosts": [
+    "la.eater.com"
+   ]
+  },
+  "laist.com": {
+   "hosts": [
+    "laist.com"
+   ],
+   "outlets": [
+    "(unknown)",
+    "CALmatters",
+    "EdSource",
+    "KPCC - 89.3 FM",
+    "LAist"
+   ],
+   "kill": [
+    "If this story helped you, please become a monthly member today to help sustain this mission\\. It just takes \\d+ minute to donate below\\.",
+    "More Voter Guides",
+    "One year ago, Congress defunded public media\\. Now that we're \\d+% community funded, please become a sustaining member or increase your existing membership today\\.",
+    "One year ago, Congress voted to defund public media, eliminating a critical \\$\\d+\\.\\d+ million from our budget every year going forward\\. But they couldn’t silence us, and we’re not going anywhere\\. LAist is now \\d+% community funded and that means we’re taking our future into our own hands and turning to you to keep local reporting strong\\.",
+    "Please don't publish my name",
+    "Sign me up for your post-election newsletter, which brings results and analysis to my inbox\\.",
+    "Sponsored message",
+    "What questions do you have about this election\\?",
+    "You ask, and we'll answer: Whether it's about how to interpret the results or track your ballot, we're here to help you understand the \\d+ general election on Nov\\. \\d+\\.",
+    "You come to LAist because you want independent reporting and trustworthy local information\\. Our nonprofit newsroom doesn’t answer to shareholders looking to turn a profit\\. Instead, we answer to you and our communities\\. We are free to follow facts wherever they lead and to hold power to account without fear or favor\\. Our only loyalty is to our readers and listeners and our mission: to inform, engage, and strengthen Southern California’s communities\\.",
+    "Your questions make our journalism stronger\\."
+   ],
+   "tail": [
+    "Climate & Environment LADWP bills",
+    "Senior Vice President News, Editor in Chief"
+   ]
+  },
+  "lamag.com": {
+   "hosts": [
+    "lamag.com"
+   ],
+   "outlets": [
+    "LAmag",
+    "Los Angeles Magazine"
+   ],
+   "kill": [
+    "Have Questions\\? Get Answers!",
+    "Scroll to continue reading",
+    "Stay on top of the latest in L\\.A\\. news, food, and culture\\. Sign up for our newsletters.*",
+    "Have Questions\\? Get Answers!.*"
+   ],
+   "lkill": [
+    "have questions\\? get answers!",
+    "scroll to continue reading"
+   ]
+  },
+  "lanacion.com.ar": {
+   "hosts": [
+    "lanacion.com.ar"
+   ]
+  },
+  "laopinion.com": {
+   "hosts": [
+    "laopinion.com"
+   ],
+   "outlets": [
+    "Opinion, La",
+    "Opinión, La"
+   ],
+   "tail": [
+    "En esta nota",
+    "Sigue leyendo:"
+   ]
+  },
+  "lapresse.ca": {
+   "hosts": [
+    "lapresse.ca"
+   ]
+  },
+  "laprogressive.com": {
+   "hosts": [
+    "laprogressive.com"
+   ],
+   "outlets": [
+    "LA Progressive"
+   ],
+   "kill": [
+    "Scroll to Continue"
+   ]
+  },
+  "lapublicpress.org": {
+   "hosts": [
+    "lapublicpress.org"
+   ]
+  },
+  "lasentinel.net": {
+   "hosts": [
+    "lasentinel.net"
+   ]
+  },
+  "lassennews.com": {
+   "hosts": [
+    "lassennews.com"
+   ]
+  },
+  "latimes.com": {
+   "hosts": [
+    "latimes.com"
+   ]
+  },
+  "law.com": {
+   "hosts": [
+    "law.com"
+   ]
+  },
+  "law.uci.edu": {
+   "hosts": [
+    "law.uci.edu"
+   ]
+  },
+  "lawenforcementtoday.com": {
+   "hosts": [
+    "lawenforcementtoday.com"
+   ]
+  },
+  "lc.org": {
+   "hosts": [
+    "lc.org"
+   ]
+  },
+  "lchaimmagazine.com": {
+   "hosts": [
+    "lchaimmagazine.com"
+   ]
+  },
+  "lechaim.ru": {
+   "hosts": [
+    "lechaim.ru"
+   ]
+  },
+  "lexblog.com": {
+   "hosts": [
+    "lexblog.com"
+   ]
+  },
+  "lmtribune.com": {
+   "hosts": [
+    "lmtribune.com"
+   ],
+   "outlets": [
+    "Lewiston Morning Tribune"
+   ],
+   "kill": [
+    "Daily headlines, straight to your inboxRead it online first and stay up-to-date, delivered daily at \\d+ AM"
+   ]
+  },
+  "local.newsbreak.com": {
+   "hosts": [
+    "local.newsbreak.com"
+   ]
+  },
+  "localnewsmatters.org": {
+   "hosts": [
+    "localnewsmatters.org"
+   ]
+  },
+  "lootedart.com": {
+   "hosts": [
+    "lootedart.com"
+   ]
+  },
+  "losangelescountypolitics.com": {
+   "hosts": [
+    "losangelescountypolitics.com"
+   ],
+   "outlets": [
+    "Los Angeles County Politics"
+   ],
+   "tail": [
+    "Leave a Reply Cancel reply"
+   ],
+   "head": "h1"
+  },
+  "losangelesissue.com": {
+   "hosts": [
+    "losangelesissue.com"
+   ]
+  },
+  "m.ktown.koreadaily.com": {
+   "hosts": [
+    "m.ktown.koreadaily.com"
+   ]
+  },
+  "m.news.nate.com": {
+   "hosts": [
+    "m.news.nate.com"
+   ],
+   "outlets": [
+    "Nate News"
+   ],
+   "tail": [
+    "댓글 운영 원칙"
+   ]
+  },
+  "m.sedaily.com": {
+   "hosts": [
+    "m.sedaily.com"
+   ]
+  },
+  "m.tanpaifang.com": {
+   "hosts": [
+    "m.tanpaifang.com"
+   ]
+  },
+  "mail.citywatchla.com": {
+   "hosts": [
+    "mail.citywatchla.com"
+   ]
+  },
+  "makorrishon.co.il": {
+   "hosts": [
+    "makorrishon.co.il"
+   ]
+  },
+  "marincountyconfidential.substack.com": {
+   "hosts": [
+    "marincountyconfidential.substack.com"
+   ]
+  },
+  "massmarketretailers.com": {
+   "hosts": [
+    "massmarketretailers.com"
+   ]
+  },
+  "meatingplace.com": {
+   "hosts": [
+    "meatingplace.com"
+   ],
+   "outlets": [
+    "Meatingplace"
+   ],
+   "tail": [
+    "Comments \\(\\d+\\)"
+   ]
+  },
+  "meatpoultry.com": {
+   "hosts": [
+    "meatpoultry.com"
+   ]
+  },
+  "mercurynews.com": {
+   "hosts": [
+    "mercurynews.com"
+   ],
+   "outlets": [
+    "Mercury News, The",
+    "TCA News Service"
+   ],
+   "kill": [
+    "We Want To Hear From You.*",
+    "Do you have a question or comment for the KFF Health News team\\?.*"
+   ]
+  },
+  "metrokorean.com": {
+   "hosts": [
+    "metrokorean.com"
+   ]
+  },
+  "mirrorspectator.com": {
+   "hosts": [
+    "mirrorspectator.com"
+   ],
+   "outlets": [
+    "Armenian Mirror-Spectator, The"
+   ],
+   "kill": [
+    "A password will be e-mailed to you\\.",
+    "Password recovery",
+    "Recover your password",
+    "Sign in",
+    "TOP STORIES WEEK \\d+",
+    "Welcome! Log into your account",
+    "your email",
+    "your password",
+    "your username"
+   ],
+   "tail": [
+    "MORE FROM Armenian Genocide",
+    "MORE FROM Community"
+   ]
+  },
+  "mitu.tv": {
+   "hosts": [
+    "mitu.tv"
+   ]
+  },
+  "mixedtimes.com": {
+   "hosts": [
+    "mixedtimes.com"
+   ]
+  },
+  "modbee.com": {
+   "hosts": [
+    "modbee.com"
+   ],
+   "outlets": [
+    "Modesto Bee, The"
+   ],
+   "kill": [
+    "Crime"
+   ]
+  },
+  "montereycountynow.com": {
+   "hosts": [
+    "montereycountynow.com"
+   ]
+  },
+  "motherjones.com": {
+   "hosts": [
+    "motherjones.com"
+   ],
+   "outlets": [
+    "Mother Jones"
+   ],
+   "tail": [
+    "Get our award-winning magazine"
+   ]
+  },
+  "mrcolionnoir.com": {
+   "hosts": [
+    "mrcolionnoir.com"
+   ]
+  },
+  "mynewsla.com": {
+   "hosts": [
+    "mynewsla.com"
+   ]
+  },
+  "nadiarahman.medium.com": {
+   "hosts": [
+    "nadiarahman.medium.com"
+   ],
+   "outlets": [
+    "nadiarahman.medium.com"
+   ],
+   "kill": [
+    "Press enter or click to view image in full size"
+   ]
+  },
+  "nadiarahman.substack.com": {
+   "hosts": [
+    "nadiarahman.substack.com"
+   ]
+  },
+  "nalert.blogspot.com": {
+   "hosts": [
+    "nalert.blogspot.com"
+   ],
+   "outlets": [
+    "Los Angeles Times"
+   ],
+   "kill": [
+    "Advertisement"
+   ]
+  },
+  "napavalleyregister.com": {
+   "hosts": [
+    "napavalleyregister.com"
+   ],
+   "outlets": [
+    "TCA News Service"
+   ],
+   "kill": [
+    "We Want To Hear From You.*",
+    "Do you have a question or comment for the KFF Health News team\\?.*"
+   ]
+  },
+  "nationalhogfarmer.com": {
+   "hosts": [
+    "nationalhogfarmer.com"
+   ]
+  },
+  "nationofchange.org": {
+   "hosts": [
+    "nationofchange.org"
+   ],
+   "outlets": [
+    "NationofChange"
+   ],
+   "kill": [
+    "Share on Facebook",
+    "Tweet on Twitter",
+    "tweet"
+   ],
+   "tail": [
+    "Get NationofChange in your inbox"
+   ]
+  },
+  "natlawreview.com": {
+   "hosts": [
+    "natlawreview.com"
+   ],
+   "outlets": [
+    "National Law Review, The"
+   ],
+   "kill": [
+    "HB Ad Slot",
+    "HB Mobile Ad Slot"
+   ]
+  },
+  "navik12tracker.substack.com": {
+   "hosts": [
+    "navik12tracker.substack.com"
+   ]
+  },
+  "nbcbayarea.com": {
+   "hosts": [
+    "nbcbayarea.com"
+   ],
+   "outlets": [
+    "NBC Bay Area"
+   ],
+   "kill": [
+    "WATCH HERE",
+    "Watch NBC Bay Area News free wherever you are"
+   ],
+   "tail": [
+    "This article tagged under:"
+   ]
+  },
+  "nbclosangeles.com": {
+   "hosts": [
+    "nbclosangeles.com"
+   ],
+   "outlets": [
+    "NBC Los Angeles"
+   ],
+   "kill": [
+    "Get Los Angeles's latest local news on crime, entertainment, weather, schools, cost of living and more\\. Here's your go-to source for today's LA news\\.",
+    "Local",
+    "Stream Los Angeles News for free, \\d+\\/\\d+, wherever you are\\.",
+    "WATCH HERE"
+   ],
+   "tail": [
+    "This article tagged under:"
+   ]
+  },
+  "nbcnews.com": {
+   "hosts": [
+    "nbcnews.com"
+   ]
+  },
+  "nccwashingtonreport.com": {
+   "hosts": [
+    "nccwashingtonreport.com"
+   ],
+   "outlets": [
+    "NCC Washington Report",
+    "Washington Report"
+   ],
+   "tail": [
+    "Pages"
+   ],
+   "ltail": [
+    "pages"
+   ]
+  },
+  "ncregister.com": {
+   "hosts": [
+    "ncregister.com"
+   ]
+  },
+  "newfoodmagazine.com": {
+   "hosts": [
+    "newfoodmagazine.com"
+   ],
+   "outlets": [
+    "New Food Magazine"
+   ],
+   "kill": [
+    "No comments"
+   ]
+  },
+  "newhope.com": {
+   "hosts": [
+    "newhope.com"
+   ]
+  },
+  "newrepublic.com": {
+   "hosts": [
+    "newrepublic.com"
+   ]
+  },
+  "news.artnet.com": {
+   "hosts": [
+    "news.artnet.com"
+   ]
+  },
+  "news.bloomberglaw.com": {
+   "hosts": [
+    "news.bloomberglaw.com"
+   ]
+  },
+  "news.subaoxw.com": {
+   "hosts": [
+    "news.subaoxw.com"
+   ],
+   "outlets": [
+    "Shandong Business Times"
+   ],
+   "kill": [
+    "头条 国内 国际 周刊 山东 评论 财经 文旅 体育 资讯"
+   ]
+  },
+  "news.yahoo.com": {
+   "hosts": [
+    "news.yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "kill": [
+    "Advertisement"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "newsarchive.berkeley.edu": {
+   "hosts": [
+    "newsarchive.berkeley.edu"
+   ]
+  },
+  "newsbeep.com": {
+   "hosts": [
+    "newsbeep.com"
+   ]
+  },
+  "newsbreak.com": {
+   "hosts": [
+    "newsbreak.com"
+   ],
+   "outlets": [
+    "NewsBreak"
+   ],
+   "kill": [
+    "undefined"
+   ]
+  },
+  "newser.com": {
+   "hosts": [
+    "newser.com"
+   ]
+  },
+  "newsfromthestates.com": {
+   "hosts": [
+    "newsfromthestates.com"
+   ],
+   "outlets": [
+    "News From The States"
+   ],
+   "kill": [
+    "Learn more about legislators mentioned in this story\\.",
+    "Share BlueskyXFacebookEmailCopy Link"
+   ],
+   "tail": [
+    "More News"
+   ]
+  },
+  "newsis.com": {
+   "hosts": [
+    "newsis.com"
+   ]
+  },
+  "newsnationnow.com": {
+   "hosts": [
+    "newsnationnow.com"
+   ],
+   "outlets": [
+    "NewsNation"
+   ],
+   "kill": [
+    "Want to see more of NewsNation\\? Get \\d+\\/\\d+ fact-based news coverage with the NewsNation app or add NewsNation as a preferred source on Google!"
+   ]
+  },
+  "newspress.com": {
+   "hosts": [
+    "newspress.com"
+   ]
+  },
+  "newsweek.com": {
+   "hosts": [
+    "newsweek.com"
+   ],
+   "outlets": [
+    "Newsweek"
+   ],
+   "kill": [
+    "Loading video\\.\\.\\.",
+    "Read More on News",
+    "Read More on U\\.S\\.",
+    "See more of our trusted coverage when you search\\.to see more of our trusted coverage when you search\\.",
+    "\\.\\.\\."
+   ]
+  },
+  "newtimesslo.com": {
+   "hosts": [
+    "newtimesslo.com"
+   ],
+   "outlets": [
+    "New Times San Luis Obispo"
+   ],
+   "kill": [
+    "CONTRIBUTE TODAY",
+    "Local News: Committed to You, Fueled by Your Support\\.",
+    "Local news strengthens San Luis Obispo County\\. Help New Times continue delivering quality journalism with a contribution to our journalism fund today\\."
+   ]
+  },
+  "nguoi-viet.com": {
+   "hosts": [
+    "nguoi-viet.com"
+   ],
+   "outlets": [
+    "Nguoi-Viet Daily News"
+   ],
+   "kill": [
+    "Facebook",
+    "X"
+   ]
+  },
+  "nile1.com": {
+   "hosts": [
+    "nile1.com"
+   ]
+  },
+  "nmreports.org": {
+   "hosts": [
+    "nmreports.org"
+   ]
+  },
+  "nnpa.org": {
+   "hosts": [
+    "nnpa.org"
+   ]
+  },
+  "noahmccashland.substack.com": {
+   "hosts": [
+    "noahmccashland.substack.com"
+   ]
+  },
+  "non-gmoreport.com": {
+   "hosts": [
+    "non-gmoreport.com"
+   ]
+  },
+  "nowruzmedia.com": {
+   "hosts": [
+    "nowruzmedia.com"
+   ],
+   "outlets": [
+    "Nowruz Media"
+   ],
+   "kill": [
+    "از نوروز مدیا حمایت کنید"
+   ]
+  },
+  "npr.org": {
+   "hosts": [
+    "npr.org"
+   ],
+   "outlets": [
+    "NPR"
+   ],
+   "kill": [
+    "Download",
+    "Embed < iframe src=\"https:\\/\\/www\\.npr\\.org\\/player.*"
+   ]
+  },
+  "nrn.com": {
+   "hosts": [
+    "nrn.com"
+   ]
+  },
+  "nssf.org": {
+   "hosts": [
+    "nssf.org"
+   ]
+  },
+  "ntdtv.com": {
+   "hosts": [
+    "ntdtv.com"
+   ],
+   "outlets": [
+    "NTD Television"
+   ],
+   "kill": [
+    "FacebookTwitterEmailPrintFont Size簡體",
+    "FacebookTwitterEmailPrintFont Size繁体"
+   ],
+   "tail": [
+    "相关文章",
+    "相關文章"
+   ]
+  },
+  "nur.kz": {
+   "hosts": [
+    "nur.kz"
+   ]
+  },
+  "nutraceuticalsworld.com": {
+   "hosts": [
+    "nutraceuticalsworld.com"
+   ],
+   "outlets": [
+    "Nutraceuticals World"
+   ],
+   "kill": [
+    "Access comprehensive eBooks covering various topics in nutraceuticals, from formulation to marketing\\.",
+    "Access our buyer’s guide to find trusted suppliers and service providers in the nutraceutical market\\.",
+    "Access sponsored articles and insights from leading companies in the nutraceutical sector\\.",
+    "Access the latest issue of Nutraceuticals World and browse our extensive archives to catch up on past articles and features\\.",
+    "Access the latest research findings and studies that inform trends and innovations in nutraceuticals\\.",
+    "Access unique content and exclusive interviews with industry leaders and innovators, offering insights into the future of nutraceuticals\\.",
+    "Browse job opportunities in the nutraceutical sector, connecting you with potential employers\\.",
+    "Discover advertising opportunities with Nutraceuticals World to connect with a targeted audience in the nutraceutical sector\\.",
+    "Discover essential vitamins and minerals that support health and wellbeing in various products\\.",
+    "Discover exclusive live streams and updates from the hottest events and shows\\.",
+    "Discover major industry events, trade shows, and conferences focused on nutraceuticals and dietary supplements\\.",
+    "Discover new products and ingredients making waves in the nutraceutical market, along with their benefits and applications\\.",
+    "Discover nutraceutical solutions aimed at supporting bone, joint, and muscle health for optimal mobility\\.",
+    "Discover nutraceutical solutions that boost energy levels and support overall vitality\\.",
+    "Discover the health benefits of omega-\\d+s and other nutritional oils for overall wellbeing\\.",
+    "Dive into feature articles that provide in-depth analysis and discussions on critical topics within the nutraceutical space\\.",
+    "Enjoy short, engaging videos that provide quick insights and updates on key nutraceutical topics\\.",
+    "Explore informational brochures that provide insights into specific products, companies, and market trends\\.",
+    "Explore mergers and acquisitions, financial performance, and investment trends shaping the nutraceutical landscape\\.",
+    "Explore nutraceutical offerings tailored specifically for men’s health and wellness\\.",
+    "Explore nutraceutical options designed to support the health and development of children\\.",
+    "Explore the benefits of green ingredients, including superfoods and their roles in health and wellness\\.",
+    "Explore the capabilities of leading nutraceutical companies and their areas of expertise\\.",
+    "Explore the role of protein and fiber in nutrition and their importance in dietary supplements\\.",
+    "Familiarize yourself with key terms and definitions related to the nutraceutical industry\\.",
+    "Familiarize yourself with the terms and conditions governing the use of nutraceuticalsworld\\.com\\.",
+    "Gain valuable perspectives from suppliers on market trends, challenges, and opportunities within the nutraceutical sector\\.",
+    "Identify the top companies leading the nutraceutical industry with innovative products and solutions\\.",
+    "Join our community! Subscribe to Nutraceuticals World to receive the latest industry news, insights, and updates directly to your mailbox\\.",
+    "Learn about Nutraceuticals World’s mission, vision, and commitment to providing valuable information and resources for the nutraceutical industry\\.",
+    "Learn about alternative sweeteners and their applications in the nutraceutical market\\.",
+    "Learn about nutraceutical products that enhance cognitive function and mental clarity\\.",
+    "Learn about nutraceutical products that support beauty and wellness, focusing on ingredients that address age-related concerns\\.",
+    "Learn about nutraceuticals that promote relaxation, stress relief, and improved sleep quality\\.",
+    "Learn about the latest innovations in manufacturing and formulation processes that enhance product quality and efficacy\\.",
+    "Learn about the uses and benefits of herbs, botanicals, and mushrooms in the nutraceutical sector\\.",
+    "Nutraceuticals World Stream offers a centralized destination where users can watch expert-led sessions anytime, anywhere\\.",
+    "Participate in informative webinars led by industry experts, covering various topics in nutraceuticals\\.",
+    "Read about our commitment to protecting your privacy and how we handle your personal information\\.",
+    "Read in-depth whitepapers that examine key issues, trends, and research findings in the nutraceutical industry\\.",
+    "Read the full digital edition of Nutraceuticals World, complete with interactive content and enhanced features for an engaging experience\\.",
+    "Review our editorial guidelines for contributions and submissions to ensure your content aligns with our standards\\.",
+    "Stay informed about antioxidant-rich ingredients that combat oxidative stress and promote overall health\\.",
+    "Stay informed on products and ingredients promoting cardiovascular health and wellbeing\\.",
+    "Stay informed with regular market updates that track the latest trends and developments impacting the nutraceutical industry\\.",
+    "Stay informed with the latest news releases and announcements from companies in the nutraceutical industry\\.",
+    "Stay updated on ingredients and products promoting eye health and vision wellness\\.",
+    "Stay updated on regulatory developments and compliance issues affecting the nutraceutical industry\\.",
+    "Stay updated on the latest research and products related to probiotics and prebiotics\\.",
+    "Tune in to discussions with industry leaders sharing their perspectives on trends and challenges in the nutraceutical sector\\.",
+    "Watch informative videos featuring industry experts discussing trends, innovations, and insights in nutraceuticals\\.",
+    "What are you searching for\\?"
+   ],
+   "tail": [
+    "Get the latest Nutraceuticals World news, insights and analysis in your Google Search and AI experiences\\.",
+    "Get the latest Nutraceuticals World news.{0,200}"
+   ]
+  },
+  "nypost.com": {
+   "hosts": [
+    "nypost.com"
+   ]
+  },
+  "nytimes.com": {
+   "hosts": [
+    "nytimes.com"
+   ]
+  },
+  "oag.ca.gov": {
+   "hosts": [
+    "oag.ca.gov"
+   ]
+  },
+  "oagamut.com": {
+   "hosts": [
+    "oagamut.com"
+   ]
+  },
+  "old.retailwire.com": {
+   "hosts": [
+    "old.retailwire.com"
+   ]
+  },
+  "one-armed-man.com": {
+   "hosts": [
+    "one-armed-man.com"
+   ]
+  },
+  "onecommune.com": {
+   "hosts": [
+    "onecommune.com"
+   ]
+  },
+  "optimistdaily.com": {
+   "hosts": [
+    "optimistdaily.com"
+   ]
+  },
+  "oragark.com": {
+   "hosts": [
+    "oragark.com"
+   ]
+  },
+  "organicconsumers.org": {
+   "hosts": [
+    "organicconsumers.org"
+   ]
+  },
+  "origin.syndicator2.univision.com": {
+   "hosts": [
+    "origin.syndicator2.univision.com"
+   ]
+  },
+  "ourweekly.com": {
+   "hosts": [
+    "ourweekly.com"
+   ]
+  },
+  "outlet:oakland post": {
+   "hosts": [],
+   "outlets": [
+    "Oakland Post",
+    "Oakland Post, The"
+   ],
+   "tail": [
+    "Oakland Post Posts by Oakland Post",
+    "Post News Group Posts by Post News Group",
+    "admin Posts by admin"
+   ]
+  },
+  "outlet:tca news service": {
+   "hosts": [],
+   "outlets": [
+    "TCA News Service"
+   ],
+   "kill": [
+    "We Want To Hear From You.*",
+    "Do you have a question or comment for the KFF Health News team\\?.*"
+   ]
+  },
+  "outlet:unknown": {
+   "hosts": [],
+   "outlets": [
+    "(unknown)"
+   ],
+   "kill": [
+    "Advertisement",
+    "Copy",
+    "Facebook",
+    "Flipboard",
+    "Getting your Trinity Audio player ready\\.\\.\\.",
+    "Pinterest",
+    "WhatsApp",
+    "X",
+    "\\d+ MIN READ"
+   ],
+   "tail": [
+    "Add as preferred source on Google",
+    "×"
+   ]
+  },
+  "outlet:yahoo news": {
+   "hosts": [],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "pacificresearch.org": {
+   "hosts": [
+    "pacificresearch.org"
+   ]
+  },
+  "pagosadailypost.com": {
+   "hosts": [
+    "pagosadailypost.com"
+   ]
+  },
+  "palateshift.com": {
+   "hosts": [
+    "palateshift.com"
+   ]
+  },
+  "palisadesnews.com": {
+   "hosts": [
+    "palisadesnews.com"
+   ]
+  },
+  "pasadenanow.com": {
+   "hosts": [
+    "pasadenanow.com"
+   ]
+  },
+  "patch.com": {
+   "hosts": [
+    "patch.com"
+   ],
+   "outlets": [
+    "Calabasas Patch",
+    "Concord Patch",
+    "Northridge Patch",
+    "Patch"
+   ],
+   "kill": [
+    "By subscribing, you agree to Patch's Privacy Policy and Terms of Use\\.",
+    "Find out what's happening in Across Californiafor free with the latest updates from Patch\\.",
+    "Find out what's happening in Agoura Hillsfor free with the latest updates from Patch\\.",
+    "Find out what's happening in Concordfor free with the latest updates from Patch\\.",
+    "Find out what's happening in Los Angelesfor free with the latest updates from Patch\\.",
+    "Find out what's happening in Northridge-Chatsworthfor free with the latest updates from Patch\\.",
+    "Find out what's happening in Pacific Palisadesfor free with the latest updates from Patch\\.",
+    "Find out what's happening in Rohnert Park-Cotatifor free with the latest updates from Patch\\.",
+    "Find out what's happening in San Diegofor free with the latest updates from Patch\\.",
+    "Find out what's happening in Temeculafor free with the latest updates from Patch\\.",
+    "Get more local news delivered straight to your inbox\\.",
+    "Get more local news delivered straight to your inbox\\. Sign up for free Patch newsletters and alerts\\.",
+    "See All Communities",
+    "Skip to main content",
+    "Top National News",
+    "California Top National News See All Communities",
+    "Top National News See All Communities"
+   ],
+   "tail": [
+    "Crime & Safety\\|\\d+h",
+    "Get more local news delivered straight to your inbox\\. Sign up for free Patch newsletters and alerts\\."
+   ]
+  },
+  "patriotla.iheart.com": {
+   "hosts": [
+    "patriotla.iheart.com"
+   ]
+  },
+  "patriotledger.com": {
+   "hosts": [
+    "patriotledger.com"
+   ]
+  },
+  "paulbrown832245.substack.com": {
+   "hosts": [
+    "paulbrown832245.substack.com"
+   ]
+  },
+  "perishablenews.com": {
+   "hosts": [
+    "perishablenews.com"
+   ]
+  },
+  "phillempert.substack.com": {
+   "hosts": [
+    "phillempert.substack.com"
+   ]
+  },
+  "pjmedia.com": {
+   "hosts": [
+    "pjmedia.com"
+   ],
+   "outlets": [
+    "PJ Media"
+   ],
+   "kill": [
+    "Advertisement"
+   ]
+  },
+  "pluribusnews.com": {
+   "hosts": [
+    "pluribusnews.com"
+   ],
+   "outlets": [
+    "Pluribus News"
+   ],
+   "tail": [
+    "Already a subscriber\\? Sign in"
+   ]
+  },
+  "plus.hankyung.com": {
+   "hosts": [
+    "plus.hankyung.com"
+   ]
+  },
+  "police1.com": {
+   "hosts": [
+    "police1.com"
+   ]
+  },
+  "politico.com": {
+   "hosts": [
+    "politico.com"
+   ],
+   "outlets": [
+    "Politico",
+    "Politico California Playbook",
+    "Politico California Playbook PM"
+   ],
+   "kill": [
+    "CALIFORNIA POLICY IS ALWAYS CHANGING: Know your next move\\. From Sacramento to Silicon Valley, POLITICO California Pro provides policy professionals with the in-depth reporting and tools they need to get ahead of policy trends and political developments shaping the Golden State\\. To learn more about the exclusive insight and analysis this subscriber-only service offers, click here\\.",
+    "COME TALK DRUGS — Join POLITICO March \\d+ at the Elks Tower in Sacramento for a conversation on prescription drug affordability with CAITLIN BERRY, of pharmacy benefit management company Prime Therapeutics; ROBIN FELDMAN, UCSF law professor; ANTHONY WRIGHT, executive director of Health Access California; and state Sen\\. SCOTT WIENER\\. How might officials find savings in the drug supply chain ecosystem\\? Doors open at \\d+:\\d+ a\\.m\\. RSVP here for “Corrective Action: How to Address Prescription Drug Cost\\.”",
+    "Did someone forward you this newsletter\\? Sign up here!",
+    "Presented by Californians for Energy Independence",
+    "Want to make an impact\\? POLITICO California has a variety of solutions available for partners looking to reach and activate the most influential people in the Golden State\\. Have a petition you want signed\\? A cause you’re promoting\\? Seeking to increase brand awareness amongst this key audience\\? Share your message with our influential readers to foster engagement and drive action\\. Contact Jesse Shapiro to find out how: jshapiro@politico\\.com",
+    "Want to make an impact\\? POLITICO California has a variety of solutions available for partners looking to reach and activate the most influential people in the Golden State\\. Have a petition you want signed\\? A cause you’re promoting\\? Seeking to increase brand awareness amongst this key audience\\? Share your message with our influential readers to foster engagement and drive action\\. Contact Jesse Shapiro to find out how: jshapiro@politico\\.com\\.",
+    "Want to make an impact\\? POLITICO California has a variety of solutions available for partners looking to reach and activate the most influential people in the Golden State\\. Have a petition you want signed\\? A cause you’re promoting\\? Seeking to increase brand awareness amongst this key audience\\? Share your message with our influential readers to foster engagement and drive action\\. Contact Rebecca Haase to find out how: rhaase@politico\\.com\\."
+   ],
+   "tail": [
+    "PDF GENERATED BY PROQUEST\\.COM",
+    "POLITICO PRO",
+    "POLITICO Pro: California policy moves fast, and the stakes are high\\. POLITICO Pro offers exclusive California policy reporting, expert analysis, and powerful tools to help professionals learn what’s happening, understand what it means, and act with confidence statewide — all on the POLITICO Pro policy intelligence platform\\. Learn more\\.",
+    "Pro provides policy professionals with the in-depth reporting and tools they need to get ahead of policy trends and political developments shaping the Golden State\\. To learn more about the exclusive insight and analysis this subscriber-only service offers, click here\\."
+   ],
+   "strip": [
+    "CALIFORNIA\\s*POLICY\\s*IS\\s*ALWAYS\\s*CHANGING:\\s*Know\\s*your\\s*next\\s*move\\.\\s*From\\s*Sacramento\\s*to\\s*Silicon\\s*Valley,\\s*POLITICO\\s*California"
+   ]
+  },
+  "postnewsgroup.com": {
+   "hosts": [
+    "postnewsgroup.com"
+   ],
+   "outlets": [
+    "Oakland Post, The"
+   ],
+   "kill": [
+    "Tweet"
+   ],
+   "tail": [
+    "Oakland Post Posts by Oakland Post",
+    "Post News Group Posts by Post News Group",
+    "admin Posts by admin"
+   ]
+  },
+  "powershealth.org": {
+   "hosts": [
+    "powershealth.org"
+   ]
+  },
+  "ppic.org": {
+   "hosts": [
+    "ppic.org"
+   ]
+  },
+  "precinctreporter.com": {
+   "hosts": [
+    "precinctreporter.com"
+   ],
+   "outlets": [
+    "Precinct Reporter"
+   ],
+   "kill": [
+    "Latest PRGNews",
+    "Lost Password",
+    "Main Menu",
+    "Precinct Reporter Group News",
+    "Sign in \\/ Join",
+    "Top Menu",
+    "\\d+"
+   ],
+   "tail": [
+    "Previous Article"
+   ]
+  },
+  "pressdemocrat.com": {
+   "hosts": [
+    "pressdemocrat.com"
+   ],
+   "outlets": [
+    "Press Democrat, The",
+    "TCA Regional News"
+   ],
+   "kill": [
+    "Getting your Trinity Audio player ready\\.\\.\\.",
+    "Stay up-to-date with free briefings on topics that matter to all Californians\\. Subscribe to CalMatters today for nonprofit news in your inbox\\."
+   ]
+  },
+  "pro.stateaffairs.com": {
+   "hosts": [
+    "pro.stateaffairs.com"
+   ]
+  },
+  "probonoinst.podbean.com": {
+   "hosts": [
+    "probonoinst.podbean.com"
+   ],
+   "outlets": [
+    "probonoinst.podbean.com"
+   ],
+   "kill": [
+    "Episodes"
+   ]
+  },
+  "progressive.org": {
+   "hosts": [
+    "progressive.org"
+   ]
+  },
+  "progressivegrocer.com": {
+   "hosts": [
+    "progressivegrocer.com"
+   ]
+  },
+  "progressivevotersguide.com": {
+   "hosts": [
+    "progressivevotersguide.com"
+   ]
+  },
+  "ptsn.co.kr": {
+   "hosts": [
+    "ptsn.co.kr"
+   ]
+  },
+  "qualityassurancemag.com": {
+   "hosts": [
+    "qualityassurancemag.com"
+   ],
+   "outlets": [
+    "Quality Assurance & Food Safety"
+   ],
+   "ltail": [
+    "get curated news on your industry\\."
+   ]
+  },
+  "rafu.com": {
+   "hosts": [
+    "rafu.com"
+   ]
+  },
+  "reason.com": {
+   "hosts": [
+    "reason.com"
+   ]
+  },
+  "redwoodbark.org": {
+   "hosts": [
+    "redwoodbark.org"
+   ]
+  },
+  "rgj.com": {
+   "hosts": [
+    "rgj.com"
+   ]
+  },
+  "riversiderecord.org": {
+   "hosts": [
+    "riversiderecord.org"
+   ]
+  },
+  "roshdmag.ir": {
+   "hosts": [
+    "roshdmag.ir"
+   ]
+  },
+  "ru.norcalpublicmedia.org": {
+   "hosts": [
+    "ru.norcalpublicmedia.org"
+   ]
+  },
+  "sacbee.com": {
+   "hosts": [
+    "sacbee.com"
+   ]
+  },
+  "sacramento.newsreview.com": {
+   "hosts": [
+    "sacramento.newsreview.com"
+   ]
+  },
+  "sactodaily.org": {
+   "hosts": [
+    "sactodaily.org"
+   ]
+  },
+  "sakhtafzarmag.com": {
+   "hosts": [
+    "sakhtafzarmag.com"
+   ],
+   "outlets": [
+    "Sakhtafzar"
+   ],
+   "kill": [
+    "Rate this item:.*",
+    "امتیاز:.*",
+    "کمی صبر کنید.*"
+   ]
+  },
+  "san.com": {
+   "hosts": [
+    "san.com"
+   ]
+  },
+  "sanbenito.com": {
+   "hosts": [
+    "sanbenito.com"
+   ],
+   "outlets": [
+    "BenitoLink"
+   ],
+   "kill": [
+    "Business",
+    "LEAVE A REPLY Cancel reply",
+    "Local News",
+    "News",
+    "Politics"
+   ]
+  },
+  "sandiegouniontribune.com": {
+   "hosts": [
+    "sandiegouniontribune.com"
+   ]
+  },
+  "sanfernandosun.com": {
+   "hosts": [
+    "sanfernandosun.com"
+   ],
+   "outlets": [
+    "San Fernando Valley Sun",
+    "San Fernando Valley Sun, The"
+   ],
+   "img": [
+    "bdb0ecde3dc9",
+    "d9c99d4fb87d"
+   ]
+  },
+  "sanjoseinside.com": {
+   "hosts": [
+    "sanjoseinside.com"
+   ]
+  },
+  "santacruzsentinel.com": {
+   "hosts": [
+    "santacruzsentinel.com"
+   ]
+  },
+  "sbcsentinel.com": {
+   "hosts": [
+    "sbcsentinel.com"
+   ]
+  },
+  "scrippsnews.com": {
+   "hosts": [
+    "scrippsnews.com"
+   ],
+   "outlets": [
+    "Scripps News"
+   ],
+   "kill": [
+    "Actions",
+    "Tweet"
+   ],
+   "head": "h1"
+  },
+  "scvnews.com": {
+   "hosts": [
+    "scvnews.com"
+   ],
+   "outlets": [
+    "SCVNews.com"
+   ],
+   "kill": [
+    "Bookmark",
+    "COMMENT POLICY: We welcome comments from individuals and businesses\\. All comments are moderated\\. Comments are subject to rejection if they are vulgar, combative, or in poor taste\\.",
+    "Click here to cancel reply\\.",
+    "Comment On This Story",
+    "Digg This",
+    "Facebook",
+    "Keep Up With Our Facebook",
+    "Latest Additions to SCVNews\\.com",
+    "Leave a Comment",
+    "REAL NAMES ONLY: All posters must use their real individual or business name\\. This applies equally to Twitter account holders who use a nickname\\.",
+    "RSS",
+    "Related",
+    "Stumble",
+    "Tweet This",
+    "You can be the first one to leave a comment\\."
+   ],
+   "tail": [
+    "Click here for the Mobile Site"
+   ]
+  },
+  "sdjewishworld.com": {
+   "hosts": [
+    "sdjewishworld.com"
+   ]
+  },
+  "sf.eater.com": {
+   "hosts": [
+    "sf.eater.com"
+   ],
+   "outlets": [
+    "Eater SF"
+   ],
+   "kill": [
+    "Intel"
+   ]
+  },
+  "sf.epochtimes.com": {
+   "hosts": [
+    "sf.epochtimes.com"
+   ],
+   "outlets": [
+    "Epoch Times, The"
+   ],
+   "kill": [
+    "人氣：\\d+",
+    "大 小 正\\|简"
+   ],
+   "tail": [
+    "分享本頁（Share this）"
+   ]
+  },
+  "sf.gazetteer.co": {
+   "hosts": [
+    "sf.gazetteer.co"
+   ],
+   "outlets": [
+    "San Francisco Gazetteer"
+   ],
+   "tail": [
+    "More Stories"
+   ]
+  },
+  "sfgate.com": {
+   "hosts": [
+    "sfgate.com"
+   ],
+   "outlets": [
+    "TCA Regional News"
+   ],
+   "strip": [
+    "Advertisement\\s*Article\\s*continues\\s*below\\s*this\\s*ad"
+   ]
+  },
+  "sfist.com": {
+   "hosts": [
+    "sfist.com"
+   ]
+  },
+  "sfstandard.com": {
+   "hosts": [
+    "sfstandard.com"
+   ],
+   "outlets": [
+    "San Francisco Standard, The"
+   ],
+   "tail": [
+    "Filed under"
+   ]
+  },
+  "sfvnewsportal.town.news": {
+   "hosts": [
+    "sfvnewsportal.town.news"
+   ],
+   "outlets": [
+    "San Fernando Valley News Portal"
+   ],
+   "tail": [
+    "More News from Calabasas"
+   ]
+  },
+  "sg.headtopics.com": {
+   "hosts": [
+    "sg.headtopics.com"
+   ]
+  },
+  "shadedcommunity.com": {
+   "hosts": [
+    "shadedcommunity.com"
+   ]
+  },
+  "shootingnewsweekly.com": {
+   "hosts": [
+    "shootingnewsweekly.com"
+   ]
+  },
+  "signalscv.com": {
+   "hosts": [
+    "signalscv.com"
+   ]
+  },
+  "simivalleyacorn.com": {
+   "hosts": [
+    "simivalleyacorn.com"
+   ]
+  },
+  "sinovision.net": {
+   "hosts": [
+    "sinovision.net"
+   ]
+  },
+  "sjvsun.com": {
+   "hosts": [
+    "sjvsun.com"
+   ],
+   "outlets": [
+    "San Joaquin Valley Sun"
+   ],
+   "tail": [
+    "Related Posts"
+   ]
+  },
+  "smdailyjournal.com": {
+   "hosts": [
+    "smdailyjournal.com"
+   ],
+   "outlets": [
+    "San Mateo Daily Journal",
+    "San Mateo Daily Journal, The"
+   ],
+   "kill": [
+    "For years, California has grappled with a problem that has a…",
+    "In struggling LA, Mayor Karen Bass fights for \\d+nd term against democratic social…",
+    "Next Next Up",
+    "Prev Previous",
+    "Previous",
+    "State votes on housing money: Proposition \\d+ seeks \\$\\d+\\.\\d+ bil…",
+    "The fight to lead Los Angeles City Hall is matching the unpopular incumbent, Kar…"
+   ],
+   "tail": [
+    "Tags"
+   ]
+  },
+  "smdp.com": {
+   "hosts": [
+    "smdp.com"
+   ],
+   "outlets": [
+    "CALmatters",
+    "NBC Bay Area",
+    "Santa Monica Daily Press"
+   ],
+   "tail": [
+    "All articles"
+   ],
+   "lkill": [
+    "all articles"
+   ],
+   "ltail": [
+    "comments"
+   ]
+  },
+  "smithsonianmag.com": {
+   "hosts": [
+    "smithsonianmag.com"
+   ]
+  },
+  "sohu.com": {
+   "hosts": [
+    "sohu.com"
+   ],
+   "outlets": [
+    "Sohu"
+   ],
+   "kill": [
+    "大众cc",
+    "展开全文"
+   ],
+   "tail": [
+    "阅读 \\(\\)"
+   ],
+   "strip": [
+    "返\\s*回\\s*搜\\s*狐\\s*，\\s*查\\s*看\\s*更\\s*多"
+   ]
+  },
+  "soundcloud.com": {
+   "hosts": [
+    "soundcloud.com"
+   ]
+  },
+  "soundofhope.org": {
+   "hosts": [
+    "soundofhope.org"
+   ],
+   "outlets": [
+    "Sound of Hope"
+   ],
+   "kill": [
+    "评论数量: \\d+"
+   ],
+   "tail": [
+    "\\*\\*\\*\\*\\*"
+   ]
+  },
+  "southbayblackjournal.com": {
+   "hosts": [
+    "southbayblackjournal.com"
+   ]
+  },
+  "southkernsol.org": {
+   "hosts": [
+    "southkernsol.org"
+   ]
+  },
+  "spanish.healthday.com": {
+   "hosts": [
+    "spanish.healthday.com"
+   ]
+  },
+  "spectrumlocalnews.com": {
+   "hosts": [
+    "spectrumlocalnews.com"
+   ]
+  },
+  "spectrumnews1.com": {
+   "hosts": [
+    "spectrumnews1.com"
+   ],
+   "outlets": [
+    "Associated Press News Service, The",
+    "Spectrum News 1"
+   ],
+   "kill": [
+    "Introducing Spectrum News\\+",
+    "Watch the latest news from across the country\\."
+   ]
+  },
+  "spillikinaerospace.medium.com": {
+   "hosts": [
+    "spillikinaerospace.medium.com"
+   ]
+  },
+  "spokesman.com": {
+   "hosts": [
+    "spokesman.com"
+   ]
+  },
+  "sports.yahoo.com": {
+   "hosts": [
+    "sports.yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "kill": [
+    "Advertisement"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "srugim.co.il": {
+   "hosts": [
+    "srugim.co.il"
+   ]
+  },
+  "statehornet.com": {
+   "hosts": [
+    "statehornet.com"
+   ]
+  },
+  "statnews.com": {
+   "hosts": [
+    "statnews.com"
+   ],
+   "outlets": [
+    "STAT"
+   ],
+   "kill": [
+    "Advertisement",
+    "Subscriber Picks"
+   ]
+  },
+  "steinberginstitute.org": {
+   "hosts": [
+    "steinberginstitute.org"
+   ]
+  },
+  "substack.com": {
+   "hosts": [
+    "substack.com"
+   ]
+  },
+  "supermarketnews.com": {
+   "hosts": [
+    "supermarketnews.com"
+   ]
+  },
+  "supermarketperimeter.com": {
+   "hosts": [
+    "supermarketperimeter.com"
+   ]
+  },
+  "supplysidefbj.com": {
+   "hosts": [
+    "supplysidefbj.com"
+   ],
+   "outlets": [
+    "Supply Side FBJ"
+   ],
+   "tail": [
+    "SupplySide Global \\d+"
+   ],
+   "strip": [
+    "chevron_right"
+   ]
+  },
+  "survivalworld.com": {
+   "hosts": [
+    "survivalworld.com"
+   ]
+  },
+  "tastingtable.com": {
+   "hosts": [
+    "tastingtable.com"
+   ]
+  },
+  "techcrunch.com": {
+   "hosts": [
+    "techcrunch.com"
+   ],
+   "outlets": [
+    "TechCrunch"
+   ],
+   "lkill": [
+    "topics"
+   ],
+   "ltail": [
+    "view bio"
+   ]
+  },
+  "techdirt.com": {
+   "hosts": [
+    "techdirt.com"
+   ]
+  },
+  "techno.nv.ua": {
+   "hosts": [
+    "techno.nv.ua"
+   ]
+  },
+  "techpolicy.press": {
+   "hosts": [
+    "techpolicy.press"
+   ]
+  },
+  "techtarget.com": {
+   "hosts": [
+    "techtarget.com"
+   ]
+  },
+  "techxplore.com": {
+   "hosts": [
+    "techxplore.com"
+   ],
+   "outlets": [
+    "TCA News Service"
+   ],
+   "kill": [
+    "We Want To Hear From You.*",
+    "Do you have a question or comment for the KFF Health News team\\?.*"
+   ]
+  },
+  "telemundo.com": {
+   "hosts": [
+    "telemundo.com"
+   ],
+   "outlets": [
+    "Noticias Telemundo",
+    "Telemundo"
+   ],
+   "kill": [
+    "00:20",
+    "00:29",
+    "00:30",
+    "00:32",
+    "00:33",
+    "00:36",
+    "00:38",
+    "00:41",
+    "00:44",
+    "01:01",
+    "01:06",
+    "01:13",
+    "01:35",
+    "03:02",
+    "04:26",
+    "04:43",
+    "05:48",
+    "Arrestan a mujer que habría conducido ebria para recoger a un niño en la escuela en Florida,",
+    "Arrestan a sospechoso de intentar llevarse a niña de \\d+ años en Florida",
+    "Declaran justificado tiroteo policial que acabó con la vida de un bebé en Mississippi",
+    "El choque entre un camión de carga y un automóvil provocó retrasos en el tránsito en San Diego",
+    "El conductor de un Tesla choca con una patrulla y deja dos policías heridos en California",
+    "Esto es lo más buscado AHORA en las plataformas digitales, martes \\d+ de octubre de \\d+",
+    "Estrellas de la NBA se convierten en superhéroes y Nueva York celebra el inicio de temporada",
+    "Guty Carrera, ganador de Top Chef VIP, comparte qué platillo le costó más trabajo preparar",
+    "Harvard investiga proteína que podría proteger el cerebro contra pérdida de memoria",
+    "ICE detiene a inmigrante que alimentaba a familias necesitadas en Nueva York",
+    "La actriz Christina Applegate revela que nunca tuvo esclerosis múltiple",
+    "Madre hispana se reencuentra con su hijo con autismo tras días desaparecido en Los Ángeles",
+    "NBC Sports celebra el regreso de la NBA con un espectacular evento en Rockefeller Center",
+    "Niño de \\d+ años celebra su adopción tras casi tres años de espera",
+    "Niño de \\d+ años encuentra pistola cargada y se la mete en la boca en Virginia",
+    "Policías rescatan a conductor de un auto en llamas en Nueva York",
+    "SIGUIENTE",
+    "Una casa de Chicago se transforma en una escena de la película ‘Coco’",
+    "Vecino salva a niño de \\d+ años atrapado entre los escombros de una casa en llamas",
+    "¡De fiesta a pesadilla! Invita a sus compañeros de trabajo a casa y termina en crisis matrimonial",
+    "¿Melania Trump desprecia un beso de Donald Trump\\? El incómodo momento que desata comentarios",
+    "Noticias California 24\\/7 en Telemundo.*"
+   ],
+   "tail": [
+    "Este artículo etiquetado en:"
+   ]
+  },
+  "telemundo33.com": {
+   "hosts": [
+    "telemundo33.com"
+   ],
+   "outlets": [
+    "Telemundo 33 Sacramento"
+   ],
+   "kill": [
+    "Local",
+    "Noticias California: Disponible aquí \\d+\\/\\d+"
+   ],
+   "lkill": [
+    "noticias california: disponible aquí #/#",
+    "mira aquí gratis",
+    "las balas impactaron la habitación de un menor de diez años\\.",
+    "con apenas # años, los videos de esta pequeña arizonense.{0,200}",
+    "local"
+   ]
+  },
+  "telemundo52.com": {
+   "hosts": [
+    "telemundo52.com"
+   ],
+   "outlets": [
+    "Telemundo 52"
+   ],
+   "kill": [
+    "Este artículo etiquetado en:",
+    "Noticias California \\d+\\/\\d+ en Telemundo \\d+\\."
+   ]
+  },
+  "telemundoareadelabahia.com": {
+   "hosts": [
+    "telemundoareadelabahia.com"
+   ],
+   "outlets": [
+    "Telemundo 48 Área de la Bahía"
+   ],
+   "tail": [
+    "Este artículo etiquetado en:"
+   ]
+  },
+  "theacorn.com": {
+   "hosts": [
+    "theacorn.com"
+   ]
+  },
+  "theaggie.org": {
+   "hosts": [
+    "theaggie.org"
+   ]
+  },
+  "thebump.com": {
+   "hosts": [
+    "thebump.com"
+   ]
+  },
+  "thebusinessjournal.com": {
+   "hosts": [
+    "thebusinessjournal.com"
+   ],
+   "outlets": [
+    "Business Journal, The"
+   ],
+   "kill": [
+    "Share:"
+   ],
+   "tail": [
+    "Related Coverage"
+   ]
+  },
+  "thecentersquare.com": {
+   "hosts": [
+    "thecentersquare.com"
+   ],
+   "outlets": [
+    "Center Square California, The"
+   ],
+   "kill": [
+    "Recommended for You"
+   ]
+  },
+  "theconnector.substack.com": {
+   "hosts": [
+    "theconnector.substack.com"
+   ]
+  },
+  "thecooldown.com": {
+   "hosts": [
+    "thecooldown.com"
+   ],
+   "outlets": [
+    "Cool Down, The"
+   ],
+   "kill": [
+    "Join our free newsletter for good news and useful tips, and don't miss this cool list of easy ways to help yourself while helping the planet\\.",
+    "TCD Picks » Quince Spotlight",
+    "💡These best-sellers from Quince deliver affordable, sustainable luxury for all"
+   ]
+  },
+  "thedesertreview.com": {
+   "hosts": [
+    "thedesertreview.com"
+   ],
+   "outlets": [
+    "CALmatters",
+    "Desert Review, The"
+   ],
+   "tail": [
+    "Post a comment as anonymous"
+   ]
+  },
+  "theepochtimes.com": {
+   "hosts": [
+    "theepochtimes.com"
+   ],
+   "outlets": [
+    "Epoch Times, The"
+   ],
+   "kill": [
+    "Author’s Selected Articles",
+    "Story continues below advertisement"
+   ],
+   "tail": [
+    "Author’s Selected Articles"
+   ]
+  },
+  "thefashionlaw.com": {
+   "hosts": [
+    "thefashionlaw.com"
+   ]
+  },
+  "thefencepost.com": {
+   "hosts": [
+    "thefencepost.com"
+   ],
+   "outlets": [
+    "Fence Post, The"
+   ],
+   "kill": [
+    "More Like This, Tap A Topic",
+    "news Share this story"
+   ]
+  },
+  "thefern.org": {
+   "hosts": [
+    "thefern.org"
+   ]
+  },
+  "thegethsemane.com": {
+   "hosts": [
+    "thegethsemane.com"
+   ]
+  },
+  "theguardian.com": {
+   "hosts": [
+    "theguardian.com"
+   ]
+  },
+  "thehill.com": {
+   "hosts": [
+    "thehill.com"
+   ],
+   "outlets": [
+    "Hill, The"
+   ],
+   "tail": [
+    "Add as preferred source on Google"
+   ],
+   "img": [
+    "d83b0514aa20",
+    "887e8875aecb",
+    "0c6b21ba48cf",
+    "96e5199c6446",
+    "15687e0fda28",
+    "48a5108d1dfc",
+    "beb70249d81f",
+    "71fe80116843"
+   ]
+  },
+  "thehowleronline.org": {
+   "hosts": [
+    "thehowleronline.org"
+   ]
+  },
+  "thejewishnews.com": {
+   "hosts": [
+    "thejewishnews.com"
+   ],
+   "outlets": [
+    "Israel Info"
+   ],
+   "kill": [
+    "The Detroit Jewish News has been supported by readers like you.*"
+   ]
+  },
+  "themoderatevoice.com": {
+   "hosts": [
+    "themoderatevoice.com"
+   ]
+  },
+  "themountainmessenger.org": {
+   "hosts": [
+    "themountainmessenger.org"
+   ]
+  },
+  "thenewlede.org": {
+   "hosts": [
+    "thenewlede.org"
+   ]
+  },
+  "thenewlede.substack.com": {
+   "hosts": [
+    "thenewlede.substack.com"
+   ]
+  },
+  "theobserver.media": {
+   "hosts": [
+    "theobserver.media"
+   ],
+   "outlets": [
+    "Observer, The"
+   ],
+   "kill": [
+    "Advertisement",
+    "importedId:\\d+"
+   ]
+  },
+  "theorion.com": {
+   "hosts": [
+    "theorion.com"
+   ],
+   "outlets": [
+    "University Wire"
+   ],
+   "kill": [
+    "View Story Comments \\d+ Like This Story Share on Facebook Share on X Email this Story Print this Story"
+   ]
+  },
+  "thepacker.com": {
+   "hosts": [
+    "thepacker.com"
+   ],
+   "outlets": [
+    "Packer, The"
+   ],
+   "tail": [
+    "Upcoming Event"
+   ]
+  },
+  "thepolypost.com": {
+   "hosts": [
+    "thepolypost.com"
+   ]
+  },
+  "theregister.com": {
+   "hosts": [
+    "theregister.com"
+   ]
+  },
+  "thesheetnews.com": {
+   "hosts": [
+    "thesheetnews.com"
+   ]
+  },
+  "theshelbyreport.com": {
+   "hosts": [
+    "theshelbyreport.com"
+   ]
+  },
+  "thesunreporter.com": {
+   "hosts": [
+    "thesunreporter.com"
+   ]
+  },
+  "thetrace.org": {
+   "hosts": [
+    "thetrace.org"
+   ]
+  },
+  "thetruthaboutguns.com": {
+   "hosts": [
+    "thetruthaboutguns.com"
+   ],
+   "outlets": [
+    "Truth About Guns, The"
+   ],
+   "kill": [
+    "Anti-Gun Idiots",
+    "August \\d+, \\d+",
+    "Current Events",
+    "In Other NEWS",
+    "Written by: Mark Chesnut",
+    "Written by: Scott Witner"
+   ]
+  },
+  "thevalleystarnews.com": {
+   "hosts": [
+    "thevalleystarnews.com"
+   ],
+   "outlets": [
+    "Valley Star"
+   ],
+   "kill": [
+    "Search"
+   ]
+  },
+  "theweek.com": {
+   "hosts": [
+    "theweek.com"
+   ]
+  },
+  "thewellnews.com": {
+   "hosts": [
+    "thewellnews.com"
+   ]
+  },
+  "theyeshivaworld.com": {
+   "hosts": [
+    "theyeshivaworld.com"
+   ]
+  },
+  "time.com": {
+   "hosts": [
+    "time.com"
+   ]
+  },
+  "timesnownews.com": {
+   "hosts": [
+    "timesnownews.com"
+   ],
+   "outlets": [
+    "Times Now"
+   ],
+   "kill": [
+    "End of Article"
+   ]
+  },
+  "timesofisrael.com": {
+   "hosts": [
+    "timesofisrael.com"
+   ],
+   "outlets": [
+    "Times of Israel, The"
+   ],
+   "kill": [
+    "Advertisement",
+    "Facebook",
+    "Homepage",
+    "Promoted: JPPI, Rabbi Sharon Brous",
+    "Send by email",
+    "Telegram",
+    "Whatsapp",
+    "X",
+    "\\d+:\\d+ \\/ \\d+:\\d+",
+    "home page",
+    "0:00 / 0:00",
+    "Promoted: .{0,80}",
+    "Help us report truthfully on social media",
+    "As a multimedia journalist, my job is to take the quality, fact-based journalism produced by The Times of Israel newsroom and make it accessible across every platform — from Instagram posts to podcasts to short-form videos\\.",
+    "This is how many, especially young people, consume news these days\\. But misinformation is rampant on social media\\. Our team at ToI produces accurate, responsible short-form reporting on Israel and the Jewish world\\.",
+    "If you believe in the importance of factual social media journalism ?, please consider joining our reader support group, The Times of Israel Community\\. ?Your financial support is essential to sustain responsible multimedia reporting\\.",
+    "— Gabriella Jacobs, multimedia journalist",
+    "If you’d like to comment, join The Times of Israel Community\\.?.{0,60}",
+    "Get The Times of Israel's Daily Edition.{0,120}"
+   ],
+   "tail": [
+    "Help us report truthfully on social media",
+    "read more:",
+    "comments"
+   ],
+   "strip": [
+    "Support our work Support our work Already a member\\? Sign in to stop seeing this",
+    "JOIN THE TOI COMMUNITY Already a member\\? Log in here",
+    "\\bAdvertisement\\b"
+   ]
+  },
+  "timesofsandiego.com": {
+   "hosts": [
+    "timesofsandiego.com"
+   ]
+  },
+  "toacorn.com": {
+   "hosts": [
+    "toacorn.com"
+   ]
+  },
+  "today.com": {
+   "hosts": [
+    "today.com"
+   ]
+  },
+  "tomkemp00.medium.com": {
+   "hosts": [
+    "tomkemp00.medium.com"
+   ]
+  },
+  "track-jpac.org": {
+   "hosts": [
+    "track-jpac.org"
+   ]
+  },
+  "transcripts.cnn.com": {
+   "hosts": [
+    "transcripts.cnn.com"
+   ]
+  },
+  "truthout.org": {
+   "hosts": [
+    "truthout.org"
+   ]
+  },
+  "truthtony.substack.com": {
+   "hosts": [
+    "truthtony.substack.com"
+   ]
+  },
+  "tvmaze.com": {
+   "hosts": [
+    "tvmaze.com"
+   ]
+  },
+  "tvnext.org": {
+   "hosts": [
+    "tvnext.org"
+   ],
+   "outlets": [
+    "TVNext"
+   ],
+   "kill": [
+    "할렐루야! 2023년.*"
+   ]
+  },
+  "tw.news.yahoo.com": {
+   "hosts": [
+    "tw.news.yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "twig24.com": {
+   "hosts": [
+    "twig24.com"
+   ]
+  },
+  "twoday.co.il": {
+   "hosts": [
+    "twoday.co.il"
+   ]
+  },
+  "ucsdguardian.org": {
+   "hosts": [
+    "ucsdguardian.org"
+   ]
+  },
+  "uk.news.yahoo.com": {
+   "hosts": [
+    "uk.news.yahoo.com"
+   ],
+   "outlets": [
+    "Guardian, The",
+    "Insider"
+   ],
+   "kill": [
+    "Advertisement"
+   ]
+  },
+  "undocu.ucsf.edu": {
+   "hosts": [
+    "undocu.ucsf.edu"
+   ]
+  },
+  "unecne.com": {
+   "hosts": [
+    "unecne.com"
+   ],
+   "outlets": [
+    "Unecne"
+   ],
+   "kill": [
+    "Facebook",
+    "Pinterest",
+    "WhatsApp"
+   ]
+  },
+  "uniondemocrat.com": {
+   "hosts": [
+    "uniondemocrat.com"
+   ]
+  },
+  "univision.com": {
+   "hosts": [
+    "univision.com"
+   ],
+   "outlets": [
+    "Univision",
+    "Univision 14 San Francisco",
+    "Univision Sacramento"
+   ],
+   "kill": [
+    "Gratis",
+    "LEER TRANSCRIPCIÓN",
+    "OCULTAR TRANSCRIPCIÓN",
+    "Relacionados:",
+    "Te puede interesar:",
+    "¿Quieres ver todo el catálogo de contenidos\\?"
+   ]
+  },
+  "upi.com": {
+   "hosts": [
+    "upi.com"
+   ]
+  },
+  "usacarry.com": {
+   "hosts": [
+    "usacarry.com"
+   ]
+  },
+  "usatoday.com": {
+   "hosts": [
+    "usatoday.com"
+   ],
+   "outlets": [
+    "USA TODAY",
+    "USA Today"
+   ],
+   "kill": [
+    "Alabama",
+    "Alaska",
+    "Arizona",
+    "Arkansas",
+    "California",
+    "Colorado",
+    "Connecticut",
+    "Delaware",
+    "District Of Columbia",
+    "Florida",
+    "Georgia",
+    "Hawaii",
+    "Idaho",
+    "Illinois",
+    "Indiana",
+    "Iowa",
+    "Kansas",
+    "Kentucky",
+    "Louisiana",
+    "Maine",
+    "Maryland",
+    "Massachusetts",
+    "Michigan",
+    "Minnesota",
+    "Mississippi",
+    "Missouri",
+    "Montana",
+    "Nebraska",
+    "Nevada",
+    "New Hampshire",
+    "New Jersey",
+    "New Mexico",
+    "New York",
+    "North Carolina",
+    "North Dakota",
+    "Ohio",
+    "Oklahoma",
+    "Oregon",
+    "Pennsylvania",
+    "Rhode Island",
+    "Select State",
+    "South Carolina",
+    "South Dakota",
+    "Tennessee",
+    "Texas",
+    "Utah",
+    "Vermont",
+    "Virginia",
+    "Washington",
+    "West Virginia",
+    "Wisconsin",
+    "Wyoming",
+    "•",
+    "• Select State.{0,800}",
+    "ELECTION RESULTS ?Senate House Governors",
+    "ELECTION RESULTS ?Presidential Senate House Governors"
+   ]
+  },
+  "uw-media.pnj.com": {
+   "hosts": [
+    "uw-media.pnj.com"
+   ]
+  },
+  "v2.courthousenews.com": {
+   "hosts": [
+    "v2.courthousenews.com"
+   ],
+   "outlets": [
+    "Courthouse News Service"
+   ],
+   "tail": [
+    "Subscribe to our free newsletters"
+   ],
+   "strip": [
+    "Link\\s*copied"
+   ]
+  },
+  "valley.labusinessjournal.com": {
+   "hosts": [
+    "valley.labusinessjournal.com"
+   ],
+   "outlets": [
+    "Los Angeles Business Journal"
+   ],
+   "kill": [
+    "Facebook",
+    "Linkedin",
+    "X"
+   ],
+   "tail": [
+    "Related Articles"
+   ]
+  },
+  "valleynewsgroup.com": {
+   "hosts": [
+    "valleynewsgroup.com"
+   ]
+  },
+  "vannuysnewspress.com": {
+   "hosts": [
+    "vannuysnewspress.com"
+   ],
+   "outlets": [
+    "Van Nuys News Press"
+   ],
+   "kill": [
+    "BuyMaps",
+    "TrackBills",
+    "Buy Maps|Track Bills|Consult Lawyers|Shop Judaica|Access Services"
+   ]
+  },
+  "vbs.org": {
+   "hosts": [
+    "vbs.org"
+   ],
+   "outlets": [
+    "Valley Beth Shalom Hazak"
+   ],
+   "ltail": [
+    "(mon|tue|wed|thu|fri|sat|sun)[a-z]*, [a-z]+ #, # # [a-z]+ #"
+   ]
+  },
+  "ve4erka.com": {
+   "hosts": [
+    "ve4erka.com"
+   ]
+  },
+  "view.nate.com": {
+   "hosts": [
+    "view.nate.com"
+   ],
+   "outlets": [
+    "Nate News"
+   ],
+   "kill": [
+    "\\d+",
+    "☞ .*",
+    "▶ .*"
+   ],
+   "tail": [
+    "댓글 운영 원칙"
+   ]
+  },
+  "villagevoice.com": {
+   "hosts": [
+    "villagevoice.com"
+   ]
+  },
+  "vinetur.com": {
+   "hosts": [
+    "vinetur.com"
+   ],
+   "outlets": [
+    "Vinetur"
+   ],
+   "kill": [
+    "Leído › \\d+ veces"
+   ]
+  },
+  "vinnews.com": {
+   "hosts": [
+    "vinnews.com"
+   ]
+  },
+  "vistazo.com": {
+   "hosts": [
+    "vistazo.com"
+   ],
+   "outlets": [
+    "Vistazo"
+   ],
+   "kill": [
+    "Servicios",
+    "Más leídas",
+    "Lo más reciente",
+    "Activar Notificaciones"
+   ]
+  },
+  "voatiengviet.com": {
+   "hosts": [
+    "voatiengviet.com"
+   ],
+   "outlets": [
+    "VOA Vietnamese"
+   ],
+   "lkill": [
+    "xem bình luận"
+   ]
+  },
+  "vsluh.net": {
+   "hosts": [
+    "vsluh.net"
+   ]
+  },
+  "washingtonexaminer.com": {
+   "hosts": [
+    "washingtonexaminer.com"
+   ]
+  },
+  "washingtonpost.com": {
+   "hosts": [
+    "washingtonpost.com"
+   ]
+  },
+  "washingtontimes.com": {
+   "hosts": [
+    "washingtontimes.com"
+   ],
+   "outlets": [
+    "Washington Times, The"
+   ],
+   "kill": [
+    "Advertisement",
+    "Copyright © \\d+ The Washington Times, LLC\\.",
+    "Copyright © \\d+ The Washington Times, LLC\\. Click here for reprint permission\\.",
+    "Please read our comment policy before commenting\\."
+   ]
+  },
+  "wavepublication.com": {
+   "hosts": [
+    "wavepublication.com"
+   ],
+   "outlets": [
+    "Los Angeles Wave"
+   ],
+   "kill": [
+    "\\d+ minutes read",
+    "\\d+ minutes? read"
+   ]
+  },
+  "web-chef.com": {
+   "hosts": [
+    "web-chef.com"
+   ]
+  },
+  "wenxuecity.com": {
+   "hosts": [
+    "wenxuecity.com"
+   ]
+  },
+  "wfsb.com": {
+   "hosts": [
+    "wfsb.com"
+   ]
+  },
+  "why4416.tistory.com": {
+   "hosts": [
+    "why4416.tistory.com"
+   ],
+   "outlets": [
+    "Why4416 blog"
+   ],
+   "tail": [
+    "'미국, 캐나다등' 카테고리의 다른 글"
+   ]
+  },
+  "wlj.net": {
+   "hosts": [
+    "wlj.net"
+   ]
+  },
+  "wsj.com": {
+   "hosts": [
+    "wsj.com"
+   ]
+  },
+  "wsvn.com": {
+   "hosts": [
+    "wsvn.com"
+   ]
+  },
+  "yahoo.com": {
+   "hosts": [
+    "yahoo.com"
+   ],
+   "outlets": [
+    "Yahoo News"
+   ],
+   "kill": [
+    "Advertisement"
+   ],
+   "tail": [
+    "其他人也在看",
+    "更多.{0,30}報導[:：]?",
+    "更多.{0,30}報導.{0,200}",
+    "Te puede interesar"
+   ]
+  },
+  "yna.co.kr": {
+   "hosts": [
+    "yna.co.kr"
+   ],
+   "outlets": [
+    "Yonhap News",
+    "Yonhap News Agency"
+   ],
+   "kill": [
+    "URL이 복사되었습니다\\.",
+    "공유하기",
+    "이미지 확대"
+   ]
+  },
+  "ynet.co.il": {
+   "hosts": [
+    "ynet.co.il"
+   ]
+  },
+  "zaviehmag.ir": {
+   "hosts": [
+    "zaviehmag.ir"
+   ]
+  },
+  "gabriel.asmdc.org": {
+   "hosts": [
+    "gabriel.asmdc.org",
+    "a46.asmdc.org"
+   ],
+   "outlets": [
+    "Gabriel's office (gabriel.asmdc.org)"
+   ],
+   "kill": [
+    "Image"
+   ],
+   "note": "RELCOPIES-v1 (agent-relcopies2 2026-10-28): official release pages (Drupal press-releases node). Keep headline, dek (h3.subtitle), date + contact block (press-status), body, photos + alt text; only the bare 'Image' field label goes."
+  },
+  "jewishcaucus.legislature.ca.gov": {
+   "hosts": [
+    "jewishcaucus.legislature.ca.gov"
+   ],
+   "outlets": [
+    "California Legislative Jewish Caucus"
+   ],
+   "kill": [
+    "Image"
+   ],
+   "note": "RELCOPIES-v1: Jewish Caucus news pages (Drupal news node). Keep headline, 'Publish Date' + date, body; only a bare 'Image' field label goes."
+  },
+  "la.streetsblog.org": {
+   "hosts": [
+    "la.streetsblog.org"
+   ],
+   "outlets": [
+    "Streetsblog Los Angeles"
+   ],
+   "tail": [
+    "Read More:"
+   ],
+   "kill": [
+    "Share on (Facebook|Bluesky)"
+   ]
+  },
+  "publimetro.co": {
+   "hosts": [
+    "publimetro.co"
+   ],
+   "outlets": [
+    "Publimetro Colombia"
+   ],
+   "tail": [
+    "¡Sigue el canal de Publimetro y recibe"
+   ],
+   "kill": [
+    "¡Sigue a Publimetro en Google.*",
+    "¡Sigue el canal de Publimetro.*",
+    "Entra al canal"
+   ]
+  },
+  "tvazteca.com": {
+   "hosts": [
+    "tvazteca.com"
+   ],
+   "outlets": [
+    "TV Azteca"
+   ],
+   "tail": [
+    "Tags relacionados"
+   ]
+  },
+  "foodingredientsfirst.com": {
+   "hosts": [
+    "foodingredientsfirst.com"
+   ],
+   "outlets": [
+    "Food Ingredients First"
+   ],
+   "kill": [
+    "All content and features on this website.*",
+    "privacy statement",
+    "Save in your AI",
+    "ChatGPT",
+    "Google AI",
+    "Claude",
+    "Perplexity",
+    "Grok",
+    "Save in your AI.*"
+   ],
+   "tail": [
+    "Save in your AI"
+   ]
+  }
+ },
+ "outlet_aliases": {
+  "abc7 los angeles spanish": [
+   "abc7 los angeles"
+  ],
+  "associated press": [
+   "associated press news service",
+   "associated press us news online"
+  ],
+  "daily mail online": [
+   "daily mail"
+  ],
+  "hey socal": [
+   "heysocal"
+  ],
+  "sacto daily 沙城日報 chinese": [
+   "sacto daily 沙城日報"
+  ]
+ },
+ "find": {
+  "note": "TinyFish-format page chrome (agent-retry post-pass, folded in by agent-code). Mode find only; Gabriel blocks kept.",
+  "head": "h1",
+  "tail": [
+   "Comments( / \\d+)?",
+   "YOU MAY ALSO LIKE",
+   "기사 추천",
+   "화제의 추천 정보",
+   "网友评论.*",
+   "Story Tags",
+   "Post a comment to this article",
+   "Share This Story",
+   "KEYWORDS:? .*",
+   "Recommended Content",
+   "HTML Embed Code",
+   "Report Abusive Comment",
+   "This article tagged under:",
+   "진보된 직업적인 팀과.*",
+   "אם תרצה לקבל את דוח לוין.*"
+  ],
+  "kill": [
+   "Advertisement",
+   "Getting your Trinity Audio player ready\\.\\.\\.",
+   "Local",
+   "Elections Sep \\d+ San Francisco .*",
+   "Watch NBC Bay Area News free wherever you are",
+   "WATCH HERE",
+   "뉴스 듣기",
+   "글자 크기",
+   "가",
+   "보통",
+   "크게",
+   "아주 크게",
+   "기사 공유",
+   "페이스북",
+   "쓰레드",
+   "엑스",
+   "카카오톡",
+   "주소복사",
+   "인쇄하기",
+   "댓글보기",
+   "공유하기",
+   "URL을 길게 누르면 복사하실 수 있습니다\\.",
+   "레이디경향",
+   "이슈",
+   "\\d{1,4}",
+   ".*Sign up for a FREE month.*",
+   ".*Receive a free month of Agri-Pulse.*",
+   ".*FREE month of Agri-Pulse.*",
+   "Looking for quick answers on food safety topics\\?.*",
+   "Try Ask FSM.*",
+   "Ask FSM →",
+   "Print Mail Download.*",
+   "HB (Mobile )?Ad Slot",
+   "Bio and Articles",
+   "317\\.805\\.4770",
+   "Email",
+   "Related Practices & Jurisdictions",
+   "Biotech Food Drug",
+   "Litigation Trial Practice",
+   "Bailee Henderson is the Director of Content Strategy for Food Safety Magazine\\..*",
+   "The Food Safety Magazine editorial team comprises .*",
+   "(?i)(\\d+(\\.\\d+)?[km]|posts|followers|following)"
+  ],
+  "repeat_title": 8,
+  "protect_gabriel": true,
+  "tidy": true,
+  "comments": [
+   "(?i)(\\d+ comments?|comments( \\(\\d+\\))?|show comments|view comments)"
+  ],
+  "related": [
+   "(?i)(related|related (articles?|posts?|stories|content|news|coverage)|more (stories|news|articles)( from .{1,60})?|latest (stories|news|posts)|you (may|might) also like|recommended( for you)?|trending( now)?|popular (stories|posts)|most (read|popular))[:.]?"
+  ],
+  "teaser_words": 70,
+  "min_position": 0.5,
+  "min_words_before": 150,
+  "comments_strong": [
+   "(?i)(\\d+|one|two|three|four|five|six|seven|eight|nine|ten) (thoughts?|responses?|comments?|replies|reactions?) (on|to) .{0,300}",
+   "(?i)(leave a reply|leave a comment|post a comment|add a comment|join the conversation|join the discussion|reader comments|comments are closed\\.?)"
+  ],
+  "tail_safe": [
+   "(?i)(tags|post a comment as (guest|anonymous)|recommended for you|featured events|related topics)",
+   "(?i).{0,40}lower waypoint\\s*next waypoint.{0,200}",
+   "(?i)player sponsored by.{0,80}",
+   "(?i)copy and paste to republish( this story)?",
+   "(?i)posts by .{1,60}"
+  ],
+  "section": [
+   [
+    "(Prev Previous|Next Next Up)",
+    16,
+    3
+   ]
+  ]
+ },
+ "skip_urls_note": "database/results/listing pages, never added (DECISIONS 2026-10-27, like californiafiles.org): bill trackers, election-results databases, donor/Form 700/race pages",
+ "skip_urls": [
+  "(?i)^https?://([^/]*\\.)?californiafiles\\.org(/|$)",
+  "(?i)^https?://([^/]*\\.)?sfchronicle\\.com/projects/[^?#]*(bill-tracker|election-results|results)",
+  "(?i)^https?://([^/]*\\.)?nytimes\\.com/interactive/[^?#]*/elections/results",
+  "(?i)^https?://[^/]+/elections/results/race/",
+  "(?i)^https?://([^/]*\\.)?(digitaldemocracy\\.calmatters\\.org|digitaldemocracy\\.org|ballotpedia\\.org|followthemoney\\.org|opensecrets\\.org|transparentcalifornia\\.com|fppc\\.ca\\.gov|cal-access\\.sos\\.ca\\.gov|powersearch\\.sos\\.ca\\.gov|leginfo\\.legislature\\.ca\\.gov|legiscan\\.com|votesmart\\.org|govtrack\\.us)(/|$)",
+  "(?i)^https?://[^?#]*(bill-tracker|billtracker|bill_tracker)(/|\\.|$)",
+  "(?i)^https?://[^?#]*/(form-?700|donors?|contributors/\\d{4}[a-z][^/?#]*|campaign-finance|candidates?/[^/]+/(finance|donors|contributions))(/|$|\\?)",
+  "(?i)^https?://[^?#]*/(election-results|elections?/results|results/(race|election))(/|$|\\?)",
+  "(?i)^https?://([^/]*\\.)?election\\.org/state/[^/]+/legislator/",
+  "(?i)^https?://([^/]*\\.)?track-jpac\\.org(/|$)",
+  "(?i)^https?://([^/]*\\.)?envirovoters\\.org/(archives/)?(scorecard|\\d{4}-(primary-)?endorsements|give-green-california)(/|$)",
+  "(?i)^https?://([^/]*\\.)?elections\\.calmatters\\.org/\\d{4}/district-postings/",
+  "(?i)^https?://([^/]*\\.)?calmatters\\.org/california-voter-guide-\\d{4}/[^/?#]+/?([?#]|$)",
+  "(?i)^https?://[^/]*medium\\.com/[^?#]*bill-tracker",
+  "(?i)^https?://[^?#]+/page/\\d+/?([?#]|$)",
+  "(?i)^https?://[^/]+/sitemap(/|\\.xml|$)",
+  "(?i)^https?://[^?#]+/(tag|tags|category|author)/[^?#]+",
+  "(?i)^https?://[^/]+/people/[a-z0-9-]+/?([?#]|$)"
+ ],
+ "jesse": "(?:\\[?[Jj][Ee][Ss][Ss][Ee]\\]?|Jessie|JESSIE)\\s+[Gg][Aa][Bb][Rr][Ii][Ee][Ll]|(?:Assemblymember|Assemblyman|Assembly\\s*[Mm]embers?|Assemblywoman|Asm\\.?|Asambleísta|asambleísta)\\s+(?:\\[?Jesse\\]?\\s+)?(?:[A-Z][a-z]+\\s+and\\s+)?Gabriel(?!\\s+[A-ZÁÉÍÓÚÑ][a-záéíóúñ]+)|Gabriel\\s*\\(D\\s*[-–‑]|Gabriel,\\s*D\\s*[-–‑]|\\(Gabriel\\s*[),&]|제시\\s*가브리엘|가브리엘|Джесси\\s+Габриэл|Габриэл|Габриел|ג['׳]סי\\s+גבריאל|גבריאל|加布里埃[尔爾]|加布尔|蓋博|盖博|جسی\\s+گابریل|گابریل|Ջեսի\\s+Գաբրիել|Գաբրիել",
+ "other_jesse": "(?:Ms|Mrs)\\.?\\s+Jessi?e\\s+Gabriel|Jessi?e\\s+Gabriel[\\s\\S]{0,400}(?:BakerHostetler|bakerlaw\\.com)|(?:BakerHostetler|bakerlaw\\.com)[\\s\\S]{0,400}Jessi?e\\s+Gabriel",
+ "jesse_strong": "(?i)assembly\\s*(?:member|man|woman)|\\basm\\.|asambleísta|gabriel\\s*\\(d\\s*[-–‑]|gabriel,\\s*d\\s*[-–‑]|encino|woodland hills|van nuys|san fernando valley|\\b4[56](?:th)?\\s+(?:assembly\\s+)?district|gibson,?\\s+dunn|\\basuc\\b|jewish caucus",
+ "other_gabriel": "Gabriel\\s+(?:Ugarte|Petek|Dillard|Lerner|Garc[ií]a|Boric|Attal|Iglesias|Byrne|Kahane|Macht|Kuris|Sanchez|Sánchez|Vargas|Rodriguez|Rodríguez|Lopez|López|Jesus|Jesús)|San\\s+Gabriel|Peter\\s+Gabriel|Sigmar\\s+Gabriel",
+ "jesse_context": "(?i)assembly|encino|woodland hills|van nuys|legislat|lawmaker|budget|\\bAB\\s?\\d+|democrat|sacramento|bill",
+ "print_page_urls_note": "REQ-11 (updfix 2026-10-30): e-paper / flipbook / page-viewer URLs are print pages, not stories: routed to run-doc print_pages (needs clipping), never to a story row.",
+ "print_page_urls": [
+  "(?i)/flippingbook/",
+  "(?i)^https?://(?:[^/]+\\.)?epaper\\.",
+  "(?i)^https?://(?:[^/]+\\.)?pressreader\\.com/",
+  "(?i)^https?://(?:[^/]+\\.)?issuu\\.com/[^/]+/docs/",
+  "(?i)^https?://[^?#]*/e-?paper(?:/|$|\\?)",
+  "(?i)^https?://[^?#]*/e-?edition(?:/|$|\\?)",
+  "(?i)^https?://[^?#]*/digital-?edition(?:/|$|\\?)"
+ ]
+}

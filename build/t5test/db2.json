@@ -1,0 +1,81 @@
+{
+ "runs": {
+  "run-b": {
+   "at": "2026-10-26T10:00:00Z",
+   "rows": [
+    {
+     "Article ID": "ws-NEW-b-1",
+     "Story ID": "jg-NEW-b-1",
+     "Original or reprint": "Original",
+     "Outlet": "NB New Outlet",
+     "Headline": "case1 new NewsBank doc",
+     "NewsBank article link": "https://infoweb.newsbank.com/apps/news/document-view?p=WORLDNEWS&docref=news/ZZZZ000000000001"
+    },
+    {
+     "Article ID": "ws-NEW-b-2",
+     "Story ID": "jg-NEW-b-2",
+     "Original or reprint": "Original",
+     "Outlet": "NB Dup Outlet",
+     "Headline": "case2 existing NewsBank doc",
+     "NewsBank article link": "https://infoweb.newsbank.com/apps/news/document-view?p=WORLDNEWS&docref=news/1AB771535547D488"
+    },
+    {
+     "Article ID": "ws-NEW-b-3",
+     "Story ID": "jg-NEW-b-3",
+     "Original or reprint": "Original",
+     "Outlet": "Google Only Outlet",
+     "Headline": "case3 google search link",
+     "Publisher link": "https://www.google.com/search?q=%22DOJ+sues+California+over+new+%27Glock+ban%27%22+Arizona+Republic",
+     "Link status": "Search link only"
+    }
+   ]
+  },
+  "run-c": {
+   "at": "2026-10-26T11:00:00Z",
+   "rows": [
+    {
+     "Article ID": "ws-NEW-c-1",
+     "Story ID": "jg-7e66d6",
+     "Original or reprint": "Reprint",
+     "Outlet": "Code Reprint Outlet",
+     "Publisher link": "https://codereprint.example/a"
+    },
+    {
+     "Article ID": "ws-NEW-c-2",
+     "Story ID": "jg-NEW-b-1",
+     "Original or reprint": "Reprint",
+     "Outlet": "Cross Run Reprint",
+     "Publisher link": "https://crossrun.example/a"
+    },
+    {
+     "Article ID": "ws-NEW-c-3",
+     "Story ID": "jg-NEW-c-9",
+     "Original or reprint": "Reprint",
+     "Outlet": "Same Run Reprint",
+     "Publisher link": "https://samerun.example/a"
+    },
+    {
+     "Article ID": "ws-NEW-c-4",
+     "Story ID": "jg-NEW-c-9",
+     "Original or reprint": "Original",
+     "Outlet": "Same Run Original",
+     "Headline": "case6 original",
+     "Publisher link": "https://samerunorig.example/a"
+    },
+    {
+     "Article ID": "ws-NEW-c-5",
+     "Story ID": "jg-abcdef",
+     "Original or reprint": "Reprint",
+     "Outlet": "Unknown Code Outlet",
+     "Publisher link": "https://unknowncode.example/a"
+    }
+   ]
+  }
+ },
+ "tones": {},
+ "authors": {},
+ "translations": {},
+ "edits": {},
+ "pages": {},
+ "reprints": {}
+}

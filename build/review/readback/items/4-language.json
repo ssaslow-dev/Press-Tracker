@@ -1,0 +1,264 @@
+{
+  "list": [
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-00169 · sheet says Spanish, text is English",
+      "id": "lang-000",
+      "key": "nb-00169",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "LEGISLATIVE OFFICES"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-02843 · sheet says Spanish, text is English",
+      "id": "lang-001",
+      "key": "nb-02843",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "California Bill Would Ban Skittles, Other Treats"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-03052 · sheet says Spanish, text is English",
+      "id": "lang-002",
+      "key": "nb-03052",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "ASSEMBLYMEMBER JESSE GABRIEL HONORS CAFE AFICIONADO AS SMALL BUSINESS OF THE YEAR FOR THE WEST SAN FERNANDO VALLEY"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-03075 · sheet says English, text is German",
+      "id": "lang-003",
+      "key": "nb-03075",
+      "options": [
+        "Change Language to German",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to German",
+      "title": "PRELIMINARY ELECTION RESULTS"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-03211 · sheet says Spanish, text is English",
+      "id": "lang-004",
+      "key": "nb-03211",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "California Jewish groups eligible for $200,000 security grants - New historic $47.5 million state security grant program will enable Jewish community to drastic"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-03483 · sheet says Spanish, text is English",
+      "id": "lang-005",
+      "key": "nb-03483",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "Features"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-03484 · sheet says Spanish, text is English",
+      "id": "lang-006",
+      "key": "nb-03484",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "News"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-03485 · sheet says Spanish, text is German",
+      "id": "lang-007",
+      "key": "nb-03485",
+      "options": [
+        "Change Language to German",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to German",
+      "title": "News"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-03531 · sheet says Portuguese, text is English",
+      "id": "lang-008",
+      "key": "nb-03531",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "L.A. County members of the California Assembly"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-03533 · sheet says Portuguese, text is English",
+      "id": "lang-009",
+      "key": "nb-03533",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "How to contact your California Assembly members"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-03532 · sheet says Spanish, text is English",
+      "id": "lang-010",
+      "key": "nb-03532",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "L.A. County members of the California Assembly - Here is the contact information for Los Angeles County’s mem[...]"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-03557 · sheet says Spanish, text is English",
+      "id": "lang-011",
+      "key": "nb-03557",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "ELECTION RESULTS"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-03870 · sheet says Spanish, text is English",
+      "id": "lang-012",
+      "key": "nb-03870",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "News"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "nb-04042 · sheet says Hebrew, text is English",
+      "id": "lang-013",
+      "key": "nb-04042",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "Daily Kickoff: Progressive, Pro-Israel & Possibly Youngest Congresswoman | Panama's Kosher Food Boom"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "tracker story · sheet says Chinese, saved page is English",
+      "id": "langt-000",
+      "key": "jg-02183",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "jg-02183"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "tracker story · sheet says Portuguese, saved page is English",
+      "id": "langt-001",
+      "key": "jg-03211",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "jg-03211"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "tracker story · sheet says Korean, saved page is English",
+      "id": "langt-002",
+      "key": "jg-03983",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "jg-03983"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "tracker story · sheet says Hebrew, saved page is English",
+      "id": "langt-003",
+      "key": "jg-04015",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "jg-04015"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "tracker story · sheet says Hebrew, saved page is English",
+      "id": "langt-004",
+      "key": "jg-04177",
+      "options": [
+        "Change Language to English",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to English",
+      "title": "jg-04177"
+    },
+    {
+      "cat": "language",
+      "conf": "",
+      "detail": "tracker story · sheet says Portuguese, saved page is Vietnamese",
+      "id": "langt-005",
+      "key": "jg-02260",
+      "options": [
+        "Change Language to Vietnamese",
+        "Leave as is"
+      ],
+      "proposed": "Change Language to Vietnamese",
+      "title": "jg-02260"
+    }
+  ]
+}

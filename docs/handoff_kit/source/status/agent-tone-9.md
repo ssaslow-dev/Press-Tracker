@@ -1,0 +1,5 @@
+tone_batch_9: 114/114 sids written to work/out/tone_batch_9.out.jsonl; fields match each need_* flag; all tone/topic values from allowed lists; bills only from gabriel_bills.json.
+Tone (112 rated): Neutral 72, Positive 34, Very positive 3 (jg-00266, jg-00371, jg-01332), Negative 3 (jg-00714, jg-00995, jg-01429), Very negative 0.
+Topic (105 assigned): Food safety 21, Antisemitism/Jewish 16, Other/roundup 15, Elections 11, State budget 10, Housing 7, Guns 4, Wildfire 4, Restaurants 4, Public safety 3, Social media 3, Energy 3, Education 2, Health/labor 1, Leadership 1.
+Flags: 0 (no "no Jesse Gabriel mention"); pre-legislature items (jg-01715, -01739, -01749, -01759) rated per addendum; jg-00084 marked Spanish but text is English, so text_en = original text.
+Addendum arrived after jg-01656; other_bills was not backfilled. Bills attributed to Gabriel but missing from the list: AB 592 (2025), AB 107 (2026 budget acts), AB 2899 (2024), AB 1386 (2023), AB 1422 (2021), AB 787 (2021 workforce housing, not the listed 2023 one), AB 3308 (2020), AB 2058 (2020); co-author of SB 1524 (2024).

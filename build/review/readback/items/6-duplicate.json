@@ -1,0 +1,69 @@
+{
+  "list": [
+    {
+      "cat": "duplicate",
+      "conf": "",
+      "detail": "jg-00758 Reprint and jg-00758 Reprint · identical saved page · Protesters calling for cease-fire in Gaza cause disruption",
+      "id": "dup-000",
+      "key": "jg-00758|jg-00758",
+      "options": [
+        "Same outlet: merge into one row",
+        "Different outlets: keep both"
+      ],
+      "proposed": "Same outlet: merge into one row",
+      "title": "Spectrum News 1 / Spectrum Local News"
+    },
+    {
+      "cat": "duplicate",
+      "conf": "",
+      "detail": "jg-00675 Reprint and jg-00675 Reprint · identical saved page · California lawmakers vote to reduce deficit by $17B",
+      "id": "dup-001",
+      "key": "jg-00675|jg-00675",
+      "options": [
+        "Same outlet: merge into one row",
+        "Different outlets: keep both"
+      ],
+      "proposed": "Same outlet: merge into one row",
+      "title": "Spectrum News 1 / Spectrum Local News"
+    },
+    {
+      "cat": "duplicate",
+      "conf": "",
+      "detail": "jg-00754 Reprint and jg-00754 Reprint · identical saved page · Gov. Newsom's spending plan as California's deficit looms",
+      "id": "dup-002",
+      "key": "jg-00754|jg-00754",
+      "options": [
+        "Same outlet: merge into one row",
+        "Different outlets: keep both"
+      ],
+      "proposed": "Same outlet: merge into one row",
+      "title": "Spectrum News 1 / Spectrum Local News"
+    },
+    {
+      "cat": "duplicate",
+      "conf": "",
+      "detail": "jg-00872 Reprint and jg-00872 Reprint · identical saved page · Newsom signs several laws, including a food ingredients ban",
+      "id": "dup-003",
+      "key": "jg-00872|jg-00872",
+      "options": [
+        "Same outlet: merge into one row",
+        "Different outlets: keep both"
+      ],
+      "proposed": "Same outlet: merge into one row",
+      "title": "Spectrum News 1 / Spectrum Local News"
+    },
+    {
+      "cat": "duplicate",
+      "conf": "",
+      "detail": "jg-00063 Reprint and jg-00063 Reprint · identical saved page · California passes non-UPF food certification bill",
+      "id": "dup-004",
+      "key": "jg-00063|jg-00063",
+      "options": [
+        "Same outlet: merge into one row",
+        "Different outlets: keep both"
+      ],
+      "proposed": "Same outlet: merge into one row",
+      "title": "FoodNavigator / FoodNavigator-USA"
+    }
+  ]
+}

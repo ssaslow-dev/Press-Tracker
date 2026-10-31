@@ -1,0 +1,106 @@
+{
+ "at": "2026-10-26T23:53:31Z",
+ "runs": {
+  "run-b": {
+   "ids": {
+    "jg-NEW-b-1": "jg-04297",
+    "ws-NEW-b-1": "ws-03987",
+    "ws-NEW-b-2": "nb-00002",
+    "jg-NEW-b-2": "jg-00001",
+    "jg-NEW-b-3": "jg-04298",
+    "ws-NEW-b-3": "ws-03988"
+   },
+   "added": [
+    "ws-03987",
+    "ws-03988"
+   ]
+  },
+  "run-c": {
+   "ids": {
+    "jg-NEW-c-9": "jg-04299",
+    "ws-NEW-c-4": "ws-03989",
+    "ws-NEW-c-1": "ws-03990",
+    "ws-NEW-c-2": "ws-03991",
+    "ws-NEW-c-3": "ws-03992"
+   },
+   "added": [
+    "ws-03989",
+    "ws-03990",
+    "ws-03991",
+    "ws-03992"
+   ]
+  }
+ },
+ "conflicts": [],
+ "applied": [],
+ "duplicates": [
+  {
+   "run": "run-b",
+   "placeholder": "ws-NEW-b-2",
+   "existing": "nb-00002",
+   "link": ""
+  }
+ ],
+ "unsupported": [],
+ "removals_requested": [],
+ "unknown_story": [
+  {
+   "run": "run-c",
+   "placeholder": "ws-NEW-c-5",
+   "story": "jg-abcdef",
+   "why": "reprint of a story not in the sheet"
+  }
+ ],
+ "edits_clear": [],
+ "edits_keep": [],
+ "reprint_counts": {
+  "jg-00021": {
+   "old": 12,
+   "new": 13,
+   "new_outlets": [
+    "code reprint outlet"
+   ]
+  },
+  "jg-04297": {
+   "old": 0,
+   "new": 1,
+   "new_outlets": [
+    "cross run reprint"
+   ]
+  },
+  "jg-04299": {
+   "old": 0,
+   "new": 1,
+   "new_outlets": [
+    "same run reprint"
+   ]
+  }
+ },
+ "pages": [],
+ "counts": {
+  "rows_added": 6,
+  "cells_filled": 0,
+  "conflicts": 0,
+  "duplicates": 1,
+  "removals_requested": 0,
+  "pages": 0,
+  "reprint_counts_changed": 3,
+  "originals": 4299,
+  "next_ws": 3993,
+  "next_jg": 4300
+ },
+ "verify": {
+  "ok": true,
+  "problems": [],
+  "rows_before": 9686,
+  "rows_after": 9692,
+  "originals": 4299
+ },
+ "sheet_line": "6 rows added, 0 cells filled.",
+ "sheet_stories": [
+  "jg-00021",
+  "jg-04297",
+  "jg-04298",
+  "jg-04299"
+ ]
+}

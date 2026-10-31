@@ -1,0 +1,4 @@
+# FINAL PASS — common rules (read before your stage)
+L = /tmp/claude-0/-home-claude/989ae3e6-bb40-514f-8289-716f9d98407d/scratchpad/lib. Read README.md, DECISIONS.md (ALL — it is the spec), CONTRACT.md, BOARD.md ("Execution order"), build/final_build.md, build/acceptance_check_final.md.
+Stages run one after another; each writes its outputs + a manifest to L/final_pass/<stage>/ and a log to L/status/agent-final-<stage>.md, and STOPS on any failed check (report exactly what failed; never improvise around it). No Exa. Never delete: anything to remove goes to Desktop/Tracker library/_to_delete/ (same subfolders). Mac scratch only in $HOME/mnt/outputs.
+Stages: F1 build the final workbook on a copy + plans (no Mac writes) → F2 library operations on the Mac per F1's plan → F3 commit the workbook to the Mac → F4 tracker build + ONE publish → F5 independent acceptance check (separate agent).

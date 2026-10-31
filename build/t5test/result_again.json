@@ -1,0 +1,98 @@
+{
+ "at": "2026-10-26T23:48:34Z",
+ "runs": {
+  "run-test01": {
+   "ids": {
+    "ws-NEW-test01-1": "ws-03866",
+    "jg-NEW-test01-1": "jg-04196",
+    "ws-NEW-test01-2": "ws-03867",
+    "jg-NEW-test01-2": "jg-04197",
+    "ws-NEW-test01-5": "nb-00111",
+    "jg-NEW-test01-9": "jg-00055",
+    "ws-NEW-test01-3": "ws-03868",
+    "ws-NEW-test01-4": "ws-03869"
+   },
+   "added": []
+  }
+ },
+ "conflicts": [
+  {
+   "aid": "nb-00034",
+   "story": "jg-00015",
+   "column": "Headline",
+   "sheet": "Dos nuevas demandas reabren el debate por el arte saqueado por los nazis en los EE.UU.",
+   "tracker": "A DIFFERENT HEADLINE",
+   "from": "edits"
+  }
+ ],
+ "applied": [],
+ "duplicates": [
+  {
+   "run": "run-test01",
+   "placeholder": "ws-NEW-test01-1",
+   "existing": "ws-03866",
+   "link": "https://www.testgazette.com/news/gabriel-one/"
+  },
+  {
+   "run": "run-test01",
+   "placeholder": "ws-NEW-test01-2",
+   "existing": "ws-03867",
+   "link": "https://sampledaily.com/a/2"
+  },
+  {
+   "run": "run-test01",
+   "placeholder": "ws-NEW-test01-5",
+   "existing": "nb-00111",
+   "link": "https://www.edhat.com/california/news/california-food-label-law-transparency/"
+  },
+  {
+   "run": "run-test01",
+   "placeholder": "ws-NEW-test01-3",
+   "existing": "ws-03868",
+   "link": "https://reprintweekly.com/x"
+  },
+  {
+   "run": "run-test01",
+   "placeholder": "ws-NEW-test01-4",
+   "existing": "ws-03869",
+   "link": "https://echotimes.com/gabriel-one"
+  }
+ ],
+ "unsupported": [],
+ "removals_requested": [],
+ "unknown_story": [],
+ "edits_clear": [],
+ "edits_keep": [
+  "jg-00015"
+ ],
+ "reprint_counts": {},
+ "pages": [
+  {
+   "page": "ws-NEW-test01-1",
+   "aid": "ws-03866",
+   "file": "Saved pages (TinyFish)/ws-03866.html",
+   "url": "https://www.testgazette.com/news/gabriel-one/"
+  }
+ ],
+ "counts": {
+  "rows_added": 0,
+  "cells_filled": 0,
+  "conflicts": 1,
+  "duplicates": 5,
+  "removals_requested": 0,
+  "pages": 1,
+  "reprint_counts_changed": 0,
+  "originals": 4197,
+  "next_ws": 3870,
+  "next_jg": 4198
+ },
+ "verify": {
+  "ok": true,
+  "problems": [],
+  "rows_before": 9548,
+  "rows_after": 9548,
+  "originals": 4197
+ },
+ "sheet_line": "0 rows added, 0 cells filled, 1 conflicts left for Sammy.",
+ "sheet_stories": []
+}

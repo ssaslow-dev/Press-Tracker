@@ -1,0 +1,54 @@
+AB-57|Law enforcement: hate crimes.|Chaptered
+AB-59|Mitigation Fee Act: fees: notice and timelines.|Assembly - Died - Local Government
+AB-61|Business pandemic relief.|Chaptered
+AB-309|Pupil mental health: model referral protocols.|Chaptered
+AB-396|CalFresh: educational programs.|Chaptered
+AB-587|Social media companies: terms of service.|Chaptered
+AB-608|Permanent vote by mail: procedures.|Assembly - Died
+AB-766|Climate change: corporate disclosures.|Assembly - Died - Natural Resources
+AB-787|Planning and zoning: housing element: converted affordable housing units.|Chaptered
+AB-800|Wildfires: local general plans: safety elements: fire hazard severity zones.|Assembly - Died - Natural Resources
+AB-836|California Building Standards Commission: recycled water: nonpotable water systems.|Assembly - Died - Environmental Safety and Toxic Materials
+AB-876|Firearms.|Assembly - Died - Appropriations
+AB-977|Homelessness program data reporting: Homeless Management Information System.|Chaptered
+AB-989|Housing Accountability Act: appeals: Office of Housing Appeals.|Senate - Died
+AB-1018|Employment Development Department: automation plans.|Assembly - Died
+AB-1053|City selection committees: County of Los Angeles: quorum: teleconferencing.|Assembly - Died - Local Government
+AB-1109|Contracts: parties.|Assembly - Died
+AB-1384|Resiliency Through Adaptation, Economic Vitality, and Equity Act of 2022.|Chaptered
+AB-1422|Health facilities: critical care units: critical care unit program flexibility.|Chaptered
+AB-1450|Public safety: large-scale sporting events.|Assembly - Died - Appropriations
+AB-1474|Sentencing: consideration of costs.|Senate - Died - Appropriations
+AB-1487|Legal Services Trust Fund Commission: Homelessness Prevention Fund: grants: eviction or displacement.|Vetoed
+AB-1516|Income taxes: credits: low-income housing.|Assembly - Died - Revenue and Taxation
+AB-1664|California State Nonprofit Security Grant Program.|Chaptered
+AB-1911|Income taxes: credits: low-income housing.|Assembly - Died - Appropriations
+AB-1929|Medi-Cal benefits: violence prevention services.|Chaptered
+AB-1961|Affordable housing: Department of Housing and Community Development.|Senate - Died - Appropriations
+AB-1991|Motels and hotels: publicly funded shelter programs.|Chaptered
+AB-2000|Motor vehicle speed contests and exhibitions of speed: offstreet parking facilities.|Chaptered
+AB-2072|Mental health professionals: natural disasters: county offices of education: personnel sharing agreements.|Chaptered
+AB-2142|Income taxes: exclusion: turf replacement water conservation program.|Chaptered
+AB-2193|Civil representation: immigration status.|Chaptered
+AB-2284|Pupil instruction: digital literacy and media literacy grant program.|Senate - Died - Appropriations
+AB-2346|Outdoor recreation: Outdoors for All Program.|Assembly - Died - Appropriations
+AB-2486|California Privacy Rights Act of 2020: Office for the Protection of Children Online.|Assembly - Died - Appropriations
+AB-2518|Severe mental illness.|Assembly - Died - Health
+AB-2520|Department of Justice: Office of Access to Justice.|Vetoed
+AB-2615|Local government.|Assembly - Died
+AB-2677|Information Practices Act of 1977.|Vetoed
+AB-2683|Postsecondary education: sexual violence and harassment: training and resources.|Chaptered
+AB-2908|Parks: Outdoor Equity Grants Program.|Assembly - Died
+AB-2952|Driver's licenses: veteran designation.|Assembly - Died - Appropriations
+ACR-51|Dr. Sally Ride Memorial Highway.|Chaptered
+ACR-56|California Holocaust Memorial Day.|Chaptered
+ACR-170|California Holocaust Memorial Day.|Chaptered
+AJR-22|Select Committee to Investigate the January 6th Attack on the United States Capitol.|Chaptered
+HR-30||Assembly - Passed
+HR-46||Assembly - Passed
+HR-48||Assembly - Passed
+HR-49||Assembly - Passed
+HR-72||Assembly - Passed
+HR-98||Assembly - Passed
+HR-99||Assembly - Passed
+HR-107||Assembly - Passed

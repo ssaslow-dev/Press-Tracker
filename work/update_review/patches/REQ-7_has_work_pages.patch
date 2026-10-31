@@ -1,0 +1,51 @@
+diff -u a/build/tests/run_all.sh b/build/tests/run_all.sh
+--- a/build/tests/run_all.sh	2026-10-30 20:13:12.697964509 +0000
++++ b/build/tests/run_all.sh	2026-10-30 20:13:12.713156552 +0000
+@@ -12,6 +12,7 @@
+      echo "== $n rc=$rc ($(( $(date +%s) - t0 ))s) :: $(echo "$out" | grep -E 'passed|PASSED|failed|FAIL|OK|Ran |checks|ALL|ok$|^PASS$' | tail -3 | tr '\n' ' ')"; }
+ s(){ skipped=$((skipped+1)); echo "== $1 SKIPPED :: $2"; }
+ r sheet_task     python3 -I $T/sheet_task/test_sheet_task.py
++r has_work_pages python3 -I $T/sheet_task/test_has_work_pages.py
+ if [ -f $L/final_pass/F1/final.xlsx ] && [ -d $L/final_pass/F4/build/copies_final ]; then r auto python3 -I $T/sheet_task/test_auto.py
+ else s auto "needs final_pass/F1/final.xlsx and final_pass/F4/build/copies_final (final_pass/ is not in the kit)"; fi
+ r removal_links  python3 -I $T/sheet_task/test_removal_links.py
+diff -u a/code/sheet_task.py b/code/sheet_task.py
+--- a/code/sheet_task.py	2026-10-30 20:13:12.695252728 +0000
++++ b/code/sheet_task.py	2026-10-30 20:13:34.557345460 +0000
+@@ -4198,8 +4198,34 @@
+            'releases': sum(1 for r in runs if (r or {}).get('releases_new') and not ((r or {}).get('sheet') or {}).get('at')),   # RELCHECK-v1
+            'edits': sum(1 for e in (db.get('edits') or {}).values() if (e or {}).get('removed') or not ((e or {}).get('reported') and str(e['reported']) >= str((e or {}).get('at') or ''))),
+            'reprints': sum(1 for d in (db.get('reprints') or {}).values() if not (d or {}).get('aid')),
+-           'pages': len(db.get('pages') or {})}
+-    return any(why.values()), why
++           'pages': 0}
++    # PAGESORPHAN-v1: a pages doc is work only when an undone run (or a hand-added reprint not yet written) still points at it. An og-/rp- doc
++    # whose run was applied, or whose candidate was never used, is not deleted by step 5 unless listed in result.pages_drop, so one orphan used to
++    # make every later run stage the workbook, write nothing and republish. Orphans are counted in why['pages_orphan'] and are not work.
++    pages = db.get('pages') or {}
++    refs = set()
++    for r in (db.get('runs') or {}).values():
++        r = r or {}
++        if run_done(r):
++            continue
++        for o in r.get('rows') or []:
++            if not isinstance(o, dict):
++                continue
++            for k in ('Article ID', 'Story ID', 'Tracker story code', '_page', '_ph_sid'):
++                v = str(o.get(k) or '')
++                if v:
++                    refs.add(v)
++                    refs.update(re.findall(r'jg-[0-9a-f]{6}', v.lower()))
++            og = o.get('_origin')
++            for c in (og.get('cands') or [] if isinstance(og, dict) else []):
++                if isinstance(c, dict) and c.get('page'):
++                    refs.add(str(c['page']))
++    for rid, d in (db.get('reprints') or {}).items():
++        if not (d or {}).get('aid'):
++            refs.update({'rp-' + str(rid), str(rid), 'rp:' + str(rid), str((d or {}).get('_pageKey') or '')} - {''})   # the reprints doc may name its own pages doc (_pageKey)
++    why['pages'] = sum(1 for k in pages if k in refs)
++    why['pages_orphan'] = len(pages) - why['pages']
++    return any(v for k, v in why.items() if k != 'pages_orphan'), why
+ 
+ 
+ def pacific_today():

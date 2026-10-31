@@ -1,0 +1,5 @@
+# Proposal 0 (coordinator's first sketch, given to Sammy)
+1. Split by job: Data = the record (how much/where/when: Report, Volume, Where it ran, Languages, Gaps, Calendar). Insights renamed "Press desk" = what to do next. Duplicates (Reporters, Bills x2, Most reprinted/Which issues travel, How it read) leave Data, replaced by one-line links.
+2. Press desk = 5 tasks: Pitch (issue -> ranked reporters/outlets, last covered, tone, release pickup, copy list); Plan a release (how similar past releases did, lag, wire, best timing); Bill brief (milestones + coverage + quotes + reporters + copyable talking points); Track a story (where it spread + outlets that usually reprint this outlet but haven't = nudge list); Watch list (negative coverage, reporters trending negative, outlets gone quiet).
+3. Every view ends in an action (copy/export/open in Clips); one shared issue + date picker across Press desk; one-line headline per view.
+4. Home "Needs attention" links into Watch list; Press desk phone-first; Data's ~30 cards grouped into collapsible sections.

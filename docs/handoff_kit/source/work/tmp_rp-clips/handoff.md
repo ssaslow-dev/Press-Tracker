@@ -1,0 +1,5 @@
+# rp-clips handoff (RELCLIPS-v1) — edits needed in files rp-clips does not own
+Patch script: work/tmp_rp-clips/handoff_patch.py <file>... (exact string replacements; prints the count; idempotent). Applied ONLY to the scratch tracker (work/tmp_rp-clips/b/tracker.js) for screenshots.
+1. code/tracker/04_facets.js (v20-tabsui / final build): Clips "Press release" facet buttons come from REL_FILTERS (15_checks.js): Any / Ran release text / Related to a release / No release; "1 on" and aria-pressed read REL_FLAG; new hint text. Without it the facet still shows the old two buttons (Any / Release copies -> flag relcopy, which still works: copies only).
+2. code/tracker/01_authors.js relHits (rp-reverse section owner / final build): the release list above the results also shows for flag relfrom (2 replacements).
+3. code/tracker/06_story_sheet.js (v20-photos / final build): the panel's badge row also renders when relsOf(r.id).length (else a story with no other badge shows no press-release badge; the panel's relline still shows).

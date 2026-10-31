@@ -1,0 +1,1951 @@
+{
+ "version": 1,
+ "note": "LEARN-v1 (2026-10-30): answers already found on the web. Check here and in outlets.json / reporters.json / reporter_employment.csv before any fetch; save new confirmed answers back.",
+ "urls": {
+  "a46.asmdc.org/press-releases/20230315-assemblymember-jesse-gabriel-introduces-bill-sustain-outdoor-dining-across": {
+   "settled": "06949 F7 names Gabriel: Not settled by page (\"one local lawmaker\"); topic matches his AB 1217 outdoor dining bill, introduced 2023-03-15",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_f7 2026-10-30"
+  },
+  "abc7.com/post/california-ab-1264-new-landmark-state-law-legally-defines-phases-ultraprocessed-foods-public-schools/17967217": {
+   "settled": "07622 Date source: page metadata (published_date 2025-10-09T02:28Z = Oct 8 PT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "abc7.com/post/california-chemicals-bans-food-ingredients-candy/13878922": {
+   "settled": "03076 Date source: page metadata (published_date 2023-10-08T20:41Z = 1:41 PM PDT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "abc7.com/post/encino-lawmaker-introduces-bill-would-ban-artificial-food-dyes-california-schools/15151553": {
+   "settled": "08277 Date source: page metadata (published_date 2024-08-07T15:29Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "abc7.com/post/hope-mission-host-meatball-madness-sunday/16278541": {
+   "settled": "07835 Date source: page metadata (published_date 2025-04-30T19:13Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "abc7.com/post/proyecto-de-ley-prohibiria-colorantes-artificiales-en-escuelas-california/15154846": {
+   "settled": "08280 Date source: page metadata (published_date 2024-08-07T17:38Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "abc7.com/post/skittles-nerds-candy-california/13253346": {
+   "settled": "08926 Date: 2023-05-15 (published_date 2023-05-16T05:38Z = May 15 10:38 PM PDT; no visible date; sheet May 16)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "abc7news.com/post/california-trump-state-prepares-battle-protect-taxpayers-progressive-policies/15648501": {
+   "settled": "08013 Date source: page metadata (published_date 2024-12-13T20:17Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "abc7news.com/post/school-meals-new-1st-nation-california-legislation-fight-ultra-processed-foods-unite-ca-democrat-rfk-jesse-gabriel/16053811": {
+   "settled": "07878 Date source: page metadata (published_date 2025-03-20T03:21Z = Mar 19 PT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "actionnewsnow.com/features/food-additive-ban-bringing-changes-in-california/article_8b6739b8-07d2-11ef-a534-db028dd0f945.html": {
+   "settled": "08404 Date source: page byline (\"May 1, 2024\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "archive.org/details/KRON_20220622_190000_KRON_4_News_at_12Noon": {
+   "settled": "09194 F7 names Gabriel: YES: transcript at ~12:26pm \"assembly member jesse gabriel is the author of ab 5.87\" (AB 587 mis-transcribed)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_f7 2026-10-30"
+  },
+  "archive.org/details/KRON_20240313_150000_KRON_4_News_at_8am": {
+   "settled": "08511 F7 names Gabriel: YES: auto-transcript at ~8:26am says \"assembly member jesse gabriel formally unveiled a bill yesterday\" (food-dye school",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_f7 2026-10-30"
+  },
+  "archive.org/metadata/FOXNEWSW_20190308_090000_Fox_and_Friends_First": {
+   "settled": "09622 Fox and Friends First 2019-03-08, 01:00 PT, clip 50:39, new Archive.org link: confirmed. \"1:00am-2:00am PST\", runtime 01:00:11; clips field lists 3039|3099 (= 50:39). Planned Parenthood student ID bill AB 624 is Gabriel's (https://cbn.com/news/politics/ca-democrat-pushes-plan-could-put-pl",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "archive.org/metadata/KRON_20220622_190000_KRON_4_News_at_12Noon": {
+   "settled": "09194 KRON 4 News at 12Noon 2022-06-22 12:00 PT, clip 26:01: confirmed. \"12:00pm-1:01pm PDT\", runtime 01:01:00; 1561s = 26:01.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "archive.org/metadata/KRON_20240313_150000_KRON_4_News_at_8am": {
+   "settled": "08511 KRON 4 News at 8am 2024-03-13 8:00 PT, clip 26:23: confirmed. \"8:00am-9:01am PDT\", runtime 01:01:00; 1583s = 26:23.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "archive.org/metadata/KTVU_20240313_140000_KTVU_Mornings_on_2": {
+   "settled": "08498 role guest, Quoted Yes, KTVU Mornings on 2 2024-03-13 7:00 PT, clip 1:35:01 = 8:35: confirmed. Item starts 14:00 UTC (7:00 PDT), runtime 2:00:58; clip 5701s = 1:35:01.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "artnews.com/art-news/news/california-legislators-bill-restitution-nazi-looted-art-1234701450": {
+   "settled": "09548 Date: 2024-03-29 (\"March 29, 2024 2:32pm\" + published_date 2024-03-29; headline wording differs slightly from row)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "audacy.com/kcbsradio/news/national/california-lawmakers-race-to-trump-proof-state-laws": {
+   "settled": "08054 Date source: page metadata (published_date 2024-12-02T20:19Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "audacy.com/knxnews/news/local/10-000-mentors-needed-for-young-men-for-ca-initiative": {
+   "settled": "07532 Date source: page metadata (published_date 2025-10-27T21:25Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "audacy.com/knxnews/news/local/boyle-heights-synagogue-to-be-revived-as-a-community-center": {
+   "settled": "09360 Date source: page metadata (published_date 2021-08-10T23:38Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "audacy.com/knxnews/news/local/is-cas-goal-of-1-01m-electric-vehicle-chargers-realistic": {
+   "settled": "08292 Date source: page metadata (published_date 2024-07-17T15:42Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "audacy.com/knxnews/news/local/l-a-educators-protest-prop-98-say-it-could-cause-lausd-to-lose-220m": {
+   "settled": "07288 Date source: page metadata (published_date 2026-06-18T18:05Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "audacy.com/knxnews/news/state/california-bill-aims-to-keep-forever-chemicals-out-of-water": {
+   "settled": "07912 Date source: page metadata (published_date 2025-02-19T21:21Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "audacy.com/knxnews/news/state/california-bill-targets-synthetic-food-dyes-in-schools": {
+   "settled": "08496 Date source: page metadata (published_date 2024-03-13T19:59Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "audacy.com/knxnews/news/state/should-corporations-face-steeper-punishment-for-crimes": {
+   "settled": "08432 Date source: page metadata (published_date 2024-04-09T22:31Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "audacy.com/live105/latest/ban-on-food-additives-heads-to-california-governors-desk": {
+   "settled": "08773 Author Stephanie Raymond; Air time 08:17 PT; Date source: confirmed. Publish stamp, not broadcast time (as labelled in the notes).",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "audacy.com/talk980am/news/national/california-could-ban-sour-patch-kids-skittles-and-more": {
+   "settled": "09057 Date source: page metadata (published_date 2023-03-16T17:36Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "bdp.lmi.net/issue/2002-09-12/full_text": {
+   "settled": "09718 Headline \"Politics as usual during UC's Sept. 11 tribute\"; author David Scharfenberg; Quoted: confirmed. Saved copy: \"By David Scharfenberg, Daily Planet Staff, Thursday September 12, 2002\"; quotes \"Jesse Gabriel, president of the Associated Students of the University of California\". Live site robots-blo",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "bearingarms.com/camedwards/2023/01/30/ca-anti-gunners-aim-at-2a-rights-n66751": {
+   "settled": "09072 Headline \"CA anti-gunners aim at 2A rights\"; Quoted No; depth Named: confirmed. Title and Cam Edwards byline match; Gabriel passage is indirect speech in an excerpted NYT block.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "beverlypress.com/2023/09/legislature-approves-bill-to-create-new-gun-sale-tax": {
+   "settled": "03305 Date source: page byline (Displayed \"September 13, 2023\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "beverlypress.com/2024/09/newsom-signs-legislation-at-holocaust-museum-la": {
+   "settled": "01884 Date: 2024-09-18 (Displayed \"September 18, 2024\"; meta 2024-09-19T01:58Z = Sep 18 PT)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "californiablackmedia.org": {
+   "settled": "10601 Date: (no primary source) (CBM site disallows robots; only syndicated reprints (thesunreporter.com) found)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "californiaglobe.com/fr/bill-to-throttle-short-term-lending-will-prove-disastrous": {
+   "settled": "09585 Date source: page byline (\"May 28, 2019 at 8:27 am\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "californiatoday.com/guides/elections/2026-california-proposition-2-guide": {
+   "settled": "06977 Date: 2026-10-19 (\"October 19, 2026\" under H1; published_date 2026-10-19T23:25Z; guide may be updated)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "californiatoday.com/news/climate/newsom-announces-2-5-billion-for-los-angeles-wildfire-recovery-and-relief-efforts": {
+   "settled": "07951 Date source: page metadata (published_date 2025-01-24T05:59Z (Jan 23 PT) vs displayed \"February 03, 2025\"; conflict, keep current)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "calmatters.org/about/team": {
+   "settled": "ryan sabalow employment: Ryan Sabalow,ryan sabalow,CalMatters,2022-01-01,, (Team page: joined CalMatters in 2022 as CatchLight Local Fellow)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "calmatters.org/author/emilyhoeven": {
+   "settled": "Emily Hoeven employment: CalMatters 2021-03-24..2022-12-06; SF Chronicle 2023-03-18..2025-02-04; Oroville entry removed: confirmed. She wrote CalMatters WhatMatters newsletter until Jan 2023, then SF Chronicle columnist/editorial board (started Jan 23, 2023). Story-date ranges are observed spans.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "calmatters.org/author/kate-wolffe": {
+   "settled": "kate wolffe employment: nothing dated (Bio gives order KQED, CapRadio, Bee, CalMatters but no dates)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "calmatters.org/author/marisa-kendall": {
+   "settled": "marisa kendall employment: Marisa Kendall,marisa kendall,Bay Area News Group,,2023-05-31 (Bio: BANG (Mercury News/East Bay Times) housing reporter before CalMatters; date)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "calmatters.org/calmatters-en-espanol/2024/07/cargadores-vehiculos-electricos-california-meta-no-realista": {
+   "settled": "08308 Date source: page byline (\"July 16, 2024 / July 17, 2024\"; published_date 2024-07-16T12:40Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "calmatters.org/education/k-12-education/2019/09/california-delay-school-ethnic-studies-plan-more-voices": {
+   "settled": "Patch (04889) site:  (Original CalMatters 2019; no Patch copy found; saved text is CalMatters)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "calmatters.org/inside-the-newsroom/2023/06/new-staffers-calmatters": {
+   "settled": "marisa kendall employment: Marisa Kendall,marisa kendall,CalMatters,2023-06-01,, (New-staffers post dated 2023-06-23; first CalMatters byline 06-13, so start befo)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "cambio16.com/california-busca-prohibir-cinco-aditivos-alimentarios-en-golosinas": {
+   "settled": "08878 Date source: page metadata (published_date 2023-07-06T17:19Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "canyoncrestguide.com/about": {
+   "settled": "Canyon Crest Guide Reach: California regional & local (rule output)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "capitolweekly.net/capitol-weeklys-top-100-alicia-isaacs-lee": {
+   "settled": "08279 Date source: page metadata (published_date 2024-08-07T05:56Z (= Aug 6 PT if true UTC); keep current)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "capitolweekly.net/mandy-lee-capitol-weekly-top-100": {
+   "settled": "09351 Date source: page metadata (published_date 2021-08-26T04:00Z (Aug 25 PT if true UTC); keep current)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/losangeles/news/15-million-renovate-breed-street-shul-boyle-heights-once-center-jewish-life-los-angeles": {
+   "settled": "09359 Date source: page byline (\"August 10, 2021 / 12:42 PM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/losangeles/news/dr-sally-ride-memorial-highway-designated-as-part-of-the-101-freeway": {
+   "settled": "09204 Date source: page byline (\"June 3, 2022 / 3:00 PM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/losangeles/news/sally-ride-101-freeway-encino": {
+   "settled": "09349 Date source: page byline (\"September 1, 2021 / 2:43 PM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/losangeles/video/asm-jesse-gabriel-on-2-5-billion-bipartisan-relief-package-for-la-county-fires-rebuilding-socal": {
+   "settled": "06932/06949/06948/08084/08500/09035/09246 Video -> TV: confirmed. CBS LA and FOX 11 (KTTV, https://en.wikipedia.org/wiki/KTTV) are TV stations; NBC Boston likewise. Rule-based otherwise.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "cbsnews.com/losangeles/video/on-your-side-outdoor-dining-permits-costs": {
+   "settled": "06949 Author Kristine Lazar: confirmed. Page dated Jul 12 2023 (03:57).",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "cbsnews.com/news/california-ban-additives-flamin-hot-cheetos-twinkies-from-schools": {
+   "settled": "08239 Date source: page metadata (published_date 2024-08-30T12:30-0400; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/news/lawsuits-filed-nazi-looted-art-museums-los-angeles-auschwitz": {
+   "settled": "00150 Date source: page metadata (Dateline \"September 19, 2026 / 5:52 PM EDT\"; date unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/sacramento/news/400-gas-rebate-proposed-by-assemblymembers": {
+   "settled": "09259 Date source: page byline (\"March 17, 2022 / 5:49 AM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/sacramento/news/california-68-billion-deficit-gavin-newsom-2024-budget-spending-plan": {
+   "settled": "02588 Date source: page byline (\"Updated on: January 10, 2024\"; published_date 2024-01-10 12:31 PST; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/sacramento/news/california-budget-may-revise-gavin-newsom-health-care-immigration": {
+   "settled": "01304 Date source: page metadata (published_date 2025-05-14T06:39 PDT; date unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/sacramento/news/ethnic-studies-curriculum-california-schools": {
+   "settled": "09562 Date source: page byline (\"August 14, 2019 / 7:19 PM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/sacramento/news/governor-punish-cities-affordable-housing": {
+   "settled": "09627 Date source: page byline (\"February 12, 2019 / 5:25 PM PST\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/sanfrancisco/news/covid-recovery-newsom-extends-outdoor-dining-to-go-cocktails-ab61-sb314-sb389": {
+   "settled": "09323 Date source: page byline (\"October 8, 2021 / 11:30 PM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/sanfrancisco/news/demonstrators-shout-down-pelosi-at-dream-act-event": {
+   "settled": "05359 Date source: page byline (\"September 18, 2017 / 11:05 AM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "cbsnews.com/sanfrancisco/news/sideshows-street-racing-newsom-signs-bill-expanding-crackdown-ab2000": {
+   "settled": "09131 Date source: page byline (\"Updated on: September 19, 2022 / 12:52 PM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "citymatters.hivebrite.com/news/2043952": {
+   "settled": "08339 Date: (no primary source) (no date in text or metadata)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "click2houston.com/news/politics/2023/04/07/california-lawmaker-wants-peeps-to-change-its-ingredients": {
+   "settled": "10649 added: names Gabriel (Assemblymember); KPRC: AP reprint of s01052",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "missing-outlet stories 2026-10-30"
+  },
+  "clickondetroit.com/news/politics/2023/04/07/california-lawmaker-wants-peeps-to-change-its-ingredients": {
+   "settled": "10648 added: names Gabriel (Assemblymember); WDIV: AP reprint of s01052",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "missing-outlet stories 2026-10-30"
+  },
+  "courthousenews.com/lawmaker-wants-california-certified-seal-for-good-food-products": {
+   "settled": "07421 Date source: page metadata (published_date 2026-03-25 13:19; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "digital-dev.ktla.com/news/nationworld/chemical-additive-ban-targeting-popular-candies-signed-into-california-law-2": {
+   "settled": "03070 Date source: page byline (\"Oct 8, 2023 / 07:24 AM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ebar.com/story/170626": {
+   "settled": "07649 Date: (no primary source) (no date on page or metadata)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/Baptist_Press": {
+   "settled": "Baptist Press Reach: Out-of-state local (rule output; denominational news service may merit National)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/Courier_News": {
+   "settled": "Reach/city: Courier News (Bridgewater NJ), Home News Tribune (East Brunswick NJ), Telegraph-Forum (Bucyrus OH): confirmed. NJ and OH confirmed. Wikipedia now puts both NJ papers in Somerville, so the recorded cities are older mastheads; reach unaffected.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/Daily_Hampshire_Gazette": {
+   "settled": "Daily Hampshire Gazette Reach: Out-of-state local (rule output)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/Home_News_Tribune": {
+   "settled": "Reach/city: Courier News (Bridgewater NJ), Home News Tribune (East Brunswick NJ), Telegraph-Forum (Bucyrus OH): confirmed. NJ and OH confirmed. Wikipedia now puts both NJ papers in Somerville, so the recorded cities are older mastheads; reach unaffected.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/International_Business_Times": {
+   "settled": "IBTimes type: national (Publishes five national editions; online)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/KDRV": {
+   "settled": "Reach fill 61 Out-of-state/CA/Int'l/National (71 blanks): spot check TV stations KDRV, KRTV, KXLH, KGUN 9, KJRH, WNCT, KXXV, WZTV: confirmed. Medford OR; Great Falls/Helena MT; Tucson AZ; Tulsa OK; Greenville NC; Waco TX. All out-of-state so Out-of-state local is right.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/KESQ-TV": {
+   "settled": "09759 KESQ Reach CA regional: confirmed. Record cites Wikipedia KESQ-TV; sibling row already CA regional.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/KFI": {
+   "settled": "KFI AM 640 Reach: California regional & local (rule output)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/KGET-TV": {
+   "settled": "KGET Reach: California regional & local (rule output)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/KGUN-TV": {
+   "settled": "Reach fill 61 Out-of-state/CA/Int'l/National (71 blanks): spot check TV stations KDRV, KRTV, KXLH, KGUN 9, KJRH, WNCT, KXXV, WZTV: confirmed. Medford OR; Great Falls/Helena MT; Tucson AZ; Tulsa OK; Greenville NC; Waco TX. All out-of-state so Out-of-state local is right.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/KITS": {
+   "settled": "outlets.json Live 105 / KITS record; outlet_rules station_calls KITS: confirmed. Live 105, San Francisco, Audacy.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/KJRH-TV": {
+   "settled": "Reach fill 61 Out-of-state/CA/Int'l/National (71 blanks): spot check TV stations KDRV, KRTV, KXLH, KGUN 9, KJRH, WNCT, KXXV, WZTV: confirmed. Medford OR; Great Falls/Helena MT; Tucson AZ; Tulsa OK; Greenville NC; Waco TX. All out-of-state so Out-of-state local is right.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/KPCC_(FM)": {
+   "settled": "KPCC - 89.3 FM publisher: Southern California Public Radio (SCPR operates; licensee Pasadena City College)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/KRTV": {
+   "settled": "Reach fill 61 Out-of-state/CA/Int'l/National (71 blanks): spot check TV stations KDRV, KRTV, KXLH, KGUN 9, KJRH, WNCT, KXXV, WZTV: confirmed. Medford OR; Great Falls/Helena MT; Tucson AZ; Tulsa OK; Greenville NC; Waco TX. All out-of-state so Out-of-state local is right.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/KTTV": {
+   "settled": "03084/07360/08075/08084/08463/08500/09035/09103/09246 FOX 11 Los Angeles Reach CA regional & local: confirmed. KTTV, Los Angeles, brand \"Fox 11 Los Angeles\", foxla.com.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/KXXV": {
+   "settled": "Reach fill 61 Out-of-state/CA/Int'l/National (71 blanks): spot check TV stations KDRV, KRTV, KXLH, KGUN 9, KJRH, WNCT, KXXV, WZTV: confirmed. Medford OR; Great Falls/Helena MT; Tucson AZ; Tulsa OK; Greenville NC; Waco TX. All out-of-state so Out-of-state local is right.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/Spectrum_News": {
+   "settled": "Spectrum Local News publisher: Charter Communications (Regional channels owned by Charter; rows span states)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/Telegraph-Forum": {
+   "settled": "Reach/city: Courier News (Bridgewater NJ), Home News Tribune (East Brunswick NJ), Telegraph-Forum (Bucyrus OH): confirmed. NJ and OH confirmed. Wikipedia now puts both NJ papers in Somerville, so the recorded cities are older mastheads; reach unaffected.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/The_Armenian_Weekly": {
+   "settled": "Armenian Weekly, The Reach: Out-of-state local (rule output)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/The_Center_Square": {
+   "settled": "Center Square Reach: National (rule output)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/The_Story_Is_with_Elex_Michaelson": {
+   "settled": "00742 Date 2025-12-12 / Air time 21:00 PT: confirmed. Same schedule; first hour. Source label again from saved copy.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/Tribune_Content_Agency": {
+   "settled": "outlets.json Time, Billboard Lifestyle, Tribune News Service, Verify -> National; ctvnews.ca -> International: confirmed. Tribune News Service is Tribune Content Agency's national distributor; VERIFY was Tegna's national fact-check service. TIME, Billboard, CTV not fetched (CTV is Canadian).",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/VINnews": {
+   "settled": "VINnews Reach: Out-of-state local (rule output; Jewish press tag not applied by name rule)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/WNCT-TV": {
+   "settled": "Reach fill 61 Out-of-state/CA/Int'l/National (71 blanks): spot check TV stations KDRV, KRTV, KXLH, KGUN 9, KJRH, WNCT, KXXV, WZTV: confirmed. Medford OR; Great Falls/Helena MT; Tucson AZ; Tulsa OK; Greenville NC; Waco TX. All out-of-state so Out-of-state local is right.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/WTKR": {
+   "settled": "WTKR Reach: Out-of-state local (rule output)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/WXMI": {
+   "settled": "outlets.json fox 17 city/state = Nashville TN (record change was the reach fill): wrong. Rows 09810 (fox17online.com) belong to WXMI Fox 17 West Michigan, Grand Rapids MI; 02474 sits in the same Scripps-station batch. Record corrected to Grand Rapids / Kent / MI. Reach (Out-of-state local",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "en.wikipedia.org/wiki/WXYZ-TV": {
+   "settled": "WXYZ Reach: Out-of-state local (rule output)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "epochtimes.com/b5/24/6/14/n14270602.htm": {
+   "settled": "08338 Date: 2024-06-14 (URL stamp 24/6/14; page shows only \"更新 2024-06-15\" (updated), not used)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "food-safety.com/articles/10425-california-bill-would-remove-ultra-processed-foods-from-school-lunches": {
+   "settled": "07772 live page (HTTP 200)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_links 2026-10-30"
+  },
+  "food-safety.com/articles/10689-california-poised-to-ban-ultra-processed-foods-of-concern-in-schools-as-ab-1264-advances": {
+   "settled": "07676 live page (HTTP 200)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_links 2026-10-30"
+  },
+  "foodbev.com/news/california-approves-non-upf-food-certification-bill": {
+   "settled": "07182 Date source: page byline (\"2 September 2026\" under byline; sheet 2026-09-02)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foodbev.com/news/california-introduces-first-in-us-non-ultra-processed-food-label": {
+   "settled": "07069 Date source: page byline (\"29 September 2026\" under byline; sheet 2026-09-29)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foodbev.com/news/california-proposes-non-ultra-processed-label-in-bid-to-reshape-food-transparency": {
+   "settled": "07397 Date: (no primary source) (metadata only placeholder \"Date Published\")",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foodingredientsfirst.com/news/confusion-or-crucial-mixed-reactions-to-california-law-banning-red-dye-no3-and-other-food-additives.html": {
+   "settled": "10643 added: names Gabriel (Assemblymember); FIF: Original, 2023-10-09",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "missing-outlet stories 2026-10-30"
+  },
+  "foodprocessing.com/ingredients/article/55342021/keeping-track-of-state-ingredient-bans": {
+   "settled": "07488 Date source: page metadata (published_date 2026-01-12; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "fox40.com/news/california-connection/california-enacts-first-statewide-gun-and-ammunition-tax-in-the-country": {
+   "settled": "03162 Date source: page byline (\"Sep 26, 2023 / 12:27 PM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxbusiness.com/economy/california-taxpayers-gas-rebate": {
+   "settled": "09258 Date source: page byline (\"March 17, 2022 4:16pm EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxbusiness.com/lifestyle/popular-easter-candy-containing-cancer-causing-ingredient": {
+   "settled": "03791 Date source: page byline (\"April 3, 2023 8:57pm EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxbusiness.com/politics/california-assembly-passes-bill-banning-toxic-chemicals-skittles-pez-hot-tamales-more": {
+   "settled": "08906 Date source: page byline (\"May 23, 2023 9:32am EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxbusiness.com/politics/california-bill-would-ban-toxic-chemicals-found-skittles-pez-other-popular-candies": {
+   "settled": "08995 Date source: page byline (\"March 25, 2023 11:07am EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxla.com/news/california-remove-racist-term-native-american-woman-from-more-than-30-places": {
+   "settled": "08075 Date source: page metadata (published_date 2024-11-17T13:49-08:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxla.com/news/election-2022-california-ballot-candidates": {
+   "settled": "09103 Date source: page metadata (published_date 2022-10-30T15:11-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxla.com/news/list-california-bills-newsom-signed-vetoed-recently": {
+   "settled": "03084 Date source: page metadata (published_date 2023-10-08T14:36:50-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxnews.com/lifestyle/california-proposes-bill-ban-food-products-while-nutritionists-fret-ingredients": {
+   "settled": "09041 Date source: page byline (\"March 20, 2023 8:58pm EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxnews.com/media/california-dem-jewish-leaders-demand-universities-address-antisemitism-crisis-climate-hate": {
+   "settled": "08617 Date source: page byline (\"November 8, 2023 12:30pm EST\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxnews.com/politics/california-democrats-kill-harsher-penalties-sex-crimes-favor-stricter-punishments-high-value-theft": {
+   "settled": "09046 Date source: page byline (\"March 18, 2023 9:01pm EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxnews.com/politics/california-lawmakers-postpone-special-session-trump-proof-state-due-wildfires": {
+   "settled": "07991 Date source: page byline (\"January 13, 2025 4:31pm EST\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxnews.com/politics/candy-cops-food-beverage-industry-slam-california-bill-may-change-how-favorite-snacks-taste": {
+   "settled": "08941 Date source: page byline (\"May 3, 2023 4:55am EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxnews.com/politics/excessive-state-taxes-against-guns-ammunition-sales-target-new-gop-crackdown-effort": {
+   "settled": "01390 Date source: page byline (\"March 27, 2025 4:40pm EDT\"; date unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "foxnews.com/politics/new-california-gov-newsom-makes-early-gun-crackdown-push": {
+   "settled": "09631 Date source: page byline (\"February 5, 2019 11:51am EST\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "fplglaw.com/insights/ca-legislature-to-vote-on-budget-starting-tomorrow": {
+   "settled": "07766 Date: (no primary source) (no date on page)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "fplglaw.com/insights/final-roundup-of-ca-nonprofit-legislation-2022": {
+   "settled": "09118 Date: (no primary source) (no date on page)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "fplglaw.com/insights/home-stretch-nonprofit-advocacy-on-2024-25-ca-budget": {
+   "settled": "08367 Date: (no primary source) (no date on page)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "fplglaw.com/insights/more-legislative-progress-for-ca-nonprofits": {
+   "settled": "07205 Date: (no primary source) (no date on page or metadata)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "fplglaw.com/insights/more-on-final-stretch-for-ca-state-budget": {
+   "settled": "07784 Date: (no primary source) (no date on page)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "fplglaw.com/insights/the-ca-budget-revision-more-reaction": {
+   "settled": "07346 Date: (no primary source) (no date on page or metadata)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "freebeacon.com/california/newsom-set-to-sign-50-mil-trump-proofing-plan-after-state-dems-vote-down-amendment-blocking-aid-for-illegal-immigrant-felons": {
+   "settled": "10642 added: names Gabriel (Assemblymember); Free Beacon: Original, Date from displayed line (Feb 4 2025)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "missing-outlet stories 2026-10-30"
+  },
+  "gatdaily.com/articles/california-lawmakers-ban-glocks": {
+   "settled": "07655 Date source: page metadata (published_date 2025-09-23T06:30Z (= Sep 22 PT / Sep 23 ET); zone ambiguous)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "goodmorningamerica.com/food/story/landmark-ca-bill-ban-harmful-food-chemicals-spares-103150822": {
+   "settled": "08767 Date source: page metadata (published_date 2023-10-12T15:35Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "greenmemag.com/health-nutrition/whats-really-in-what-we-eat-california-approves-the-first-label-for-non-ultra-processed-foods": {
+   "settled": "07150 Date source: page metadata (published_date 2026-09-10T10:59Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "gunownersca.com/2025/05/22/glock-ban-bill-all-politics-zero-safety": {
+   "settled": "07798 live page (HTTP 200)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_links 2026-10-30"
+  },
+  "hanbitdaily.com": {
+   "settled": "Hanbit Daily type: foreign (ok) (Seoul-based; current type fits)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "hebrewnews.com/article/61543": {
+   "settled": "08181 Date: (no primary source) (no date on page or metadata)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "highpointdigest.com/about": {
+   "settled": "Highpoint Digest publisher:  (Founder Michael A. Williams; owner/location not stated)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "highschool.latimes.com/news/new-california-bill-could-ban-color-dyes-in-kids-favorite-snacks-in-public-schools": {
+   "settled": "08438 Date source: page metadata (published_date 2024-04-02T16:17Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "hunton.com/hunton-retail-law-resource/california-proposes-landmark-labeling-law-targeting-upfs": {
+   "settled": "07388 Date: (no primary source) (no date on page or metadata)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ibtimes.com": {
+   "settled": "IBTimes Reach: National (rule output if type set to national (type change))",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "iheart.com/content/2023-03-21-new-california-bill-could-ban-the-sale-of-this-popular-candy": {
+   "settled": "iHeartRadio San Antonio station: no station: national iheart.com/content hub (iHeartMedia HQ San Antonio TX) (Byline iHeartRadio/Logan DeLoye; no station named on page)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "iheart.com/content/2026-09-08-california-lawmakers-approve-non-ultraprocessed-certified-seal": {
+   "settled": "iHeartRadio San Antonio Reach: National (National hub content; not California-specific)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "indivisibleventura.org/federal-26th-congressional-district-2026-primary-election": {
+   "settled": "07345 Date: 2026-05-18 (published_date 2026-05-19T03:01Z = May 18 PT; no visible date)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "indivisibleventura.org/state-46th-assembly-district-2026-primary-election": {
+   "settled": "06913 Date source: page metadata (published_time 2026-05-19T03:14Z = May 18 PT; no visible date)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "indivisibleventura.org/state-member-of-the-assembly-46th-district": {
+   "settled": "07189 Date source: page metadata (published_date 2026-09-01T19:14Z; page says periodically updated)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "jeffkrasno.substack.com/p/childrens-health-crisis-what-schools": {
+   "settled": "07428/07429/07430 Commune with Jeff Krasno 2026-03-19 same episode: confirmed. All dated Mar 19 2026, same guests (Nora LaTorre, Jesse Gabriel), host Jeff Krasno.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "jewishfed.org/news/jewish-community-convenes-for-2026-california-governor-candidate-forum": {
+   "settled": "06984 Date source: page byline (\"February 27, 2026\" under H1; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "jewishinsider.com/2021/02/ji-podcast-jesse-gabriel": {
+   "settled": "06950 Authors Jarrod Bernstein, Rich Goldberg; show Limited Liability Podcast: confirmed. \"Jewish Insider's Limited Liability Podcast, hosts Jarrod Bernstein and Rich Goldberg\"; page byline is JI Staff.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "jewishinsider.com/2023/05/california-budget-deficit-nonprofit-security-funding-gavin-newsom": {
+   "settled": "08940 Date source: page metadata (published_date 2023-05-04T06:10Z (May 4 ET); unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "jewishinsider.com/2023/07/gavin-newsom-california-budget-nonprofit-security-grant-program-allocation": {
+   "settled": "08871 Date: 2023-07-14 (published_date 2023-07-14T07:15Z (= 3:15 AM ET Jul 14); no visible date; sheet Jul 13)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "jewishinsider.com/2024/01/daily-kickoff-wapos-israel-coverage-under-fire": {
+   "settled": "08553 live page (HTTP 200)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_links 2026-10-30"
+  },
+  "jewishinsider.com/podcasts/episodes/inside-the-california-ethnic-studies-curriculum-debate": {
+   "settled": "06950/09434 Jewish Insider 2021-02-05 same episode: confirmed. Both Feb 5 2021, same guest/topic (ethnic studies, Melissa Weiss); different titles only.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "jweekly.com/2021/09/15/working-at-j-has-taught-me-what-really-matters-as-a-journalist": {
+   "settled": "gabriel greschler employment: nothing dated (No JTA staff job in bios; JTA row likely republished J. story)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "kcra.com/article/california-ab-2316-synthetic-food-dye-school-meals/62474029": {
+   "settled": "08119 Date source: page metadata (published_date 2024-10-01T20:51Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/california-assembly-public-safety-committee-faces-pressure-fentanyl-crime/43649095": {
+   "settled": "08948 Date source: page metadata (published_date 2023-04-20T03:31Z = Apr 19 PT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/california-budget-talks-ramp-up-2024/60930745": {
+   "settled": "08370 Date source: page metadata (published_date 2024-05-29T00:56Z = May 28 PT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/california-lawmakers-budget-bargaining-chip/60954209": {
+   "settled": "08366 Date source: page metadata (published_date 2024-05-31T02:03Z = May 30 PT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/california-lawmakers-newsom-state-money-problems/70067391": {
+   "settled": "07477 Date source: page metadata (published_date 2026-01-21T01:33Z = Jan 20 PT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/california-leaders-ask-voters-improve-ability-saving-money/71719212": {
+   "settled": "07280 Date source: page metadata (published_date 2026-06-25T01:48Z = Jun 24 PT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/california-leaders-federal-immigration-crackdown/70149136": {
+   "settled": "07465 Date source: page metadata (published_date 2026-01-27T02:51Z = Jan 26 PT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/california-voters-proposition-2-rainy-day-fund/73264408": {
+   "settled": "07228 Date source: page metadata (published_date 2026-07-26T15:25Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/californias-legislative-analyst-budget-proposal-review/69980560": {
+   "settled": "07485 Date source: page metadata (published_date 2026-01-12T23:12Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/democrats-gov-newsom-california-ads-taxpayer-money/70687371": {
+   "settled": "07434 Date source: page metadata (published_date 2026-03-10T01:17Z = Mar 9 PT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/gov-newsom-signs-bills-immigration-enforcement/73941905": {
+   "settled": "07040 Date source: page metadata (published_date 2026-09-29T15:00Z = 8am PT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/newsom-california-lawmakers-have-a-dollar68b-budget-hole-to-deal-with-legislative-analyst-says/46065238": {
+   "settled": "08577 Date source: page metadata (published_date 2023-12-07T17:49Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/politics-california-budget-talks-june-23/65163875": {
+   "settled": "07753 Date source: page metadata (published_date 2025-06-24T03:01Z = Jun 23 PT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcra.com/article/the-riggs-report-synagogue-shooting-prompts-talk-of-more-security-spending/27346232": {
+   "settled": "09595 Date source: page metadata (published_date 2019-05-02T13:01Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kcrw.com/news/shows/greater-la/outdoor-dining/al-fresco-rules": {
+   "settled": "outlets.json KCRW record (Santa Monica College): confirmed. KCRW show page; licensee not fetched.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "kcur.org/politics-elections-and-government/2026-09-01/kansas-journalism-graduate-lara-korte-stars-stripes-pentagon": {
+   "settled": "lara korte employment: Lara Korte,lara korte,Stars and Stripes,2024-01-01,, (At Stars and Stripes \"since 2024\"; exact start unknown; post-Gabriel era)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "koreadaily.com/article/20220622194817717": {
+   "settled": "09187 Date: 2022-06-22 (published_date 2022-06-23T02:48Z = Jun 22 PT; URL stamp 20220622)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "koreadaily.com/article/20220715215723631": {
+   "settled": "09178 Date: 2022-07-15 (published_date 2022-07-16T04:57Z = Jul 15 PT; URL stamp 20220715)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "koreadaily.com/article/20230320203720548": {
+   "settled": "09034 Date: 2023-03-20 (published_date 2023-03-21T03:37Z = Mar 20 PT; URL stamp 20230320)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "koreadaily.com/article/20231011001723363": {
+   "settled": "08670 Date source: page metadata (published_date 2023-10-11T07:17Z = Oct 11 00:17 PT; URL 20231011; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "koreadaily.com/article/20231015192250234": {
+   "settled": "08647 Date source: page metadata (published_date 2023-10-16T02:22Z = Oct 15 PT; URL stamp 20231015; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "koreadaily.com/article/20241202194859487": {
+   "settled": "08035 Date: 2024-12-02 (published_date 2024-12-03T02:48Z = Dec 2 PT; URL stamp 20241202)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "koreadaily.com/article/20250324200451941": {
+   "settled": "07858 Date: 2025-03-24 (published_date 2025-03-25T03:04Z = Mar 24 PT; URL stamp 20250324)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "koreadailytimes.com/news/75869": {
+   "settled": "08720 Date source: page metadata (published_date 2023-09-27T17:29-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "koreadailytimes.com/news/83124": {
+   "settled": "07637 Date source: page metadata (published_date 2025-10-08T20:32-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "koreatimes.com/article/1531990": {
+   "settled": "08151 Date source: page metadata (published_date 2024-09-30T00:00+09:00 placeholder stamp; day unchanged)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "koreatowndaily.com/about": {
+   "settled": "Koreatown Daily Reach: Ethnic; California regional & local (rule output)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "kpbs.org/news/economy/2024/05/20/what-drives-californias-budget-decisions-a-lot-of-politics-not-as-much-data": {
+   "settled": "02250 Date: 2024-05-20",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_f7 2026-10-30"
+  },
+  "kpbs.org/news/politics/2025/06/13/california-lawmakers-approve-325-billion-budget-passed-on-hope": {
+   "settled": "01256 Date: 2025-06-13",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_f7 2026-10-30"
+  },
+  "kpbs.org/news/politics/2026/06/30/newsom-signs-352b-spending-plan-and-reflects-on-signature-policies-before-he-leaves-office": {
+   "settled": "00380 Date: 2026-06-30",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_f7 2026-10-30"
+  },
+  "kpbs.org/news/politics/2026/08/03/keep-an-eye-on-these-5-deals-as-california-lawmakers-close-out-the-legislative-session": {
+   "settled": "00279 Date: 2026-08-03",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_f7 2026-10-30"
+  },
+  "kpbs.org/podcasts/kpbs-midday-edition/media-literacy-and-what-it-means-for-democracy": {
+   "settled": "08786 Author/byline: confirmed. Per page byline.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "kqed.org/news/11963514/labor-rights-ice-and-self-driving-trucks-the-biggest-bills-vetoed-by-newsom-so-far": {
+   "settled": "07588 Date source: page byline (\"Oct 7, 2023 Updated Jul 16, 2024\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kqed.org/news/11968643/why-californias-insurance-market-is-in-trouble": {
+   "settled": "08582 KQED Political Breakdown -> KQED, Radio, publisher KQED Inc.: confirmed. Political Breakdown from KQED Public Radio, hosts Marisa Lagos and Scott Shafer, dated Nov 30 2023; names Gabriel as new Budget chair.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "kqed.org/news/11971518/california-politicians-navigate-israel-hamas-war-as-legislature-reconvenes": {
+   "settled": "02665 Author Sameea Kamal; Date source page byline: confirmed. Byline Sameea Kamal, Jan 3 2024, page is the CalMatters story; quotes Gabriel as caucus co-chair.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "kqed.org/news/12002010/newsom-signs-2-bills-aimed-at-solving-californias-housing-crisis": {
+   "settled": "08256 Date source: page byline (\"Aug 27, 2024 Updated 4:29 pm PT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kqed.org/news/12013395/newsom-calls-special-session-prepare-california-legal-fight-against-trump": {
+   "settled": "08086 Date source: page byline (\"Nov 7, 2024 Updated Jan 29, 2025\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kqed.org/news/12023345/california-legislatures-special-session-fire-aid-trump-lawsuits-faces-1st-test": {
+   "settled": "07960 Date source: page byline (\"Jan 22, 2025\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kqed.org/news/12023677/california-legislature-moves-toward-approving-aid-for-wildfire-recovery-and-legal-battles": {
+   "settled": "07959 Date source: page byline (\"Jan 23, 2025 Updated Jan 29, 2025\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kqed.org/news/12024851/california-legislature-approves-50m-to-fight-trump-administration-in-court": {
+   "settled": "07940 Date source: page byline (\"Feb 3, 2025 Updated Feb 6, 2025\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kqed.org/news/12050674/california-democrats-could-ban-sale-of-new-glocks-one-of-the-most-popular-handguns": {
+   "settled": "01167 Date: 2025-08-01",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_f7 2026-10-30"
+  },
+  "kqed.org/news/12071138/residents-challenge-official-response-a-year-after-moss-landing-battery-plant-fire": {
+   "settled": "07459 Date source: page byline (\"Jan 27, 2026\" under H1; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kqed.org/news/12077674/a-new-homelessness-strategy-with-roots-in-the-south-bay-is-sweeping-california": {
+   "settled": "00600 Date: 2026-03-26",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_f7 2026-10-30"
+  },
+  "ksby.com/news/california-news/california-legislature-approves-2-5b-for-state-response-to-los-angeles-area-fires": {
+   "settled": "01557 Date source: page metadata (published_date 2025-01-23T20:50 (no tz); date unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ksl.com/article/50617084/california-lawmaker-wants-peeps-to-change-its-ingredients": {
+   "settled": "KSL page is the Publisher link of 03741 (Philadelphia Tribune, Syndicated copy); names Gabriel the Assemblymember; AP Peeps story = s01052",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "missing-outlet stories 2026-10-30"
+  },
+  "ktla.com/news/california/california-bill-could-prohibit-schools-from-serving-breakfast-cereals-baked-goods-and-other-foods-with-artificial-dyes": {
+   "settled": "02456 Date source: page byline (\"Mar 12, 2024 / 01:43 PM PDT\"; date unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ktla.com/news/california/california-lawmakers-still-need-to-decide-on-these-bills": {
+   "settled": "08832 Date source: page byline (\"Sep 3, 2023 / 08:00 AM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ktla.com/news/california/california-one-step-closer-to-banning-certain-food-dyes-in-school-lunches": {
+   "settled": "08232 Date source: page byline (\"Aug 30, 2024 / 03:36 PM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ktla.com/news/california/newsom-signs-first-in-the-nation-bill-restricting-ultra-processed-foods-in-california-schools/amp": {
+   "settled": "07620 Date source: page metadata (published_date 2025-10-08T22:49Z = 3:49 PM PDT; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ktla.com/news/local-news/california-bill-targeting-skittles-other-candies-really-about-the-fda-lawmaker-says": {
+   "settled": "06944 Date source: page byline (\"Jun 8, 2023 / 06:00 AM PDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ktvu.com/news/california-bill-could-lead-to-a-ban-on-skittles-and-other-popular-candies": {
+   "settled": "03894 Date source: page metadata (published_date 2023-03-21T15:30 -07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ktvu.com/news/california-lawmakers-want-to-keep-outdoor-dining-parklets-around-post-covid": {
+   "settled": "09334 Date source: page metadata (published_date 2021-09-28T18:38-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ktvu.com/news/new-california-laws-2026": {
+   "settled": "07610 Date source: page metadata (published_date 2025-10-09T12:56-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ktvu.com/news/new-california-laws-coming-july-1": {
+   "settled": "07279 Date source: page metadata (published_date 2026-06-25T07:16-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ktvu.com/news/new-laws-coming-california": {
+   "settled": "08116 Date source: page metadata (published_date 2024-10-02T09:11-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ktvu.com/news/restaurant-fees-california-could-still-legal-long-fees-displayed-clearly-conspicuously": {
+   "settled": "08355 Date source: page metadata (published_date 2024-06-07T07:12-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "ktvu.com/news/several-school-bills-could-become-law-california": {
+   "settled": "08201 Date source: page metadata (published_date 2024-09-06T06:39-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "kvpr.org/people/ryan-sabalow-calmatters": {
+   "settled": "ryan sabalow employment: Ryan Sabalow,ryan sabalow,\"Sacramento Bee, The\",,2021-12-31 (Bio: covered water/environment at the Bee before CalMatters; from-date unfound)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "la.streetsblog.org/2022/12/02/metro-breaks-ground-on-early-phase-of-valley-rail-construction": {
+   "settled": "10647 added: names Gabriel (Assemblymember); Streetsblog LA: displayed Dec 2 2022 (metadata Dec 3 UTC)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "missing-outlet stories 2026-10-30"
+  },
+  "laist.com/about-us": {
+   "settled": "KPCC - 89.3 FM name use: Same newsroom (SCPR, Pasadena); KPCC through Jan 2023, LAist 89.3 since 2023-01-31; LAist.com site f (Radio brand KPCC to LAist 89.3 Jan 2023; license Pasadena City College)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "laist.com/news/politics/2022-election-california-general-state-assembly": {
+   "settled": "09113 Date source: page metadata (published_date 2022-10-11T12:00 (no tz); unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "laist.com/news/politics/which-bills-will-gavin-newsom-sign-into-new-california-laws": {
+   "settled": "03258 Date source: page metadata (published_date 2023-09-11T13:15 (no tz); unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "laist.com/shows/airtalk/airtalk-for-january-27-2021": {
+   "settled": "09441/09563/09565 LAist AirTalk = KPCC radio program, Medium Radio: confirmed. AirTalk is an LAist (Southern California Public Radio) show on 89.3 FM; Gabriel is a guest on the 2021-01-27 page (checked 09441 only).",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "lakeconews.com/news?itemid=46&start=1440": {
+   "settled": "bot_blocked",
+   "verdict": "blocked",
+   "checked": "2026-10-30",
+   "source": "Update page 2026-10-30"
+  },
+  "latimes.com/california/story/2021-03-23/california-handguns-microstamps-bill": {
+   "settled": "04653 live page (HTTP 200)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_links 2026-10-30"
+  },
+  "latimes.com/california/story/2026-07-01/trump-administration-california-glock-ban-lawsuits": {
+   "settled": "10635 Date source: page byline (\"July 1, 2026 Updated 3:58 PM PT\"; URL 2026-07-01; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "latimes.com/espanol/california/articulo/2024-09-02/no-mas-hot-cheetos-california-aprueba-prohibicion-de-colorantes-sinteticos-de-alimentos-en-escuelas": {
+   "settled": "08219 live page (HTTP 200)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_links 2026-10-30"
+  },
+  "lc.org/newsroom/details/030719-ca-bill-violates-free-speech": {
+   "settled": "09623 Date: (no primary source) (no date on page; URL stamp 030719 matches current 2019-03-07)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "marinij.com/2025/06/30/california-poised-to-approve-most-significant-environmental-law-rollbacks-in-decades-2": {
+   "settled": "login_required",
+   "verdict": "blocked",
+   "checked": "2026-10-30",
+   "source": "Update page 2026-10-30"
+  },
+  "mynewsla.com/government/2024/02/26/from-sacramento-l-a-city-officials-announce-more-resources-for-housing-2": {
+   "settled": "02538 Date: 2024-02-26 (page byline \"February 26, 2024\"; URL 2024/02/26; sheet 3 days earlier)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "nbcbayarea.com/video/news/politics/california-lawmakers-to-begin-special-session-to-trump-proof-state-laws/3689094": {
+   "settled": "01734 F7 NBC Bay Area video page does not name Gabriel: confirmed. Page byline Patrick Smith, NBC News, Oct 24 2024; Gabriel not named.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "nbcbayarea.com/video/news/politics/california-lawmakers-to-begin-special-session-to-trump-proof-state-laws/3724452": {
+   "settled": "01734 F7 names Gabriel: Not settled: page has no transcript or name; Gabriel introduced Trump-proofing bills same day",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_f7 2026-10-30"
+  },
+  "nbcboston.com/video/on-air/as-seen-on/california-lawmaker-looks-to-ban-chemicals-found-in-skittles/3004102": {
+   "settled": "06948 F7 names Gabriel: Not settled by page (says only \"California Lawmaker\"); topic matches his AB 418 Skittles bill",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_f7 2026-10-30"
+  },
+  "nbclosangeles.com/news/early-returns-trickling-in-for-la-area-elections/41778": {
+   "settled": "09682 Date: 2018-04-03 (\"Published April 3, 2018 / Updated April 4\"; published_date 2018-04-03T21:10-07:00; sheet used update day)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "nbclosangeles.com/news/local/if-passed-assembly-bill-418-will-prohibit-use-of-toxic-chemical-in-certain-foods/3121394": {
+   "settled": "08994 Date source: page byline (\"Published March 25, 2023\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "nbclosangeles.com/news/national-international/california-bill-skittles-ban/3122245": {
+   "settled": "08997 Date source: page byline (\"Published March 24, 2023\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "nbcnews.com/health/health-news/california-phase-ultraprocessed-food-school-meals-rcna236506": {
+   "settled": "07626 Date source: page byline (\"Oct. 8, 2025, 6:00 PM EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "nbcnews.com/health/health-news/fda-bans-red-no-3-artificial-coloring-beverages-candy-rcna185479": {
+   "settled": "07973 Date source: page byline (\"Jan. 15, 2025, 9:24 AM EST\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "nbcnews.com/news/us-news/are-skittles-banned-california-rcna120165": {
+   "settled": "06937 Date source: page byline (\"Oct. 12, 2023, 3:43 PM EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "nbcnews.com/news/us-news/california-becomes-first-state-ban-four-chemicals-food-red-dye-no-3-rcna119660": {
+   "settled": "08675 Date source: page byline (\"Oct. 10, 2023, 1:20 PM EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "nbcnews.com/news/us-news/california-governor-signs-legislation-prohibiting-six-artificial-dyes-rcna173232": {
+   "settled": "08129 Date source: page byline (\"Sept. 30, 2024, 3:35 PM EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "nbcnews.com/news/us-news/california-lawmaker-introduce-bill-remove-artificial-dyes-foods-served-rcna142818": {
+   "settled": "08502 Date source: page byline (\"March 12, 2024, 12:00 PM EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "nbcnews.com/news/us-news/california-legislators-send-governor-landmark-bill-banning-six-artific-rcna168953": {
+   "settled": "08234 Date source: page byline (\"Aug. 30, 2024, 12:04 PM EDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "nbcnews.com/news/us-news/california-ultraprocessed-foods-public-schools-rcna196935": {
+   "settled": "06922 Date source: page byline (\"March 19, 2025, 3:01 AM EDT / Updated March 20\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "news.artnet.com/art-world/california-revives-nazi-looted-pissarro-cassirer-case-2717210": {
+   "settled": "07518 Date source: page metadata (published_date 2025-11-21T15:40Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "newscaststudio.com/2025/02/03/tegna-disbands-national-verify-fact-checking-team-fires-staff": {
+   "settled": "outlets.json Time, Billboard Lifestyle, Tribune News Service, Verify -> National; ctvnews.ca -> International: confirmed. Tribune News Service is Tribune Content Agency's national distributor; VERIFY was Tegna's national fact-check service. TIME, Billboard, CTV not fetched (CTV is Canadian).",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "newsnationnow.com/entertainment-news/food/new-york-bill-ban-five-cancer-causing-food-additives": {
+   "settled": "08631 Date source: page byline (\"Oct 20, 2023 / 06:57 PM CDT\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "oagamut.com/4964/news/california-state-assembly-passes-ultra-processed-food-ban": {
+   "settled": "07654 Date: (no primary source) (no date on page or metadata)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "onecommune.com/blog/podcast-children-s-health-crisis-fixing-the-broken-school-food-system-with-nora-latorre-jesse-gabriel": {
+   "settled": "07429 Guests Nora LaTorre / Jesse Gabriel: confirmed. Nora LaTorre is CEO of Eat Real.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "optimistdaily.com/2025/10/california-takes-bold-step-to-remove-ultra-processed-foods-from-school-meals": {
+   "settled": "07640 Date source: page metadata (published_date 2025-10-03T00:00-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "origin.syndicator2.univision.com/politica-area-de-la-bahia/california-prohibe-colorantes-alimentarios-genera-debate-industria-dulces": {
+   "settled": "08680 Date source: page metadata (published_date 2023-10-10T19:52 (no tz); unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "pagosadailypost.com/category/letters-opinion-editorials": {
+   "settled": "Pagosa Daily Post Reach: Out-of-state local (rule output)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "patch.com/california/los-angeles/karen-bass-launches-re-election-campaign-rally-downtown-la": {
+   "settled": "Patch (00740) site: Los Angeles Patch; published 2025-12-14 (Same Bass rally story title on patch.com/california/los-angeles)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "pbs.org/newshour/politics/california-governor-aims-to-slash-10000-vacant-state-jobs-to-help-close-27-6-billion-deficit": {
+   "settled": "10628 Date: 2024-05-10 (AP story by Adam Beam, \"May 10, 2024, 4:53 PM EDT\" (PBS reprint); apnews.com page not found)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "pbssocal.org/people/sameea-kamal": {
+   "settled": "sameea kamal employment: Sameea Kamal,sameea kamal,CalMatters,2021-06-01,, (\"Joined CalMatters in June 2021 from the Los Angeles Times\"; end date unfound)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "pe.com/2022/01/20/csu-adds-ban-on-caste-based-discrimination-to-system-wide-policy": {
+   "settled": "404 on 2026-10-30",
+   "verdict": "dead",
+   "checked": "2026-10-30",
+   "source": "web_links 2026-10-30"
+  },
+  "podcastrex.com/shows/the-sick-podcast-with-tony-marinaro-le-sick-podcast-avec-tony-marinaro/daniel-jacob-nouvel-entraineur-chef-du-rocket-et-controverse-a-la-coupe-du-monde-le-sick-podcast-avec-tony-marinaro-130726/transcript": {
+   "settled": "bot_blocked",
+   "verdict": "blocked",
+   "checked": "2026-10-30",
+   "source": "Update page 2026-10-30"
+  },
+  "podcastrex.com/shows/the-sick-podcast-with-tony-marinaro-le-sick-podcast-avec-tony-marinaro/droits-de-diffusion-francophone-du-canadien-amazon-obtient-sa-part-le-sick-podcast-avec-tony-marinaro-210726/transcript": {
+   "settled": "bot_blocked",
+   "verdict": "blocked",
+   "checked": "2026-10-30",
+   "source": "Update page 2026-10-30"
+  },
+  "podcasts.apple.com/us/podcast/childrens-health-crisis-fixing-the-broken-school-food/id1409479503?i=1000756142311": {
+   "settled": "07429 Outlet/show Commune with Jeff Krasno: confirmed. Apple: \"Commune with Jeff Krasno\".",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "politico.com/blogs/politico-press/2022/03/08/lara-korte-joins-politico-as-california-playbook-co-author-00015269": {
+   "settled": "lara korte employment: Lara Korte,lara korte,\"Sacramento Bee, The\",2020-01-01,2022-03-07 (Bee state reporter since 2020; Politico joining announced 2022-03-08)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "probonoinst.podbean.com/e/special-editiondaca-panel-discussion-part-1": {
+   "settled": "09702 Author/host Bradley Phillips; His role guest: confirmed. \"Bradley Phillips of Munger, Tolles & Olson moderates the discussion with Jesse Gabriel of Gibson, Dunn & Crutcher\"; Dec 11 2017, 32 min.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "progressive.org/about-us/mission-and-history": {
+   "settled": "outlets.json progressive reach = Out-of-state local: wrong. Magazine \"publish[es] on national politics\"; sheet row 03685 already National. Corrected record to National (code/outlets.json and build/pub/pipeline/outlets.json).",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "publimetro.co/noticias/2024/05/08/proponen-en-california-prohibir-a-escuelas-servir-alimentos-quimicos-que-contienen-tintes": {
+   "settled": "10645 added: names Gabriel (Assemblymember); Publimetro: displayed date 6 May 2024 (URL/metadata say May 8)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "missing-outlet stories 2026-10-30"
+  },
+  "regionalmedianews.com/meet-our-team": {
+   "settled": "Regional Media News publisher: Regional Media (CEO Fletcher M. Ford) (Team page lists CEO; regions Illinois/Iowa; state left blank)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_outlets 2026-10-30"
+  },
+  "sacbee.com/news/politics-government/capitol-alert/article250236890.html": {
+   "settled": "09414 Date source: page metadata (published_date 2021-03-29T04:55-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "santacruzsentinel.com/2025/07/01/california-poised-to-approve-most-significant-environmental-law-rollbacks-in-decades": {
+   "settled": "login_required",
+   "verdict": "blocked",
+   "checked": "2026-10-30",
+   "source": "Update page 2026-10-30"
+  },
+  "sfchronicle.com/about/newsroomnews/article/Emily-Hoeven-joins-SF-Chronicle-17636093.php": {
+   "settled": "Emily Hoeven employment: CalMatters 2021-03-24..2022-12-06; SF Chronicle 2023-03-18..2025-02-04; Oroville entry removed: confirmed. She wrote CalMatters WhatMatters newsletter until Jan 2023, then SF Chronicle columnist/editorial board (started Jan 23, 2023). Story-date ranges are observed spans.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "sfstandard.com/author/gabriel-greschler": {
+   "settled": "gabriel greschler employment: Gabriel Greschler,gabriel greschler,Mercury News,2021-09-16,, (SF Standard bio lists Mercury News; farewell says next job is daily metro; dates)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "sfstandard.com/author/hannah-wiley": {
+   "settled": "hannah wiley employment: Hannah Wiley,hannah wiley,San Francisco Standard,, (Standard bio: senior politics reporter; start date not on page)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "soundcloud.com/unlockingcapolitics/unlocking-california-politics-ep-17-unlocking-the-2024-state-budget": {
+   "settled": "08259 Author/host Sanjay Wagle; depth Featured/guest: confirmed. Published 2024-08-21.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "spectrumnews1.com/ca/la/inside-the-issues/2023/05/02/bill-to-ban-chemicals-used-in-candy-causes-controversy": {
+   "settled": "08942 Date source: page metadata (published_date 2023-05-01T18:44-07:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "spectrumnews1.com/ca/la/politics/2024/03/16/chemicals-in-school-foods-ban": {
+   "settled": "08472 Date source: page metadata (published_date 2024-03-15T21:35-07:00; URL 03/16 is UTC-day; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "spectrumnews1.com/politics/2021/08/13/boyle-heights-breed-street-shul-to-get-millions-in-renovation-funding": {
+   "settled": "09356 Date: (no primary source) (no date on page; URL 08/13 is UTC-style, sheet 08-12)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "supplysidefbj.com/food-beverage-regulations/california-governor-signs-landmark-bill-to-ban-harmful-food-chemicals": {
+   "settled": "08712 Date: 2023-10-08 (published_date 2023-10-08T05:00Z (date-only style stamp); no visible date)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "talkingbiznews.com/media-moves/korte-joins-politico-to-co-author-california-playbook": {
+   "settled": "lara korte employment: Lara Korte,lara korte,Politico,2022-03-08,, (Joined as California Playbook co-author March 2022; end date unfound)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "talkingbiznews.com/media-moves/la-times-promotes-rosenhall-to-sacramento-bureau-chief": {
+   "settled": "nicole nixon employment: nothing dated (No dated source found for any move)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "talkingbiznews.com?p=122678": {
+   "settled": "hannah wiley employment: Hannah Wiley,hannah wiley,\"Sacramento Bee, The\",,2022-01-10 (Bee lead legislative reporter; moved to LA Times (release 2022-01-11))",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "telemundo.com/noticias/noticias-telemundo/estados-unidos/video/buscan-prohibir-servir-hot-cheetos-y-takis-en-las-escuelas-de-california-tmvo12594447": {
+   "settled": "08480 Duration 0:34: confirmed. \"March 14, 2024 00:34\"; names asambleista Jesse Gabriel.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "telemundo52.com/news/local-news/la-alcaldesa-de-los-angeles-karen-bass-lanza-su-campana-de-reeleccion/2822056": {
+   "settled": "07508 Date source: page byline (\"Publicado el 13 de diciembre del 2025\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "telemundo52.com/noticias/california/podria-tener-ingredientes-cancerigenos-piden-modificar-esta-popular-golosina/2397981": {
+   "settled": "08978 Date source: page byline (\"Publicado el 07 de abril del 2023\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "telemundo52.com/noticias/california/propuesta-reembolso-gastos-gasolina/2267628": {
+   "settled": "09247 Date source: page byline (\"Publicado el 17 de marzo del 2022\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "telemundo52.com/noticias/local/aprueban-proyectos-de-ley-para-regular-contenido-en-las-redes-sociales/2319963": {
+   "settled": "09164 Date source: page byline (\"Publicado el 31 de agosto del 2022\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "telemundo52.com/noticias/local/incendios-en-el-sur/condado-los-angeles-legislacion-saqueos/2735287": {
+   "settled": "07929 Date source: page byline (\"Publicado el 10 de febrero del 2025\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "telemundo52.com/noticias/local/incendios-en-el-sur/registros-revelan-que-fondos-de-2-5-mil-millones-por-los-incendios-forestales-siguen-sin-utilizarse/2866301": {
+   "settled": "07329 Date source: page byline (\"Publicado el 28 de mayo del 2026\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "telemundo52.com/noticias/local/padres-no-podran-demandar-a-redes-sociales-por-adiccion-segun-proyecto-de-ley-en-california/2302524": {
+   "settled": "09179 Date source: page byline (\"Publicado el 15 de julio del 2022\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "telemundoareadelabahia.com/noticias/california/negocios-podran-continuar-ofreciendo-servicios-al-aire-libre-en-california/2183753": {
+   "settled": "09321 Date source: page byline (\"Publicado el 08 de octubre del 2021\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "telemundoareadelabahia.com/noticias/proyecto-de-ley-podria-cambiar-lo-que-los-ninos-comen-en-las-escuelas/2409464": {
+   "settled": "08272 Date source: page byline (\"Publicado el 12 de agosto del 2024\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "texastribune.org/author/sameea-kamal": {
+   "settled": "sameea kamal employment: Sameea Kamal,sameea kamal,Texas Tribune,2025-06-21,, (Tribune bio says \"previously\" CalMatters; page dated 2025-06-21, start is on or )",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_reporters 2026-10-30"
+  },
+  "thefern.org/podcast/talkin-maha-and-the-midterms": {
+   "settled": "07118 Role Mentioned in story (headline does not name him): confirmed. Headline names no one; author Jane Black profiles him (per FERN podcast).",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "thehowleronline.org/12346/news/ca-bill-targets-ultraprocessed-foods-in-school-cafeterias": {
+   "settled": "07647 Date: (no primary source) (no date on page or metadata)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "today.com/food/news/california-bill-ab418-skittles-food-containing-chemicals-red3-rcna77016": {
+   "settled": "06945 Date source: page byline (\"Updated May 16, 2023, 9:58 AM EDT\"; published_date 2023-05-16; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "transcripts.cnn.com/show/cnr/date/2018-11-11/segment/02": {
+   "settled": "05177 Air time 12:00 PT (3-4p ET same day): unverifiable. CNN transcript site robots-blocked.",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "tvazteca.com/estados-unidos/con-una-nueva-ley-las-escuelas-de-california-prohibiran-este-tipo-de-alimentos-en-unos-anos-aa": {
+   "settled": "10646 added: names Gabriel (Assemblymember); TV Azteca: 2024-09-06 (publication metadata / DD/MM line)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "missing-outlet stories 2026-10-30"
+  },
+  "univision.com/local/los-angeles-kmex/con-ropa-anaranjada-y-actividades-educativas-buscan-prevenir-la-violencia-con-armas-de-fuego-video": {
+   "settled": "09583 Date: (no primary source) (no date in text or metadata)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "univision.com/local/los-angeles-kmex/los-angeles-propone-legislacion-mas-estricta-contra-saqueadores-e-impostores-durante-desastres": {
+   "settled": "07928 Date source: page metadata (published_date 2025-02-10T15:12-05:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "univision.com/local/los-angeles-kmex/politica-los-angeles/inmigrantes-indocumentados-obtener-identificacion-california-vendedores-ambulantes": {
+   "settled": "09123 Date source: page metadata (published_date 2022-09-23T20:10-04:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "univision.com/local/sacramento-kuvs/politica-sacramento/california-nuevo-impuesto-armas-municiones": {
+   "settled": "06943 Date source: page metadata (published_date 2023-09-08T15:05-04:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "univision.com/local/san-francisco-kdtv/california-busca-combatir-las-noticias-falsas-y-el-ciberacoso-desde-las-escuelas": {
+   "settled": "08893 Date source: page metadata (published_date 2023-06-06T23:13-04:00; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "usacarry.com/california-banned-glock-sales-on-july-1-on-august-4-saf-nra-and-fpc-filed-to-stop-it": {
+   "settled": "07222 Date source: page metadata (published_date 2026-08-05T17:07Z; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "vannuysnewspress.com/amid-youth-mental-health-crisis-california-and-nba-champion-team-up-on-new-law-to-get-coaches-into-the-game": {
+   "settled": "00052 Date: 2026-10-02 (byline \"October 2, 2026\" on page; sheet date 5 days later)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "vannuysnewspress.com/assemblymember-jesse-gabriel-calls-for-greater-accountability-for-state-homeless-funding": {
+   "settled": "09534 Date: (no primary source) (no date in text or metadata)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "vannuysnewspress.com/building-on-success-california-strengthens-its-flagship-violence-intervention-program-as-demand-reaches-all-time-high": {
+   "settled": "00107 Date source: page byline (Date line \"September 27, 2026\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "vannuysnewspress.com/california-adopts-comprehensive-strategy-to-prevent-homelessness-before-it-starts": {
+   "settled": "07059 Date source: page byline (Date line \"September 29, 2026\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "vannuysnewspress.com/governor-newsom-signs-balanced-state-budget": {
+   "settled": "07741 Date: (no primary source) (no date in text or metadata)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "vannuysnewspress.com/speaker-robert-rivas-budget-chair-jesse-gabriel-issue-statements-on-governors-may-revise-budget-proposal": {
+   "settled": "07812 Date: (no primary source) (no date in text or metadata)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "vbs.org/gala-2023": {
+   "settled": "08938 Format Article, Mention depth List-only: confirmed. Only mention: \"Rachel Rosner and Assemblymember Jesse Gabriel\" in sponsor list.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "vbs.org/hazak/video-archive": {
+   "settled": "09268 YouTube link youtu.be/5Kv-_jkAzTQ: confirmed. Archive lists \"What a nice Jewish Boy... with Jesse Gabriel\" under March 14, 2022 and links that URL.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "vinetur.com/en/20260921107439/anheuser-busch-will-invest-$21-million-in-southern-california-facilities.html": {
+   "settled": "07124 Topic District / community (Anheuser-Busch plant): confirmed. Article (Sept 21 2026): $21M for LA brewery, \"Assemblyman Jesse Gabriel\" says it strengthens manufacturing. That the plant is in his district was not verified.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "vpm.org/npr-news/npr-news/2024-11-08/gov-newsom-calls-a-special-session-to-prep-california-for-legal-fight-against-trump": {
+   "settled": "01761/01762 NPR Morning Edition 2024-11-08 same broadcast; byline Megan Myscofski: confirmed. NPR copy dated Nov 8 2024, byline Megan Myscofski, quotes Gabriel (\"In these situations, speed matters\") identical to saved NewsBank text (host A Martinez). npr.org itself robots-blocked.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  },
+  "washingtonexaminer.com/news/1639616/babylon-bee-complaint-alleges-california-law-gives-power-to-censor-its-content": {
+   "settled": "10621 Date source: page byline (\"April 13, 2023 5:54pm ET\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "washingtonexaminer.com/news/2444295/what-to-know-about-californias-ban-on-four-food-additives": {
+   "settled": "10620 Date source: page byline (\"October 14, 2023 5:00pm ET\"; unchanged)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "webmd.com/diet/news/20231030/cm/red-dye-bans-may-grow": {
+   "settled": "10644 added: names Gabriel (Assemblymember); WebMD: displayed date Oct. 27 2023 (URL/metadata say Oct 30)",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "missing-outlet stories 2026-10-30"
+  },
+  "yahoo.com/news/california-bill-targeting-gun-manufacturers-052246460.html": {
+   "settled": "07775 Date source: page metadata (Yahoo shows \"Sat, June 7, 2025 1:22 AM EDT\" = Jun 6 PT; aggregator page)",
+   "verdict": "unconfirmed",
+   "checked": "2026-10-30",
+   "source": "web_dates 2026-10-30"
+  },
+  "youtube.com/watch?v=r6Yn-wDnaNI": {
+   "settled": "06917 Date 2026-05-15: confirmed. \"May 15, 2026\"; Jewish California (formerly JPAC); title AB 715 Lawsuit Panel.",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "review4_factcheck 2026-10-30"
+  }
+ },
+ "blocked_hosts": {
+  "californiablackmedia.org": {
+   "why": "robots.txt disallows",
+   "checked": "2026-10-30",
+   "source": "web_links / review4_factcheck 2026-10-30 (never worked around)"
+  },
+  "jewishinsider.com": {
+   "why": "403 to bots (not dead)",
+   "checked": "2026-10-30",
+   "source": "web_links / review4_factcheck 2026-10-30 (never worked around)"
+  },
+  "jweekly.com": {
+   "why": "403 to bots",
+   "checked": "2026-10-30",
+   "source": "web_links / review4_factcheck 2026-10-30 (never worked around)"
+  },
+  "knewz.com": {
+   "why": "blocked to fetch",
+   "checked": "2026-10-30",
+   "source": "web_links / review4_factcheck 2026-10-30 (never worked around)"
+  },
+  "npr.org": {
+   "why": "robots-blocked transcripts / durations",
+   "checked": "2026-10-30",
+   "source": "web_links / review4_factcheck 2026-10-30 (never worked around)"
+  },
+  "politico.com": {
+   "why": "403 to bots",
+   "checked": "2026-10-30",
+   "source": "web_links / review4_factcheck 2026-10-30 (never worked around)"
+  },
+  "sacbee.com": {
+   "why": "fetch blocked from the sandbox (not proven dead)",
+   "checked": "2026-10-30",
+   "source": "web_links / review4_factcheck 2026-10-30 (never worked around)"
+  },
+  "soundcloud.com": {
+   "why": "robots-blocked",
+   "checked": "2026-10-30",
+   "source": "web_links / review4_factcheck 2026-10-30 (never worked around)"
+  },
+  "transcripts.cnn.com": {
+   "why": "robots-blocked",
+   "checked": "2026-10-30",
+   "source": "web_links / review4_factcheck 2026-10-30 (never worked around)"
+  }
+ },
+ "archive": {
+  "pe.com/2022/01/20/csu-adds-ban-on-caste-based-discrimination-to-system-wide-policy": {
+   "archive_url": "http://web.archive.org/web/20220121044219/https://www.pe.com/2022/01/20/csu-adds-ban-on-caste-based-discrimination-to-system-wide-policy/",
+   "status": "404 on 2026-10-30",
+   "checked": "2026-10-30",
+   "source": "web_links 2026-10-30"
+  }
+ },
+ "searches": {
+  "origin:02269 Publisher link": {
+   "settled": "CalMatters page not found",
+   "verdict": "not_found",
+   "checked": "2026-10-30",
+   "source": "web_origins 2026-10-30"
+  },
+  "origin:07093 Originator": {
+   "settled": "Sammy declined (realfoods.co.kr / Nate): stays \"originator unknown\"",
+   "verdict": "confirmed",
+   "checked": "2026-10-30",
+   "source": "DECISIONS LOOSEENDS-v1"
+  },
+  "origin:07210 Publisher link": {
+   "settled": "knewz.com blocked to fetch; search found no matching page",
+   "verdict": "not_found",
+   "checked": "2026-10-30",
+   "source": "web_origins 2026-10-30"
+  },
+  "origin:10624 Publisher link": {
+   "settled": "CNS public page not found",
+   "verdict": "not_found",
+   "checked": "2026-10-30",
+   "source": "web_origins 2026-10-30"
+  },
+  "origin:10625 Publisher link": {
+   "settled": "CNS public page not found",
+   "verdict": "not_found",
+   "checked": "2026-10-30",
+   "source": "web_origins 2026-10-30"
+  },
+  "origin:10626 Publisher link": {
+   "settled": "VC Star URL not found",
+   "verdict": "not_found",
+   "checked": "2026-10-30",
+   "source": "web_origins 2026-10-30"
+  },
+  "origin:10627 Publisher link": {
+   "settled": "Mercury News URL not found",
+   "verdict": "not_found",
+   "checked": "2026-10-30",
+   "source": "web_origins 2026-10-30"
+  },
+  "origin:10628 Publisher link": {
+   "settled": "AP original on apnews.com not found; PBS NewsHour reprint credits Adam Beam/AP; searches could not return apnews.com (proxy rejected domain filter)",
+   "verdict": "not_found",
+   "checked": "2026-10-30",
+   "source": "web_origins 2026-10-30"
+  },
+  "origin:10634 Publisher link": {
+   "settled": "Allrecipes URL not found by search (2 tries)",
+   "verdict": "not_found",
+   "checked": "2026-10-30",
+   "source": "web_origins 2026-10-30"
+  },
+  "origin:10641 Publisher link": {
+   "settled": "dailynews.com URL not found by search",
+   "verdict": "not_found",
+   "checked": "2026-10-30",
+   "source": "web_origins 2026-10-30"
+  }
+ },
+ "never_coverage_hosts": {
+  "m.youtube.com": {
+   "why": "YouTube videos and channels are not coverage",
+   "checked": "2026-10-30",
+   "source": "NOBLOGS-v1 (Sammy 2026-10-30)"
+  },
+  "mrcolionnoir.com": {
+   "why": "single-author gun-rights advocacy blog (Colion Noir): not coverage",
+   "checked": "2026-10-30",
+   "source": "NOBLOGS-v1 (Sammy 2026-10-30)"
+  },
+  "youtu.be": {
+   "why": "YouTube videos and channels are not coverage",
+   "checked": "2026-10-30",
+   "source": "NOBLOGS-v1 (Sammy 2026-10-30)"
+  },
+  "youtube.com": {
+   "why": "YouTube videos and channels are not coverage",
+   "checked": "2026-10-30",
+   "source": "NOBLOGS-v1 (Sammy 2026-10-30)"
+  }
+ }
+}

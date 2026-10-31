@@ -1,0 +1,379 @@
+[
+{
+"stem": "2023/ws-00856",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2023/ws-00947",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2023/ws-02922",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2023/ws-03014",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2023/ws-03232",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2024/ws-00554",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2024/ws-00566",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2024/ws-00620",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2024/ws-02396",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2024/ws-02446",
+"ident": false,
+"ident_ws": false,
+"over": 8,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2024/ws-02457",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2024/ws-02567",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2024/ws-02673",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2024/ws-02793",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2025/ws-01966",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2025/ws-01972",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2025/ws-01996",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2025/ws-02041",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2025/ws-02134",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2025/ws-02160",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2025/ws-02204",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2025/ws-02243",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2026/nb-00327",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2026/ws-01369",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2026/ws-01422",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2026/ws-01580",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2026/ws-01600",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2026/ws-01756",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+},
+{
+"stem": "2026/ws-01785",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"imgs": [
+0,
+0
+],
+"verdict": "ok",
+"flags": []
+}
+]

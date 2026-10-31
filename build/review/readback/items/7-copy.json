@@ -1,0 +1,82 @@
+{
+  "list": [
+    {
+      "cat": "copy",
+      "conf": "",
+      "detail": "jg-03754 · the only saved page is “News Analysis: In California, the cost of driving has always been a political hot potato” (headline match 0.21)",
+      "id": "copy-000",
+      "key": "jg-03754",
+      "options": [
+        "Don't use that page",
+        "Use it as the saved copy"
+      ],
+      "proposed": "Don't use that page",
+      "title": "Los Angeles Times: Cars, gas taxes and tricky turns"
+    },
+    {
+      "cat": "copy",
+      "conf": "",
+      "detail": "jg-03763 · the only saved page is “All California taxpayers would get $400 rebates to defray gas costs under new proposal” (headline match 0.33)",
+      "id": "copy-001",
+      "key": "jg-03763",
+      "options": [
+        "Don't use that page",
+        "Use it as the saved copy"
+      ],
+      "proposed": "Don't use that page",
+      "title": "Los Angeles Times: A $400 gas rebate may be ahead"
+    },
+    {
+      "cat": "copy",
+      "conf": "",
+      "detail": "jg-03911 · the only saved page is “Editorial: Tenant protections are homeless prevention” (headline match 0.44)",
+      "id": "copy-002",
+      "key": "jg-03911",
+      "options": [
+        "Don't use that page",
+        "Use it as the saved copy"
+      ],
+      "proposed": "Don't use that page",
+      "title": "Los Angeles Times: Saving tenants from harassment"
+    },
+    {
+      "cat": "copy",
+      "conf": "",
+      "detail": "jg-04043 · the only saved page is “Newsom Signs Hate-Crime Legislation to Protect Non-Profits” (headline match 0.45)",
+      "id": "copy-003",
+      "key": "jg-04043",
+      "options": [
+        "Don't use that page",
+        "Use it as the saved copy"
+      ],
+      "proposed": "Don't use that page",
+      "title": "Daily News: Governor signs SFV lawmaker's bill establishing hate-crime protections"
+    },
+    {
+      "cat": "copy",
+      "conf": "",
+      "detail": "jg-04087 · the only saved page is “Gov. Newsom Aims To Spend $15 Million To Increase Security At Nonprofits Vulnerable To Hate Crimes” (headline match 0.42)",
+      "id": "copy-004",
+      "key": "jg-04087",
+      "options": [
+        "Don't use that page",
+        "Use it as the saved copy"
+      ],
+      "proposed": "Don't use that page",
+      "title": "Associated Press: California governor aims to hike security grants"
+    },
+    {
+      "cat": "copy",
+      "conf": "",
+      "detail": "jg-02347 · the only saved page is “Gov. Gavin Newsom signs law banning new Glock sales in California” (headline match 0.9)",
+      "id": "copy-005",
+      "key": "jg-02347",
+      "options": [
+        "Don't use that page",
+        "Use it as the saved copy"
+      ],
+      "proposed": "Don't use that page",
+      "title": "Madisony: Gov. Gavin Newsom signs legislation banning new Glock gun sales in California"
+    }
+  ]
+}

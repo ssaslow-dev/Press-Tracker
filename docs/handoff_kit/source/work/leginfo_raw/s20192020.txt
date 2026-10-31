@@ -1,0 +1,48 @@
+AB-165|Peace officer training: gun violence restraining orders.|Senate - Died - Appropriations
+AB-166|Medi-Cal: violence preventive services.|Vetoed
+AB-330|Appointed legal counsel in civil cases.|Chaptered
+AB-387|Task force: adverse drug events: prescriptions.|Senate - Died - Appropriations
+AB-424|Depositions: audio or video recordings.|Senate - Died - Judiciary
+AB-541|Student financial aid: students exempt from paying nonresident tuition.|Assembly - Died - Higher Education
+AB-542|Student financial aid: Competitive Cal Grant A and B awards.|Assembly - Died - Higher Education
+AB-624|Pupil and student health: identification cards: sexual assault hotline and reproductive health care telephone numbers.|Vetoed
+AB-666|Pupil mental health: model referral protocols.|Assembly - Died - Appropriations
+AB-752|Public transit: transit stations: lactation rooms.|Chaptered
+AB-791|Income taxes: credits: low-income housing: qualified opportunity zone.|Assembly - Died - Appropriations
+AB-877|Energy: solar energy and energy storage systems.|Assembly - Died - Natural Resources
+AB-1009|Firearms: reports to the Department of Justice.|Vetoed
+AB-1132|Telecommunications: caller identification fraud.|Chaptered
+AB-1188|Dwelling units: persons at risk of homelessness.|Chaptered
+AB-1278|Public postsecondary educational institutions: public services and programs: internet website notification.|Chaptered
+AB-1339|Mechanics liens: attachment date.|Assembly - Died - Judiciary
+AB-1463|California Global Warming Solutions Act of 2006.|Assembly - Died
+AB-1548|California State Nonprofit Security Grant Program.|Chaptered
+AB-1579|College and university student housing: impact mitigation fees.|Assembly - Died - Education
+AB-1581|School districts: reorganization.|Assembly - Died
+AB-2018|Pupil mental health: model referral protocols.|Assembly - Died - Education
+AB-2026|Security planning: major sporting and entertainment events.|Assembly - Died - Governmental Organization
+AB-2058|Income taxes: credits: low-income housing.|Assembly - Died - Appropriations
+AB-2235|Hate crime data collection and outreach.|Assembly - Died - Public Safety
+AB-2236|Peace officer training: hate crimes.|Assembly - Died - Appropriations
+AB-2271|Appointed legal counsel in civil matters: unlawful detainer cases.|Senate - Died - Judiciary
+AB-2272|Eviction: education, outreach, and legal services: short-term rental assistance.|Assembly - Died - Judiciary
+AB-2416|Postsecondary education: student financial aid: satisfactory academic progress.|Chaptered
+AB-2486|Immigration: legal services.|Assembly - Died
+AB-2616|Peace officer training: gun violence restraining orders.|Assembly - Died - Public Safety
+AB-2617|Firearms: gun violence restraining orders.|Chaptered
+AB-2618|Firearms: possession by misdemeanant.|Assembly - Died - Public Safety
+AB-2746|Funding accountability: state funding for homelessness.|Vetoed
+AB-2790|Personal rights.|Assembly - Died
+AB-2791|Crimes: stalking, false emergency reports, and harassment.|Assembly - Died - Public Safety
+AB-2874|Individual retirement accounts.|Assembly - Died
+AB-3023|Short-term lodging establishment: state of emergency: local emergency: rates.|Assembly - Died - Public Safety
+AB-3082|Nurse-to-patient ratios.|Assembly - Died - Health
+AB-3147|Fees for development projects.|Assembly - Died - Local Government
+AB-3180|Pupils: tobacco and cannabis products: confiscation.|Assembly - Died - Education
+AB-3247|Teacher credentialing.|Assembly - Died
+AB-3308|School districts: employee housing.|Chaptered
+AB-3322|Alcohol and drug programs.|Assembly - Died
+AB-3323|Civil actions: pleadings.|Assembly - Died
+ACR-39|National Speech and Debate Education Day.|Chaptered
+ACR-54|California Holocaust Memorial Day.|Chaptered
+ACR-123|Childhood Cancer Awareness Month.|Chaptered

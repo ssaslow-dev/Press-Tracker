@@ -1,0 +1,5878 @@
+[
+{
+"set": "rf1",
+"stem": "2018/ws-01249",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+740,
+740
+]
+},
+{
+"set": "rf1",
+"stem": "2018/ws-01252",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+836,
+836
+]
+},
+{
+"set": "rf1",
+"stem": "2018/ws-01260",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+750,
+750
+]
+},
+{
+"set": "rf1",
+"stem": "2018/ws-01264",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+616,
+616
+]
+},
+{
+"set": "rf1",
+"stem": "2018/ws-03833",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+569,
+569
+]
+},
+{
+"set": "rf1",
+"stem": "2019/ws-01197",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+231,
+231
+]
+},
+{
+"set": "rf1",
+"stem": "2019/ws-01204",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+617,
+617
+]
+},
+{
+"set": "rf1",
+"stem": "2019/ws-01207",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+812,
+812
+]
+},
+{
+"set": "rf1",
+"stem": "2019/ws-01210",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+870,
+870
+]
+},
+{
+"set": "rf1",
+"stem": "2019/ws-01222",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+304,
+304
+]
+},
+{
+"set": "rf1",
+"stem": "2019/ws-01234",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1061,
+1061
+]
+},
+{
+"set": "rf1",
+"stem": "2019/ws-01244",
+"ident": false,
+"ident_ws": false,
+"over": 3,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+613,
+616
+]
+},
+{
+"set": "rf1",
+"stem": "2020/ws-01187",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+333,
+333
+]
+},
+{
+"set": "rf1",
+"stem": "2020/ws-03648",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+777,
+777
+]
+},
+{
+"set": "rf1",
+"stem": "2020/ws-03715",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+982,
+982
+]
+},
+{
+"set": "rf1",
+"stem": "2021/ws-01099",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+284,
+284
+]
+},
+{
+"set": "rf1",
+"stem": "2021/ws-01109",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+570,
+570
+]
+},
+{
+"set": "rf1",
+"stem": "2021/ws-01140",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+510,
+510
+]
+},
+{
+"set": "rf1",
+"stem": "2021/ws-01160",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+912,
+912
+]
+},
+{
+"set": "rf1",
+"stem": "2021/ws-01162",
+"ident": false,
+"ident_ws": false,
+"over": 41,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+839,
+880
+]
+},
+{
+"set": "rf1",
+"stem": "2021/ws-01173",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+700,
+700
+]
+},
+{
+"set": "rf1",
+"stem": "2021/ws-03524",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+583,
+583
+]
+},
+{
+"set": "rf1",
+"stem": "2022/ws-01032",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+617,
+617
+]
+},
+{
+"set": "rf1",
+"stem": "2022/ws-01043",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+304,
+304
+]
+},
+{
+"set": "rf1",
+"stem": "2022/ws-01045",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+304,
+304
+]
+},
+{
+"set": "rf1",
+"stem": "2022/ws-01060",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+751,
+751
+]
+},
+{
+"set": "rf1",
+"stem": "2022/ws-01069",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+680,
+680
+]
+},
+{
+"set": "rf1",
+"stem": "2022/ws-01074",
+"ident": false,
+"ident_ws": false,
+"over": 15,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+690,
+705
+]
+},
+{
+"set": "rf1",
+"stem": "2022/ws-01086",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+681,
+681
+]
+},
+{
+"set": "rf1",
+"stem": "2022/ws-03344",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+553,
+553
+]
+},
+{
+"set": "rf1",
+"stem": "2022/ws-03439",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+594,
+594
+]
+},
+{
+"set": "rf1",
+"stem": "2022/ws-03450",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+422,
+422
+]
+},
+{
+"set": "rf1",
+"stem": "2022/ws-03453",
+"ident": false,
+"ident_ws": false,
+"over": 1,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+410,
+411
+]
+},
+{
+"set": "rf1",
+"stem": "2022/ws-03459",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+387,
+387
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00775",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+758,
+758
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00780",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1267,
+1315
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00785",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+657,
+657
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00789",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1404,
+1404
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00806",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+687,
+687
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00814",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+789,
+789
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00818",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+486,
+534
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00836",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+636,
+636
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00842",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+518,
+518
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00846",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+3051,
+3051
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00860",
+"ident": false,
+"ident_ws": false,
+"over": 16,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+696,
+712
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00864",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+526,
+526
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00870",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+4400,
+4400
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00878",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+527,
+527
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00889",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+832,
+832
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00894",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+875,
+875
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00908",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1371,
+1371
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00917",
+"ident": false,
+"ident_ws": false,
+"over": 11,
+"under": 2,
+"verdict": "ok",
+"flags": [],
+"words": [
+621,
+630
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00919",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1444,
+1444
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00924",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1263,
+1263
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00931",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+996,
+996
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00951",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+679,
+679
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00962",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+892,
+892
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00974",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1388,
+1388
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00988",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+806,
+806
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-00997",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+679,
+679
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-01016",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+621,
+621
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-01298",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+519,
+519
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-02887",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+530,
+530
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-02983",
+"ident": false,
+"ident_ws": false,
+"over": 12,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+630,
+642
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-02997",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+668,
+668
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-03012",
+"ident": false,
+"ident_ws": false,
+"over": 7,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+823,
+830
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-03025",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+687,
+687
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-03048",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+243,
+243
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-03094",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+473,
+473
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-03145",
+"ident": false,
+"ident_ws": false,
+"over": 23,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1137,
+1160
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-03205",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+972,
+972
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-03235",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+247,
+247
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-03243",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+733,
+733
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-03252",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+399,
+399
+]
+},
+{
+"set": "rf1",
+"stem": "2023/ws-03275",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+601,
+601
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00532",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1055,
+1055
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00536",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+912,
+912
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00538",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+805,
+805
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00546",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1464,
+1464
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00549",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+3057,
+3057
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00555",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1089,
+1089
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00567",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+631,
+631
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00583",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+362,
+362
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00600",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+3717,
+3717
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00611",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1200,
+1200
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00616",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+858,
+858
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00629",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+824,
+824
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00641",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+835,
+835
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00648",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1395,
+1395
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00658",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+468,
+468
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00663",
+"ident": false,
+"ident_ws": false,
+"over": 14,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1314,
+1328
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00671",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+639,
+639
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00674",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+580,
+580
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00676",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+964,
+964
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00687",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+357,
+357
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00723",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+378,
+378
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00752",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+996,
+996
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00756",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+899,
+899
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-00761",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1649,
+1649
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02402",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1236,
+1236
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02417",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+744,
+744
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02474",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+981,
+981
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02484",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+825,
+825
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02499",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1019,
+1019
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02520",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1139,
+1139
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02561",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+401,
+401
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02565",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+883,
+883
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02573",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1042,
+1042
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02637",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1122,
+1122
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02664",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+764,
+764
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02667",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+779,
+779
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02695",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+638,
+638
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02718",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+397,
+397
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02765",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+430,
+430
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02772",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+795,
+795
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02784",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+827,
+827
+]
+},
+{
+"set": "rf1",
+"stem": "2024/ws-02795",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+608,
+608
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00291",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1537,
+1537
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00296",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+900,
+900
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00299",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+928,
+928
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00301",
+"ident": false,
+"ident_ws": false,
+"over": 3,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1267,
+1270
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00307",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+2659,
+2659
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00315",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+323,
+323
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00351",
+"ident": false,
+"ident_ws": false,
+"over": 13,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1238,
+1251
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00362",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1587,
+1587
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00371",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+541,
+541
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00390",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1128,
+1128
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00392",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+767,
+767
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00400",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1258,
+1258
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00406",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+805,
+805
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00420",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1308,
+1308
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00422",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1489,
+1489
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00426",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1170,
+1170
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00442",
+"ident": false,
+"ident_ws": false,
+"over": 3,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1549,
+1552
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00454",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+875,
+875
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00457",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+937,
+937
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00460",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+942,
+942
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00472",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+677,
+677
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00475",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+721,
+721
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00483",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+652,
+652
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00495",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+607,
+607
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-00519",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1392,
+1392
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-01284",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+433,
+433
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-01290",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+525,
+525
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-01889",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+493,
+493
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-01898",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1246,
+1246
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-01925",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+562,
+562
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-01947",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+694,
+694
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-01953",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+490,
+490
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-01986",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1096,
+1096
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-01990",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+483,
+483
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-02038",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1378,
+1378
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-02062",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+842,
+842
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-02106",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1411,
+1411
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-02150",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1567,
+1567
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-02156",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+266,
+266
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-02180",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1067,
+1067
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-02236",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+80,
+80
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-02278",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+692,
+692
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-02301",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [
+"long_block"
+],
+"words": [
+952,
+952
+]
+},
+{
+"set": "rf1",
+"stem": "2025/ws-02338",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+500,
+500
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00003",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1110,
+1110
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00011",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+522,
+522
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00014",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+533,
+533
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00027",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+829,
+829
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00036",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+504,
+504
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00050",
+"ident": false,
+"ident_ws": false,
+"over": 52,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+499,
+551
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00052",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+543,
+543
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00062",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1179,
+1179
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00065",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1297,
+1297
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00073",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1265,
+1265
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00077",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1496,
+1496
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00079",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1450,
+1450
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00085",
+"ident": false,
+"ident_ws": false,
+"over": 3,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+2309,
+2312
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00091",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+413,
+413
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00099",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1156,
+1156
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00106",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1781,
+1781
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00110",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+664,
+664
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00117",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+759,
+759
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00130",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+643,
+643
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00134",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1485,
+1485
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00139",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1570,
+1618
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00147",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+704,
+704
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00186",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+415,
+415
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00198",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+485,
+485
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00208",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1332,
+1332
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00235",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+930,
+930
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00252",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+2027,
+2027
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00269",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+606,
+606
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00273",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1170,
+1170
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00277",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+790,
+790
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-00285",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+609,
+609
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01270",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+263,
+263
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01418",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+614,
+614
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01427",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+801,
+801
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01434",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1151,
+1151
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01476",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+602,
+602
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01487",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+229,
+229
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01511",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+2603,
+2603
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01530",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+502,
+502
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01548",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+287,
+287
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01597",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+743,
+743
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01628",
+"ident": false,
+"ident_ws": false,
+"over": 8,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1130,
+1138
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01645",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+476,
+476
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01696",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1038,
+1038
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01742",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+338,
+338
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01798",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+246,
+246
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01826",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+958,
+958
+]
+},
+{
+"set": "rf1",
+"stem": "2026/ws-01847",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+547,
+547
+]
+},
+{
+"set": "rf2",
+"stem": "2017/ws-01266",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+378,
+378
+]
+},
+{
+"set": "rf2",
+"stem": "2018/ws-01247",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+369,
+369
+]
+},
+{
+"set": "rf2",
+"stem": "2018/ws-01253",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+743,
+743
+]
+},
+{
+"set": "rf2",
+"stem": "2018/ws-01261",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+902,
+902
+]
+},
+{
+"set": "rf2",
+"stem": "2018/ws-03841",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+215,
+215
+]
+},
+{
+"set": "rf2",
+"stem": "2019/ws-01203",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+831,
+879
+]
+},
+{
+"set": "rf2",
+"stem": "2019/ws-01209",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+872,
+872
+]
+},
+{
+"set": "rf2",
+"stem": "2019/ws-01216",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+2488,
+2488
+]
+},
+{
+"set": "rf2",
+"stem": "2019/ws-01230",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1401,
+1401
+]
+},
+{
+"set": "rf2",
+"stem": "2019/ws-01243",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+621,
+621
+]
+},
+{
+"set": "rf2",
+"stem": "2019/ws-03779",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+546,
+546
+]
+},
+{
+"set": "rf2",
+"stem": "2020/ws-01181",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+870,
+870
+]
+},
+{
+"set": "rf2",
+"stem": "2020/ws-01191",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1282,
+1330
+]
+},
+{
+"set": "rf2",
+"stem": "2020/ws-03658",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+209,
+209
+]
+},
+{
+"set": "rf2",
+"stem": "2021/ws-01108",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+562,
+562
+]
+},
+{
+"set": "rf2",
+"stem": "2021/ws-01129",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+456,
+456
+]
+},
+{
+"set": "rf2",
+"stem": "2021/ws-01136",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+370,
+370
+]
+},
+{
+"set": "rf2",
+"stem": "2021/ws-01149",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+433,
+433
+]
+},
+{
+"set": "rf2",
+"stem": "2021/ws-01155",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+801,
+801
+]
+},
+{
+"set": "rf2",
+"stem": "2021/ws-01163",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+861,
+861
+]
+},
+{
+"set": "rf2",
+"stem": "2021/ws-01167",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+802,
+802
+]
+},
+{
+"set": "rf2",
+"stem": "2021/ws-01177",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+254,
+254
+]
+},
+{
+"set": "rf2",
+"stem": "2021/ws-03509",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+219,
+219
+]
+},
+{
+"set": "rf2",
+"stem": "2021/ws-03527",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+600,
+600
+]
+},
+{
+"set": "rf2",
+"stem": "2022/ws-01030",
+"ident": false,
+"ident_ws": false,
+"over": 1,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+958,
+959
+]
+},
+{
+"set": "rf2",
+"stem": "2022/ws-01036",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1364,
+1412
+]
+},
+{
+"set": "rf2",
+"stem": "2022/ws-01044",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+290,
+290
+]
+},
+{
+"set": "rf2",
+"stem": "2022/ws-01047",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+314,
+314
+]
+},
+{
+"set": "rf2",
+"stem": "2022/ws-01065",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1654,
+1654
+]
+},
+{
+"set": "rf2",
+"stem": "2022/ws-01072",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+671,
+671
+]
+},
+{
+"set": "rf2",
+"stem": "2022/ws-01078",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+841,
+841
+]
+},
+{
+"set": "rf2",
+"stem": "2022/ws-01092",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1150,
+1150
+]
+},
+{
+"set": "rf2",
+"stem": "2022/ws-03301",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+664,
+664
+]
+},
+{
+"set": "rf2",
+"stem": "2022/ws-03430",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+926,
+926
+]
+},
+{
+"set": "rf2",
+"stem": "2022/ws-03452",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+305,
+305
+]
+},
+{
+"set": "rf2",
+"stem": "2022/ws-03454",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "error",
+"flags": [
+"no_gabriel"
+],
+"words": [
+595,
+595
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00779",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1233,
+1233
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00782",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+323,
+323
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00788",
+"ident": false,
+"ident_ws": false,
+"over": 107,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1237,
+1344
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00790",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1284,
+1284
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00797",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+950,
+950
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00813",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+605,
+605
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00816",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+493,
+493
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00819",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+518,
+518
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00841",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+535,
+535
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00843",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+574,
+574
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00862",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+813,
+813
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00869",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+412,
+412
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00875",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+501,
+501
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00879",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+496,
+496
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00892",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+639,
+639
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00901",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "error",
+"flags": [
+"no_gabriel"
+],
+"words": [
+93,
+93
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00915",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+722,
+770
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00918",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1387,
+1387
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00922",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1320,
+1320
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00939",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+514,
+514
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00960",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+935,
+935
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00964",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+939,
+939
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00969",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+892,
+892
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00987",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+772,
+772
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-00990",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+350,
+350
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-01000",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+477,
+477
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-01008",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1032,
+1032
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-01306",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1286,
+1286
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-02874",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+798,
+798
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-02987",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+350,
+350
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-03002",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+3937,
+3937
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-03023",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+938,
+938
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-03043",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+291,
+291
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-03071",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+652,
+652
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-03101",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+668,
+668
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-03155",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+296,
+296
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-03196",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+665,
+665
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-03234",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [
+"long_block"
+],
+"words": [
+338,
+338
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-03237",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+215,
+215
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-03246",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+393,
+393
+]
+},
+{
+"set": "rf2",
+"stem": "2023/ws-03270",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+922,
+922
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00537",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "error",
+"flags": [
+"no_gabriel"
+],
+"words": [
+155,
+155
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00544",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+881,
+881
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00547",
+"ident": false,
+"ident_ws": false,
+"over": 107,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1421,
+1528
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00550",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+976,
+976
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00557",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+929,
+929
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00581",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+719,
+719
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00587",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+317,
+317
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00601",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+3206,
+3206
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00615",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1140,
+1140
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00639",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+2328,
+2328
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00646",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+976,
+976
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00655",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1000,
+1000
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00667",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+925,
+925
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00672",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+693,
+693
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00675",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+573,
+573
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00677",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+2083,
+2083
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00702",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+457,
+457
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00716",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+829,
+829
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00729",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+521,
+521
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00755",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+493,
+493
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00758",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1611,
+1611
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-00762",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1413,
+1461
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02399",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+366,
+366
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02409",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+787,
+787
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02419",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+744,
+744
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02477",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+453,
+453
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02481",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+638,
+638
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02485",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+874,
+874
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02502",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+456,
+456
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02514",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+456,
+456
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02560",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1605,
+1605
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02563",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+660,
+660
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02566",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+852,
+852
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02655",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1119,
+1119
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02665",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+637,
+637
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02690",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1224,
+1224
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02715",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+259,
+259
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02766",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+430,
+430
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02783",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+826,
+826
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02792",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+388,
+388
+]
+},
+{
+"set": "rf2",
+"stem": "2024/ws-02797",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1358,
+1358
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00295",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1005,
+1005
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00298",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1055,
+1055
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00300",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+992,
+992
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00303",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+372,
+420
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00308",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+2500,
+2500
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00319",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+659,
+659
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00355",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+599,
+599
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00368",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+566,
+566
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00388",
+"ident": false,
+"ident_ws": false,
+"over": 147,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1409,
+1556
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00391",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1189,
+1189
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00398",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1692,
+1692
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00404",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1546,
+1546
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00414",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+113,
+113
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00421",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1255,
+1255
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00425",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1262,
+1262
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00434",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1460,
+1460
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00453",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+898,
+898
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00455",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+858,
+858
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00459",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+899,
+899
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00464",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+863,
+911
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00474",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+900,
+900
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00480",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+629,
+629
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00494",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+591,
+591
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00504",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1280,
+1280
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00512",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+593,
+593
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-00520",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1477,
+1477
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-01280",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+162,
+162
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-01288",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+864,
+864
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-01291",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+599,
+599
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-01896",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1249,
+1297
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-01910",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+924,
+924
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-01936",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+589,
+589
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-01951",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+437,
+437
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-01985",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+975,
+975
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-01991",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+473,
+473
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-02012",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+943,
+943
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-02040",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+332,
+332
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-02114",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1527,
+1527
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-02149",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1530,
+1530
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-02151",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1569,
+1569
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-02167",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1070,
+1070
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-02229",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+270,
+270
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-02266",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+424,
+424
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-02279",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+726,
+726
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-02326",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+416,
+416
+]
+},
+{
+"set": "rf2",
+"stem": "2025/ws-02344",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+544,
+544
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00010",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+503,
+503
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00012",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+598,
+598
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00016",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1958,
+1958
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00021",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+576,
+576
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00031",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1186,
+1186
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00038",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+472,
+472
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00051",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+505,
+505
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00055",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+887,
+887
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00064",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1248,
+1248
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00074",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1310,
+1310
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00078",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1433,
+1433
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00081",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+844,
+844
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00089",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+380,
+380
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00092",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+512,
+512
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00103",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1892,
+1892
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00107",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1833,
+1833
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00124",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1026,
+1026
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00132",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+633,
+633
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00135",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1499,
+1499
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00141",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1601,
+1601
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00153",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1176,
+1176
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00179",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1129,
+1129
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00191",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+649,
+649
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00206",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+899,
+947
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00234",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+703,
+703
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00262",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1095,
+1095
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00272",
+"ident": false,
+"ident_ws": false,
+"over": 48,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1018,
+1066
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00275",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1062,
+1062
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00284",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+928,
+928
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-00290",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+550,
+550
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01348",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+928,
+928
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01419",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+607,
+607
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01428",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+790,
+790
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01436",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+643,
+643
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01478",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+751,
+751
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01538",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1304,
+1304
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01571",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+710,
+710
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01626",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1393,
+1393
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01632",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+630,
+630
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01649",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1025,
+1025
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01736",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+946,
+946
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01773",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+600,
+600
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01788",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+634,
+634
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01815",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+350,
+350
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01835",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+432,
+432
+]
+},
+{
+"set": "rf2",
+"stem": "2026/ws-01861",
+"ident": true,
+"ident_ws": true,
+"over": 0,
+"under": 0,
+"verdict": "ok",
+"flags": [],
+"words": [
+1810,
+1810
+]
+}
+]

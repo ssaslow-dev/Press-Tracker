@@ -1,0 +1,11 @@
+bucket 1: 348/350 identical (99.4%), ignoring spaces 350/350 (100.0%), files where mine removed text the bucket kept: 0 (0 tokens), mine kept text the bucket removed: 0
+bucket 2: 350/350 identical (100.0%), ignoring spaces 350/350 (100.0%), files where mine removed text the bucket kept: 0 (0 tokens), mine kept text the bucket removed: 0
+bucket 3: 347/350 identical (99.1%), ignoring spaces 350/350 (100.0%), files where mine removed text the bucket kept: 0 (0 tokens), mine kept text the bucket removed: 0
+bucket 4: 343/350 identical (98.0%), ignoring spaces 348/350 (99.4%), files where mine removed text the bucket kept: 2 (4 tokens), mine kept text the bucket removed: 1
+bucket 5: 350/350 identical (100.0%), ignoring spaces 350/350 (100.0%), files where mine removed text the bucket kept: 0 (0 tokens), mine kept text the bucket removed: 0
+bucket 6: 349/350 identical (99.7%), ignoring spaces 349/350 (99.7%), files where mine removed text the bucket kept: 1 (1 tokens), mine kept text the bucket removed: 0
+bucket 7: 338/350 identical (96.6%), ignoring spaces 350/350 (100.0%), files where mine removed text the bucket kept: 0 (0 tokens), mine kept text the bucket removed: 0
+bucket 8: 348/349 identical (99.7%), ignoring spaces 349/349 (100.0%), files where mine removed text the bucket kept: 0 (0 tokens), mine kept text the bucket removed: 0
+bucket 9: 349/349 identical (100.0%), ignoring spaces 349/349 (100.0%), files where mine removed text the bucket kept: 0 (0 tokens), mine kept text the bucket removed: 0
+bucket 10: 349/349 identical (100.0%), ignoring spaces 349/349 (100.0%), files where mine removed text the bucket kept: 0 (0 tokens), mine kept text the bucket removed: 0
+ALL: 3471/3497 (99.26%), over-removal files 3

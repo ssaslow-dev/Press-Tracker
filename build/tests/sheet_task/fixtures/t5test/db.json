@@ -1,0 +1,96 @@
+{
+ "runs": {
+  "run-test01": {
+   "at": "2026-10-26T23:00:00Z",
+   "mode": "find",
+   "rows": [
+    {
+     "Article ID": "ws-NEW-test01-1",
+     "Story ID": "jg-NEW-test01-1",
+     "Original or reprint": "Original",
+     "Data Source": "Web search (TinyFish)",
+     "Date": "2026-10-25",
+     "Outlet": "Test Gazette",
+     "Headline": "Gabriel bill test story one",
+     "Author / byline": "Pat Reporter",
+     "Publisher link": "https://www.testgazette.com/news/gabriel-one/",
+     "Link status": "Publisher URL",
+     "Medium": "Online news",
+     "Topic": "Antisemitism / Jewish community",
+     "Bills": [
+      "AB 715"
+     ],
+     "Role": "Mentioned in story",
+     "Tone": "Neutral"
+    },
+    {
+     "Article ID": "ws-NEW-test01-2",
+     "Story ID": "jg-NEW-test01-2",
+     "Original or reprint": "Original",
+     "Data Source": "Web search (TinyFish)",
+     "Date": "2026-10-24",
+     "Outlet": "Sample Daily",
+     "Headline": "Gabriel test story two",
+     "Publisher link": "https://sampledaily.com/a/2",
+     "Link status": "Publisher URL"
+    },
+    {
+     "Article ID": "ws-NEW-test01-3",
+     "Story ID": "jg-00037",
+     "Original or reprint": "Reprint",
+     "Data Source": "Web search (TinyFish)",
+     "Date": "2026-10-25",
+     "Outlet": "Reprint Weekly",
+     "Headline": "reprint of existing",
+     "Publisher link": "https://reprintweekly.com/x"
+    },
+    {
+     "Article ID": "ws-NEW-test01-4",
+     "Story ID": "jg-NEW-test01-1",
+     "Original or reprint": "Reprint",
+     "Outlet": "Echo Times",
+     "Publisher link": "https://echotimes.com/gabriel-one"
+    },
+    {
+     "Article ID": "ws-NEW-test01-5",
+     "Story ID": "jg-NEW-test01-9",
+     "Original or reprint": "Original",
+     "Outlet": "Dup Outlet",
+     "Publisher link": "https://www.edhat.com/california/news/california-food-label-law-transparency/"
+    }
+   ]
+  }
+ },
+ "tones": {
+  "jg-00001": {
+   "tone": "Positive",
+   "why": "test tone note",
+   "rated": "2026-10-26",
+   "by": "Claude"
+  },
+  "jg-NEW-test01-2": {
+   "tone": "Neutral",
+   "why": "tone for new story",
+   "rated": "2026-10-26",
+   "by": "Claude"
+  }
+ },
+ "edits": {
+  "jg-00015": {
+   "hl": "A DIFFERENT HEADLINE",
+   "author": "Edit Author",
+   "at": "2026-10-26T23:01:00Z"
+  }
+ },
+ "authors": {},
+ "translations": {},
+ "pages": {
+  "ws-NEW-test01-1": {
+   "url": "https://www.testgazette.com/news/gabriel-one/",
+   "title": "T1",
+   "clean": "<p>clean</p>",
+   "scoped": "<article>Gabriel</article>"
+  }
+ },
+ "reprints": {}
+}

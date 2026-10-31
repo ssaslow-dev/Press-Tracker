@@ -1,0 +1,5 @@
+tone_batch_4: 115/115 sids written to work/out/tone_batch_4.out.jsonl (validated: one line per sid, tones/topics all from allowed lists, 6 hl_en + 6 text_en done).
+Tone (109 rated): Neutral 80, Positive 25, Negative 4, Very positive 0, Very negative 0; 5 were topic/bills-only (no tone needed).
+Topic: Antisemitism/Jewish 18, Food safety 17, Elections 9, State budget 9, Housing 9, Other/roundup 8, Guns 7, Energy/env 6, Education 5, Immigration 4, Public safety 4, Wildfire 3, Social media/tech 3, Health/labor 2, Restaurants 2, Leadership 1.
+Flags: 1 -- jg-00587 (Modesto Bee, FPC suit vs AB 28 gun tax) never names Gabriel. jg-01479 and jg-01621 are labeled Spanish but are English results tables, so text_en = source text. Pre-office stories jg-01721..jg-01764 rated, not flagged.
+Bills: numbers only (descriptive refs like "Glock ban" not mapped). The other_bills addendum arrived after 110/115 were done and none of the last 5 had any. Unlisted Gabriel bills seen earlier: AB 2621, AB 2822, AB 2835, AB 2331, AB 2142, AB 529, AB 1386, AB 467, AB 591, AB 1278, AB 330, AB 2416, AB 59, AB 1096 (coauthor).

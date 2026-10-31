@@ -1,0 +1,42 @@
+{
+ "v": 1,
+ "about": "OUTLETRULES-v1 (agent-instructions2, 2026-10-28): outlet matching from the retired workbook tab 'Reprint info' (B14, B40-B42), read by sheet_task.norm_outlet(name, city). Keys are normalized names (lower case, accents folded, punctuation -> space, \"Today's Edition\" / ': Blogs' / ', The' / leading 'The' removed). feeds: a name starting with the prefix is that outlet. generic_needs_city: such a name is one outlet per Outlet city (key 'name@city'; blank city = the bare name). aliases: key (normalized name, or 'name@city' for a generic one) -> the outlet's key. keep_separate: groups that must never fold into one (unit-tested). 'week' is not generic: The Week's editions are one outlet (B40).",
+ "feeds": {
+  "associated press": "associated press",
+  "targeted news service": "targeted news service"
+ },
+ "aliases": {
+  "excelsior california": "excelsior orange county register weekly",
+  "lassen news": "lassen county times",
+  "reason com": "reason",
+  "kpcc": "kpcc 89 3 fm",
+  "cnn wire service": "cnn",
+  "politico pro": "politico",
+  "politico california playbook": "politico",
+  "politico california playbook pm": "politico",
+  "pais el": "el pais",
+  "el pais america edition": "el pais",
+  "el pais mexico edition": "el pais",
+  "el pais english": "el pais",
+  "week us edition": "week",
+  "week uk edition": "week",
+  "northwest arkansas democrat gazette": "arkansas democrat gazette",
+  "daily herald dupage county edition": "daily herald@arlington heights",
+  "collegian san joaquin delta college": "collegian@stockton",
+  "independent the independent on sunday": "independent@london",
+  "times sunday times": "times@london",
+  "tribune@san luis obispo": "san luis obispo tribune"
+ },
+ "generic_needs_city": ["times", "herald", "tribune", "gazette", "independent", "daily news", "daily herald", "collegian",
+  "journal", "news", "record", "sun", "post", "star", "press"],
+ "keep_separate": [
+  [["Gazette, The", "Colorado Springs"], ["Denver Gazette, The", "Denver"]],
+  [["Daily News", ""], ["Daily Breeze", "Torrance"]],
+  [["Center Square California, The", ""], ["Center Square Texas, The", ""]],
+  [["Mercury News, The", "San Jose"], ["Oroville Mercury-Register", "Oroville"]],
+  [["Excelsior: Orange County Register weekly", "Santa Ana"], ["Orange County Register, The", "Santa Ana"]],
+  [["Acorn, The", "Agoura Hills"], ["Simi Valley Acorn", "Simi Valley"], ["Thousand Oaks Acorn", "Thousand Oaks"],
+   ["Moorpark Acorn", "Moorpark"], ["Camarillo Acorn", "Camarillo"]],
+  [["Brentwood News", ""], ["Press, The", "Brentwood"]]
+ ]
+}

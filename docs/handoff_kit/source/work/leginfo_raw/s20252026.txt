@@ -1,0 +1,89 @@
+ABX1-1|Budget Act of 2024.|Assembly - Died - Budget
+ABX1-2|Budget Act of 2024.|Assembly - Died - Budget
+ABX1-4|Budget Act of 2024.|Chaptered
+ABX1-5|Budget Act of 2024.|Assembly - Died
+AB-100|Budget Acts of 2023 and 2024.|Chaptered
+AB-101|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-102|Budget Act of 2025.|Chaptered
+AB-103|Budget Acts of 2022, 2023, and 2024.|Senate - Budget and Fiscal Review
+AB-104|Budget Act of 2025.|Chaptered
+AB-105|Budget Acts of 2021, 2023, 2024, and 2025.|Senate - Inactive
+AB-106|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-107|Budget Acts of 2023, 2024, and 2025.|Chaptered
+AB-108|Budget Act of 2025.|Chaptered
+AB-109|Budget Act of 2026.|Chaptered
+AB-110|Budget Act of 2026.|Senate - Inactive
+AB-111|Budget Act of 2026.|Senate - Inactive
+AB-112|Budget Acts of 2022, 2023, 2024, and 2025.|Chaptered
+AB-113|Budget Act of 2026.|Chaptered
+AB-114|Budget Acts of 2022, 2023, 2024, and 2025.|Senate - Third Reading
+AB-115|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-183|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-185|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-188|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-189|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-197|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-198|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-199|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-200|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-201|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-202|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-203|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-204|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-205|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-206|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-207|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-208|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-209|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-210|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-211|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-212|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-213|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-214|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-215|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-216|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-217|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-218|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-219|Budget Act of 2025.|Senate - Budget and Fiscal Review
+AB-227|Budget Act of 2025.|Assembly - Died - Budget
+AB-299|Motels, hotels, and short-term lodging: disasters.|Chaptered
+AB-395|Holidays.|Chaptered
+AB-468|Crimes: looting.|Chaptered
+AB-469|Crimes: impersonation of first responders.|Assembly - Died
+AB-549|Emergency services: human trafficking.|Assembly - Died - Appropriations
+AB-592|Business: retail food.|Chaptered
+AB-644|Exposition Park: Holocaust memorial.|Senate - Inactive
+AB-794|California Safe Drinking Water Act: emergency regulations.|Assembly - Died
+AB-1002|Contractors: failure to pay wages: discipline.|Chaptered
+AB-1127|Firearms: converter pistols.|Chaptered
+AB-1264|Pupil nutrition: restricted school foods and ultraprocessed foods of concern: prohibition.|Chaptered
+AB-1274|Recycling: beverage containers.|Assembly - Died
+AB-1563|Budget Act of 2026.|Assembly - Budget
+AB-1626|Interscholastic athletics: youth sports: coaches: behavioral and mental health training.|Chaptered
+AB-1806|Department of Justice.|Chaptered
+AB-1807|Immigration enforcement: use of state-owned property.|Chaptered
+AB-1836|California State Nonprofit Security Grant Program.|Chaptered
+AB-1915|Accelerated restaurant equipment permitting approval: retail food safety.|Senate - Appropriations
+AB-1924|Statewide homelessness prevention strategy.|Chaptered
+AB-2020|Housing programs: financing.|Chaptered
+AB-2204|Prisons: organized sports programming.|Chaptered
+AB-2244|Non-Ultraprocessed Certified food standard.|Chaptered
+AB-2354|Pupil instruction: California Serves Program.|Senate - Appropriations
+AB-2378|California Violence Intervention and Prevention Grant Program.|Chaptered
+AB-2492|Public safety: mega sporting events.|Assembly - Appropriations
+AB-2544|Education for Filmmakers Pilot Program.|Assembly - Economic Development, Growth, & Household Impact
+AB-2546|Director of Consumer Affairs: duties.|Assembly - Pending Referral
+AB-2548|Wages.|Assembly - Pending Referral
+AB-2626|Housing programs: financing.|Senate - Appropriations
+AB-2708|Grand juries.|Assembly - Pending Referral
+AB-2725|Crimes: schools.|Assembly - Pending Referral
+AB-2738|Construction guidelines for straw-bale structures.|Assembly - Pending Referral
+AB-2742|Property ownership.|Assembly - Pending Referral
+AB-2747|Vehicles: manufacturers: engine labeling.|Assembly - Pending Referral
+AB-2750|Development projects.|Assembly - Pending Referral
+ACA-20|Save for California's Future Act.|Chaptered
+ACR-195|Jewish American Heritage Month.|Chaptered
+HR-18||Assembly - Passed
+HR-29||Assembly - Passed
+HR-60||Assembly - Passed
+HR-90||Assembly - Passed

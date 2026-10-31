@@ -1,0 +1,18 @@
+# agent-leginfo status (complete: true)
+- leginfo readable via Exa web_fetch (author search + billStatusClient pages). curl: proxy 403; WebFetch: client_error; TinyFish: status pages OK, search pages bot_blocked.
+- Author search (lists only FIRST lead author) saved: 2019-20 (48), 2021-22 (54), 2023-24 (67), 2025-26 (89) in work/leginfo_raw/s*.txt. 2017-18 search URL returns a cached ACR-274 page (unreadable); ACR 274 (2017-18) is his.
+- Co-lead bills (e.g. AB 2788 Gloria+Gabriel, AB 671 Wicks+Gabriel) don't show in search -> verifying LegiScan candidates via status pages (~170 URLs, work/leginfo_raw/todo_urls.txt).
+- status-page batch 1/12 done (14 bills; AB 2925 2023-24 page cut off before author block, retry)
+- batch 2 done (16 bills 2023-24; SB 233 page cut off, retry with more chars)
+- batch 3 done (18 bills 2021-22; AB 2596 = co-lead)
+- batch 4 done (17 bills 2021-22; AB 1223 cut off, retry)
+- batch 5 done (18 bills 2021-22; AB 1033 = co-lead)
+- batch 6 done (14 confirmed; AB 80, SB 87, ACA 1, ACA 5 lists truncated -> retry)
+- batch 7 done (17; SB 793 truncated -> retry)
+- STEP 1 DONE: 64 bill decisions written to artifact (63 Add, 1 Not his: AB 1377); work/out/bill_check.csv written. Batch 8 (18 bills 2019-20) recorded; continuing remaining batches.
+- batch 9 done (2019-20 complete; ACR 274 2017-18 confirmed author). Next: 2017-18 (20) + retries
+- batch 10 done (2017-18 all 20 confirmed). Retries left: AB 2925 (23-24), SB 233, AB 1223, AB 80, SB 87, ACA 1, ACA 5, SB 793
+- DONE (complete: true). work/gabriel_bills_leginfo.json/.csv = 443 rows, all confirmed_leginfo=true (search pages + status pages via Exa fetch). Roles: author/co-lead 273, principal coauthor 19, coauthor 151 (incl. 20 HRs, 4 ABX1, 4 SBX1 co-lead).
+- Old list gabriel_bills.json: 45/46 confirmed; AB 130 (2025-26, "Housing budget trailer bill") NOT a Gabriel bill on leginfo.
+- 331 leginfo Gabriel measures are in neither old list nor candidates (166 author-role): work/out/gabriel_bills_not_in_old_or_candidates.csv
+- Caveats: leginfo author search lists only first lead author; co-lead and coauthor rows come from checking LegiScan candidates on leginfo status pages, so coauthor bills LegiScan missed could still be missing. 2017-18 search page unreadable (only ACR 274 found as author). An older cached 2025-26 search showed AB 116-182 budget bills under Gabriel; the fresh search doesn't, so they're excluded.

@@ -1,0 +1,167 @@
+diff -u a/build/tests/run_all.sh b/build/tests/run_all.sh
+--- a/build/tests/run_all.sh	2026-10-30 19:59:15.513744265 +0000
++++ b/build/tests/run_all.sh	2026-10-30 19:59:15.516248018 +0000
+@@ -12,6 +12,7 @@
+      echo "== $n rc=$rc ($(( $(date +%s) - t0 ))s) :: $(echo "$out" | grep -E 'passed|PASSED|failed|FAIL|OK|Ran |checks|ALL|ok$|^PASS$' | tail -3 | tr '\n' ' ')"; }
+ s(){ skipped=$((skipped+1)); echo "== $1 SKIPPED :: $2"; }
+ r sheet_task     python3 -I $T/sheet_task/test_sheet_task.py
++r verify_tabs    python3 -I $T/sheet_task/test_verify_tabs.py
+ if [ -f $L/final_pass/F1/final.xlsx ] && [ -d $L/final_pass/F4/build/copies_final ]; then r auto python3 -I $T/sheet_task/test_auto.py
+ else s auto "needs final_pass/F1/final.xlsx and final_pass/F4/build/copies_final (final_pass/ is not in the kit)"; fi
+ r removal_links  python3 -I $T/sheet_task/test_removal_links.py
+diff -u a/code/sheet_task.py b/code/sheet_task.py
+--- a/code/sheet_task.py	2026-10-30 19:59:15.510936002 +0000
++++ b/code/sheet_task.py	2026-10-30 19:59:15.512387243 +0000
+@@ -4111,6 +4111,139 @@
+     return len(rows) - 1
+ 
+ 
++# VERIFYTABS-v1: verify() covers every tab, not only Coverage / Originals / Removed
++VT_DERIVED_REL = {'Has copies', 'Copies (rows)', 'First copy date (if different)', 'Related count', 'Related story IDs', 'In tracker',
++                  'Tracker release ID 1', 'Tracker release ID 2', 'Coverage stories linked', 'Tracker date (earliest pickup)',
++                  'Copy story ID 1', 'Copy story ID 2', 'Also on caucus site (date)', 'Also on caucus site (URL)'}   # recomputed from the copies / relmatch on every run
++VT_KEYS = {'Audio & video details': ('Article ID',), 'Removed': ('Article ID',), PRINT_TAB: ('Article ID',), 'Press releases': ('Release ID', 'URL')}
++VT_NEW_OK = {'Press releases', 'Audio & video details', 'Removed'}   # tabs a run may add rows to
++VT_SKIP = {'Coverage', 'Originals'}                               # checked by verify() itself
++VT_MAX = 50
++
++
++def _vt_hyperlinks(path):
++    """hyperlink count per sheet name, from the sheet XML (read-only openpyxl does not expose them)"""
++    import zipfile
++    out = {}
++    try:
++        z = zipfile.ZipFile(path)
++        wbx = z.read('xl/workbook.xml').decode('utf-8', 'ignore')
++        rels = z.read('xl/_rels/workbook.xml.rels').decode('utf-8', 'ignore')
++        tgt = {}
++        for m in re.finditer(r'<Relationship\b[^>]*>', rels):
++            t = m.group(0)
++            i, g = re.search(r'\bId="([^"]+)"', t), re.search(r'\bTarget="([^"]+)"', t)
++            if i and g:
++                tgt[i.group(1)] = g.group(1)
++        for m in re.finditer(r'<sheet\b[^>]*>', wbx):
++            t = m.group(0)
++            n, r = re.search(r'\bname="([^"]*)"', t), re.search(r'\br:id="([^"]+)"', t)
++            if not (n and r and r.group(1) in tgt):
++                continue
++            from html import unescape
++            tp = tgt[r.group(1)].lstrip('/')
++            tp = tp if tp.startswith('xl/') else 'xl/' + tp
++            out[unescape(n.group(1))] = len(re.findall(rb'<hyperlink\b', z.read(tp)))
++    except Exception as _e:
++        out['__error__'] = repr(_e)[:120]
++    return out
++
++
++def _vt_read(path, skip):
++    wb = openpyxl.load_workbook(path, read_only=True, data_only=False)
++    try:
++        names, tabs = list(wb.sheetnames), {}
++        for ws in wb.worksheets:
++            if ws.title in skip:
++                continue
++            rows = ws.iter_rows(values_only=True)
++            hdr = next(rows, ())
++            hdr = list(hdr)
++            while hdr and hdr[-1] in (None, ''):
++                hdr.pop()
++            tabs[ws.title] = (hdr, [list(r) for r in rows])
++        return names, tabs
++    finally:
++        wb.close()
++
++
++def verify_tabs(before_path, after_path, res):
++    """VERIFYTABS-v1: every non-blank cell of every other tab is unchanged (fill-blanks-only), no tab or key row is lost, header rows are
++    identical, hyperlinks do not drop. Allowed: new rows on Press releases / Audio & video details / Removed; the Press releases
++    derived columns (VT_DERIVED_REL); rows of Audio & video details moved to Removed (res['removed'][*]['rows'][*]['aid'])."""
++    problems, checked = [], []
++    try:
++        bn, bt = _vt_read(before_path, VT_SKIP)
++        an, at = _vt_read(after_path, VT_SKIP)
++    except Exception as _e:
++        return [f'tabs unreadable: {_e!r}'[:200]], checked
++    nb = [n for n in bn if n != 'Originals']
++    na = [n for n in an if n != 'Originals']
++    for n in bn:
++        if n not in an:
++            problems.append(f'sheet missing after: {n!r}')
++    for n in an:
++        if n not in bn:
++            problems.append(f'sheet added: {n!r}')
++    if not problems and nb != na:
++        problems.append(f'sheet order changed: {nb} -> {na}')
++    removed_aids = {str(x.get('aid')) for e in (res or {}).get('removed', []) for x in e.get('rows', []) if x.get('aid')}
++    for name, (bh, brows) in bt.items():
++        if name not in at:
++            continue
++        ah, arows = at[name]
++        checked.append(name)
++        if bh != ah:
++            problems.append(f'{name}: header row changed ({len(bh)} -> {len(ah)} columns)')
++            continue
++        hi = {h: i for i, h in enumerate(bh) if h not in (None, '')}
++        kcols = VT_KEYS.get(name)
++        kc = [hi[k] for k in (kcols or ()) if k in hi][:1] if name == 'Press releases' else [hi[k] for k in (kcols or ()) if k in hi]
++        if not kc:   # tabs without a named key (Bills): the first four columns together; duplicates are numbered in order
++            kc = list(range(min(4, len(bh))))
++
++        def keyed(rows):
++            seen, out = {}, {}
++            for r in rows:
++                k = tuple(norm_val(r[i]) if i < len(r) else '' for i in kc)
++                if name == 'Press releases' and not k[0]:   # Release ID else URL
++                    ui = hi.get('URL')
++                    k = (norm_val(r[ui]) if ui is not None and ui < len(r) else '',)
++                if not any(k):
++                    continue
++                n = seen.get(k, 0)
++                seen[k] = n + 1
++                out[k + (n,)] = r
++            return out
++        bk, ak = keyed(brows), keyed(arows)
++        derived = VT_DERIVED_REL if name == 'Press releases' else set()
++        for k, br in bk.items():
++            ar = ak.get(k)
++            lab = '/'.join(x for x in k[:-1] if x)[:40]
++            if ar is None:
++                if name == 'Audio & video details' and k[0] in removed_aids:
++                    continue
++                problems.append(f'{name}: row missing after: {lab}')
++                continue
++            for c, h in enumerate(bh):
++                if h in (None, '') or h in derived:
++                    continue
++                bv = norm_val(br[c]) if c < len(br) else ''
++                if not bv:
++                    continue
++                av = norm_val(ar[c]) if c < len(ar) else ''
++                if bv != av:
++                    problems.append(f'{name} / {lab} / {h}: {bv[:50]!r} -> {av[:50]!r}')
++        extra = [k for k in ak if k not in bk]
++        if extra and name not in VT_NEW_OK:
++            problems.append(f'{name}: {len(extra)} new rows (this tab is not written by the run): {[("/".join(x for x in k[:-1] if x))[:30] for k in extra[:3]]}')
++    hb, ha = _vt_hyperlinks(before_path), _vt_hyperlinks(after_path)
++    for n in bn:
++        if n in hb and n in ha and ha[n] < hb[n] and n != '__error__':
++            problems.append(f'{n}: hyperlinks dropped {hb[n]} -> {ha[n]}')
++    return problems, checked
++
++
+ def verify(before_path, after_path, res):
+     import pandas as pd
+     b = pd.read_excel(before_path, sheet_name='Coverage', dtype=object)
+@@ -4178,8 +4311,10 @@
+             problems.append(f'Article IDs reused from the Removed tab: {clash[:5]}')
+     except Exception:
+         pass
+-    return {'ok': not problems, 'problems': problems[:50], 'rows_before': len(b), 'rows_after': len(a),
+-            'originals': len(o)}
++    tp, tabs_checked = verify_tabs(before_path, after_path, res)   # VERIFYTABS-v1
++    problems += tp
++    return {'ok': not problems, 'problems': problems[:VT_MAX], 'rows_before': len(b), 'rows_after': len(a),
++            'originals': len(o), 'tabs_checked': tabs_checked}
+ 
+ 
+ def run_done(run):

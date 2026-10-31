@@ -1,0 +1,70 @@
+{
+ "written": {
+  "Story in English": 13,
+  "Translated Headline": 64
+ },
+ "skipped_nonblank": 0,
+ "held": [
+  "jg-02347",
+  "jg-04043"
+ ],
+ "flagged": [
+  {
+   "sid": "jg-00084",
+   "aid": "nb-00169",
+   "flag": "section label, not a headline ('LEGISLATIVE OFFICES'); Language 'Spanish' looks wrong for a Sacramento Bee listing"
+  },
+  {
+   "sid": "jg-00275",
+   "aid": "nb-00650",
+   "flag": "likely a section label ('Regalos' = 'Gifts'), not a headline"
+  },
+  {
+   "sid": "jg-00493",
+   "aid": "nb-01228",
+   "flag": "outlet suffix '\u2013 The Orion' kept as in original"
+  },
+  {
+   "sid": "jg-01087",
+   "aid": "nb-02843",
+   "flag": "headline already in English; Language 'Spanish' may be mislabeled"
+  },
+  {
+   "sid": "jg-01199",
+   "aid": "nb-03052",
+   "flag": "headline already in English (press release); Language 'Spanish' may be mislabeled"
+  },
+  {
+   "sid": "jg-01292",
+   "aid": "nb-03211",
+   "flag": "headline already in English; Language 'Spanish' may be mislabeled"
+  },
+  {
+   "sid": "jg-01437",
+   "aid": "nb-03483",
+   "flag": "section label ('Features'), not a headline; Language 'Spanish' looks wrong"
+  },
+  {
+   "sid": "jg-01438",
+   "aid": "nb-03485",
+   "flag": "section label ('News'), not a headline; Language 'Spanish' looks wrong"
+  },
+  {
+   "sid": "jg-01479",
+   "aid": "nb-03557",
+   "flag": "section label ('ELECTION RESULTS'), not a headline; Language 'Spanish' looks wrong"
+  },
+  {
+   "sid": "jg-01621",
+   "aid": "nb-03870",
+   "flag": "section label ('News'), not a headline; Language 'Spanish' looks wrong"
+  },
+  {
+   "sid": "jg-01722",
+   "aid": "nb-04042",
+   "flag": "headline already in English; Language 'Hebrew' may be mislabeled"
+  }
+ ],
+ "Coverage_existing_changed": 0,
+ "Originals_existing_changed": 0
+}

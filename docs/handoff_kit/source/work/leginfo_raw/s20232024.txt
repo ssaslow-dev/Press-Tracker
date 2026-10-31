@@ -1,0 +1,67 @@
+AB-28|Firearms and ammunition: excise tax.|Chaptered
+AB-29|Firearms: California Do Not Sell List.|Assembly - Died - Appropriations
+AB-36|Domestic violence protective orders: possession of a firearm.|Assembly - Died - Appropriations
+AB-106|Budget Acts of 2022 and 2023.|Chaptered
+AB-107|Budget Act of 2024.|Chaptered
+AB-108|Budget Act of 2024.|Senate - Died - Budget and Fiscal Review
+AB-109|Budget Act of 2023.|Senate - Died - Budget and Fiscal Review
+AB-157|Budget Act of 2024.|Chaptered
+AB-158|Budget Acts of 2022 and 2023.|Chaptered
+AB-180|Budget Act of 2024.|Chaptered
+AB-418|The California Food Safety Act.|Chaptered
+AB-467|Domestic violence: restraining orders.|Chaptered
+AB-484|Sentencing enhancements: property loss.|Assembly - Died - Appropriations
+AB-529|Adaptive reuse projects.|Chaptered
+AB-554|Corporations for the prevention of cruelty to animals: enforcement of laws.|Assembly - Died
+AB-591|Electric vehicle service equipment: connectors and public accessibility.|Senate - Died - Transportation
+AB-740|Department of General Services: drone cybersecurity.|Assembly - Died - Accountability and Administrative Review
+AB-787|Pupil instruction: digital citizenship and media literacy: survey.|Senate - Died - Appropriations
+AB-875|Courts: data reporting.|Vetoed
+AB-924|Alternative dispute resolution: complaints.|Senate - Died - Judiciary
+AB-947|California Consumer Privacy Act of 2018: sensitive personal information.|Chaptered
+AB-1053|Housing programs: multifamily housing programs: expenditure of loan proceeds.|Chaptered
+AB-1063|Nurse-to-patient staffing ratios: annual report.|Vetoed
+AB-1120|Pupil health: mental health screenings.|Assembly - Died - Education
+AB-1185|California State Nonprofit Security Grant Program.|Chaptered
+AB-1217|Business pandemic relief.|Chaptered
+AB-1305|Voluntary carbon market disclosures.|Chaptered
+AB-1386|Veterans housing: tenant referrals.|Chaptered
+AB-1482|Electric vehicle charging infrastructure: local publicly owned electric utilities.|Assembly - Died - Appropriations
+AB-1529|Electric vehicle charging stations.|Assembly - Died - Transportation
+AB-1546|California Consumer Privacy Act of 2018: statute of limitations.|Senate - Died - Appropriations
+AB-1614|Retail gasoline fueling stations: alternative fuels transition: study.|Vetoed
+AB-1659|Sale of small electronic devices: charging devices.|Senate - Died - Appropriations
+AB-1812|Budget Act of 2024.|Assembly - Died - Budget
+AB-2316|Pupil nutrition: substances: prohibition.|Chaptered
+AB-2331|Voluntary carbon market disclosures.|Assembly - Died
+AB-2432|California Victims of Crime Act.|Chaptered
+AB-2455|Whistleblower protection: state and local government procedures.|Chaptered
+AB-2505|Attorneys: pro bono legal services.|Chaptered
+AB-2550|Business establishments: building standards: retail food safety.|Senate - Died - Appropriations
+AB-2608|Postsecondary education: sexual violence and sexual harassment: training.|Chaptered
+AB-2621|Law enforcement training.|Chaptered
+AB-2676|Housing elements.|Assembly - Died
+AB-2700|Emergency medical services: alternate destinations.|Assembly - Died - Appropriations
+AB-2728|Planning and zoning: housing development: independent institutions of higher education and religious institutions.|Senate - Died - Appropriations
+AB-2784|Special education: nonpublic, nonsectarian schools: waivers.|Assembly - Died
+AB-2793|Housing elements: prohousing incentives.|Assembly - Died
+AB-2822|Domestic violence.|Chaptered
+AB-2835|Motels and hotels: publicly funded shelter programs.|Chaptered
+AB-2867|Recovery of artwork and personal property lost due to persecution.|Chaptered
+AB-2878|Statute of limitations: Pandemic Unemployment Assistance fraud.|Assembly - Died - Appropriations
+AB-2899|General acute care hospitals: licensed nurse-to-patient ratios.|Vetoed
+AB-2921|Planning and zoning.|Assembly - Died
+AB-3160|Insurance, income, and corporation taxes: credits: low-income housing.|Vetoed
+AB-3174|Multifamily Housing Program: definitions.|Assembly - Died
+AB-3228|Peace officers: personnel records.|Assembly - Died
+AB-3270|California Green Collar Jobs Act of 2008: California Workforce Investment Board.|Assembly - Died
+ACR-43|California Holocaust Memorial Day.|Chaptered
+ACR-176|California Holocaust Memorial Day.|Chaptered
+HR-21||Assembly - Died
+HR-22||Assembly - Passed
+HR-25||Assembly - Passed
+HR-39||Assembly - Passed
+HR-40||Assembly - Passed
+HR-76||Assembly - Passed
+HR-95||Assembly - Passed
+HR-118||Assembly - Passed

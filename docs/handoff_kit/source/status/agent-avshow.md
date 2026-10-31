@@ -1,0 +1,9 @@
+- 2026-10-28T04:25:55Z agent-avshow started: Sammy comment 69e1f457 (Show = channel). Read README/DECISIONS/CONTRACT/inbox AVDATE/agent-avdate.
+- 2026-10-28T04:30:08Z coordinator add (Sammy b8050b09): Channel on every AV row, from outlet/URL/page evidence; report counts by source.
+- 2026-10-28T04:34:19Z audit+plan done: work/tmp_agent-avshow/plan.csv (896 Channel cells, 12 Show cells). Waiting for token.
+- 2026-10-28T04:34:27Z token taken (read none; blankfill done, expected master 5b073e81…).
+- Staged master 5b073e81… (= blankfill's result). Backup "Backups/AJG Coverage - NewsBank BACKUP before AV channel-show split 2026-10-28.xlsx" = 5b073e81… on the Mac.
+- apply.py: inserted "Channel" (col E, before Show/program) on "Audio & video details"; 890 Channel fills + 12 Show/program changes; diff.py over 1,012,588 cells: 902/902 expected, 0 unexpected (values, hyperlinks, fonts, number formats; other tabs untouched). avtab.block() on the new file: same 896 rows, only the 12 Show rows differ (current code ignores Channel).
+- Commit with expectedMtimeMs 1793161956640: written. Mac sha b395595aebd6d86e7e8547d1ea22754a162c8809b6f5c30b320130abb4f72d9c = local. coverage_current.xlsx updated (pre copy coverage_pre_avshow_5b073e81.xlsx). Change list work/out/av_channel_show_changes.csv. Token released ("none").
+- Excel-closed check: can't see Mac apps from the VM; commit succeeded with the mtime guard.
+- 2026-10-28T04:37:21Z DECISIONS line, CONTRACT AV layout, codespec.md, phaseB_inbox item written. Done.

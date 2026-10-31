@@ -1,0 +1,2 @@
+retry pages: 28/29 identical, 28/29 ignoring spaces; over-removal files 1; image count differs 0
+  {'stem': '2024/ws-02446', 'ident': False, 'ident_ws': False, 'over': 8, 'under': 0, 'imgs': [0, 0], 'verdict': 'ok', 'flags': []}

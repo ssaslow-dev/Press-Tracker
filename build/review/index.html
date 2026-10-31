@@ -1,0 +1,142 @@
+<title>AJG Coverage Review Queue</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,600&display=swap">
+<style>
+/* Layout: one reading column; a sticky tab bar of decision categories; each item is a row with the proposed call pre-selected. */
+:root{
+  --bg:#f6f7f5; --panel:#ffffff; --ink:#1d2421; --muted:#5d6863; --line:#dde2df;
+  --accent:#2f6b57; --accent-ink:#ffffff; --pending:#9a6b12; --done:#2f6b57; --reject:#9b3b33;
+  --f-display:"Source Serif 4",Georgia,serif; --f-body:"IBM Plex Sans",system-ui,sans-serif; --f-mono:"IBM Plex Mono",ui-monospace,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#121715;--panel:#1a201e;--ink:#e3e8e5;--muted:#9aa6a0;--line:#2c3532;--accent:#7cc2a6;--accent-ink:#0f1513;--pending:#d9a646;--done:#7cc2a6;--reject:#e08a80;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#121715;--panel:#1a201e;--ink:#e3e8e5;--muted:#9aa6a0;--line:#2c3532;--accent:#7cc2a6;--accent-ink:#0f1513;--pending:#d9a646;--done:#7cc2a6;--reject:#e08a80;color-scheme:dark}
+html,body{background:var(--bg);color:var(--ink)}
+body{font:15px/1.5 var(--f-body);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:860px;margin:0 auto;display:grid;gap:16px}
+h1{font:600 28px/1.15 var(--f-display);margin:0;text-wrap:balance}
+.lede{color:var(--muted);margin:0;max-width:65ch}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line)}
+.tab{font:500 13px var(--f-body);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 11px;cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tab .n{font-family:var(--f-mono);font-variant-numeric:tabular-nums;opacity:.8;margin-left:4px}
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;color:var(--muted);font-size:13px}
+.tools button{font:500 13px var(--f-body);border:1px solid var(--accent);color:var(--accent);background:transparent;border-radius:6px;padding:5px 10px;cursor:pointer}
+.catnote{color:var(--muted);font-size:14px;margin:0;max-width:65ch}
+.list{display:grid;gap:8px}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px 14px;display:grid;gap:8px;border-left:4px solid var(--line)}
+.item[data-state="done"]{border-left-color:var(--done)}
+.item[data-state="pending"]{border-left-color:var(--pending)}
+.t{font-weight:600;overflow-wrap:anywhere}
+.d{color:var(--muted);font-size:13px;overflow-wrap:anywhere}
+.conf{font:500 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;border-radius:4px;border:1px solid var(--line);color:var(--muted);margin-left:6px}
+.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+select,input[type=text]{font:14px var(--f-body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:5px 8px;min-width:0}
+input[type=text]{flex:1 1 200px}
+.save{font:600 13px var(--f-body);background:var(--accent);color:var(--accent-ink);border:0;border-radius:6px;padding:6px 12px;cursor:pointer}
+.state{font-size:12px;color:var(--muted)}
+.state.ok{color:var(--done)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;border:0;margin:0;padding:0;min-width:0}
+.chip{display:inline-flex;align-items:center;gap:6px;font:500 13px var(--f-body);border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:4px 10px;cursor:pointer}
+.chip input{margin:0;accent-color:var(--accent)}
+.chip:has(input:checked){border-color:var(--accent);color:var(--accent)}
+.chip:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.state.err{color:var(--reject)}
+button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.only{display:inline-flex;align-items:center;gap:8px;font:500 13px var(--f-body);color:var(--ink);cursor:pointer}
+.only input{margin:0;accent-color:var(--accent)}
+.auto{display:flex;flex-wrap:wrap;gap:6px;align-items:baseline;font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+.auto .tag{font:500 11px var(--f-mono);letter-spacing:.04em;text-transform:uppercase;padding:1px 6px;border-radius:4px;border:1px solid var(--accent);color:var(--accent);white-space:nowrap}
+.item[data-by="claude"]{border-left-color:var(--accent);border-left-style:dashed}
+.empty{background:var(--panel);border:1px dashed var(--line);border-radius:8px;padding:20px;color:var(--muted)}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style>
+<div class="wrap">
+  <h1>Coverage review queue</h1>
+  <p class="lede">Calls the agents couldn't make with certainty for <b>AJG Coverage - NewsBank.xlsx</b>. Each row comes with the proposed answer already selected. Press <b>Save</b> to accept it, or change it first. Nothing goes into the sheet until you decide; Claude reads your answers from here.</p>
+  <div class="bar" id="tabs" role="toolbar" aria-label="Categories"></div>
+  <label class="only" for="only"><input type="checkbox" id="only"> Show only items that need me</label>
+  <p class="catnote" id="catnote"></p>
+  <div class="tools" id="tools"></div>
+  <div class="list" id="list"><div class="empty">Loading the review items…</div></div>
+</div>
+<script>
+const CATS={
+  reach:{label:'Reach',note:'Outlet-level Reach for 862 stories that had none. High-confidence calls follow the tracker\'s existing mapping or the outlet\'s location; low ones need your judgment.'},
+  role:{label:'Role',note:'How Gabriel appears. The rule (byline names Jesse Gabriel → Op-ed; headline names Gabriel → Named in headline) disagreed with the old tracker on these.'},
+  nogabriel:{label:'Not about Gabriel?',note:'Originals whose NewsBank text never mentions Jesse Gabriel (often a "Gabriel Lerner" byline or a different Gabriel).'},
+  language:{label:'Language',note:'The Language column doesn\'t match the article\'s actual language.'},
+  headline:{label:'Headlines',note:'Rows whose "headline" is a section label or is already in English.'},
+  duplicate:{label:'Duplicates',note:'Two rows with byte-identical saved pages: the same outlet under two names. Merging lowers "# of reprints" by one.'},
+  bills:{label:'Gabriel bills',note:'Bills the agents saw credited to Gabriel in article text that are missing from the tracker\'s list of his bills. Confirmed ones are added to the list and filled into Bills for every story that names them.'},
+  copy:{label:'Saved copies',note:'The only saved page for these stories belongs to a different outlet or headline in the old grouping.'},
+  relabel:{label:'Reach relabels',note:'Outlets that already had a Reach and would move to Spanish-language, Ethnic or International (or stay National as a US edition). Nothing changes in the sheet until you approve.'},
+  tone:{label:'Tone (full text)',note:'Stories first rated from a search snippet; the full article now reads differently.'},
+  links:{label:'Bad links',note:'The stored link opens a tag page or sitemap instead of the article.'},
+  process:{label:'Process choices',note:'How the work gets done, not the data itself.'},
+  pressrelease:{label:'Press releases',note:'Borderline cases for the press-release rule: is this release text republished as-is (left out of the tracker), or real reporting (kept)?'},
+  authors:{label:'Authors',note:'Bylines the agents could not split into Author 1, 2, 3… and Author title with certainty.'},
+  checks:{label:'Data checks',note:'Findings from the saved-copy cleaning pass that only you can decide. One row per group; the count and examples are in each row, the full list is in sammy_detail.csv.'},
+  regroup:{label:'Reprint regroup',note:'Low-confidence calls from the stricter 90% reprint rule: merges, splits and original changes. Each row shows the shared-text percentages and the passage that didn\'t match. Nothing changes in the sheet until you approve.'}
+};
+let ITEMS=[], DEC={}, cur='reach', db=null;
+let ONLY=true; try{const v=localStorage.getItem('reviewOnlyNeedsMe'); if(v!==null)ONLY=v==='1';}catch(e){}
+const byClaude=d=>!!(d&&d.by&&/claude/i.test(d.by));
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function counts(c){const it=ITEMS.filter(i=>i.cat===c);return [it.filter(i=>!DEC[i.id]).length,it.length];}
+const label=c=>CATS[c]?.label||c;
+const asList=v=>v==null||v===''?[]:Array.isArray(v)?v:[v];
+const fmt=v=>Array.isArray(v)?v.join(' + '):String(v??'');
+function catKeys(){const k=Object.keys(CATS).filter(c=>ITEMS.some(i=>i.cat===c));ITEMS.forEach(i=>{if(i.cat!=null&&!k.includes(i.cat))k.push(i.cat);});return k;}
+function renderTabs(){
+  $('#tabs').innerHTML=catKeys().map(c=>{const [d,n]=counts(c);return `<button class="tab" aria-pressed="${c===cur}" data-c="${esc(c)}">${esc(label(c))}<span class="n" title="${d} of ${n} still need you">${d}/${n}</span></button>`;}).join('');
+}
+function control(i,d){
+  if(i.multi){const sel=asList(d?d.choice:i.proposed);return `<fieldset class="chips" id="m-${i.id}" aria-label="Decision (choose one or more)">${i.options.map((o,n)=>`<label class="chip" for="c-${i.id}-${n}"><input type="checkbox" id="c-${i.id}-${n}" value="${esc(o)}"${sel.includes(o)?' checked':''}>${esc(o)}</label>`).join('')}</fieldset>`;}
+  const v=d?.choice||i.proposed;return `<select id="s-${i.id}" aria-label="Decision">${i.options.map(o=>`<option${o===v?' selected':''}>${esc(o)}</option>`).join('')}</select>`;
+}
+function render(){
+  const keys=catKeys(); if(keys.length&&!keys.includes(cur))cur=keys[0];
+  renderTabs();
+  $('#catnote').textContent=CATS[cur]?.note||'';
+  $('#only').checked=ONLY;
+  const all=ITEMS.filter(i=>i.cat===cur);
+  const it=ONLY?all.filter(i=>!DEC[i.id]):all;
+  $('#tools').innerHTML=all.some(i=>i.conf)?`<button id="bulk">Accept all high-confidence proposals</button><span>${all.filter(i=>i.conf==='high'&&!DEC[i.id]).length} undecided high-confidence</span>`:'';
+  $('#list').innerHTML=it.length?it.map(i=>{const d=DEC[i.id];const auto=byClaude(d);return `<div class="item" data-state="${d?'done':'pending'}"${auto?' data-by="claude"':''} data-id="${i.id}">
+    <div class="t">${esc(i.title)}${i.conf?`<span class="conf">${esc(i.conf)}</span>`:''}</div>
+    <div class="d">${esc(i.detail)}</div>
+    ${auto?`<div class="auto"><span class="tag">Decided by Claude</span><span>${esc(String(d.note||'').replace(/^Auto:\s*/,''))}</span></div>`:''}
+    <div class="row">${control(i,d)}
+    <input type="text" id="n-${i.id}" placeholder="Note (optional)" aria-label="Note" value="${esc(auto?'':(d?.note||''))}">
+    <button class="save" data-id="${i.id}">${d?'Update':'Save'}</button><span class="state ${d?'ok':''}" role="status">${d?(auto?'Claude\'s call: '+esc(fmt(d.choice)):'Saved'):'Proposed: '+esc(fmt(i.proposed))}</span></div></div>`;}).join(''):(ONLY&&all.length?'<div class="empty">Nothing here needs you. Untick "Show only items that need me" to see the decided ones.</div>':'<div class="empty">Nothing in this category.</div>');
+}
+function choiceOf(i){
+  if(!i.multi)return document.getElementById('s-'+i.id).value;
+  const box=document.getElementById('m-'+i.id);const on=new Set([...box.querySelectorAll('input:checked')].map(x=>x.value));
+  return i.options.filter(o=>on.has(o));
+}
+async function save(id,choice,note){
+  if(!db)return false;
+  try{await db.collection('decisions').doc(id).set({choice,note:note||'',at:new Date().toISOString()});DEC[id]={choice,note};return true;}catch(e){return false;}
+}
+document.addEventListener('change',e=>{if(e.target.id==='only'){ONLY=e.target.checked;try{localStorage.setItem('reviewOnlyNeedsMe',ONLY?'1':'0');}catch(err){}render();}});
+document.addEventListener('click',async e=>{
+  const t=e.target.closest('.tab'); if(t){cur=t.dataset.c;render();return;}
+  const b=e.target.closest('.save'); if(b){const id=b.dataset.id;const i=ITEMS.find(x=>x.id===id);const st=b.nextElementSibling;const ch=choiceOf(i);
+    if(i.multi&&!ch.length){st.textContent='Pick at least one.';st.className='state err';return;}
+    b.disabled=true;const ok=await save(id,ch,document.getElementById('n-'+id).value);b.disabled=false;st.textContent=ok?'Saved':'Couldn\'t save. Check your connection and try again.';st.className='state '+(ok?'ok':'err');if(ok){const el=b.closest('.item');el.dataset.state='done';delete el.dataset.by;el.querySelector('.auto')?.remove();b.textContent='Update';renderTabs();}return;}
+  if(e.target.id==='bulk'){e.target.disabled=true;const todo=ITEMS.filter(i=>i.cat===cur&&i.conf==='high'&&!DEC[i.id]);for(const i of todo){await save(i.id,i.multi?asList(i.proposed):i.proposed,'');}render();}
+});
+(async()=>{
+  const C=window.claude; db=C&&C.use?await C.use('db').catch(()=>null):null;
+  if(!db){$('#list').innerHTML='<div class="empty">Sign in to claude.ai to load the review items.</div>';return;}
+  const snap=await db.collection('items').get().catch(()=>null);
+  ITEMS=snap?snap.docs.flatMap(d=>(d.data().list||[])):[];
+  ITEMS.sort((a,b)=>a.id<b.id?-1:1);
+  if(!ITEMS.length){$('#list').innerHTML='<div class="empty">No review items yet. Claude adds them here as the agents finish.</div>';return;}
+  let first=true;db.collection('decisions').onSnapshot(s=>{DEC={};s.docs.forEach(d=>DEC[d.id]=d.data());if(first){first=false;render();}else renderTabs();},()=>{if(first){first=false;render();}});
+})();
+</script>

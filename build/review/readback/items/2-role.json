@@ -1,0 +1,284 @@
+{
+  "list": [
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-00143 · nb-00312 · byline: Linh Tat · old tracker said “Named in headline”",
+      "id": "role-000",
+      "key": "nb-00312",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "California podría indicar qué alimentos no son 'ultraprocesados' en los supermercados"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-00701 · nb-01694 · byline: Katherine Donlevy · old tracker said “Named in headline”",
+      "id": "role-001",
+      "key": "nb-01694",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "Flamin' Hot Cheetos, other popular snacks could be outlawed at California schools"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-01308 · nb-03233 · byline: Ricardo Roura · old tracker said “Mentioned in story”",
+      "id": "role-002",
+      "key": "nb-03233",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Named in headline",
+      "title": "Ley AB57 permitirá a las fuerzas de seguridad prevenir y responder mejor los delitos de odio: asambleísta Jesse Gabriel"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-01487 · nb-03582 · byline: Ben Allen and Jesse Gabriel · old tracker said “Mentioned in story”",
+      "id": "role-003",
+      "key": "nb-03582",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Op-ed by Gabriel",
+      "title": "State Caucus an Ally for the Jewish Community"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-01622 · nb-03871 · byline: Elizabeth Chou · old tracker said “Named in headline”",
+      "id": "role-004",
+      "key": "nb-03871",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "SAN FERNANDO VALLEY - Acosta leads; other incumbents hold Assembly seats"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-01954 · ws-01488 · byline: Jane Black · old tracker said “Named in headline”",
+      "id": "role-005",
+      "key": "ws-01488",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "Meet the Guy Actually Protecting America's Food Supply"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-02124 · ws-01694 · byline: Ashley Chan · old tracker said “Named in headline”",
+      "id": "role-006",
+      "key": "ws-01694",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "Bipartisan Bill Targets California's Failure on Homelessness Prevention"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-02203 · ws-01787 · byline: Nicole Norman and Rachel Bluth · old tracker said “Named in headline”",
+      "id": "role-007",
+      "key": "ws-01787",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "In California, the war on ultraprocessed foods moves to the supermarket"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-02371 · ws-01974 · byline: — · old tracker said “Named in headline”",
+      "id": "role-008",
+      "key": "ws-01974",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "California Is First State To Ban Ultra-Processed Food From School Menus"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-02484 · ws-02101 · byline: Katy Grimes · old tracker said “Named in headline”",
+      "id": "role-009",
+      "key": "ws-02101",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "California Legislature is Trying to Ban Your Glock"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-02510 · ws-02134 · byline: — · old tracker said “Named in headline”",
+      "id": "role-010",
+      "key": "ws-02134",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "California Bill Would Remove Ultra-Processed Foods from School Lunches"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-02607 · ws-02246 · byline: Alan Riquelmy · old tracker said “Named in headline”",
+      "id": "role-011",
+      "key": "ws-02246",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "California lawmakers pitch plan to remove ultra-processed foods from school meals"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-02713 · ws-02357 · byline: Edwin Folven · old tracker said “Named in headline”",
+      "id": "role-012",
+      "key": "ws-02357",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "AJU welcomes state leader for in-depth look at antisemitism"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-02797 · ws-02445 · byline: Kat Schuster · old tracker said “Named in headline”",
+      "id": "role-013",
+      "key": "ws-02445",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "CA To Ban Popular Food Brands From Schools"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-02890 · ws-02549 · byline: Jesse Gabriel · old tracker said “Named in headline”",
+      "id": "role-014",
+      "key": "ws-02549",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Op-ed by Gabriel",
+      "title": "Assemblymember Jesse Gabriel Announces California Passes First-in-the-Nation Legislation to Ban Harmful Chemicals in School Foods"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-02927 · ws-02593 · byline: Jesse Gabriel · old tracker said “Named in headline”",
+      "id": "role-015",
+      "key": "ws-02593",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Op-ed by Gabriel",
+      "title": "Assemblymember Jesse Gabriel Says California Passes Legislation to Help Holocaust Survivors Recover Stolen Property"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-02961 · ws-02626 · byline: Jesse Gabriel · old tracker said “Named in headline”",
+      "id": "role-016",
+      "key": "ws-02626",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Op-ed by Gabriel",
+      "title": "Assemblymember Jesse Gabriel Announces Historic New Tax on Gun Industry Goes Into Effect in California"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-03093 · ws-02754 · byline: Alexa Mae Asperin · old tracker said “Named in headline”",
+      "id": "role-017",
+      "key": "ws-02754",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Mentioned in story",
+      "title": "Hot Cheetos ban in California schools? Snacks with artificial dyes targeted in new bill"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-04025 · ws-03709 · byline: Ben Allen and Jesse Gabriel · old tracker said “Mentioned in story”",
+      "id": "role-018",
+      "key": "ws-03709",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Op-ed by Gabriel",
+      "title": "Sacramento Archives"
+    },
+    {
+      "cat": "role",
+      "conf": "",
+      "detail": "jg-04181 · pq-00335 · byline: Theodore J. Boutrous Jr. and Jesse Gabriel · old tracker said “Mentioned in story”",
+      "id": "role-019",
+      "key": "pq-00335",
+      "options": [
+        "Mentioned in story",
+        "Named in headline",
+        "Op-ed by Gabriel"
+      ],
+      "proposed": "Op-ed by Gabriel",
+      "title": "Spare the 'Dreamers' a Nightmare by According Them Due Process"
+    }
+  ]
+}

@@ -1,0 +1,212 @@
+# agent-releasecheck — READ-ONLY audit of the tracker's press-release list vs official sources
+Started 2026-10-27. Scope: a46.asmdc.org press releases (+ Jewish Caucus listing, scope addition from coordinator).
+Tracker list source: build/insights/release_pickup_data.py -> ins_release_pickup.json (v13 blocks): 72 releases, 2019-02-04..2026-10-02,
+built ONLY from Coverage rows with Press release = Yes (i.e. releases that some clipped outlet/wire ran), curated REL table.
+Issuers included: o (his office), b (budget chair), c (Legislative Jewish Caucus from Nov 2020).
+## Log
+- 19:50 a46 listing: gabriel.asmdc.org/press-releases (a46.asmdc.org redirects) pages 0-19 via TinyFish; fresh ttl=0 recheck showed stale cached pages -> 199 releases 2018-06-10..2026-10-24 in work/tmp_agent-releasecheck/a46_all.tsv. curl blocked by proxy (host not allowed) in container and on Mac.
+- 20:10 Detail pages: all 199 a46 + 59 caucus pages fetched via TinyFish (raw JSON in work/tmp_agent-releasecheck/fetched/, merged pages.json); metadata by extract.py -> releases.json; tracker match by manual adjudication (build_table.py, map M) -> table.json; Coverage-sheet headline check sheet_hits.py.
+- Workbook write (cleared by coordinator): backup 'Backups/AJG Coverage - NewsBank BACKUP before press releases tab 2026-10-27.xlsx' sha 91417e01…8a64 (= staged master); new tab 'Press releases' 244 rows x 16 cols; other 5 tabs diffed cell-for-cell (944,804 cells: value, number format, hyperlink, font, fill, alignment) = 0 differences; committed with expectedMtimeMs; Mac sha 65c73661066d109d26df0ee045996dbbbe9eb907c3b14ece1c07d8392921ac56 = local; no lock file before/after. work/coverage_current.xlsx updated (previous kept as coverage_pre_releasestab.xlsx). DECISIONS.md entry appended.
+
+## Summary (for Sammy)
+- Tracker list = 72 releases, 2019-02-04..2026-10-02, built only from Coverage rows flagged Press release = Yes (releases some clipped outlet ran). It is a pickup list, not a catalogue of everything his office issued.
+- Official, same range: gabriel.asmdc.org 196 releases, 57 in tracker; qualifying Jewish Caucus 44, 10 in tracker. Whole site: a46 199 (2018-06-10..2026-10-24), caucus in scope 45.
+- Tracker items with no official posting (5): s03045 2024-04-19 "Gabriel Applauds $6 Million in Security Grants for the Valley"; s02549 2025-05-11 "Minority Caucuses Team to Fight Hatred in K-12 Schools"; s02158 2026-04-28 "Legislative Jewish Caucus furious over candidate's antisemitism permitted in California's voter pamphlet"; s02140 2026-05-18 "Rabbi Devorah Marcus, 13 others, honored at California Capitol"; s02061 2026-07-01 "State budget includes annual $80m for security of vulnerable nonprofit institutions". 4 are genuine caucus / diversity-caucus releases carried by SDJW marked '(Press Release)' (caucus site has no posts 2025-10-07..2026-09-25); s03045 is an Encino Enterprise print brief, unconfirmed as a release.
+- Actionable misses (official release whose headline appears verbatim in the Coverage sheet but which the tracker list doesn't include):
+  - 2021-06-03 California Assembly Passes Bill Requiring Prosecutors and Judges to Consider Costs of Sentencing in Criminal Cases -> Coverage sheet has a run with this headline: 04581 East County Today 2021-06-07 (story s04588; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2021-09-28 State Officials Hold Virtual Press Conference on Efforts to Expand Outdoor Dining Across California -> Coverage sheet has a run with this headline: 04468 Lassen County Times 2021-09-30 (story s01337; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2021-10-08 Governor Signs New Law Addressing Student Mental Health Crisis in California -> Coverage sheet has a run with this headline: 04377 San Fernando Valley Sun, The 2021-10-14 (story s01304; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2022-08-22 Governor Newsom Signs Legislation to Strengthen Proactive Gun Violence Prevention Efforts -> Coverage sheet has a run with this headline: 04156 Lassen County Times 2022-08-24 (story s01196; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2022-08-23 State Legislature Approves Measure to Strengthen California’s Response to Climate Change -> Coverage sheet has a run with this headline: 04161 Lassen County Times 2022-08-23 (story s01198; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2022-08-30 State Legislature Advances Bill to Combat Homelessness By Making Significant Improvements to Shelter Programs -> Coverage sheet has a run with this headline: 04139 Lassen County Times 2022-08-31 (story s01190; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2022-09-16 Governor Signs Bill to Strengthen California’s Response to Climate Change -> Coverage sheet has a run with this headline: 04111 Lassen County Times 2022-09-16 (story s01179; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2022-09-28 Governor Signs New Law to Strengthen California’s Water Conservation Efforts -> Coverage sheet has a run with this headline: 04055 Lassen County Times 2022-09-29 (story s01157; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2023-06-06 California State Assembly Advances Bill to Regulate Voluntary Carbon Offsets -> Coverage sheet has a run with this headline: 03517 Del Norte Triplicate 2023-06-08 (story s00991; Press release=blank); 03518 Desert Review, The 2023-06-06 (story s00991; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2023-09-01 New Tax on Gun Manufacturers and Dealers Advances to Senate Floor -> Coverage sheet has a run with this headline: 03345 Lassen County Times 2023-09-05 (story s00940; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2023-10-09 Governor Newsom Signs First-In-The-Nation Bill to Regulate Voluntary Carbon Offsets -> Coverage sheet has a run with this headline: 02912 Pasadena Independent 2023-10-12 (story s00842; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2023-10-17 Governor Newsom Signs Legislation to Expedite Housing Services for Homeless Veterans -> Coverage sheet has a run with this headline: 02770 Del Norte Triplicate 2023-11-03 (story s00802; Press release=blank); 02858 Del Norte Triplicate 2023-10-18 (story s00823; Press release=blank); 02859 Lassen County Times 2023-10-18 (story s00823; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2023-11-07 Following Antisemitic Incidents on Campuses, California Legislative Jewish Caucus Calls for Immediate Action by UC & CSU Leadership -> Coverage sheet has a run with this headline: 08616 Davis Vanguard 2023-11-08 (story s03228; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2024-05-01 Jewish Caucus Condemns Total Failure by UCLA Leadership -> Coverage sheet has a run with this headline: 08402 Davis Vanguard 2024-05-02 (story s03035; Press release=blank) -- not flagged Press release, so the tracker list cannot see it
+  - 2026-09-29 New California Law Protects Affordable Housing from Preventable Foreclosure -> Coverage sheet has a run with this headline: 07038 PublicNow 2026-09-30 (story s01893; Press release=Yes) -- flagged as a release but left OUT of the tracker list (release_pickup_data.py treats s01893 as unknown issuer)
+- Date mismatches > 1 day (tracker date = earliest pickup, later than official): s01167 official 2022-09-19by +2 days; s03597 official 2023-02-17by +4 days; s03570 official 2023-02-22by +26 days; s01093 official 2023-03-15by +3 days; s03427 official 2023-07-05by +14 days; s03178 official 2023-12-29by +2 days; s03016 official 2024-05-16by +5 days; s02890 official 2024-08-29by +2 days; s02017 official 2026-08-28by +3 days
+- Untracked a46 releases (date, title):
+  - 2018-06-10 Gabriel Takes Oath to Represent 45th Assembly District
+  - 2018-06-17 Gabriel Appointed To Assembly Leadership
+  - 2019-02-04 ASSEMBLYMEMBER JESSE GABRIEL INTRODUCES BILL TO PROTECT SENIORS BY REQUIRING BETTER LABELING FOR PRESCRIPTION DRUGS
+  - 2019-02-14 ASSEMBLYMEMBER JESSE GABRIEL INTRODUCES LEGISLATION TO MAKE COLLEGE MORE ACCESSIBLE FOR CALIFORNIA STUDENTS
+  - 2019-03-07 Assemblymember Jesse Gabriel Responds to False and Misleading Attacks By Anti-Choice Activists
+  - 2019-04-11 Rejecting Attacks by Anti-Choice Activists, Assembly Education Committee Approves Assemblymember Gabriel’s Bill Adding Resource Numbers to California Student IDs
+  - 2019-04-24 Assembly Judiciary Committee Approves Assemblymember Gabriel’s Bill Cracking Down On Spam Calls and Caller ID Fraud
+  - 2019-05-07 Legislation to Establish Major New Incentive for Affordable Housing in Opportunity Zones Clears Key Committee with Unanimous Bipartisan Support
+  - 2019-05-09 California Assembly Passes Innovative Legislation to Enable Landlords and Tenants to Assist Persons at Risk of Homelessness
+  - 2019-06-05 Assemblymember Gabriel Honors New Friends Homeless Center with West Valley Nonprofit of the Year Award
+  - 2019-07-23 Assemblymember Jesse Gabriel and Veterans Affairs Secretary Dr. Vito Imbasciani Honor San Fernando Valley Military Veterans at Special Recognition Ceremony
+  - 2019-09-27 Governor Newsom Signs Innovative Legislation to Protect Californians at Risk of Homelessness
+  - 2019-10-11 Governor Newsom Signs Legislation Establishing New Program to Protect Californians Against Hate Crimes
+  - 2019-10-11 Governor Newsom Signs Package of New Gun Laws from Legislature’s Gun Violence Prevention Working Group
+  - 2020-02-04 Bipartisan Coalition Introduces Legislation to Combat Imminent Loss of Affordable Housing
+  - 2020-02-06 California Legislators Introduce Bill to Secure 2026 World Cup Games
+  - 2020-03-13 $15 Million in Security Funding Awarded to California Nonprofits At Risk of Hate-Motivated Violence
+  - 2020-04-29 COVID-19 Virtual Town Hall
+  - 2020-09-01 California Legislature Passes Bill to Enforce Out-of-State Gun Restrictions
+  - 2020-09-02 Bills to Strengthen Homeless Funding Oversight and Create Affordable Housing for Teachers Pass State Legislature
+  - 2020-09-29 Amid Federal Inaction, California Governor Signs Bill to Enforce Out-of-State Gun Restrictions
+  - 2020-09-30 Governor Newsom Vetoes Bipartisan Legislation to Strengthen Accountability and Transparency for State Homelessness Funding
+  - 2020-09-30 Governor Signs Bill to Help Homeless College Students Retain Financial Aid Amid Global Pandemic
+  - 2021-01-26 Legislators Introduce Bill to Address Student Mental Health Crisis Exacerbated by the COVID-19 Pandemic
+  - 2021-02-17 Legislators Announce Effort to Support Struggling Restaurants Through More Outdoor Dining and Delivery Options
+  - 2021-03-16 Assemblymember Jesse Gabriel Honors Community Organizer Lisa Kodimer as 2021 Woman of the Year
+  - 2021-03-23 Legislators Announce Measure to Require Microstamping Technology in Law Enforcement Handguns
+  - 2021-04-06 Legislation to Establish Statewide Eviction Defense Program for Vulnerable Renters Approved by Assembly Judiciary Committee
+  - 2021-05-28 Building on Nationwide Momentum, California Assembly Approves Legislation to Establish Eviction Defense Program
+  - 2021-06-02 Jesse Gabriel Appointed Chair of the Assembly Committee on Privacy and Consumer Protection
+  - 2021-06-03 California Assembly Passes Bill Requiring Prosecutors and Judges to Consider Costs of Sentencing in Criminal Cases
+  - 2021-06-15 California Legislature Allocates $120 Million to Fund Eviction Defense Services for Vulnerable Tenants
+  - 2021-06-23 ONEgeneration Selected as 2021 Nonprofit of the Year for the West San Fernando Valley
+  - 2021-07-15 Legislation to Expand Outdoor Dining Statewide Passes Key Senate Committee, Gains Waiver for Immediate Implementation
+  - 2021-08-07 Assemblymember Jesse Gabriel Partners with Child Development Institute to Provide San Fernando Valley Families with Back to School Necessities
+  - 2021-08-09 Assemblymember Jesse Gabriel Secures $3.5 Million in State Funding for the West Valley Food Pantry
+  - 2021-08-19 Assemblymember Jesse Gabriel Honors Gasolina Café as Small Business of the Year in the West San Fernando Valley
+  - 2021-08-27 Assemblymember Jesse Gabriel Presents $500,000 Check to the Alliance for Community Empowerment
+  - 2021-09-01 State Legislature Approves Resolution to Rename Portion of Highway 101 in Honor of Trailblazing Astronaut and Former Encino Resident Sally Ride
+  - 2021-09-09 State Legislature Approves Measure to Expand CalFresh Food Benefits for Thousands of California Students
+  - 2021-09-10 After Multi-Year Effort, State Legislature Approves Measure Enabling Educators to Better Address Student Mental Health Crisis in California
+  - 2021-09-10 California Legislature Approves Statewide Eviction Defense Program for Vulnerable Tenants
+  - 2021-09-28 Governor Newsom Signs Bill to Boost Workforce Housing in California
+  - 2021-09-28 State Officials Hold Virtual Press Conference on Efforts to Expand Outdoor Dining Across California
+  - 2021-09-29 Governor Newsom Signs New Law Mandating Strict Accountability for State Homeless Funding
+  - 2021-10-05 Governor Newsom Signs New Law Targeting Growing Hunger Crisis at California Colleges and Universities
+  - 2021-10-08 Governor Newsom Signs New Law to Expand Outdoor Dining Across California
+  - 2021-10-08 Governor Signs New Law Addressing Student Mental Health Crisis in California
+  - 2021-11-15 Assemblymember Jesse Gabriel Hosts Awards Ceremony Honoring San Fernando Valley Community Leaders
+  - 2022-01-19 Following Texas Hostage Standoff, Jewish Caucus Chair Introduces Legislation to Protect Communities Facing Hate-Motivated Violence
+  - 2022-01-26 Assemblymember Jesse Gabriel Announces $4.8 million to Enhance Security at San Fernando Valley Nonprofits Facing Hate-Motivated Violence
+  - 2022-02-16 Amid Spike in Gun Homicides, Lawmakers Introduce Bill to Strengthen Gun Violence Prevention Efforts
+  - 2022-05-25 Assembly Advances Gun Violence Prevention Package in Wake of Uvalde, TX School Shooting Tragedy
+  - 2022-05-27 State Assembly Advances Bill to Strengthen California’s Water Conservation Tools
+  - 2022-06-03 Assemblymember Jesse Gabriel and San Fernando Valley Elected Officials Honor Trailblazing Astronaut and Former Encino Resident with Highway 101 Dedication
+  - 2022-06-09 Organization for Social Media Safety Selected as 2022 Nonprofit of the Year for the West San Fernando Valley
+  - 2022-08-22 Governor Newsom Signs Legislation to Strengthen Proactive Gun Violence Prevention Efforts
+  - 2022-08-23 State Legislature Approves Measure to Strengthen California’s Response to Climate Change
+  - 2022-08-24 California Legislators Meet with Moms Demand Action Founder to Discuss New Gun Safety Laws
+  - 2022-08-24 California Legislature Approves Bill to Extend and Strengthen California’s Nonprofit Security Grant Program
+  - 2022-08-30 After Two-Year Fight, State Legislature Approves Major Social Media Transparency Bill
+  - 2022-08-30 State Legislature Advances Bill to Combat Homelessness By Making Significant Improvements to Shelter Programs
+  - 2022-08-31 State Legislature Approves Bill to Better Address Sexual Violence and Harassment on College Campuses
+  - 2022-09-01 State Legislature Advances Measure to Address Mental Health Needs of Students and Teachers After Local Emergencies
+  - 2022-09-16 Governor Signs Bill to Strengthen California’s Response to Climate Change
+  - 2022-09-18 Governor Signs Bill to Extend and Strengthen California’s Nonprofit Security Grant Program
+  - 2022-09-28 Governor Signs New Law to Strengthen California’s Water Conservation Efforts
+  - 2022-10-25 Assemblymember Jesse Gabriel Presents $2 Million Check to Support Cutting-Edge Research and Innovation in Warner Center
+  - 2023-05-02 Hundreds of Volunteers, Community Organizations, and Elected Officials Join Together for Assemblymember Jesse Gabriel’s Valley Day of Service
+  - 2023-06-06 California State Assembly Advances Bill to Regulate Voluntary Carbon Offsets
+  - 2023-06-07 Assemblymember Jesse Gabriel Honors New Economics for Women as California Nonprofit of the Year
+  - 2023-06-29 California State Senate Advances Landmark Legislation to Ban Use of Dangerous Food Additives
+  - 2023-07-12 Legislation Banning Dangerous Food Additives Clears Final Policy Committee in the California State Legislature
+  - 2023-07-12 New Excise Tax on Guns Clears Final Policy Committee in the California Legislature
+  - 2023-08-25 Assemblymember Jesse Gabriel Secures $2 Million for New Economics for Women for Major Expansion Project
+  - 2023-09-01 New Tax on Gun Manufacturers and Dealers Advances to Senate Floor
+  - 2023-09-07 California Legislature Passes Landmark Tax on Firearm Manufacturers and Dealers
+  - 2023-09-08 Author of AB 587 Statement on Twitter’s Legal Challenge to Landmark Transparency Measure
+  - 2023-09-26 Governor Newsom Signs Historic Tax on Gun Manufacturers to Fund School Safety and Violence Prevention Programs
+  - 2023-10-07 Landmark Legislation Banning Dangerous Food Additives Signed by Governor Newsom
+  - 2023-10-09 Governor Newsom Signs First-In-The-Nation Bill to Regulate Voluntary Carbon Offsets
+  - 2023-10-10 Amid Mideast Violence and Spike in Hate Crimes, Governor Newsom Signs Legislation to Protect Vulnerable Communities
+  - 2023-10-13 Governor Newsom Signs Bill to Sustain Outdoor Dining
+  - 2023-10-17 Governor Newsom Signs Legislation to Expedite Housing Services for Homeless Veterans
+  - 2023-12-01 Assembly Budget Chair Gabriel Comments on Latest Revenue Forecast
+  - 2024-01-10 Speaker Rivas, Assembly Budget Chair Gabriel Comment on Governor’s January Budget
+  - 2024-03-12 Assemblymember Jesse Gabriel, Celebrity Chef Tom Colicchio Unveil Legislation to Prohibit Harmful Chemicals in School Foods
+  - 2024-04-15 Elected Officials, Community Organizations, and 1,300+ Volunteers Join Together for Assemblymember Jesse Gabriel’s Third Annual Valley Day of Service
+  - 2024-05-10 Assembly Speaker Robert Rivas, Budget Chair Jesse Gabriel Respond to Governor’s May Revision
+  - 2024-05-21 California State Assembly Advances Landmark Legislation to Ban Harmful Chemicals in School Foods
+  - 2024-05-23 California State Assembly Passes Legislation to Increase Penalties for Corporate Malfeasance, Fund Crime Victim Service Programs
+  - 2024-05-28 Assemblymember Jesse Gabriel Successfully Advances 14 Bills to the California State Senate
+  - 2024-06-05 Boys & Girls Club of the West Valley Named California Nonprofit of the Year
+  - 2024-08-06 Elected Officials, Celebrities, Advocates Rally Behind Landmark Food Safety Legislation Ahead of Critical Vote
+  - 2024-08-15 Assemblymember Jesse Gabriel Successfully Advances Seven Bills to the California State Senate Floor
+  - 2024-09-16 Governor Newsom Signs Legislation to Help Holocaust Survivors Recover Stolen Property
+  - 2024-09-27 Governor Newsom Signs New Law to Hold Corporations Accountable, Fund Essential Services for Crime Victims
+  - 2024-09-28 Governor Newsom Signs First-in-the-Nation Legislation to Ban Harmful Chemicals in School Meals
+  - 2024-12-02 California Assembly Budget Chair Introduces Special Session Proposal to Fund Potential Litigation Against the Trump Administration
+  - 2025-01-03 Author of Landmark California Food Safety Bills Comments on Governor Newsom’s Executive Order
+  - 2025-01-13 Assembly Budget Chair Jesse Gabriel Comments on Proposed Funding for Southern California Wildfire Response and Recovery
+  - 2025-02-03 Assembly Budget Chair Jesse Gabriel Comments on Special Session Bills to Protect Federal Funding, Constitutional Rights
+  - 2025-02-19 Lawmakers, Advocates Introduce Legislation to Protect Californians from Dangerous “Forever Chemicals” in Drinking Water
+  - 2025-03-19 California Lawmakers Introduce First-in-the-Nation Legislation to Phase Out Harmful Ultra-Processed Foods from School Meals
+  - 2025-06-03 California Advances First-in-the-Nation Legislation To Phase Out Harmful Ultra-Processed Foods from School Meals
+  - 2025-06-04 California State Assembly Passes Legislation Strengthening Penalties for Looting, Impersonation of Emergency Personnel During Wildfires and Other Emergencies
+  - 2025-06-06 California Assembly Passes Legislation to Close DIY Machine Gun Loophole
+  - 2025-07-16 Legislators Announce Agreement to Advance Legislation Cracking Down on Looting and Impersonation of First Responders
+  - 2025-07-17 First-in-the-Nation Legislation Phasing Out Harmful Ultra-Processed Foods from California School Meals Clears Final Policy Committee
+  - 2025-07-18 Legislation Closing DIY Machine Gun Loophole Advances to Senate Appropriations Committee
+  - 2025-08-19 Nationally-Watched Legislation to Phase Out Harmful Ultra-Processed Foods from California Schools Secures Support from Key Stakeholders Ahead of Critical Senate Vote
+  - 2025-08-26 Ahead of Critical Vote, Lawmakers and Advocates Urge California to Close DIY Machine Gun Loophole
+  - 2025-09-09 California Passes Legislation to Crack Down on Wage Theft
+  - 2025-09-09 California State Legislature Passes Two Bills to Assist Small Restaurants
+  - 2025-09-14 California Legislature Passes First-in-the-Nation Legislation to Remove Harmful Ultra-Processed Foods from Schools
+  - 2025-09-15 California Legislature Passes Legislation Strengthening Penalties for Looting, Impersonation of First Responders During Wildfires and Other Emergencies
+  - 2025-10-08 Governor Newsom Signs Landmark Legislation to Remove Harmful Ultra-Processed Foods from California Schools
+  - 2025-10-09 Governor Newsom Signs New Laws to Cut Red Tape and Save Neighborhood Restaurants
+  - 2025-10-10 Governor Newsom Signs First-In-The-Nation Legislation to Close DIY Machine Gun Loophole
+  - 2025-10-10 Governor Newsom Signs New Law to Protect Workers and Crack Down on Wage Theft
+  - 2025-10-10 Governor Newsom Signs New Laws Strengthening Penalties for Looting, Impersonation of First Responders During Wildfires and Other Emergencies
+  - 2025-11-19 Assembly Budget Chair Gabriel Responds to Latest Revenue Forecast
+  - 2026-01-09 Assembly Budget Chair Jesse Gabriel, Speaker Robert Rivas Issue Statement on Governor Newsom’s Budget Proposal
+  - 2026-01-26 California Legislators Introduce Bills to Prevent Federal Immigration Agents from Using State Resources, Require Independent Investigation of Shootings
+  - 2026-03-25 Assemblymember Jesse Gabriel Introduces Legislation to Create First-In-the-Nation Seal for Non-Ultra-Processed Foods
+  - 2026-04-09 California Lawmakers Announce the “Second Chance Sports Act” to Expand Access to Organized Sports Programs in Correctional Facilities
+  - 2026-04-20 Elected Officials, Community Leaders, and 750+ Volunteers Gather for Assemblymember Jesse Gabriel’s Annual Valley Day of Service
+  - 2026-05-07 Assembly Democrats Release Road Map to a Responsible and Compassionate Budget
+  - 2026-05-11 What They’re Saying: California Leaders, Advocates, Nonprofits Praise Assembly Democrats’ Budget Priorities for Defending Health Access, Safety Net
+  - 2026-05-27 California Advances Legislation to Protect State Resources, Require Independent Investigation of Shootings
+  - 2026-05-28 California State Assembly Advances First-in-the-Nation Legislation to Create State Seal for Non-Ultraprocessed Foods
+  - 2026-05-28 California State Assembly Passes “Second Chance Sports Act” to Expand Access to Organized Sports Programs in Correctional Facilities
+  - 2026-08-26 California Draws the Line, Passes Legislation to Push Back on Reckless ICE Raids and Safeguard Constitutional Rights
+  - 2026-08-28 California Steps Up for Faith Communities, Passes Legislation to Prevent Public Meetings and Graduations from Being Scheduled on Important Religious and Cultural Holidays
+  - 2026-08-30 California Legislature Passes First-in-the-Nation Legislation to Create Official State Seal for Non-Ultraprocessed Foods
+  - 2026-08-31 California Legislature Passes “Second Chance Sports Act” to Expand Access to Organized Sports Programs in Correctional Facilities
+  - 2026-09-01 Amid Youth Mental Health Crisis, California Lawmakers and NBA Champion Team Up to Get Coaches Into the Game
+  - 2026-09-29 California Draws the Line on Reckless ICE Raids, Safeguards Constitutional Rights with Two New Laws
+  - 2026-09-29 New California Law Protects Affordable Housing from Preventable Foreclosure
+  - 2026-09-30 California Steps Up for Faith Communities, Enacts Law to Prevent Public Meetings and Graduations from Being Scheduled on Important Religious and Cultural Holidays
+  - 2026-10-01 From San Quentin’s Field of Dreams to State Law: California Enacts the “Second Chance Sports Act”
+  - 2026-10-24 Assembly Budget Chair Jesse Gabriel and Mayor Karen Bass Announce $22 Million in State Funding for Sepulveda Basin Improvements
+- Untracked qualifying caucus releases, names/quotes Gabriel:
+  - 2018-12-12 Senator Ben Allen Named Chair of California Legislative Jewish Caucus (quoted: No)
+  - 2019-04-29 On Holocaust Remembrance Day, Governor Newsom and the Jewish Caucus Announce Budget Funding To Bolster Security at Places of Worship and Schools (quoted: Yes)
+  - 2019-06-27 Jewish Caucus Budget Priorities Funded in New State Budget (quoted: Yes)
+  - 2019-08-07 Jewish Caucus Voices Concerns about Draft Ethnic Studies Model Curriculum (quoted: Yes)
+  - 2019-08-09 Jewish and Latino Caucuses Visit ICE Detention Center and Meet with Asylum Seekers at Mexican Border (quoted: Yes)
+  - 2020-07-22 Jewish Caucus Leaders Applaud Firm Commitment to Remove Anti-Jewish Bias from Ethnic Studies Model Curriculum (quoted: Yes)
+  - 2020-08-12 Statement on New Draft Ethnic Studies Model Curriculum (quoted: Yes)
+  - 2020-08-31 Jewish Caucus Leaders Issue Statement on Ethnic Studies Legislation (quoted: Yes)
+  - 2021-01-14 California Jewish Community to House Leadership: Take Action to Protect Democracy (quoted: Yes)
+  - 2021-03-18 Jewish Caucus Chair Jesse Gabriel Comments on Approval of the Ethnic Studies Model Curriculum (quoted: Yes)
+  - 2021-04-08 Jewish Caucus Commemorates Holocaust Remembrance Day at the State Capitol (quoted: Yes)
+  - 2022-02-28 California Jewish Legislators Stand in Solidarity with Ukraine (quoted: Yes)
+  - 2022-03-15 Jewish Caucus Statement on Sierra Club’s Decision to Reinstate Travel to Israel (quoted: No)
+  - 2022-10-11 California Legislative Diversity Caucuses take a unified stance calling for immediate resignation of Los Angeles City Councilmembers Nury Martinez, Kevin de Leon, and Gil Cedillo. (quoted: No)
+  - 2022-10-24 Jewish Caucus Speaks Out Against Kanye West Anti-Jewish Hate (quoted: Yes)
+  - 2023-01-06 Jewish Caucus Announces Leadership for 2023-2024 Legislative Session (quoted: Yes)
+  - 2023-04-18 Jewish Caucus Observes Yom HaShoah in the State Capitol (quoted: Yes)
+  - 2023-05-09 Jewish Caucus Announces Legislative Priorites 2023 (quoted: Yes)
+  - 2023-10-07 California Legislative Jewish Caucus Releases Statement on Horrific Terrorist Attacks Against Israel (quoted: Yes)
+  - 2023-10-18 Jewish Caucus Applauds Additional Funding to Protect Vulnerable Communities Amid Surge in Mideast Violence (quoted: Yes)
+  - 2023-11-07 Following Antisemitic Incidents on Campuses, California Legislative Jewish Caucus Calls for Immediate Action by UC & CSU Leadership (quoted: No)
+  - 2023-12-11 California Legislative Jewish Caucus Urges President Biden to Continue to Make Safe Release of Hostages and Red Cross Access a Top Priority (quoted: No)
+  - 2024-02-27 Jewish Caucus Condemns Antisemitic Violence on UC Campuses, Demands UC Hold Perpetrators Accountable and Do More to Address Antisemitism on Campus (quoted: Yes)
+  - 2024-04-05 California Legislative Jewish Caucus Applauds Release of the Golden State Plan to Counter Antisemitism (quoted: Yes)
+  - 2024-04-10 Jewish Caucus Applauds Award of $40 Million in State Funding for Nonprofit Security Grants (quoted: Yes)
+  - 2024-05-01 Jewish Caucus Condemns Total Failure by UCLA Leadership (quoted: Yes)
+  - 2024-05-15 Jewish Caucus Commends CSU Chancellor García for Decisive Action Rejecting Boycott of Israel by Sonoma State (quoted: Yes)
+  - 2024-05-20 Jewish Caucus Announces 2024 Priority Legislation (quoted: Yes)
+  - 2024-06-24 Jewish Caucus Issues Statement Regarding Violent Antisemitic Attacks in Los Angeles (quoted: Yes)
+  - 2024-07-30 Jewish Caucus Applauds Historic $76 Million in Funding for California’s Nonprofit Security Grant Program (quoted: Yes)
+  - 2024-09-09 Jewish Caucus Announces Leadership for 2025-2026 Legislative Session (quoted: Yes)
+  - 2024-10-02 Governor Newsom Signs All Four Jewish Caucus Priority Bills Into Law (quoted: Yes)
+  - 2025-10-07 Governor Newsom Signs Landmark Legislation to Combat Antisemitism in K-12 Schools (quoted: Yes)
+- Untracked qualifying caucus releases, caucus only (tenure, no Gabriel mention):
+  - 2024-01-03 Jewish Caucus Sends Letter to Colleagues Re: October 7 Attack, Rising Antisemitism, and the 2024 Legislative Year
+  - 2025-06-06 Jewish Caucus Statement on ICE Raids in Los Angeles
+- Not reached / limits: curl to gabriel.asmdc.org / caucus site blocked by proxy (container and Mac) -> all reads via TinyFish fetch_content; Assembly Democrats caucus-wide listing not checked separately (Gabriel's own site carries his releases incl. budget statements). Word counts = body text of the page; 'Gabriel quoted' and 'other members named' are pattern-based (spot-checked), not hand-read for all 244. Listing pages were initially served from stale cache (one release, 2026-08-31, missing) -> re-listed with ttl=0; final count 199 consistent across both passes.

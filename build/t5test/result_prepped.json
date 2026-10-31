@@ -1,0 +1,159 @@
+{
+ "at": "2026-10-26T23:53:47Z",
+ "runs": {
+  "run-test01": {
+   "ids": {
+    "jg-NEW-test01-1": "jg-04297",
+    "ws-NEW-test01-1": "ws-03987",
+    "jg-NEW-test01-2": "jg-04298",
+    "ws-NEW-test01-2": "ws-03988",
+    "ws-NEW-test01-5": "nb-00111",
+    "jg-NEW-test01-9": "jg-00055",
+    "ws-NEW-test01-3": "ws-03989",
+    "ws-NEW-test01-4": "ws-03990"
+   },
+   "added": [
+    "ws-03987",
+    "ws-03988",
+    "ws-03989",
+    "ws-03990"
+   ]
+  }
+ },
+ "conflicts": [
+  {
+   "aid": "nb-00034",
+   "story": "jg-00015",
+   "column": "Headline",
+   "sheet": "Dos nuevas demandas reabren el debate por el arte saqueado por los nazis en los EE.UU.",
+   "tracker": "A DIFFERENT HEADLINE",
+   "from": "edits"
+  }
+ ],
+ "applied": [
+  {
+   "aid": "nb-00001",
+   "column": "Tone",
+   "value": "Positive",
+   "from": "tones"
+  },
+  {
+   "aid": "nb-00001",
+   "column": "Tone note",
+   "value": "test tone note",
+   "from": "tones"
+  },
+  {
+   "aid": "nb-00001",
+   "column": "Tone rated by",
+   "value": "Claude, from tracker (2026-10-26)",
+   "from": "tones"
+  },
+  {
+   "aid": "ws-03988",
+   "column": "Tone",
+   "value": "Neutral",
+   "from": "tones"
+  },
+  {
+   "aid": "ws-03988",
+   "column": "Tone note",
+   "value": "tone for new story",
+   "from": "tones"
+  },
+  {
+   "aid": "ws-03988",
+   "column": "Tone rated by",
+   "value": "Claude, from tracker (2026-10-26)",
+   "from": "tones"
+  },
+  {
+   "aid": "nb-00034",
+   "column": "Author / byline",
+   "value": "Edit Author",
+   "from": "edits"
+  },
+  {
+   "aid": "ws-03987",
+   "column": "Saved Copy?",
+   "value": "Yes",
+   "from": "pages"
+  },
+  {
+   "aid": "ws-03987",
+   "column": "File type",
+   "value": "HTML",
+   "from": "pages"
+  },
+  {
+   "aid": "ws-03987",
+   "column": "File name",
+   "value": "Saved pages (TinyFish)/ws-03987.html",
+   "from": "pages"
+  }
+ ],
+ "duplicates": [
+  {
+   "run": "run-test01",
+   "placeholder": "ws-NEW-test01-5",
+   "existing": "nb-00111",
+   "link": "https://www.edhat.com/california/news/california-food-label-law-transparency/"
+  }
+ ],
+ "unsupported": [],
+ "removals_requested": [],
+ "unknown_story": [],
+ "edits_clear": [],
+ "edits_keep": [
+  "jg-00015"
+ ],
+ "reprint_counts": {
+  "jg-00037": {
+   "old": 9,
+   "new": 10,
+   "new_outlets": [
+    "reprint weekly"
+   ]
+  },
+  "jg-04297": {
+   "old": 0,
+   "new": 1,
+   "new_outlets": [
+    "echo times"
+   ]
+  }
+ },
+ "pages": [
+  {
+   "page": "ws-NEW-test01-1",
+   "aid": "ws-03987",
+   "file": "Saved pages (TinyFish)/ws-03987.html",
+   "url": "https://www.testgazette.com/news/gabriel-one/"
+  }
+ ],
+ "counts": {
+  "rows_added": 4,
+  "cells_filled": 10,
+  "conflicts": 1,
+  "duplicates": 1,
+  "removals_requested": 0,
+  "pages": 1,
+  "reprint_counts_changed": 2,
+  "originals": 4298,
+  "next_ws": 3991,
+  "next_jg": 4299
+ },
+ "verify": {
+  "ok": true,
+  "problems": [],
+  "rows_before": 9686,
+  "rows_after": 9690,
+  "originals": 4298
+ },
+ "sheet_line": "4 rows added, 10 cells filled, 1 conflicts left for Sammy.",
+ "sheet_stories": [
+  "jg-00037",
+  "jg-04297",
+  "jg-04298"
+ ]
+}

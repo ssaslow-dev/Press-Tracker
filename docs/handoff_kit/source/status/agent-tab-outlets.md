@@ -1,0 +1,8 @@
+# agent-tab-outlets log
+- 23:41Z read contract, agent-tabs status, framework (tabs_tracker.js), _common_data.py, harness/stub, DECISIONS (publisher fills, Santa Maria News Media override from 2020-03-13), TONE_GUIDE.
+- wrote build/tabs/outlets_data.py (sheet Reach/Medium/Language/county/state/city per canonical outlet; reprint-only outlets lack these in data.json).
+- wrote build/tabs/outlets.js (21 KB, IIFE, registers once), build/tabs/test/outlets.test.js, build/tabs/outlets.md. Block tab_outlets 56 KB (v2: value table + indexes), deterministic (two runs same md5).
+- build_testpage.sh + MOD=outlets harness: 132/132 at 1400 and 390. Independent model in Node from srv/blocks (counts per outlet for all 1,139 rows via CSV, tone averages, facets each with option count + result, combined, chips, sort, TSV/names/CSV export, URL round-trip, page facts, in-page search, chart per year, story panel, back, deep link, unknown slug, never #clips, reporter cross-link, no overflow). Publisher override checked against the workbook (work/tmp_agent-tab-outlets/sheet_pubs.json).
+- Findings for agent-tabs: tab-common canonical names leave punctuation variants split (India West / India-West; Food and / & Environment Reporting Network) and produce "The The Times"; Politico etc. have no Outlet state/county in the sheet ("Not recorded").
+- DONE (no publish, no workbook write, no Exa).
+- 23:50Z coordinator addendum (bill links via ctx.billLink): checked outlets.js; it renders no bill numbers (grep: none), so no change. Bill chips on the outlet page come from the framework story list (integrator's ctx.billLink upgrade covers them).

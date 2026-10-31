@@ -1,0 +1,7 @@
+# F7 — one combined republish of the tracker (same artifact)
+Inputs: the CURRENT committed workbook L/work/coverage_current.xlsx (after the Pasadena date write, if any — check its sha matches the Mac's last committed sha in the newest F-report), code/ (apply_all_patches incl. AUTO-v1), plus:
+1. Acceptance fixes (DECISIONS): build_data never outputs the retired Reach label 'Spanish-language & ethnic'; Bills shown limited to bills in the leginfo list; page <title> "AJG Press Coverage Tracker" (drop "(Copy)").
+2. No reprint links anywhere (DECISIONS, artifact comment): remove "Reprint links (N)" lists and per-reprint links; reprints listed by outlet/date only; links only on Originals. Update the links suite accordingly.
+3. Manage tab patch: code/patch_manage.py (status/agent-manage.md) — run after apply_all, add as step 4d in apply_all_patches.py; ALSO reword its Saved-copies line so it doesn't promise that files dropped into the Desktop library are picked up by Refresh (the sheet task only saves pages from the db) — say "add copies with the drop zone".
+4. Prune: L/final_pass/F7/files_map.json (17 removals + repacked img/3.json).
+Rebuild (build_data, make_copies, assemble) from the current workbook; run all suites once; publish ONCE to https://claude.ai/artifact/5wHur4aRkSbAu6FscDpTjv (read first, keep capabilities); verify published = local, size under the limit; spot-check 30 viewer copies' images (incl. img/3 users); re-check the two acceptance failures (AB 130 absent; no 'Spanish-language & ethnic'). Report version + size.

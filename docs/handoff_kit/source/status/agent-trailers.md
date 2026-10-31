@@ -1,0 +1,1 @@
+- 2026-10-27T16:07:54Z started; read DECISIONS/probe/F1 status; 1 web search + 1 TinyFish fetch (CoB author search 2023-24/2025-26, read-only). STOPPED on coordinator order (Sammy: trailer bills do NOT count). No files written; final.xlsx sha a6f54716... verified unchanged; JSON 443 rows unchanged.

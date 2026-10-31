@@ -1,0 +1,6 @@
+# agent-headlines (T13 part 2) — 2026-10-27
+- 59 NewsBank non-English headlines processed → lib/work/out/headlines_nb.jsonl.
+  - 53 got hl_en. 6 not translated because they are section labels, not headlines: jg-00084 "LEGISLATIVE OFFICES", jg-00275 "Regalos", jg-01437 "Features", jg-01438 "News", jg-01479 "ELECTION RESULTS", jg-01621 "News" (5 are Sacramento Bee rows labeled Spanish — Language likely wrong; real headline missing).
+  - 4 headlines already in English, Language likely mislabeled: jg-01087 (Newsmax), jg-01199 (US Fed News), jg-01292 (Israel National News), jg-01722 (Jewish Journal, "Hebrew"). hl_en = same text.
+- Tone: 2 stories → lib/work/out/tone_now.jsonl. jg-02347 Neutral, Guns, AB 1127; jg-04043 Positive, Antisemitism / Jewish community, AB 1548. Both texts came from T11's borderline list (copy saved under a reprint code), flagged.
+- Self-check (5): #3 "Newsom firmó una nueva ley…" → "Newsom signed a new law that will change California restaurants forever" ✓; #8 Portuguese "Congresso da Califórnia aprova US$ 2,5 bilhões…" → legislature (not Congress) approves $2.5B ✓ ("Congresso" here = state legislature); #12 ✓; #29 "órdenes de protección" = protective orders ✓; #57 leading "?" is a lost "¿", translated as a question ✓.

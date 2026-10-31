@@ -1,0 +1,13 @@
+# agent-fetch-rated-2
+- Jobs: lib/work/jobs/fetch_rated_2.jsonl (110). Output: lib/work/out/fetch_rated_2.out.jsonl. Saver script: scratchpad/fr2/save.py (writes texts/tracker/<sid>.html, stages /mnt/user-data/outputs/tlib_rated2/<year>/<aid>.html, appends library_adds_pending.csv).
+- Mac: device was offline at start; came online ~00:44 UTC but device_commit_files needs a fileUuid from SendUserFile, which this agent doesn't have -> cannot commit. All Mac adds left staged + listed in library_adds_pending.csv. Nothing written to the Mac.
+- 2026-10-27 00:49 UTC: jobs 0-65 done (66/110). Heavy blocking: PublicNow, Davis Vanguard, GV Wire, ABC10, law.com, J. Weekly (403), OC Register/Daily News (login), Politico (title only), State Affairs (paywall caption only).
+- 2026-10-27 00:57 UTC: DONE 110/110. Self-check: 110 unique out lines, none missing.
+  - Verified (outlet+headline) 49; mentions Gabriel 45; full-text rated 41 (4 verified only via paywall fragment/caption: jg-01972, jg-02072, jg-02641 State Affairs captions; jg-04039 Politico Pro description).
+  - Not verified 61: 59 fetch_failed (blocks/403/login/404/timeout), 2 not-an-article (jg-01822 Pasadena Star-News tag page, jg-03682 Daily News sitemap; both point to the Sept 29 2026 City News Service story "Gov. Gavin Newsom signs two immigration bills co-authored by Encino Assemblymember Jesse Gabriel").
+  - Verified but no Gabriel mention: jg-03782 (SF Chronicle SB1341 tracker page). jg-01968, jg-02119, jg-03405 paywall fragments only (unknown, not "no mention").
+  - 14 previously unconfirmed stories now confirmed to mention Gabriel.
+  - Tone disagreements (existing tone kept; for Sammy): jg-03120 KTVU Neutral->Positive (Gabriel live interview); jg-03206 KRON Positive->Neutral (one-line leadership mention); jg-03288 New Hope Positive->Negative (critics dominate); jg-04180 Jewish Journal Neutral->Positive (his own symposium piece, 2017; possible Role "Op-ed").
+  - other_bills: AB 166 (2019-20) from jg-04039.
+  - Copies: 41 in lib/work/texts/tracker/; 41 staged at /mnt/user-data/outputs/tlib_rated2/<year>/<aid>.html; all 41 listed in lib/work/library_adds_pending.csv. 0 written to the Mac (commit tool needs a SendUserFile fileUuid that agents don't have). library_adds.csv not created (no adds).
+  - TV-caption items (archive.org) saved as the relevant segment only; results pages (NYT x2, SMDP) saved as full results text.

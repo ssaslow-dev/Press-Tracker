@@ -1,0 +1,3 @@
+- 2026-10-28T03:52:50Z agent-avdate started: diagnose AV date 2026-10-20 comment (read-only)
+- 2026-10-28T03:59:24Z diagnosis done: 06972/06973 Coverage Date = tracker page-save date 2026-10-20; AV tab copied it; render fine. CSV 14 cells written to work/out/avdate_fixes.csv
+- 2026-10-28T04:00:05Z report.md write was refused by the harness (subagents return reports as text); full report delivered in the handback. Done; no workbook/code writes, no publish.

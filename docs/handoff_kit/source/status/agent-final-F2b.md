@@ -1,0 +1,2 @@
+- 2026-10-27T15:56:29Z F2b started; resuming at add batch 58
+- 2026-10-27T16:10:32Z STOPPED on coordinator order (original F2 agent finished). F2b committed add batches 58-69 (log rows 9852-10451, 600 files, all identical sha to plan) concurrently with the original agent; appended progress rows 9852-10451 (50 duplicates 10402-10451 in f2_progress.txt). Wrote Mac scratch f2/post_F2b.tsv (read-only listing). No report written, verify not run, no other writes.

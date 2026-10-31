@@ -1,0 +1,5 @@
+tone_batch_3: 115/115 sids written to work/out/tone_batch_3.out.jsonl; all tone/topic values validated against allowed lists.
+Tone (111 rated): Neutral 84, Positive 15, Very positive 6, Negative 2, Very negative 2 (+4 topic/bills-only rows, no tone needed).
+Topic (106 assigned): Food safety 24, Other/roundup 16, Elections/campaigns 13, Antisemitism/Jewish community 13, Guns 6, State budget 6, Energy/env 5, Public safety 5, Education 4, Immigration 3, Wildfire 3, Housing 3, Social media 3, Health/labor 1, Restaurants 1.
+Flags: 2 "no Jesse Gabriel mention" (jg-01238 Shelter Cove land auction; jg-01733 NY musician Jesse Gabriel of The Narrative); 7 non-English stories given hl_en + text_en.
+Bills: other_bills recorded only from jg-01384 (row 91) onward, since the addendum arrived mid-run: jg-01447 AB 2746. Earlier rows name off-list bills not recorded: AB 2378 (jg-00061), AB 671 (jg-00316), AB 2455/AB 2899 (jg-00529), AB 2835 (jg-00561), AB 2608 (jg-00575), AB 467 (jg-00968), AB 591 (jg-01104), 2021 AB 787 housing (jg-01301, jg-01340; the list's AB 787 is the 2023-24 bill).

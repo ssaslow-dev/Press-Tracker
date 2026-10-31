@@ -1,0 +1,7 @@
+# agent-pubwrite
+- Tue Oct 27 16:48:17 UTC 2026 started: publisher fill + Santa Maria News Media override write
+- Step 1 (sale date): Lee announced the completed sale ("has sold") in each paper on Fri 2020-03-13 (Noozhawk 2020-03-13: "The newspaper noted the sale on Friday"; Santa Maria Sun 2020-03-18: "announced the sale on March 13"). ourvalleyvoice 2020-04-02 reports it after the fact. No source gives a separate closing date → use 2020-03-13 as the effective date for the override.
+- Step 2: Mac workbook sha a6f547167cb5cf0f… MATCHES (4,360,653 bytes, mtime Oct 27 16:11), BUT Excel lock file `~$AJG Coverage - NewsBank.xlsx` EXISTS (165 bytes, Oct 27 16:24) in Gabriel press PDFs.
+- STOPPED: Sammy needs to close Excel. Nothing staged, backed up, written or committed. Nothing changed in lib/work.
+- Prep note: fill list has 4,034 unique aids; only Santa Maria-group rows in it are Hanford "Sentinel, The" (15, already Santa Maria News Media). Override rows (SMT/Lompoc/SYV) are existing "Lee Enterprises" values in the sheet.
+- RERUN (Excel closed): no lock; Mac sha a6f54716… OK; backup made + verified; one write = publisher fills 4,034 + override 44 (cutoff 2020-03-13) + AB 130 removal 3 + font flatten + red rows 2,563 Coverage / 370 Originals. 0 unexpected value/style changes. Committed (expectedMtimeMs 1793117474885); Mac sha bfc0bab9… verified. coverage_current.xlsx updated, old kept as coverage_pre_publisher.xlsx. Report: final_pass/F6/F6_publisher_report.md. DONE.

@@ -1,0 +1,11 @@
+# tone_topic — Tone by issue (Insights view 5)
+- Shows: small multiples, one panel per issue, of diverging quarterly columns — share of rated stories Positive/Very positive (up) and Negative/Very negative (down); Neutral is the remainder (in tooltip + table). A small count strip under each panel shows rated stories per quarter.
+- Min-n rule: a quarter with fewer than 5 rated stories gets a hollow ring on the zero line, no bar. Chart starts in the first year with >= 50 rated stories (Q1 2018 today); earlier stories and year-only dates are counted in a footnote.
+- Controls (card-local .seg): Originals only / Incl. reprints; Main 6 issues / All 15 issues. "Other / roundup" and "Unassigned" are excluded. Issue order = rated Originals count (stable across the toggle).
+- Reprints: only Originals are rated (DECISIONS token cut 3), so a reprint carries its Original's tone and counts in the quarter it ran (falls back to the Original's date when the reprint has none).
+- One shared y-scale across panels (same px per % up and down), so panels compare honestly.
+- Interaction: hover = tooltip (all five tones, n, net tone); click a quarter = detail card listing its stories by tone (Neutral collapsed), headline -> ctx.openStory; issue title -> ctx.clips({topic}); "Show the numbers" table + Copy table.
+- Params: r=1 (reprints), all=1, q=<issue>|<quarter key>, issue=<name> (single panel; unknown -> .empty).
+- Data: ctx.D only (tone, topic, date, reps[].date). No data block, no _data.py.
+- Colours: tracker tone tokens via ctx.colorFor('tone', …); count strip var(--q3); thin rings --ink-3.
+- Test: test/tone_topic.test.js — 40/40 PASS at 1400 and 375 (hand-checked counts for Guns Q3 2023, Food safety Q1 2023, Antisemitism Q2 2024 in both modes vs independent Node count; tooltip, detail list, story panel, Clips jump, all-issues, issue param, .empty, no overflow, re-render ~18 ms).

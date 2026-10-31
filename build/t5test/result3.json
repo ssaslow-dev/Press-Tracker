@@ -1,0 +1,54 @@
+{
+ "at": "2026-10-26T23:54:08Z",
+ "runs": {
+  "run-d": {
+   "ids": {
+    "ws-NEW-d-1": "ws-03993"
+   },
+   "added": [
+    "ws-03993"
+   ]
+  }
+ },
+ "conflicts": [],
+ "applied": [],
+ "duplicates": [],
+ "unsupported": [],
+ "removals_requested": [],
+ "unknown_story": [],
+ "edits_clear": [],
+ "edits_keep": [],
+ "reprint_counts": {
+  "jg-04297": {
+   "old": 1,
+   "new": 2,
+   "new_outlets": [
+    "later reprint"
+   ]
+  }
+ },
+ "pages": [],
+ "counts": {
+  "rows_added": 1,
+  "cells_filled": 0,
+  "conflicts": 0,
+  "duplicates": 0,
+  "removals_requested": 0,
+  "pages": 0,
+  "reprint_counts_changed": 1,
+  "originals": 4299,
+  "next_ws": 3994,
+  "next_jg": 4300
+ },
+ "verify": {
+  "ok": true,
+  "problems": [],
+  "rows_before": 9692,
+  "rows_after": 9693,
+  "originals": 4299
+ },
+ "sheet_line": "1 row added, 0 cells filled.",
+ "sheet_stories": [
+  "jg-04297"
+ ]
+}
