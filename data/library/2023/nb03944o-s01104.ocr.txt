@@ -1,0 +1,96 @@
+Bill tries to boost vehicle charging access
+March 5, 2023 | San Francisco Chronicle (CA)
+Author: Dustin Gardiner Section: A 1283 Words
+Page: A001
+OpenURL Link
+
+Hopping in a Tesla and driving from San Francisco to downtown Los Angeles has gotten easier as charging stations
+along Interstate 5 rapidly expand. The trip now takes about eight hours, including two charging stops that double
+as meal and bathroom breaks.
+But making the same road trip in another type of electric vehicle can be problematic due, in large part, to a lack of
+access to fast-charging stations, according to a new EV road trip planning tool created by The Chronicle.
+For example, it takes nine hours to make the same trip in a Chevy Bolt or Ford F-150 Lightning truck, the paper
+found, including an additional stop and much longer wait times to charge given a lack of fast chargers.
+The comparison illustrates a charging problem that legislators, environmentalists and auto-industry experts say has
+become increasingly apparent as sales of all electric vehicles soar.
+Tesla operates chargers that are compatible only with its vehicles. Its stations use a plug that exclusively works
+with its cars, and drivers use an integrated payment system within the car.
+Electric-car advocates say it's a problem that raises concerns about economic inequities in the transition to clean
+cars because many middle- and lower-income drivers can't buy pricey Teslas, which go for $43,900 at the cheapest.
+Now, a California legislator is attempting to solve the problem by forcing Tesla and other station operators to open
+their networks to all drivers. Assembly Member Jesse Gabriel has unveiled a bill that would require new public
+stations to be accessible to all drivers and have universal connecting ports.
+The bill, if approved by the Legislature and Gov. Gavin Newsom, would expand on Tesla's recent announcement
+that it will open a portion of its chargers to non-Tesla drivers.
+Last month, Tesla and the White House announced that it would make at least 7,500 chargers available to all types
+of electric vehicles by the end of 2024, including 3,500 new and existing superchargers along highways scattered
+across the country -- a partnership that allows Tesla to receive gobs of federal funding to help build more chargers.
+Not just for 'elite'
+Gabriel said his proposal, Assembly Bill 591, is designed to make the company move faster in opening its charging
+network, so the state can ensure all drivers are included in the state's rapid shift to zero-emissions vehicles.
+"It can't just be something that works for the elite and the wealthy," said Gabriel, a Democrat from Los Angeles
+County who drives a Tesla Model 3. "We're hoping to get there a little faster than the White House. We have to get
+to a point where charging your EV is as easy as filling your tank at a gas station."
+Tesla and its registered lobbyists in Sacramento did not respond to requests for comment.
+CEO Elon Musk tweeted "Tesla Superchargers almost everywhere" on the same day the company announced its
+agreement with the White House to open some chargers, and Tesla said it would double the size of its U.S. network
+within two years.
+
+Gabriel's bill would apply to any new charging ports as well as existing charging ports that are significantly
+retrofitted. It would also require Tesla and other EV charging networks -- which commonly require a membership to
+recharge -- to accept credit cards in addition to app payments.
+He said he began working on the bill long before the White House's announcement because he's concerned
+California won't meet ambitious climate targets at its current pace.
+The state, under a rule Newsom spearheaded, will require that most new cars sold in California be zero-emission by
+2035. The rule includes interim benchmarks: 35% of new vehicles must be fully electric or plug-in hybrid by model
+year 2026.
+Electric vehicles accounted for nearly 19 percent of all new vehicles
+In California, Tesla has by far the largest market share of any electric vehicle, accounting for about 73 percent of
+models sold. Tesla's market share of new sales has dropped slightly. Still, there are about three Tesla
+Superchargers for every two similar chargers from other companies, such as EVgo and Electrify America, according
+to the U.S. Department of Energy.
+Tesla's Model 3, its most popular car, has an estimated battery range of 315 miles and a starting price of $43,990.
+By comparison, the Chevy Bolt has a range of 259 miles and starting price of $25,600; the Ford F-150 Lightning has
+a base range of 240 miles and starts at $55,974. Those prices don't reflect the final price after variousrebates and
+tax incentives that many buyers receive.
+Environmentalists and electric-car experts say they fear the transition to clean cars could lose steam if there aren't
+enough publicly accessible chargers for lower-priced models.
+Eliminate 'huge barrier'
+Alvaro Sanchez, vice president of policy at the Greenlining Institute, an environmental advocacy group sponsoring
+AB591, said low-income communities and communities of color have, so far, been the least likely to benefit from
+clean transportation.
+He said the barrier for many is uncertainty about whether they will be able to charge, especially those who live in
+an apartment or condo without the ability to charge where they park.
+"The goal is to try to eliminate that huge barrier," Sanchez said. "We need to build so many charging stations in
+order to be able to have a full electric fleet in California."
+Battery range anxiety -- the fear of winding up stranded on the side of the road without any juice -- has long been a
+major hurdle for the electric-car market. Gil Tal, director of the electric vehicle research center at UC Davis, said
+what distinguished Tesla early on was its ability to ease that fear with a reliable, user-friendly network of fast
+chargers, which allow recharging of about 80% of a battery in 30 minutes or less, compared with several hours for
+stations typically installed in homes and public parking lots.
+"Tesla did something that no one else was doing, giving their customers a very good experience," he said.
+Tal said day-to-day range anxiety has dissipated for many drivers as battery range increases and charging networks
+of all types expand, allowing most drivers to commute to work and run errands around town on a single charge. He
+said the critical hurdle for non-Tesla drivers is having the confidence they can make the same weekend road trips
+But Gabriel's bill, which has not received a hearing yet, could face fervent opposition from Tesla and other
+companies that operate membership charging stations.
+Marc Geller, who lives in San Francisco and helped found Plug In America, a national advocacy group for electric-car
+
+drivers, said while he's happy to see Tesla voluntarily open up some of its chargers to the wider public, he worries
+about forcing the company to go further right now.
+"Until I see that the other carmakers are truly stepping up to the plate, we ought not hobble the one company that
+is really successfully putting EVs on the road, including for an increasingly wide variety of people," he said.
+Geller said while policymakers are focused on public charging ports, the more meaningful way to ensure equity is to
+help more drivers access charging at home, including by requiring power outlets with cheaper utility-rate energy at
+every parking spot built for new housing.
+"That's how you serve everybody," he said. "Anyone who has parking at home or work should be served by slow
+power at utility rates."
+Reach Dustin Gardiner: dustin.gardiner@sfchronicle.com
+(c) San Francisco Chronicle 2023
+
+Citation (apa Style)
+Gardiner, D. (2023, March 5). Bill tries to boost vehicle charging access.San Francisco Chronicle (CA), p. A001. Available from
+NewsBank: Access World News – Historical and Current: https://infoweb.newsbank.com/apps/news/document-view?
+p=WORLDNEWS&docref=news/190115FF130EF3B8.
+
+

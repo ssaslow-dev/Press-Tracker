@@ -1,0 +1,98 @@
+Officials hope robocalls drop dramatically in coming weeks,
+September 27, 2021 | Sacramento Bee, The (CA)
+Author: TERI SFORZA; Orange County Register Section: News 1160 Words
+Page: 1A
+OpenURL Link
+
+Ring! Ring! Ring! Your car warranty is nearing expiration. You owe money to the IRS. You've been pre-approved for
+a low-interest credit card!
+Robocalls - often from scammers trying to steal your money - have long been the bane of communication
+technology.
+"It's not just that they're are so damn annoying and frustrating, it's that they're dangerous," said Assemblyman
+Jesse Gabriel, D-Woodland Hills, who chairs the Assembly Committee on Privacy and Consumer Protection.
+"They enable criminal conduct and erode trust. They prey on our most vulnerable communities - seniors,
+immigrants, those with limited English skills. And we have the technology to stop it."
+The U.S. Federal Communications Commission gave phone companies a June 30 deadline to start using technology
+that helps identify and block such calls. And while the phone companies controlling the lion's share of the market Verizon, AT&T and T-Mobile - have done so across all or most of their networks, many smaller companies have not.
+Scammers are flocking to those little companies and continue to make more than a billion robocalls a month,
+according to FCC data and "Make the Ringing Stop," a new report by the California Public Interest Research Group.
+"Every day they wait, another Californian is taken advantage of," said California Attorney General Rob Bonta.
+"There has been much progress - but there's much to be done."
+Sluggish response
+Among 49 of the largest phone companies nationwide, only 16 have completely implemented anti-robocall
+technology, the report found. Another 18 have partially implemented the technology, and 15 told the FCC that
+they're skipping the industry standard technology and are, or will, use their own methods to reduce robocalls.
+"What does this mean? It means the industry isn't doing nearly as much as hoped to fight the crime that for years
+has caused so much heartache and aggravation among consumers nationwide," the report said.
+Illegal robocalls lead to $10 billion a year in fraud, according to the Federal Trade Commission. The calls cost
+consumers an additional $3 billion a year in wasted time, according to the FCC.
+An elderly Ohio man lost more than $124,000 in May after he was tricked into believing a call was from Amazon's
+security department.
+"Unwanted robocalls terrorize all of us, and sometimes lives are destroyed," said Sander Kushen, a public health
+advocate for CALPIRG.
+Next week, the FCC is slated to restrict carriers from completing calls originating with phone companies that
+haven't detailed how they'll block robocalls, though some companies have been granted extensions. CALPIRG
+called on the FCC to move up the deadline, and to follow through on promises to monitor the effectiveness of each
+provider's plan. If robocalls still get through, the regulator should force companies to plug the holes, CALPIRG said.
+
+Working the scam
+"Con artists call and impersonate your bank, the IRS, the police, the Social Security Administration, Amazon or any
+other entity they think will get your attention and rattle you badly enough to cough up personal information or
+agree to wire money or run out to buy gift cards to pay some fabricated obligation," the report said.
+These scammers do something called "spoofing." Using computers, they set up automated dialing software and
+decide what to display for the caller ID. Sometimes they'll choose an area code and prefix to make the call look
+local, so you might be more inclined to answer. Sometimes they'll hijack the caller ID of a company you trust, or of
+a government office you fear.
+The antidote is technology called STIR/SHAKEN, which stands for Secure Telephone Identity Revisited and
+Signature-based Handling of Asserted information using Tokens.
+It allows the company originating a call to verify that the call is truly coming from the number on the caller ID, and
+to "sign off" on it before allowing it to go through, the report says.
+It's essentially caller ID authentication, and the hope is that the majority of scam calls will get blocked, and the ones
+that do get through will be labeled as "possible scam" so consumers either won't answer or will be suspicious.
+Over time, the hope is, scam calls should be less and less lucrative and become less and less common.
+Good news, bad news
+The good news is that the major carriers have been rolling out the STIR/SHAKEN technology for more than a year,
+and with the FCC's June deadline bearing down, the volume of scam calls plunged.
+The bad news is that more than a billion robocalls a month are still made anyway.
+Scam calls totaled 2.1 billion in June, 1.8 billion in July and 1.5 billion in August, according to data from YouMail, a
+robocall filtering company. That's a drop of 29% over three months.
+Beginning Tuesday, phone companies are required to block calls from companies that haven't at least filed plans for
+fighting illegal robocalls with the FCC's Robocall Mitigation Database. Officials hope that will reduce scam calls even
+more.
+But criminals are nothing if not adaptable.
+You may have noticed more texts from "Amazon" or the "Employment Development Department" as of late: There
+has been an explosion in "robotexts," which aren't covered by the law.
+And robotexts dwarf robocalls: 7.65 billion spam texts were sent in August - or 30 spam texts for every person in the
+U.S., according to RoboKiller. The FCC expects spam texts to hit 86 billion this year, a 55% leap over last year.
+Kushen, of CALPIRG, said that's next on the agenda. Industry groups are in the early stages of crafting
+authentication plans for text messages.
+Tips to stay safe
+* Gift cards are for gifts; never pay bills with them.
+* Don't give your phone number to anyone who doesn't need to reach you immediately; opt for email notifications
+from retailers, pharmacies, etc.
+
+* Use multiple robocall filters; one might catch calls that slip through the others. Start by asking your phone
+company what robocall filters it offers at no charge.
+* If someone calls claiming to be with a company you do business with, hang up and call them back at a phone
+number you look up independently.
+* Never confirm or provide personal information to any caller you weren't expecting, no matter who they say they
+are.
+* If you get a call saying you're supposedly a victim of fraud, or you're behind on taxes, or your grandchild is in jail,
+call someone you trust before taking any action.
+* If a caller demands you to take action immediately or pressures you not to tell anyone about the call, hang up and
+contact a trusted relative or friend.
+* Be skeptical of your caller ID; a call that appears to be from a neighbor could be coming from a con artist halfway
+around the world.
+* Don't be tricked if a caller knows your name, address, family members' names or even your Social Security
+number. All of this and more was exposed for half of the adult population in the Equifax data breach of 2017 and
+numerous other breaches in recent years.
+* Register with the federal Do Not Call Registry, and report illegal robocalls and Do Not Call List violations to the FTC
+at 1-877-FTC-HELP, or file a complaint online at ftc.gov/complaint and consumercomplaints.fcc.gov .
+Source: CALPIRG
+Copyright (c) 2021 The Sacramento Bee
+
+Citation (apa Style)
+SFORZA, T. (2021, September 27). Officials hope robocalls drop dramatically in coming weeks,.Sacramento Bee, The (CA), p. 1A.
+Available from NewsBank: Access World News – Historical and Current: https://infoweb.newsbank.com/apps/news/documentview?p=WORLDNEWS&docref=news/18549BE74BA1CC68.
+
+

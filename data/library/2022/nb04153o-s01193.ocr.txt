@@ -1,0 +1,66 @@
+State online safety bills could go national
+August 31, 2022 | San Francisco Chronicle (CA)
+Author: Chase DiFeliciantonio Section: Main News 771 Words
+Page: A006
+OpenURL Link
+
+A sweeping state bill aimed at regulating how tech and social media companies build products for and collect data
+on children in cyberspace passed the California State Senate on Monday, and it now heads to Gov. Gavin Newsom's
+desk to possibly be signed into law.
+The bill is aimed at protecting young people who are particularly vulnerable online to body image issues and
+negative social pressures and is notable for attempting to regulate not just products directed at kids, but also ones
+they reasonably might use.
+Called the California Age Appropriate Design Code, the bill, AB2273, would require companies like social media sites
+with products that are often used by kids to put safeguards in place, like assessing whether new features could
+expose children to or be targeted by harmful content, or draw them in to hours of scrolling through addictive
+content.
+The measure would also require companies whose services might be used by children to estimate the age range of
+their users, and default privacy settings to the highest levels for minors, among other features.
+The bill would also place limits on how companies use the data of young people, including creating digital profiles of
+them that many companies use to target advertising.
+"We like to say as California goes, so goes the nation," said Assembly member Buffy Wicks, D-Oakland, during a
+Tuesday news conference. Wicks, one of the sponsors of the bill, alluded to the potential national implications for
+regulating big tech companies should the bill become law.
+Wicks said the measure was modeled after a law in the United Kingdom that defaults Google to safe search mode
+and disabled direct messages between children and adults they don't follow on some social media sites, among
+other features.
+The bill has seen bipartisan support, including from Assembly member Jordan Cunningham, R-San Luis Obispo.
+"We have to show D.C. how things can get done and how kids can be protected," he said during the news
+conference.
+Some of the harms legislators are worried about are also under investigation by Attorney General Rob Bonta's
+office, which earlier this year said it was looking into how TikTok had promoted itself to young people and its
+impacts on young people's physical and emotional health.
+TikTok's parent companies and Google previously paid fines to federal regulators for collecting children's online
+information without the permission of their parents.
+Bonta's office announced another similar investigation last year into Meta, formerly Facebook, for promoting
+Instagram to young people, investigating whether the company ignored the product's potential negative health
+effects.
+But advocates have raised concerns over the bill, including San Francisco digital privacy nonprofit the Electronic
+Frontier Foundation, which previously warned legislators the bill could result in unintended consequences like
+
+companies collecting more data on users to verify their ages.
+Along with that bill seeking to protect kids online, legislators are also advancing AB587, which would require social
+media companies to disclose information about their content moderation policies.
+Authored by Assembly Member Jesse Gabriel, D-Woodland Hills (Los Angeles County), the bill aims to skirt debates
+about what companies like Twitter and Facebook should and should not censor online by instead attempting to
+draw back the curtain on how those processes work.
+"The bill seeks to address concerns that social media platforms are enabling the spread of hate," Gabriel said
+during the joint news conference of his bill, which has passed the State Senate with bipartisan support and is back
+in the Assembly for a concurrence vote.
+Gabriel said social media has too often radicalized people and provided a platform for public health disinformation,
+which is why the bill would require major social media companies to publicly disclose their content moderation
+policies and report key data about how they enforce those policies.
+He said social media companies had pushed back on the measure throughout the legislative process, although the
+bill is not designed to censor any particular speech and doesn't require companies to have specific content
+moderation policies.
+"They believe that whatever we do will automatically and instantly become a model for other states," he said.
+Chase DiFeliciantonio is a San Francisco Chronicle staff writer. Email: chase.difeliciantonio@sfchronicle.com Twitter:
+@ChaseDiFelice
+(c) San Francisco Chronicle 2022
+
+Citation (apa Style)
+DiFeliciantonio, C. (2022, August 31). State online safety bills could go national.San Francisco Chronicle (CA), p. A006. Available
+from NewsBank: Access World News – Historical and Current: https://infoweb.newsbank.com/apps/news/document-view?
+p=WORLDNEWS&docref=news/18C3C4BA2C2EB6F8.
+
+
