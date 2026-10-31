@@ -54,13 +54,14 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 - **Spec:** `work/saver/SAVER_SPEC.md`, about 20 Sonnet hours in total.
 - **Status:**
   - Part 1 is built: `saver_diff.py` and the preview path. The replay of the 2026-10-30 save matches cell for cell. The replay fixture (in.xlsx, the staged result, db/) is not in this repo because it contains the workbook.
-  - Fable's review (`work/saver/REVIEW_1.md`, failing tests in `work/saver/tests/review/`) said fix first. Five gaps were found: hyperlink targets, identity checks on new rows of the A&V and Removed tabs, removed_move on pre-existing rows, links on moved and header rows, and a lock-takeover race. A Sonnet fix was in progress at handoff; check the latest commit.
+  - Fable's review (`work/saver/REVIEW_1.md`) findings are fixed; all 25 tests in `work/saver/tests/review/` pass.
+  - Part 2 is built (2026-10-31): `save` (backup, checked swap, pages add-only, removals moved to `_to_delete/`, ledger, keep 3 saver backups, rebuild). 95 saver tests pass. See `work/saver/README.md`.
+  - Not yet run: a replay against a real past save (the fixture is not in this repo), and the rebuild against the real published pipeline (only stubs so far; use `--no-rebuild` until it has run once).
+  - Claude recommended (2026-10-31) parking the next steps until Sammy decides on switch-over and how stories arrive; not yet decided.
 - **Next steps:**
-  1. Finish the fixes so all review tests pass.
-  2. Build `save`, the write path.
-  3. Replay more past saves.
-  4. Fable reviews the whole program.
-  5. First supervised live save.
+  1. Replay more past saves.
+  2. Fable reviews the whole program.
+  3. First supervised live save.
 - **Known bug from the 2026-10-30 manual save:** article shards were copied into `copies/articles/articles/`, nested one level too deep, so relmatch read stale shards. Two `release_related.json` entries are `bill` where they should be `text`. The next save fixes them.
 
 ## Build decisions (Sammy, 2026-10-31, NEWPROJECT-v1)
