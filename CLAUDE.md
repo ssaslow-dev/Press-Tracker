@@ -80,6 +80,7 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
    - The first real save and the switch-over need Sammy present.
    - Fable: the three checkpoints plus at most one more, for an unexplained replay mismatch.
 5. **The 256 MB artifact cap** (Sammy: "do what you think is best"): keep the current tracker's design for now, with saved copies in per-year files. Revisit only if the new tracker gets near the cap. A browser page can't read a private GitHub repo without credentials, so the copies can't simply be loaded from here.
+6. **Look and feel** (SAMELOOK-v1): the new tracker looks and feels the same as the current one, minus the Update button functionality.
 
 ## Open decisions for Sammy (don't assume answers)
 
