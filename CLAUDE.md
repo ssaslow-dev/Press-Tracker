@@ -91,7 +91,7 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 
 - **An online read-only copy for colleagues** after switch-over (SWITCHOVER-v1: decide later).
 - **How new stories reach the new project after switch-over,** until it has its own Update button.
-- **Whether the office PC lets an unzipped portable program run** (LOCALAPP-v1: Windows PC, no installs). Untested.
+- The office PC runs the unzipped test folder (2026-11-02: it works).
 - **From earlier work:**
   - A5 wire-blend pickups;
   - 4 unsettled F7 rows (09721, 01734, 06948, 06949);
