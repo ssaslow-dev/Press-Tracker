@@ -64,7 +64,8 @@ A reader checks names (allow-listed folders and file types, no scripts), caps (3
 5. The article shards live once, in `data\copies\articles`; the server serves `/articles/<file>.json` from there instead of keeping a second copy in `data\site`.
 6. **Photos kept as links (PHOTOLINK-v1, 2026-11-02; replaces the offline photo step, HANDOFF_PC_APP point 6).** New saved copies keep their photos as remote `<img>` links to the news site's own image addresses; Edge loads them when a copy is opened. Copies already in the library keep the photos embedded in them; nothing is changed there. See "Photos" below.
 7. B10 (same handoff, point 8): `station_cli` refuses a second take-in of a run id that the saver's ledger, the local db (`sheet.written`) or a finished update already holds (`ALREADY_SAVED`), at inspect and again at save.
-8. The pipeline folder is therefore written by the tracker after a save (the keeper copy only). FORMAT.md said "never written".
+8. **Local fonts (LOCALFONTS-v1, 2026-11-02).** The page head and the saved-copy viewer no longer ask Google Fonts. `fonts/fetch_fonts.py` (pinned `@fontsource` npm tarballs, sha512 checked) writes `work/localapp/fonts/files/` (woff2 for latin and latin-ext, `fonts.css` with fontsource's unicode-ranges, licence texts). Assembly copies them to `data\site\fonts\` (served at `/fonts/`), applies patch 08 (`shell.html` and the built `index.html`: three Google links become `<link rel="stylesheet" href="/fonts/fonts.css">`) and patch 07 (`tracker.js` and `index.html`: the viewer's `@import` points at `/fonts/fonts.css`, and the frame's policy becomes `style-src 'unsafe-inline' 'self'; font-src 'self'`). Roboto Slab 500-800, Public Sans 400-700 and Public Sans 400 italic (the viewer asked for it). Tests: `tests/test_localfonts.py`.
+8b. The pipeline folder is therefore written by the tracker after a save (the keeper copy only). FORMAT.md said "never written".
 
 ## Photos (PHOTOLINK-v1)
 
@@ -86,6 +87,7 @@ It also removes every `<script>`, and `media_gate.clean_html` still removes `<sv
 
     python3 -I -m unittest discover -s work/localapp/app/tests -p test_station.py -v       (about 15 minutes: real previews and saves on the real workbook; 13 tests)
     python3 -I -m unittest discover -s work/localapp/app/tests -p test_photolink.py -v     (PHOTOLINK-v1: LinkPage and Viewer in seconds, Save a few minutes)
+    python3 -I -m unittest discover -s work/localapp/app/tests -p test_localfonts.py -v    (LOCALFONTS-v1: zero outside requests from the page and the viewer frame; both fonts load; 15 seconds)
     cd work/localapp/app && python3 -I -m unittest discover -s tests -t tests              (the whole suite)
 
 Every host in test_photolink.py is on the reserved `.test` domain, Playwright answers the requests itself, and every python process of the app runs under a net guard (a `.pth` in the work copy's site-packages) that logs and refuses any non-loopback connection or name lookup.

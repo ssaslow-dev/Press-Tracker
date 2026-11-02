@@ -10,11 +10,29 @@ Inputs (all read only; nothing under code/, build/, data/ is written):
 Output: OUT/index.html (default station/dist/), plus OUT/build_info.json with the input checksums.
 The page holds no stories and no workbook data: step 1 of the page loads the "for Update" file in the browser.
 """
-import argparse, hashlib, json, os, re, subprocess, sys, tempfile
+import argparse, base64, hashlib, json, os, re, subprocess, sys, tempfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPO = os.path.abspath(os.path.join(HERE, '..', '..', '..'))
 VENDOR = os.path.join(REPO, 'work', 'localapp', 'vendor')
+FONTS = os.path.join(REPO, 'work', 'localapp', 'fonts', 'files')
+
+
+def inline_fonts_css():
+    """LOCALFONTS-v1: fonts/files/fonts.css with every woff2 as a data: URI, so the published page needs no outside request and no file beside it.
+    Every file is checked against FONTS.json (written by fonts/fetch_fonts.py) first."""
+    meta = json.load(open(os.path.join(FONTS, 'FONTS.json'), encoding='utf-8'))['files']
+    css = open(os.path.join(FONTS, 'fonts.css'), encoding='utf-8').read()
+    assert sha(css.encode('utf-8')) == meta['fonts.css']['sha256'], 'fonts.css does not match FONTS.json (rerun fonts/fetch_fonts.py)'
+
+    def uri(m):
+        n = m.group(1)
+        b = open(os.path.join(FONTS, n), 'rb').read()
+        assert sha(b) == meta[n]['sha256'], f'{n} does not match FONTS.json'
+        return 'url(data:font/woff2;base64,' + base64.b64encode(b).decode() + ')'
+    out, n = re.subn(r'url\(\./([A-Za-z0-9._-]+\.woff2)\)', uri, css)
+    assert n == sum(1 for k in meta if k.endswith('.woff2')), (n, 'woff2 files in fonts.css')
+    return out, n
 
 
 def sha(b):
@@ -52,8 +70,8 @@ def main():
     i, j = shell.index('<body>') + len('<body>'), shell.rindex('</body>')
     page = shell[i:j]
     page = re.sub(r'<title>[^<]*</title>', '', page, count=1).strip()
-    # ACCOUNT-NEUTRAL-v1 (UPDATESTATION-v1 follow-up 6): no outside code or fonts. The shell's Google Fonts links go; the page's own
-    # font stacks (Rockwell/Georgia, system-ui/Segoe UI) take over.
+    # ACCOUNT-NEUTRAL-v1 (UPDATESTATION-v1 follow-up 6): no outside code or fonts. The shell's Google Fonts links go; the two fonts the links
+    # asked for (Roboto Slab, Public Sans) come back as data: URIs in a style block (LOCALFONTS-v1), so the look is the tracker's own.
     page, n = re.subn(r'<link rel="(?:preconnect|stylesheet)"[^>]*fonts\.g[^>]*>\s*', '', page)
     assert n == 3, f'expected 3 font links, removed {n}'
     page = once(page, '<script id="data" type="application/json">[]</script>', '<script id="data" type="application/json">[]</script>')
@@ -66,7 +84,8 @@ def main():
     st_js = open(os.path.join(HERE, 'src', 'station.js'), encoding='utf-8').read()
     assert '</script' not in st_js
     page = once(page, '<main class="wrap">', '<main class="wrap">\n' + st_html)
-    doc = ('<title>AJG Update Station</title>\n' + page + '\n<style id="station-css">\n' + st_css + '</style>\n'
+    fonts_css, nfonts = inline_fonts_css()
+    doc = ('<title>AJG Update Station</title>\n' + page + '\n<style id="station-fonts">\n' + fonts_css + '</style>\n<style id="station-css">\n' + st_css + '</style>\n'
            '<script type="text/plain" id="tracker-src">' + body_esc + '</script>\n<script id="station-js">\n' + st_js + '</script>\n')
     # outside references: none in the shell or the station layer; the tracker JS keeps two it never reaches in the station (listed in README)
     outer = doc.replace(body_esc, '')
@@ -79,7 +98,7 @@ def main():
     open(p, 'w', encoding='utf-8').write(doc)
     info = {'index_html_bytes': len(doc.encode()), 'index_html_sha256': sha(doc.encode()), 'tracker_js_sha256': sha(js), 'tracker_js_parts_bytes': len(js),
             'shell_sha256': sha(shell.encode()), 'vendor': os.path.basename(vendor),
-            'station_css_sha256': sha(st_css.encode()), 'station_html_sha256': sha(st_html.encode()), 'station_js_sha256': sha(st_js.encode())}
+            'fonts_woff2_inlined': nfonts, 'fonts_css_sha256': sha(fonts_css.encode()), 'station_css_sha256': sha(st_css.encode()), 'station_html_sha256': sha(st_html.encode()), 'station_js_sha256': sha(st_js.encode())}
     json.dump(info, open(os.path.join(a.out, 'build_info.json'), 'w'), indent=1)
     print(json.dumps(info, indent=1))
 

@@ -232,6 +232,9 @@ def copy_app_code(root: Path, pb: Path, info: dict):
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '05_sheet_task_photolink.patch')
     shutil.copy2(ap_ / 'photolink.py', pipe / 'photolink.py')
     patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '06_tracker_js_photolink.patch')    # the viewer keeps linked photos; every page rebuild uses this tracker.js
+    # LOCALFONTS-v1: no Google Fonts request from the PC page or the viewer frame; the fonts are served from data\site\fonts (copy_fonts)
+    patched_copy(pipe / 'shell.html', pipe / 'shell.html', ap_ / '08_shell_localfonts.patch')
+    patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '07_tracker_js_localfonts.patch')
     spec = importlib.util.spec_from_file_location('pipeline_sha', REPO / 'work' / 'saver' / 'tools' / 'pipeline_sha.py')
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
@@ -252,6 +255,29 @@ def copy_tree(src: Path, dst: Path, hardlink=False):
     shutil.copytree(src, dst, copy_function=(os.link if hardlink else shutil.copy2), dirs_exist_ok=True)
 
 
+FONTS_SRC = LOCALAPP / 'fonts' / 'files'
+
+
+def patch_index_fonts(idx: Path):
+    """LOCALFONTS-v1: the same two patches as pipeline/shell.html and pipeline/tracker.js, on a page already built (each must match exactly once)"""
+    ap_ = HERE / 'patches'
+    patched_copy(idx, idx, ap_ / '08_shell_localfonts.patch')
+    patched_copy(idx, idx, ap_ / '07_tracker_js_localfonts.patch')
+
+
+def copy_fonts(data: Path):
+    """LOCALFONTS-v1: Roboto Slab and Public Sans (fonts/fetch_fonts.py) into data\\site\\fonts, with their licence texts; served by the page server like any site file"""
+    dst = data / 'site' / 'fonts'
+    if not (FONTS_SRC / 'fonts.css').is_file():
+        raise SystemExit('fonts: run python3 -I work/localapp/fonts/fetch_fonts.py first (work/localapp/fonts/files is missing)')
+    if dst.is_dir():
+        shutil.rmtree(dst)
+    dst.mkdir(parents=True)
+    for f in sorted(FONTS_SRC.iterdir()):
+        if f.is_file() and f.suffix != '.json':
+            shutil.copy2(f, dst / f.name)
+
+
 def fill_data(root: Path, pb: Path, a, info: dict):
     data = root / 'data'
     for d in DATA_DIRS:
@@ -259,6 +285,8 @@ def fill_data(root: Path, pb: Path, a, info: dict):
     (data / 'role.json').write_text(json.dumps({'role': a.role}) + '\n', encoding='utf-8')
     site = pb / 'site'
     patched_copy(site / 'index.html', data / 'site' / 'index.html', HERE / 'patches' / '06_tracker_js_photolink.patch')   # PHOTOLINK-v1: the same viewer patch as pipeline/tracker.js (a rebuild makes it from there)
+    patch_index_fonts(data / 'site' / 'index.html')
+    copy_fonts(data)
     for f in (site / 'data').iterdir():
         shutil.copy2(f, data / 'site' / 'data' / f.name)
     if a.live_site and (Path(a.live_site) / 'img').is_dir():
@@ -360,6 +388,9 @@ def main(argv=None):
         idx = root / 'data' / 'site' / 'index.html'      # PHOTOLINK-v1: the page already in data\site gets the viewer patch too (once; a rebuilt page has it already)
         if idx.is_file() and 'PHOTOLINK-v1 (PC tracker)' not in idx.read_text(encoding='utf-8'):
             patched_copy(idx, idx, HERE / 'patches' / '06_tracker_js_photolink.patch')
+        if idx.is_file() and '/fonts/fonts.css' not in idx.read_text(encoding='utf-8'):
+            patch_index_fonts(idx)                        # LOCALFONTS-v1 (same rule)
+        copy_fonts(root / 'data')
         top_files(root, a)
         precompile(root)
         app_manifest(root)

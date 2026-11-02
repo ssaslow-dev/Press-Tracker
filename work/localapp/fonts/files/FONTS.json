@@ -1,0 +1,125 @@
+{
+ "note": "written by fetch_fonts.py",
+ "packages": {
+  "roboto-slab": {
+   "version": "5.3.0",
+   "integrity": "sha512-nrl4sOt5OIoMV3VecGVOnNAADU/8vz6+CLtLr4cCAf106hVtSLCTObPN8Z2KdZ03U01UDvgIp3hsu2TX3jen6w==",
+   "license": "Apache-2.0",
+   "tarball_bytes": 1107358,
+   "woff2": [
+    "roboto-slab-latin-500-normal.woff2",
+    "roboto-slab-latin-ext-500-normal.woff2",
+    "roboto-slab-latin-600-normal.woff2",
+    "roboto-slab-latin-ext-600-normal.woff2",
+    "roboto-slab-latin-700-normal.woff2",
+    "roboto-slab-latin-ext-700-normal.woff2",
+    "roboto-slab-latin-800-normal.woff2",
+    "roboto-slab-latin-ext-800-normal.woff2"
+   ]
+  },
+  "public-sans": {
+   "version": "5.3.0",
+   "integrity": "sha512-kjODI0S3zdv0mBYCIQ8TbBayaiqszpc2UbhJiO3bjIqVVXzcWfHSt2o3WBCLOY3juaGaQoy4MoWCcgmfI5hCuA==",
+   "license": "OFL-1.1",
+   "tarball_bytes": 1186450,
+   "woff2": [
+    "public-sans-latin-400-normal.woff2",
+    "public-sans-latin-ext-400-normal.woff2",
+    "public-sans-latin-500-normal.woff2",
+    "public-sans-latin-ext-500-normal.woff2",
+    "public-sans-latin-600-normal.woff2",
+    "public-sans-latin-ext-600-normal.woff2",
+    "public-sans-latin-700-normal.woff2",
+    "public-sans-latin-ext-700-normal.woff2",
+    "public-sans-latin-400-italic.woff2",
+    "public-sans-latin-ext-400-italic.woff2"
+   ]
+  }
+ },
+ "files": {
+  "LICENSE-public-sans": {
+   "bytes": 4503,
+   "sha256": "705a497c781f6463ff819abb513bb495f3fb05256f1d20321e3275813c0bafa5"
+  },
+  "LICENSE-roboto-slab": {
+   "bytes": 11404,
+   "sha256": "58fde637cb64b89166884b28067832233d8440e409b1666d6455c578bf135cf8"
+  },
+  "fonts.css": {
+   "bytes": 7343,
+   "sha256": "5cedad6554791380614db9be54723398173c377dc44ff7385877f9f04a320ba5"
+  },
+  "public-sans-latin-400-italic.woff2": {
+   "bytes": 15644,
+   "sha256": "e9110763c65b780c1282c9ee7c7acf152b16aec93d75ba2e6e8831f74c7233a7"
+  },
+  "public-sans-latin-400-normal.woff2": {
+   "bytes": 14632,
+   "sha256": "36274b5787b4f03b27e65ae971d6c808a96838ccd60c9dabaee154889b6bba82"
+  },
+  "public-sans-latin-500-normal.woff2": {
+   "bytes": 14656,
+   "sha256": "55e866a00caa197bc9fafa52c907f4dfe88e51bbb3f585c777931d03eb961e96"
+  },
+  "public-sans-latin-600-normal.woff2": {
+   "bytes": 14592,
+   "sha256": "c7842f97346df1b3b470e9d71acde90f132dd858508ec5ae6606401e5d0938f7"
+  },
+  "public-sans-latin-700-normal.woff2": {
+   "bytes": 14600,
+   "sha256": "dace741613696827f61dbee2d984e8685f14a2846136783f3ad1c8950914bf1d"
+  },
+  "public-sans-latin-ext-400-italic.woff2": {
+   "bytes": 10920,
+   "sha256": "e6222552947514482967d4785b869b1612b6ef47bb35fd8647c304e1d755940b"
+  },
+  "public-sans-latin-ext-400-normal.woff2": {
+   "bytes": 10452,
+   "sha256": "812efcc8f7784063692076be1d14318767646847de8974a89d18074596141a54"
+  },
+  "public-sans-latin-ext-500-normal.woff2": {
+   "bytes": 10448,
+   "sha256": "1787aa45adfb870a086cec11215051e3af11f3e6f3dd8e17b3d7bfc81c3521a7"
+  },
+  "public-sans-latin-ext-600-normal.woff2": {
+   "bytes": 10524,
+   "sha256": "962979846a2c91c474023dc6280864e468d512eff2b26844dffdfdb9f4a54a4f"
+  },
+  "public-sans-latin-ext-700-normal.woff2": {
+   "bytes": 10532,
+   "sha256": "dd2078a57ba3674bd8cc99488857606e47560a4555511c33d301afbdac580ab3"
+  },
+  "roboto-slab-latin-500-normal.woff2": {
+   "bytes": 14264,
+   "sha256": "f3b980518edc0c50f50d0b7a4a6758d42f378d893234e2895bc44e205cfaf97f"
+  },
+  "roboto-slab-latin-600-normal.woff2": {
+   "bytes": 14352,
+   "sha256": "fb6a1cc3244bbc46d30fb34869ceadd0a4da59c5ac4caa7fd43afd204ab616da"
+  },
+  "roboto-slab-latin-700-normal.woff2": {
+   "bytes": 14184,
+   "sha256": "66fa77aafb51fb5058e1fd7e34977f55e84494600bccb2d4cc9d0cbc998eb5cb"
+  },
+  "roboto-slab-latin-800-normal.woff2": {
+   "bytes": 14376,
+   "sha256": "554c88442931155d2f07608d29fc9d403962f934ec43ef9aff6823e9c2c25ac9"
+  },
+  "roboto-slab-latin-ext-500-normal.woff2": {
+   "bytes": 9440,
+   "sha256": "9cabe43eb713fbea9b29ac3609410ddb41401adf322c4dd6fbaffd88c9bf894e"
+  },
+  "roboto-slab-latin-ext-600-normal.woff2": {
+   "bytes": 9400,
+   "sha256": "43c91c8fe3d572b38f0ac349b154f793ab9c4833fc2f3108f8997675734aeb7c"
+  },
+  "roboto-slab-latin-ext-700-normal.woff2": {
+   "bytes": 9284,
+   "sha256": "4c4d3346f204f8619eb68de0a3a4ba067f4f0d1aa533909b9052196858cb484f"
+  },
+  "roboto-slab-latin-ext-800-normal.woff2": {
+   "bytes": 9408,
+   "sha256": "6f8d43dc4996975e3cddc264123c069d38270a91db049ba5f6b9606ca4ade520"
+  }
+ }
+}

@@ -1,0 +1,7 @@
+--- a/pipeline/shell.html
++++ b/pipeline/shell.html
+@@ -4,3 +4,1 @@
+-<link rel="preconnect" href="https://fonts.googleapis.com">
+-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@500;600;700;800&family=Public+Sans:wght@400;500;600;700&display=swap">
++<link rel="stylesheet" href="/fonts/fonts.css">

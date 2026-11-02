@@ -38,7 +38,7 @@ const CLASSIFY = {
 const CALLS = [];
 
 /* ---- local server: the page inside the skeleton the Artifact tool adds; the for-Update file; nothing else ---- */
-const shellHead = (() => { const s = fs.readFileSync(path.join(__dirname, '..', '..', 'vendor', fs.readdirSync(path.join(__dirname, '..', '..', 'vendor')).filter(d => d.startsWith('live_')).sort().pop(), 'pipeline', 'shell.html'), 'utf8'); return s.slice(0, s.indexOf('<body>') + 6); })();
+const shellHead = (() => { const s = fs.readFileSync(path.join(__dirname, '..', '..', 'vendor', fs.readdirSync(path.join(__dirname, '..', '..', 'vendor')).filter(d => d.startsWith('live_')).sort().pop(), 'pipeline', 'shell.html'), 'utf8'); return s.slice(0, s.indexOf('<body>') + 6).replace(/<link rel="(?:preconnect|stylesheet)"[^>]*fonts\.g[^>]*>\s*/g, ''); })();   // the Artifact tool's skeleton has no font links; the vendor head's Google links are not part of the page under test
 const wrapped = shellHead + fs.readFileSync(PAGE, 'utf8') + '</body></html>';
 const server = http.createServer((req, res) => {
   if (req.url.split('?')[0] === '/index.html' || req.url === '/') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' }); res.end(wrapped); }
@@ -92,6 +92,7 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   const ctx = await browser.newContext({ viewport: { width: 1200, height: 1000 }, acceptDownloads: true });
   const pages = {}; Object.values(ARTICLES).forEach(a => { pages[a.url] = { title: a.title, html: html(a), author: a.author }; });
   await ctx.addInitScript(INIT, { hits: SEARCH_HITS, pages, classify: CLASSIFY, today: TODAY, dbMode: DBMODE });
+  const outside = []; await ctx.route(u => !/^(http:\/\/127\.0\.0\.1[:/]|data:|blob:|about:)/.test(u.href), r => { outside.push(r.request().url()); r.abort(); });   // LOCALFONTS-v1: record and refuse any request that leaves the machine
   const page = await ctx.newPage();
   const errors = []; page.on('pageerror', e => errors.push('pageerror: ' + e.message)); page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
 
@@ -105,6 +106,22 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   check('step 3 button is disabled', await page.$eval('#stPack', b => b.disabled));
   check('other tabs are hidden', !(await page.locator('nav.tabs').isVisible()) && !(await page.locator('#view-ov').isVisible()));
   await page.screenshot({ path: path.join(OUT, 'shot_1_before.png') });
+
+  /* 1b. fonts (LOCALFONTS-v1): the real Roboto Slab and Public Sans, from the page itself, no outside request */
+  const fnt = await page.evaluate(async () => {
+    const want = [['700 16px "Roboto Slab"', 'Abc'], ['800 16px "Roboto Slab"', 'Abc'], ['500 16px "Roboto Slab"', 'Abc'], ['600 16px "Roboto Slab"', 'Łódź'], ['400 16px "Public Sans"', 'Abc'], ['700 16px "Public Sans"', 'Abc'], ['500 16px "Public Sans"', 'Łódź'], ['600 16px "Public Sans"', 'Abc']];
+    const got = {}; for (const [spec, txt] of want) { const l = await document.fonts.load(spec, txt); got[spec + '|' + txt] = l.length && l.every(f => f.status === 'loaded'); }
+    await document.fonts.ready;
+    const slab = [...document.querySelectorAll('h1,h2,h3,b,.sec,.tile b')].filter(e => e.offsetParent && /^"?Roboto Slab/.test(getComputedStyle(e).fontFamily)).length;
+    const faces = [...document.fonts].map(f => f.family.replace(/"/g, '') + '|' + f.weight + '|' + f.status);
+    return { got, slab, faces, body: getComputedStyle(document.body).fontFamily, src: [...document.querySelectorAll('style')].map(x => x.textContent).join('').includes('data:font/woff2;base64,') };
+  });
+  check('Roboto Slab (500-800) and Public Sans (400-700) faces load, latin and latin-ext', Object.values(fnt.got).every(Boolean), JSON.stringify(fnt.got));
+  check('18 inlined faces, none in error', fnt.faces.filter(f => /^(Roboto Slab|Public Sans)\|/.test(f)).length === 18 && !fnt.faces.some(f => f.endsWith('|error')), JSON.stringify(fnt.faces));
+  check('headings use Roboto Slab, body uses Public Sans', fnt.slab > 0 && /^"?Public Sans/.test(fnt.body), fnt.slab + ' ' + fnt.body);
+  check('the fonts are inline data: URIs (no file, no outside link)', fnt.src);
+  check('no request left the machine (Google Fonts or anything else)', outside.length === 0, outside.join(' '));
+  await page.screenshot({ path: path.join(OUT, 'shot_fonts.png') });
 
   /* 2. a wrong file is refused */
   fs.writeFileSync(path.join(OUT, 'bad.json'), JSON.stringify({ hello: 1 }));
@@ -251,6 +268,7 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   await p3.screenshot({ path: path.join(OUT, 'shot_5_log.png'), fullPage: true });
 
   fs.writeFileSync(path.join(OUT, 'results_' + DBMODE + '.json'), JSON.stringify({ today: TODAY, zip: dl.name, results }, null, 1));
+  check('still no request left the machine, whole run', outside.length === 0, outside.join(' '));
   await browser.close(); server.close();
   console.log(`\n${results.length - failed} of ${results.length} checks passed`);
   process.exit(failed ? 1 : 0);

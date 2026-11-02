@@ -310,8 +310,8 @@ class Viewer(unittest.TestCase):
         sheet = by['https://styles.example.test/x.css'][0]
         self.assertEqual(sheet['failure'], 'csp', 'a stylesheet in a saved copy is stopped by the frame\'s own policy before it leaves the browser')
         live = sorted({e['url'].split('/')[2] for e in out['external'] if e['failure'] != 'csp'})
-        # the tracker's own font requests (page head and the viewer frame) were there before this change; a CSS background image counts as an image
-        allowed = {'control.example.test', 'images.example.test', 'bg.example.test', 'fonts.googleapis.com', 'fonts.gstatic.com'}
+        # LOCALFONTS-v1: the fonts come from the PC's own server now, so no font host is allowed; a CSS background image counts as an image
+        allowed = {'control.example.test', 'images.example.test', 'bg.example.test'}
         self.assertTrue(set(live) <= allowed, ('unexpected hosts requested', live))
         # the viewer's frame: sandboxed without scripts, locked to images (+ fonts) by its own policy
         self.assertEqual(v['sandbox'], 'allow-same-origin allow-popups allow-popups-to-escape-sandbox')
