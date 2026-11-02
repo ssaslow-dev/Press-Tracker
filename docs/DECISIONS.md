@@ -411,3 +411,6 @@ LOCALAPP-v1 (Sammy, 2026-10-31, follow-up): target is the office Windows PC; not
 
 ## LOCALAPP-v1 go (Sammy, 2026-11-02)
 SAVERHOLD-v1 lifted. Sammy: "get started on everything": the Windows probe zip, the local app, and the saver as its save engine. Portable Python comes from the official python.org build published on NuGet (package "python"), because python.org itself is blocked from the build container.
+
+## UPDATEFOLDER-v1 (Sammy, 2026-11-02)
+Final product: Claude does the searching and saving work, then gives Sammy an "update folder". Sammy drags it into the local program, which sorts the data and integrates it into the tracker. The local program itself needs no Claude or TinyFish connection (narrows LOCALAPP-v1). Open: what exactly the folder carries (found stories for the program to save, or finished changes), and how Claude learns what is already in the tracker.
