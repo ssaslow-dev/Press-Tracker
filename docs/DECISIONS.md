@@ -408,3 +408,6 @@ The new project's tracker looks and feels the same as the current artifact track
 ## LOCALAPP-v1 (Sammy, 2026-10-31)
 The point of the new project: make the existing tracker self-contained local software. It will connect to Claude and TinyFish only for the Update button, nothing else. Saves, the page and the data all run locally. Replaces the "browser-only" assumption in CLAUDE.md. work/desktop_plan/PLAN.md is the closest existing plan, except that its Claude Desktop connector for saves does not fit this decision. Open: which computer, and whether IT allows it.
 LOCALAPP-v1 (Sammy, 2026-10-31, follow-up): target is the office Windows PC; nothing may be installed. The app must run from an unzipped folder (portable Python inside). Still untested whether the PC lets an unzipped python.exe run.
+
+## LOCALAPP-v1 go (Sammy, 2026-11-02)
+SAVERHOLD-v1 lifted. Sammy: "get started on everything": the Windows probe zip, the local app, and the saver as its save engine. Portable Python comes from the official python.org build published on NuGet (package "python"), because python.org itself is blocked from the build container.

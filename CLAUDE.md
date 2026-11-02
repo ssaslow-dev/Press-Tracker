@@ -57,7 +57,7 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
   - Fable's review (`work/saver/REVIEW_1.md`) findings are fixed; all 25 tests in `work/saver/tests/review/` pass.
   - Part 2 is built (2026-10-31): `save` (backup, checked swap, pages add-only, removals moved to `_to_delete/`, ledger, keep 3 saver backups, rebuild). 95 saver tests pass. See `work/saver/README.md`.
   - Not yet run: a replay against a real past save (the fixture is not in this repo), and the rebuild against the real published pipeline (only stubs so far; use `--no-rebuild` until it has run once).
-  - **On hold** (Sammy, 2026-10-31, SAVERHOLD-v1). Do not continue the steps below until Sammy lifts the hold.
+  - Hold lifted (Sammy, 2026-11-02): the saver is the save engine of the local app (LOCALAPP-v1); work on everything is go.
 - **Next steps:**
   1. Replay more past saves.
   2. Fable reviews the whole program.
