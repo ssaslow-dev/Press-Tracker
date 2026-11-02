@@ -57,6 +57,10 @@ The station layer adapts around it, without editing it:
 - **Hidden:** Refresh from files (header and panel), Save to sheet, Spreadsheet download, Manage. Only Update (confirm dialog with the Since field), the run log, and the new Download step remain.
 - **Connector name.** The mcp capability declares the server as exactly `TinyFish`, the value of `TF` in `41_update_search.js`. A page that declares mcp cannot be shared "anyone with the link"; it stays private.
 
+## Add NewsBank PDFs (NEWSBANKPDF-v1)
+
+A fourth card, "Add NewsBank PDFs": drop NewsBank "Multiple Articles" batch PDFs; it cuts one PDF per story, checks each against the for-Update file, rates and translates it like a find, looks up the publisher's own page, and adds the stories and their PDFs to the update zip (`files/<id>.pdf`). Design, today's pipeline with file:line, sharing with interns and what a real batch PDF must show: **NEWSBANK.md**. Code: `src/nbparse.js` (pure parsing), `src/newsbank.js` (runs inside the tracker's scope), `src/newsbank_ui.js` (card, pdf.js and pdf-lib), `vendor/` (pinned pdfjs-dist 4.10.38 and pdf-lib 1.17.1, `fetch_pdflibs.py`). Tests: `bash tests/nb/run_all.sh FOR_UPDATE.json [SCRATCH]` (parse test in node, Playwright test under a strict policy, zip check with the PC code, refusal tests, band reader, and the patched `sheet_task` on a copy of the snapshot workbook). The PC patches are proposals in `../newsbank_pc/`.
+
 ## Photos (UPDATESTATION-v1 follow-up 7A): feasibility
 
 See the report in the build hand-back; summary here. TinyFish `fetch_content` cannot supply image bytes: on a direct image URL it returned only metadata (title with the pixel size, `text: null`, `image_links` listing the same URL), the tool has no bytes or base64 option, and a Wikimedia thumbnail gave `target_http_error 400`. The artifact sandbox blocks other hosts for fetch/XHR and images (artifact contract text), so the page cannot fetch them itself either. A test page ("AJG photo test", `photo_test/photo_test.html`) records what an open page really gets; its result is in db collection `photo_test`, document `latest`, once someone opens it.

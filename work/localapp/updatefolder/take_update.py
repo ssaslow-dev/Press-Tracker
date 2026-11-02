@@ -110,7 +110,7 @@ def inspect_update(zip_path, layout: PCLayout) -> dict:
     try:
         (stage / 'manifest.json').write_bytes(man_b)
         for name, b in entries.items():
-            p = stage / name
+            p = stage / 'db' / name if F.is_pdf_entry(name) else stage / name     # NEWSBANKPDF-v1: files/<id>.pdf -> staging/<id>/db/files/ (the saver's --db copy carries it to sheet_task)
             p.parent.mkdir(parents=True, exist_ok=True)
             p.write_bytes(b)
         (stage / 'zip_sha256.txt').write_text(zsha + '  ' + zp.name + '\n', encoding='utf-8')

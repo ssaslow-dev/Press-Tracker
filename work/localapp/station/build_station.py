@@ -39,6 +39,37 @@ def sha(b):
     return hashlib.sha256(b).hexdigest()
 
 
+def vendor_pdf_libs():
+    """NEWSBANKPDF-v1: pdf.js (Apache-2.0) and pdf-lib (MIT), pinned in vendor/PINS.json (npm tarball sha512, file sha256). Every file is checked
+    here. pdf.js ships as ES modules; the page runs it as plain scripts, so the module syntax is removed exactly as below and each build asserts the
+    result: `import.meta.url` (used only in a Node branch) becomes a constant, and the final `export{...}` becomes an assignment to a global."""
+    vd = os.path.join(HERE, 'vendor')
+    pins = json.load(open(os.path.join(vd, 'PINS.json')))
+    raw = {}
+    for pk in pins['packages'].values():
+        for fn, meta in pk['files'].items():
+            b = open(os.path.join(vd, fn), 'rb').read()
+            assert sha(b) == meta['sha256'], f'vendor/{fn} does not match PINS.json (rerun vendor/fetch_pdflibs.py)'
+            raw[fn] = b.decode('utf-8')
+
+    def classic(src, glob):
+        m = re.search(r'export\s*\{([^}]*)\}\s*;?\s*$', src)
+        assert m, 'no final export statement'
+        pairs = []
+        for part in m.group(1).split(','):
+            a = part.strip().split(' as ')
+            pairs.append((a[-1].strip(), a[0].strip()))
+        body = src[:m.start()]
+        assert body.count('import.meta') == body.count('import.meta.url'), 'import.meta used other than .url'
+        body = body.replace('import.meta.url', '"about:blank"')
+        assert not re.search(r'(^|[;}])\s*import\s*[{(*\w"\']', body.replace('import(', '')), 'a static import is left'
+        return '"use strict";(function(){' + body + '\n;globalThis.' + glob + '={' + ','.join(f'{k}:{v}' for k, v in pairs) + '};})();'
+    js = classic(raw['pdf.min.mjs'], 'pdfjsLib')
+    worker = classic(raw['pdf.worker.min.mjs'], 'pdfjsWorker')
+    return {'pdfjs': js, 'pdfjs_worker': worker, 'pdflib': raw['pdf-lib.min.js'],
+            'info': {k: {'version': v['version'], 'license': v['license'], 'integrity': v['integrity'], 'files': {f: m['sha256'] for f, m in v['files'].items()}} for k, v in pins['packages'].items()}}
+
+
 def once(s, old, new):
     if s.count(old) != 1:
         raise SystemExit(f'build: expected exactly one {old[:60]!r}, found {s.count(old)}')
@@ -82,22 +113,37 @@ def main():
     st_html = open(os.path.join(HERE, 'src', 'station.html'), encoding='utf-8').read()
     st_css = open(os.path.join(HERE, 'src', 'station.css'), encoding='utf-8').read()
     st_js = open(os.path.join(HERE, 'src', 'station.js'), encoding='utf-8').read()
-    assert '</script' not in st_js
+    nb_ui = open(os.path.join(HERE, 'src', 'newsbank_ui.js'), encoding='utf-8').read()
+    nb_parse = open(os.path.join(HERE, 'src', 'nbparse.js'), encoding='utf-8').read()
+    nb_scope = open(os.path.join(HERE, 'src', 'newsbank.js'), encoding='utf-8').read()
+    st_js = once(st_js, '/*NB_UI*/', nb_ui)
+    for t in (st_js, nb_parse, nb_scope):
+        assert '</script' not in t
+    lib = vendor_pdf_libs()
     page = once(page, '<main class="wrap">', '<main class="wrap">\n' + st_html)
     fonts_css, nfonts = inline_fonts_css()
     doc = ('<title>AJG Update Station</title>\n' + page + '\n<style id="station-fonts">\n' + fonts_css + '</style>\n<style id="station-css">\n' + st_css + '</style>\n'
-           '<script type="text/plain" id="tracker-src">' + body_esc + '</script>\n<script id="station-js">\n' + st_js + '</script>\n')
+           '<script type="text/plain" id="tracker-src">' + body_esc + '</script>\n<script type="text/plain" id="nb-scope-src">' + nb_scope + '</script>\n'
+           '<script id="nbparse-js">\n' + nb_parse + '</script>\n'
+           '<script type="text/plain" id="vendor-pdfjs-worker">' + lib['pdfjs_worker'].replace('</script', '<\\/script') + '</script>\n'
+           '<script type="text/plain" id="vendor-pdfjs">' + lib['pdfjs'].replace('</script', '<\\/script') + '</script>\n'
+           '<script type="text/plain" id="vendor-pdflib">' + lib['pdflib'].replace('</script', '<\\/script') + '</script>\n'
+           '<script id="station-js">\n' + st_js + '</script>\n')
     # outside references: none in the shell or the station layer; the tracker JS keeps two it never reaches in the station (listed in README)
     outer = doc.replace(body_esc, '')
+    for k in ('pdfjs_worker', 'pdfjs', 'pdflib'):
+        outer = outer.replace(lib[k].replace('</script', '<\\/script'), '')   # the vendored libraries keep some URLs in strings and comments; none is fetched (listed below)
     for bad in ('fonts.googleapis', 'fonts.gstatic', 'claude.ai/', 'cdnjs.cloudflare', 'jsdelivr', 'unpkg.com'):
         assert bad not in outer, f'outside reference left in the page: {bad}'
     residual = sorted({m.group(0) for m in re.finditer(r'https://(?:fonts\.googleapis\.com|cdnjs\.cloudflare\.com)[^\s\'"`)]*', body)})
     print('tracker JS keeps (not reachable in the station):', residual)
+    vend_urls = sorted({m.group(0) for k in ('pdfjs_worker', 'pdfjs', 'pdflib') for m in re.finditer(r'https?://[^\s\'"`)<>\\]+', lib[k])})
     os.makedirs(a.out, exist_ok=True)
     p = os.path.join(a.out, 'index.html')
     open(p, 'w', encoding='utf-8').write(doc)
     info = {'index_html_bytes': len(doc.encode()), 'index_html_sha256': sha(doc.encode()), 'tracker_js_sha256': sha(js), 'tracker_js_parts_bytes': len(js),
             'shell_sha256': sha(shell.encode()), 'vendor': os.path.basename(vendor),
+            'pdf_libs': lib['info'], 'vendor_urls_in_strings': vend_urls, 'nb_scope_sha256': sha(nb_scope.encode()), 'nbparse_sha256': sha(nb_parse.encode()), 'nb_ui_sha256': sha(nb_ui.encode()),
             'fonts_woff2_inlined': nfonts, 'fonts_css_sha256': sha(fonts_css.encode()), 'station_css_sha256': sha(st_css.encode()), 'station_html_sha256': sha(st_html.encode()), 'station_js_sha256': sha(st_js.encode())}
     json.dump(info, open(os.path.join(a.out, 'build_info.json'), 'w'), indent=1)
     print(json.dumps(info, indent=1))

@@ -15,7 +15,7 @@ const PACK_COLLS = ['runs', 'pages', 'reprints', 'authors', 'translations', 'ton
 const ID_RX = /^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/;
 const RESERVED = new Set(['CON', 'PRN', 'AUX', 'NUL'].concat([1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => 'COM' + i), [1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => 'LPT' + i)));
 
-const S = { loaded: false, file: null, seq: 0, lastPacked: 0, lastZip: null, realDb: null, busyPack: false };
+const S = { loaded: false, file: null, seq: 0, lastPacked: 0, lastZip: null, realDb: null, busyPack: false, noMirror: new Set() };   // noMirror: documents that hold NewsBank text are never copied to the artifact db (NEWSBANKPDF-v1)
 const sess = {};            // collection -> Map(id -> {data, seq}) of documents the tracker code wrote after the file was loaded
 PACK_COLLS.forEach(c => { sess[c] = new Map(); });
 
@@ -95,7 +95,7 @@ const MIRROR = new Set(PACK_COLLS.concat(['clips']));
 const mirrorQ = new Map(); let mirroring = false, mirrorFail = 0;
 const fileKey = () => S.file.fingerprint.workbook_sha256.slice(0, 12) + '-' + String(S.file.created_at || '').replace(/[^0-9]/g, '');
 function mirror(coll, id, data, seq) {
-  if (!S.realDb || !MIRROR.has(coll)) return;
+  if (!S.realDb || !MIRROR.has(coll) || S.noMirror.has(coll + '.' + id)) return;
   mirrorQ.set(coll + '.' + id, { coll, id, data, seq });
   if (!mirroring) drain();
 }
@@ -185,7 +185,11 @@ async function loadFile(f) {
   S.afterRunsSub = openPanel; setTimeout(() => { if (S.afterRunsSub) openPanel(); }, 6000);   // slow start: draw now, and once more when the history arrives
   const src = $('#tracker-src').textContent.replace(/<\\\/script/gi, '<' + '/script');
   const s = document.createElement('script');
-  s.textContent = '(function(window){\n' + src + '\n})(window.__stationWin);';
+  const nbScope = (document.getElementById('nb-scope-src') || {}).textContent || '';   // NEWSBANKPDF-v1: runs in the tracker's own scope
+  // the tracker code is one function ((function(){ ... })();): the NewsBank code goes inside it, before its closing, so it sees covHit, dupOf, toRow ... as the Update code does
+  const cut = src.lastIndexOf('})();');
+  if (cut < 0) { S.loaded = false; showErr('The tracker code has an unexpected shape.'); return; }
+  s.textContent = '(function(window){\n' + src.slice(0, cut) + '\n' + nbScope.replace(/<\\\/script/gi, '<' + '/script') + '\n' + src.slice(cut) + '\n})(window.__stationWin);';
   try { document.body.appendChild(s); } catch (e) { S.loaded = false; showErr('The tracker code did not start: ' + (e && e.message ? e.message : e)); return; }
   showLoaded();
   offerRecovery();
@@ -204,7 +208,7 @@ function showLoaded() {
   $('#stFacts').innerHTML = facts.map(([k, v]) => '<dt>' + esc(k) + '</dt><dd>' + v + '</dd>').join('');
   $('#stDrop').hidden = true; $('#stLoaded').hidden = false;
   $('#st-step1').classList.add('st-done');
-  ['#st-step2', '#st-step3'].forEach(s => $(s).classList.remove('st-lock'));
+  ['#st-step2', '#st-step3', '#st-nb'].forEach(s => { const el = $(s); if (el) el.classList.remove('st-lock'); });
   $('#stStep2Cap').textContent = 'Press Update database. Same searches and same checks as the tracker’s button; tone, authors and translations are filled in for each new story.';
   const f = $('#runFind'); if (f) f.disabled = false;
   updatePackUi();
@@ -273,7 +277,8 @@ function updatePackUi() {
   if (!S.loaded) return;
   const p = pending(), busy = trackerBusy();
   const parts = [];
-  if (p.runs.length) parts.push(fmtN(p.runs.length) + (p.runs.length === 1 ? ' run' : ' runs') + ': ' + fmtN(p.stories) + ' new ' + (p.stories === 1 ? 'story' : 'stories') + ', ' + fmtN(p.reprints) + (p.reprints === 1 ? ' reprint' : ' reprints') + ' (' + fmtN(p.rows) + ' spreadsheet rows)');
+  const nbN = S.nb ? [...sess.pages].filter(([, v]) => v.seq > S.lastPacked && v.data && v.data.nb && v.data.nb.file).length : 0;
+  if (p.runs.length) parts.push(fmtN(p.runs.length) + (p.runs.length === 1 ? ' run' : ' runs') + (nbN ? ' (' + fmtN(nbN) + ' NewsBank story PDFs)' : '') + ': ' + fmtN(p.stories) + ' new ' + (p.stories === 1 ? 'story' : 'stories') + ', ' + fmtN(p.reprints) + (p.reprints === 1 ? ' reprint' : ' reprints') + ' (' + fmtN(p.rows) + ' spreadsheet rows)');
   let msg = p.runs.length ? 'Ready: ' + parts.join('') + '.' : (S.lastZip ? 'The last update folder was downloaded. Nothing new since.' : 'Nothing to download yet. Press Update database in step 2.');
   if (busy) msg = 'A run is going. Download the update folder when it is done.';
   if (p.running && !busy) msg += ' One run was left unfinished; it is included as far as it got.';
@@ -297,9 +302,19 @@ async function pack() {
     const runIds = [];
     for (const [id, v] of p.runs) if (add('runs', id, v.data)) runIds.push(id);
     if (!runIds.length) throw new Error('No run could be packed.');
-    for (const c of PACK_COLLS.filter(x => x !== 'runs')) for (const [id, v] of sess[c]) if (v.seq > S.lastPacked) add(c, id, v.data);
+    const pdfBlobs = [];   // NEWSBANKPDF-v1: each NewsBank story's own PDF travels as files/<id>.pdf; the pages doc says which (nb.file) and its sha256
+    for (const c of PACK_COLLS.filter(x => x !== 'runs')) for (const [id, v] of sess[c]) if (v.seq > S.lastPacked) {
+      let data = v.data;
+      if (c === 'pages' && data && data.nb && data.nb.file) {
+        const fid = String(data.nb.file).replace(/^files\//, '').replace(/\.pdf$/, ''), pf = S.nb && S.nb.pdfs.get(fid);
+        if (!pf || pf.sha256 !== data.nb.pdf_sha256) { warns.push('The PDF of “' + (data.title || id) + '” is not in this tab any more: its row goes in without a saved copy.'); data = Object.assign({}, data, { nb: Object.assign({}, data.nb, { file: '', pdf_sha256: '', pdf_bytes: 0 }) }); }
+        else if (!pdfBlobs.some(b => b.name === 'files/' + fid + '.pdf')) pdfBlobs.push({ name: 'files/' + fid + '.pdf', bytes: pf.bytes, kind: 'pdf' });
+      }
+      add(c, id, data);
+    }
+    blobs.push(...pdfBlobs);
     const files = {};
-    for (const b of blobs) files[b.name] = { sha256: await sha256Hex(b.bytes), bytes: b.bytes.length };
+    for (const b of blobs) files[b.name] = Object.assign({ sha256: await sha256Hex(b.bytes), bytes: b.bytes.length }, b.kind ? { kind: b.kind } : {});
     const manifest = { format: 'ajg-update-folder', format_version: 1, created_at: nowIso(), source: { workbook_sha256: S.file.fingerprint.workbook_sha256 },
       runs: runIds.slice().sort(), files, station_version: STATION_VERSION, for_update_created_at: S.file.created_at || '', for_update_name: S.fileName || '' };
     const entries = [{ name: 'manifest.json', bytes: enc.encode(JSON.stringify(manifest, null, 1) + '\n') }].concat(blobs);
@@ -326,6 +341,7 @@ async function saveFile(filename, bytes) {
   if (dl) { try { await dl.save({ filename, data: blob }); return; } catch (e) { if (e && e.code === 'declined') return; if (e && e.code === 'rate_limited') { toastMsg('A download is already waiting for you to confirm.'); return; } } }
   const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 5000);
 }
+/*NB_UI*/
 function toastMsg(t) { const el = document.getElementById('toast'); if (!el) return; el.textContent = t; el.hidden = false; setTimeout(() => { el.hidden = true; }, 4000); }
 /* the station's own record that these runs were packed (kept in the artifact's db when it is there; nothing is deleted) */
 async function recordPacked(runIds, filename, zsha, nfiles) {
@@ -339,11 +355,11 @@ async function recordPacked(runIds, filename, zsha, nfiles) {
 
 /* the tracker's own sentences that send the user to a chat for saving to the sheet do not apply here */
 const TAKE = 'Download the update folder in step 3 to take it to the PC tracker.';
-const FIX = [[/To put (?:it|them) in the (?:sheet|spreadsheet), ask Claude in chat to “save the last run to the sheet”\./g, TAKE], [/Ask Claude in chat to “save the last run to the sheet”\./g, TAKE],
+const FIX = [[/as batch PDFs into Documents\/Gabriel press PDFs, then ask Claude to extract them\./g, 'as batch PDFs, then drop them into “Add NewsBank PDFs” below.'], [/To put (?:it|them) in the (?:sheet|spreadsheet), ask Claude in chat to “save the last run to the sheet”\./g, TAKE], [/Ask Claude in chat to “save the last run to the sheet”\./g, TAKE],
   [/when you ask Claude in chat to “save the last run to the sheet”/g, 'when the update folder (step 3) is taken in on the PC tracker']];
 function fixTexts(root) {
   const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-  const hits = []; for (let n = w.nextNode(); n; n = w.nextNode()) if (/save the last run to the sheet/.test(n.nodeValue)) hits.push(n);
+  const hits = []; for (let n = w.nextNode(); n; n = w.nextNode()) if (/save the last run to the sheet|Gabriel press PDFs/.test(n.nodeValue)) hits.push(n);
   hits.forEach(n => { let t = n.nodeValue; FIX.forEach(([a, b]) => { t = t.replace(a, b); }); if (t !== n.nodeValue) n.nodeValue = t; });
 }
 
@@ -353,6 +369,7 @@ function init() {
   const f = $('#runFind'); if (f) f.disabled = true;
   const sub = $('#subline'); if (sub) sub.innerHTML = 'Update<br>station';
   wireStep1();
+  nbWire();
   $('#stPack').addEventListener('click', () => { pack(); });
   $('#stRecoverBtn').addEventListener('click', () => { recover(); });
   $('#stPackAgain').addEventListener('click', async () => { if (S.lastZip) await saveFile(S.lastZip.filename, S.lastZip.zip); });

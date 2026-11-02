@@ -1,0 +1,46 @@
+{
+ "note": "Pinned by sha512 (npm tarball) and sha256 (kept files). Fetched from registry.npmjs.org.",
+ "packages": {
+  "pdfjs-dist": {
+   "version": "4.10.38",
+   "license": "Apache-2.0",
+   "tarball": "https://registry.npmjs.org/pdfjs-dist/-/pdfjs-dist-4.10.38.tgz",
+   "integrity": "sha512-/Y3fcFrXEAsMjJXeL9J8+ZG9U01LbuWaYypvDW2ycW1jL269L3js3DVBjDJ0Up9Np1uqDXsDrRihHANhZOlwdQ==",
+   "files": {
+    "pdf.min.mjs": {
+     "sha256": "44ec6f011027ee77791386b66c14876a5fc29e20bf0433c07c6726fff7212b72",
+     "bytes": 398237,
+     "from": "package/legacy/build/pdf.min.mjs"
+    },
+    "pdf.worker.min.mjs": {
+     "sha256": "bd88805178a26c729db8c0107a5b630cb900ec070f4d8c7529a3e45530afd41d",
+     "bytes": 1417586,
+     "from": "package/legacy/build/pdf.worker.min.mjs"
+    },
+    "LICENSE-pdfjs-dist.txt": {
+     "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+     "bytes": 10174,
+     "from": "package/LICENSE"
+    }
+   }
+  },
+  "pdf-lib": {
+   "version": "1.17.1",
+   "license": "MIT",
+   "tarball": "https://registry.npmjs.org/pdf-lib/-/pdf-lib-1.17.1.tgz",
+   "integrity": "sha512-V/mpyJAoTsN4cnP31vc0wfNA1+p20evqqnap0KLoRUN0Yk/p3wN52DOEsL4oBFcLdb76hlpKPtzJIgo67j/XLw==",
+   "files": {
+    "pdf-lib.min.js": {
+     "sha256": "0f9a5cad07941f0826586c94e089d89b918c46e5c17cf2d5a3c6f666e3bc694f",
+     "bytes": 525099,
+     "from": "package/dist/pdf-lib.min.js"
+    },
+    "LICENSE-pdf-lib.md": {
+     "sha256": "f2c9fc00fdb66eb99ac156ba52d734af66d8d309f65753ae809ad34ee2883bcb",
+     "bytes": 1070,
+     "from": "package/LICENSE.md"
+    }
+   }
+  }
+ }
+}

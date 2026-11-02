@@ -27,3 +27,19 @@
 .st-note { margin: 8px 0 0; font-size: var(--fs-sm); color: var(--ink-3); }
 .st-list { margin: 8px 0 0; padding-left: 20px; font-size: var(--fs-md); color: var(--ink-2); }
 @media (max-width: 640px) { .st-facts { grid-template-columns: 1fr; } .st-facts dt { margin-top: 6px; } }
+
+/* NewsBank PDFs card (NEWSBANKPDF-v1) */
+.st-lock #nbBody, .st-lock #nbTbl { display: none; }
+.nb-files { list-style: none; padding-left: 0; }
+.nb-file { margin: 4px 0; font-size: var(--fs-md); color: var(--ink-2); }
+.nb-file.nb-error b, .nb-w { color: var(--bad, #b42318); }
+.nb-file ul { margin: 2px 0 0; padding-left: 18px; font-size: var(--fs-sm); }
+.nb-tblwrap { max-height: 460px; overflow: auto; margin-top: 12px; border: 1px solid var(--line); border-radius: 8px; }
+.nb-tbl { width: 100%; border-collapse: collapse; font-size: var(--fs-sm); }
+.nb-tbl th, .nb-tbl td { padding: 6px 8px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--line); }
+.nb-tbl th { position: sticky; top: 0; background: var(--panel-2); color: var(--ink-3); font-weight: 600; }
+.nb-r.nb-known td, .nb-r.nb-dup_batch td, .nb-r.nb-skipped td { color: var(--ink-3); }
+.nb-note { color: var(--ink-3); }
+.nb-flag { font-size: var(--fs-xs); color: var(--bad, #b42318); border: 1px solid currentColor; border-radius: 4px; padding: 0 4px; }
+.nb-opt { display: block; margin-top: 12px; font-size: var(--fs-md); color: var(--ink-2); }
+@media (max-width: 640px) { .nb-tbl th:nth-child(4), .nb-tbl td:nth-child(4), .nb-tbl th:nth-child(6), .nb-tbl td:nth-child(6) { display: none; } }
