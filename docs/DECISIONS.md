@@ -423,3 +423,9 @@ UPDATESTATION-v1 (Sammy, 2026-11-02, follow-up 2): the "for Claude" file carries
 UPDATESTATION-v1 (Sammy, 2026-11-02, follow-up 3): Sammy will run updates weekly or monthly, by hand (NOSCHED-v1 unchanged). The five manual steps per update (make file, upload, Update, download folder, drag in) are acceptable at that pace. Safeguards to build: the for-Claude file and the update folder carry the workbook checksum, so the PC program refuses or warns on a folder made from an older workbook; the file also carries the button's own memory (searched dates, lookup cache, etc.).
 UPDATESTATION-v1 (Sammy, 2026-11-02, follow-up 4; replaces follow-up 2): the for-Update file carries NO article text. The survey (work/localapp/SURVEY.md 7e) showed the Update page never decides a reprint by text (41:1-6); the text test (REPRINT90-v1, reprint_rule.py) runs at save time in sheet_task.py, which on the PC reads the PC's own library and article shards. The file carries story details only (SURVEY 7e list) plus the button's memory; the update folder carries each new find's own page text.
 UPDATESTATION-v1 (Sammy, 2026-11-02, follow-up 5): (1) tone rating, author splitting and translation (the tracker's other Claude uses) move to the Update station: it does them for each new story before packing the update folder; re-rating older stories also happens there. The PC tracker hides those buttons. (2) The "for Claude" file is renamed the "for Update" file.
+
+## SWITCHOVER-v1 (Sammy, 2026-11-02)
+- Switch-over happens when the new setup is ready and tested: end-to-end test on copies, Fable review, then one supervised real save with Sammy present. No fixed date.
+- The PC tracker starts fresh: the old tracker's team notes, saved views and edit history are NOT copied over (they stay in the old tracker).
+- The review queue (decided merges, today's review-queue artifact) moves into the PC tracker.
+- An online read-only copy for colleagues: decide later; build without it.

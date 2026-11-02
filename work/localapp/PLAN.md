@@ -49,9 +49,9 @@ Written 2026-11-02 for Sammy. Decisions behind it: LOCALAPP-v1, UPDATEFOLDER-v1,
 
 Agent time: several days of building. The calendar is set by your PC test rounds (steps 1, 5, 7).
 
-## Still open for you
+## Settled 2026-11-02 (SWITCHOVER-v1)
 
-- When to switch over.
-- At switch-over: copy the old tracker's team notes, saved views and edit history into the PC tracker? (Recommended: yes, once.)
-- The review queue page (decided merges): fold it into the PC tracker or the Update station? (Recommended: PC tracker, since it changes saved rows.)
-- Colleagues: today others can open the shared read-only copy online. The PC tracker is on one PC. Keep publishing a read-only copy for them? (It would need a deliberate upload each time, without article text.)
+- Switch over when ready and tested (step 10 follows steps 8 and 9).
+- The PC tracker starts fresh: old team notes, saved views and edit history stay in the old tracker.
+- The review queue (merge decisions) moves into the PC tracker.
+- An online read-only copy for colleagues: decide later.

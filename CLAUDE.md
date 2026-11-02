@@ -84,10 +84,11 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 7. **Local software** (LOCALAPP-v1): the new project turns the existing tracker into self-contained software that runs locally. Its only outside connections, later, are Claude and TinyFish, and only for the Update button. Target: the office Windows PC, with nothing installed (portable folder only).
 8. **Update folder** (UPDATEFOLDER-v1): Claude does the searching and saving work and hands Sammy an update folder; he drags it into the local program, which integrates it into the tracker. The program itself does not go online. The PC program writes the workbook (all saver checks, workbook never leaves the PC); a program button makes a "for Update" list of stories already in the tracker (no article text) that Sammy loads into the Update station.
 9. **Update station** (UPDATESTATION-v1): a new, separate claude.ai artifact holds only the Update button, working exactly as today, and produces the update folder for the PC tracker. Each use starts by uploading the "for Update" file from the PC; duplicate checks and the reprint logic work from that file, which carries story details only, no article text (the text-based reprint test runs at save time on the PC); read in the browser, not stored in the artifact. Tone rating, author splitting and translation also happen in the Update station.
+10. **Switch-over** (SWITCHOVER-v1): when ready and tested (end-to-end test, Fable review, one supervised real save). The PC tracker starts fresh (no old notes, views or edit history). The review queue moves into the PC tracker. Plan: `work/localapp/PLAN.md`.
 
 ## Open decisions for Sammy (don't assume answers)
 
-- **When to switch over** from the old tracker to the new project (see NEWPROJECT-v1). The new project is self-contained local software (LOCALAPP-v1). Google Drive was ruled out because its connector can't carry or replace the workbook.
+- **An online read-only copy for colleagues** after switch-over (SWITCHOVER-v1: decide later).
 - **How new stories reach the new project after switch-over,** until it has its own Update button.
 - **Whether the office PC lets an unzipped portable program run** (LOCALAPP-v1: Windows PC, no installs). Untested.
 - **From earlier work:**
