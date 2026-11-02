@@ -1,6 +1,6 @@
 # AJG Press Tracker: instructions for Claude
 
-Press-coverage database for CA Assemblymember Jesse Gabriel (AD-46), kept by Sammy (ssaslow@berkeley.edu). It catches every real story about Gabriel the Assemblymember and nothing else: print, online, TV, radio, podcasts and non-English outlets. Reprints are grouped under the story that ran first. Sammy prefers lean, precise prose and plain words; he is not a programmer.
+Press-coverage database for CA Assemblymember Jesse Gabriel (AD-46), kept by Sammy (ssaslow@berkeley.edu). It catches every real story about Gabriel the Assemblymember and nothing else: print, online, TV, radio, podcasts and non-English outlets. Reprints are grouped under the story that ran first. Sammy prefers lean, precise prose and plain words; he is not a programmer (basic level: high-school AP Computer Science). Explain technical ideas in everyday terms and define any jargon.
 
 ## Where things live
 
