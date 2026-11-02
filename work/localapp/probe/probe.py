@@ -65,15 +65,6 @@ def c_bind():
     return True, "bound 127.0.0.1 on port %d" % port
 
 
-def c_internet():
-    import urllib.request
-    try:
-        with urllib.request.urlopen("https://www.example.com", timeout=5) as r:
-            return True, "HTTPS GET www.example.com -> HTTP %s" % r.status
-    except Exception as e:
-        return False, "no internet or blocked (%s: %s)" % (type(e).__name__, e)
-
-
 def find_edge():
     cands = []
     for var in ("ProgramFiles(x86)", "ProgramFiles", "LOCALAPPDATA"):
@@ -99,7 +90,6 @@ def run_checks():
         check("Load openpyxl from app\\site-packages", c_openpyxl, True),
         check("Create and read an .xlsx", c_xlsx, True),
         check("Open a local port (127.0.0.1)", c_bind, True),
-        check("Outbound internet (info only)", c_internet),
         check("Microsoft Edge found (info only)", c_edge),
     ]
     return results

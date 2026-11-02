@@ -429,3 +429,6 @@ UPDATESTATION-v1 (Sammy, 2026-11-02, follow-up 5): (1) tone rating, author split
 - The PC tracker starts fresh: the old tracker's team notes, saved views and edit history are NOT copied over (they stay in the old tracker).
 - The review queue (decided merges, today's review-queue artifact) moves into the PC tracker.
 - An online read-only copy for colleagues: decide later; build without it.
+
+## GOVIT-v1 (Sammy, 2026-11-02)
+The office PC is a government computer with a strict IT department; everything must fly with them. Rules for the PC tracker and anything run on that PC: no installs, no admin rights, no registry, no services, scheduled tasks or startup entries; no network connections at all (the probe's internet check was removed); listen on 127.0.0.1 only; read and write only inside the app's own folder (plus files the user picks); signed official Python (PSF build) and pinned, hash-checked official packages only; readable source; no PowerShell; nothing hidden. Sammy should get IT's OK before running anything, using work/localapp/IT_NOTE.md. Downloads from the Update station are plain zip files of JSON and saved article HTML (no programs).
