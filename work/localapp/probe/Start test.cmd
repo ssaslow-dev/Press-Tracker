@@ -1,7 +1,7 @@
 @echo off
 setlocal
 title AJG Tracker test
-cd /d "%~dp0"
+pushd "%~dp0"
 echo Running the test. Please wait...
 echo.
 "%~dp0python\python.exe" -I -s "%~dp0app\probe.py"
@@ -15,5 +15,6 @@ echo If you see this, copy this window's text to Claude.
 echo (Click the window, press Ctrl+A, then Enter, then paste.)
 echo ------------------------------------------------------------
 :end
+popd
 echo.
 pause

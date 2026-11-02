@@ -65,6 +65,32 @@ def c_bind():
     return True, "bound 127.0.0.1 on port %d" % port
 
 
+def c_lock():
+    """the save program's lock: create a file exclusively, a second exclusive create must fail (checks network-drive locking)"""
+    p = os.path.join(HERE, "_probe_lock.tmp")
+    try:
+        fd = os.open(p, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        os.close(fd)
+        try:
+            fd2 = os.open(p, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+            os.close(fd2)
+            ok = False
+            msg = "a second exclusive create did NOT fail: locking is unreliable here"
+        except FileExistsError:
+            ok, msg = True, "exclusive create works (second attempt refused)"
+        os.remove(p)
+        return ok, msg
+    except Exception as e:
+        return False, "%s: %s" % (type(e).__name__, e)
+
+
+def c_where():
+    unc = HERE.startswith("\\\\")
+    drive = os.path.splitdrive(HERE)[0]
+    kind = "network path (UNC)" if unc else ("drive " + drive if drive else "local path")
+    return True, kind + ": " + HERE
+
+
 def find_edge():
     cands = []
     for var in ("ProgramFiles(x86)", "ProgramFiles", "LOCALAPPDATA"):
@@ -90,6 +116,8 @@ def run_checks():
         check("Load openpyxl from app\\site-packages", c_openpyxl, True),
         check("Create and read an .xlsx", c_xlsx, True),
         check("Open a local port (127.0.0.1)", c_bind, True),
+        check("Exclusive lock file (needed for safe saving)", c_lock, True),
+        check("Where this folder is (info only)", c_where),
         check("Microsoft Edge found (info only)", c_edge),
     ]
     return results

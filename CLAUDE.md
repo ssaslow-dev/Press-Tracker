@@ -86,6 +86,7 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 9. **Update station** (UPDATESTATION-v1): a new, separate claude.ai artifact holds only the Update button, working exactly as today, and produces the update folder for the PC tracker. Each use starts by uploading the "for Update" file from the PC; duplicate checks and the reprint logic work from that file, which carries story details only, no article text (the text-based reprint test runs at save time on the PC); read in the browser, not stored in the artifact. Tone rating, author splitting and translation also happen in the Update station.
 10. **Switch-over** (SWITCHOVER-v1): when ready and tested (end-to-end test, Fable review, one supervised real save). The PC tracker starts fresh (no old notes, views or edit history). The review queue moves into the PC tracker. Plan: `work/localapp/PLAN.md`.
 11. **Government computer** (GOVIT-v1): strict IT. On the PC: no installs, admin, registry, services or network connections; 127.0.0.1 only; files only in the app folder; signed official Python and hash-pinned packages; readable source. Get IT's OK first (`work/localapp/IT_NOTE.md`).
+12. **Several PCs** (MULTIPC-v1): one tracker folder on a shared network drive; several PCs and several people save. The lock and ledger keep saves one at a time; notes and views live in the shared folder.
 
 ## Open decisions for Sammy (don't assume answers)
 

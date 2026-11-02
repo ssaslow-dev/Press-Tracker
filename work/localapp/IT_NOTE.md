@@ -2,14 +2,14 @@
 
 **What it is:** a small folder that checks whether a planned office tool can run on this PC. The tool would be a press-clippings tracker for Assemblymember Jesse Gabriel's office. This test does nothing else.
 
-**What is in the zip** ("AJG Tracker test.zip", sha256 `53952af347705d20ed855da4d8fa77b41c67a632f428d764412db28ddaafd98e`):
+**What is in the zip** ("AJG Tracker test.zip", sha256 `32fc4e5829e1684e815281f6a1f0f18b68497d1de283513d07f31bdec10706a0`):
 - `python\`: CPython 3.13.16 for Windows, the official build by the Python Software Foundation, taken from its NuGet package "python". `python.exe` and its DLLs carry the PSF Authenticode signature.
 - `app\probe.py`: the test script, plain readable text (about 200 lines).
 - `app\site-packages\`: openpyxl 3.1.5 and et_xmlfile 2.0.0, unpacked from their official PyPI wheels.
 - `Start test.cmd`: a 10-line batch file that runs `python\python.exe -I -s app\probe.py`.
 
 **What it does:**
-- It writes and removes one small file in its own folder.
+- It writes and removes two small files in its own folder (one tests exclusive file locking, which the tool uses so only one person saves at a time).
 - It creates one small Excel file in its own `_test_output` folder.
 - It listens on 127.0.0.1 (this computer only) on a random port, and opens one local page in Edge showing the results.
 - It stops when its window is closed, or after 15 minutes.
