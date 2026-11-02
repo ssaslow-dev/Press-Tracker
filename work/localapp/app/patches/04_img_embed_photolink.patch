@@ -1,0 +1,12 @@
+--- a/pipeline/img_embed.py
++++ b/pipeline/img_embed.py
+@@ -382,6 +382,9 @@
+ def embed_page(page, base_url, cache_dir, story_id='', aid='', copy_file='', kind='story', fetch=True, session=None):
+     """Update button save step: every <img> of a newly saved page -> embedded data: photo (cache hit, else fetched now and
+     cached in the same format) or dropped (ads/pixels/logos, failures; captions kept). Returns (page, report)."""
++    if os.environ.get('AJG_LINK_PHOTOS') == '1':   # PHOTOLINK-v1 (PC tracker): photos stay as links to the site's own images; nothing is fetched or cached
++        import photolink
++        return photolink.link_page(page, base_url)
+     idx = CacheIndex(cache_dir)
+     new_recs = []
+     s = session

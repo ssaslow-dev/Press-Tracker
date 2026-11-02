@@ -172,8 +172,10 @@ class Flow(unittest.TestCase):
         lib = K.root / 'data' / 'library' / '2026'
         saved = [p for p in lib.glob('ws*o-s*.html') if 'quokkaexample1' in p.read_text(encoding='utf-8', errors='replace').lower()]
         self.assertTrue(saved, 'the new page was added to the library')
-        for p in saved:
-            self.assertNotIn('images.example.com', p.read_text(encoding='utf-8', errors='replace'), 'remote photos are dropped offline')
+        for p in saved:     # PHOTOLINK-v1: the photo stays as a link (the program fetched nothing); details in test_photolink.py
+            txt = p.read_text(encoding='utf-8', errors='replace')
+            self.assertIn('src="https://images.example.test/photo-example1.jpg"', txt, 'remote photos are kept as links')
+            self.assertIn('referrerpolicy="no-referrer" loading="lazy"', txt)
         self.assertIn('quokkaexample1', K.get('/articles/2026.json').decode('utf-8').lower(), 'the new copy is in the shard the page reads')
         S['wb1'] = new
         S['pipeline_ok'] = (K.root / 'app' / 'pipeline' / 'PIPELINE.sha256').is_file()

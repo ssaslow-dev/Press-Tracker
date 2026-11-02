@@ -5,10 +5,13 @@ const fs = require('fs');
 (async () => {
   const base = process.argv[2], steps = JSON.parse(fs.readFileSync(process.argv[3], 'utf8'));
   const b = await chromium.launch(); const ctx = await b.newContext({ acceptDownloads: true, viewport: { width: 1280, height: 900 } });
-  const p = await ctx.newPage(); const errors = [], results = {};
+  const p = await ctx.newPage(); const errors = [], results = {}, external = [], pending = [];
+  // every request that is not for this PC's own server (PHOTOLINK-v1 tests: what would the browser fetch, and with which headers)
+  p.on('request', r => { if (!r.url().startsWith(base) && !/^(data|blob):/.test(r.url())) pending.push(r.allHeaders().then(h => external.push({ url: r.url(), type: r.resourceType(), referer: h['referer'] || null, headers: h }), () => external.push({ url: r.url(), type: r.resourceType(), referer: null }))); });
   p.on('pageerror', e => errors.push('pageerror: ' + String(e).slice(0, 300)));
   p.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text().slice(0, 300)); });
-  p.on('requestfailed', r => errors.push('requestfailed: ' + r.url().slice(0, 120)));
+  const failures = {};
+  p.on('requestfailed', r => { failures[r.url()] = (r.failure() || {}).errorText || 'failed'; errors.push('requestfailed: ' + r.url().slice(0, 120)); });
   p.on('response', r => { if (r.status() >= 400) errors.push('http ' + r.status() + ' ' + r.url().slice(0, 120)); });
   const panel = () => p.evaluate(() => (document.querySelector('#ajgf') || {}).innerText || '');
   try {
@@ -33,6 +36,13 @@ const fs = require('fs');
         await p.locator('#ajgf button', { hasText: s.text }).first().click(); const d = await dl;
         await d.saveAs(s.save); results[name] = d.suggestedFilename();
       }
+      else if (s.op === 'intercept') {   // answer requests to other hosts from here (nothing leaves the machine): rules [{match, status, type, b64|body}], default empty 200
+        await ctx.route(u => !u.href.startsWith(base) && !/^(data|blob):/.test(u.href), route => {
+          const u = route.request().url(), rule = (s.rules || []).find(x => u.includes(x.match));
+          if (!rule) return route.fulfill({ status: 200, contentType: 'text/plain', body: '' });
+          route.fulfill({ status: rule.status || 200, contentType: rule.type || 'text/plain', body: rule.b64 ? Buffer.from(rule.b64, 'base64') : (rule.body || '') });
+        });
+      }
       else if (s.op === 'eval') { results[name] = await p.evaluate(s.expr); }
       else if (s.op === 'mark') { await p.evaluate(() => { window.__mark = 1; }); }
       else if (s.op === 'wait_reload') { await p.waitForFunction(() => !window.__mark, null, { timeout: 60000 }); await p.waitForFunction(() => window.__ajgFiles === true, null, { timeout: 60000 }); await p.waitForTimeout(2000); }
@@ -42,6 +52,8 @@ const fs = require('fs');
       else throw new Error('unknown op ' + s.op);
     }
   } catch (e) { results.crash = String(e).slice(0, 600); try { results.crash_panel = await panel(); } catch (x) { } }
-  console.log(JSON.stringify({ results, errors }));
+  await Promise.all(pending);
+  external.forEach(e => { e.failure = failures[e.url] || null; });
+  console.log(JSON.stringify({ results, errors, external }));
   await b.close();
 })().catch(e => { console.error(e); process.exit(1); });

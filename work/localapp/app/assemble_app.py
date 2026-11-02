@@ -96,7 +96,9 @@ def apply_unified(text: str, patch: str, what: str) -> str:
 def patched_copy(src: Path, dst: Path, patch_file: Path):
     txt = src.read_text(encoding='utf-8')
     new = apply_unified(txt, patch_file.read_text(encoding='utf-8'), patch_file.name)
-    dst.write_text(new, encoding='utf-8', newline='\n')
+    tmp = dst.with_name(dst.name + '.new')      # a new file, never a write into the old one (copies of the folder may hard-link it)
+    tmp.write_text(new, encoding='utf-8', newline='\n')
+    os.replace(tmp, dst)
 
 
 # ---------------------------------------------------------------- the page build (work/localapp/build) -> pipeline + site
@@ -224,6 +226,12 @@ def copy_app_code(root: Path, pb: Path, info: dict):
     patched_copy(pipe / 'release_rule.py', pipe / 'release_rule.py', wp / '01_release_rule_pdftext.patch')
     patched_copy(pipe / 'img_embed.py', pipe / 'img_embed.py', wp / '02_img_embed_offline.patch')
     shutil.copy2(wp / 'pdftext_pypdf.py', pipe / 'pdftext_pypdf.py')
+    # PHOTOLINK-v1: the PC keeps photos as links. Patches and the new module live next to this script (app/patches/); each patch must match exactly once.
+    ap_ = HERE / 'patches'
+    patched_copy(pipe / 'img_embed.py', pipe / 'img_embed.py', ap_ / '04_img_embed_photolink.patch')
+    patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '05_sheet_task_photolink.patch')
+    shutil.copy2(ap_ / 'photolink.py', pipe / 'photolink.py')
+    patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '06_tracker_js_photolink.patch')    # the viewer keeps linked photos; every page rebuild uses this tracker.js
     spec = importlib.util.spec_from_file_location('pipeline_sha', REPO / 'work' / 'saver' / 'tools' / 'pipeline_sha.py')
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
@@ -250,7 +258,7 @@ def fill_data(root: Path, pb: Path, a, info: dict):
         (data / d).mkdir(parents=True, exist_ok=True)
     (data / 'role.json').write_text(json.dumps({'role': a.role}) + '\n', encoding='utf-8')
     site = pb / 'site'
-    shutil.copy2(site / 'index.html', data / 'site' / 'index.html')
+    patched_copy(site / 'index.html', data / 'site' / 'index.html', HERE / 'patches' / '06_tracker_js_photolink.patch')   # PHOTOLINK-v1: the same viewer patch as pipeline/tracker.js (a rebuild makes it from there)
     for f in (site / 'data').iterdir():
         shutil.copy2(f, data / 'site' / 'data' / f.name)
     if a.live_site and (Path(a.live_site) / 'img').is_dir():
@@ -349,6 +357,9 @@ def main(argv=None):
         for d in ('server', 'station', 'updatefolder', 'saver', 'pipeline', 'docs'):
             shutil.rmtree(root / 'app' / d, ignore_errors=True)
         copy_app_code(root, pb, info)
+        idx = root / 'data' / 'site' / 'index.html'      # PHOTOLINK-v1: the page already in data\site gets the viewer patch too (once; a rebuilt page has it already)
+        if idx.is_file() and 'PHOTOLINK-v1 (PC tracker)' not in idx.read_text(encoding='utf-8'):
+            patched_copy(idx, idx, HERE / 'patches' / '06_tracker_js_photolink.patch')
         top_files(root, a)
         precompile(root)
         app_manifest(root)

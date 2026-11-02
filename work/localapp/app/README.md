@@ -14,7 +14,7 @@ Assembled by `assemble_app.py` from the finished pieces (page build, server, upd
         server\                 server.py, claude_shim.js            (unchanged copies)
         updatefolder\           formats, layout, make_for_update, take_update   (unchanged copies)
         saver\                  saver.py, saver_diff.py (unchanged), saver_steps.py (winpack patch 03 applied to the copy), pipeline_sha.py
-        pipeline\               code\ + vendor files from the page build, winpack patches 01 and 02 applied, pdftext_pypdf.py, PIPELINE.sha256 regenerated
+        pipeline\               code\ + vendor files from the page build, winpack patches 01 and 02 and app patches 04 to 06 (PHOTOLINK-v1) applied, pdftext_pypdf.py, photolink.py, PIPELINE.sha256 regenerated
         station\                the layer written for this folder: launcher.py, station_server.py, station_cli.py, refresh.py, post_save.py,
                                 plain.py, common.py, web\panel.js, selfcheck.py
         docs\                   FORMAT.md, IT_NOTE.md, winpack README, this file
@@ -57,18 +57,38 @@ A reader checks names (allow-listed folders and file types, no scripts), caps (3
 
 ## Changes to other pieces, all made outside them (wrapper, copy or patch at assembly)
 
-1. `saver_steps.py` copy gets winpack patch 03; `release_rule.py` and `img_embed.py` copies get patches 01 and 02; `pdftext_pypdf.py` added; `PIPELINE.sha256` regenerated (assemble_app.py has its own small unified-diff applier and refuses a patch that does not match exactly once).
+1. `saver_steps.py` copy gets winpack patch 03; `release_rule.py` and `img_embed.py` copies get patches 01 and 02; `pdftext_pypdf.py` added; `PIPELINE.sha256` regenerated (assemble_app.py has its own small unified-diff applier and refuses a patch that does not match exactly once). PHOTOLINK-v1 adds app patches 04 (`img_embed.py`), 05 (`sheet_task.py`) and 06 (`tracker.js`, and the same text applied to `data\site\index.html`) and the new module `photolink.py`, all from `app/patches/` (item 6).
 2. `take_update.py` and `make_for_update.py` start children with `python -I` only. `station_cli.py` swaps their `subprocess` for a shim that adds `-B -X utf8` and `AJG_NO_NETWORK=1`; it also points temp files at `data\tmp`. They are also told `--legacy app\pipeline\legacy_index.html` (make_for_update's CLI does not look for it by itself, so the "for Update" file would lack the fields only the old page carries).
 3. `server.py`: not edited. `station_server.py` subclasses its handler, adds the script/style to the served page (monkey-patching `inject_shim`), the `/articles/` route, the `/_local/station/*` endpoints and a streaming upload (the base server holds bodies in memory, capped at 64 MB).
 4. `take_update.save` is called with `rebuild=True` (the saver's rebuild into its working folder). The saver "never writes" the page, the shards or the pipeline folder, so `post_save.py` copies them in afterwards (page, changed shards into `data\copies\articles`, and `lookup_cache.json`, `outlets.json`, bills, release texts and release related into `app\pipeline`, then writes PIPELINE.sha256 again; old versions are kept aside). This is the "adapter" job of SAVER_SPEC section 8 and fixes the nested-shard bug of the manual 2026-10-30 save. If the saver's rebuild fails, the page is rebuilt the plain way.
 5. The article shards live once, in `data\copies\articles`; the server serves `/articles/<file>.json` from there instead of keeping a second copy in `data\site`.
-6. Offline photos (HANDOFF_PC_APP point 6): take_update does not give the saver an `--img-cache`, and without one the saver skips its photo step and leaves remote `<img>` tags in the cleaned copy. The subprocess shim adds `--img-cache data\img_cache` (an empty folder), so the step runs, every fetch fails at once (patch 02) and the images go with their wrappers. Tested: a saved page that carried a remote photo has none in the library copy or the shard (`_original_html` keeps the raw page).
+6. **Photos kept as links (PHOTOLINK-v1, 2026-11-02; replaces the offline photo step, HANDOFF_PC_APP point 6).** New saved copies keep their photos as remote `<img>` links to the news site's own image addresses; Edge loads them when a copy is opened. Copies already in the library keep the photos embedded in them; nothing is changed there. See "Photos" below.
 7. B10 (same handoff, point 8): `station_cli` refuses a second take-in of a run id that the saver's ledger, the local db (`sheet.written`) or a finished update already holds (`ALREADY_SAVED`), at inspect and again at save.
 8. The pipeline folder is therefore written by the tracker after a save (the keeper copy only). FORMAT.md said "never written".
+
+## Photos (PHOTOLINK-v1)
+
+**What the save does.** `station_cli` no longer gives the saver an `--img-cache`; it sets `AJG_LINK_PHOTOS=1` for every child process (and `AJG_NO_NETWORK=1` stays). Patch 05 makes `sheet_task` run its photo step on each new page and release copy when that switch is on; patch 04 hands the page to `photolink.link_page` instead of fetching and caching. For each `<img>` it:
+- keeps one absolute `https` address (the largest `srcset` entry up to 1,000 px wide, as PHOTOS-v2; lazy-load attributes and `<picture>` sources are used only to find that address and are then removed). An `http` address is kept only when the image has no `https` one, and is listed in the save log (`photos.http_only`);
+- sets `referrerpolicy="no-referrer"` and `loading="lazy"`, and removes event handlers;
+- drops what `img_embed` already classifies as ads, tracking pixels, logos and avatars, 1-pixel images and images declared smaller than 60 x 40 px; the wrapper they leave empty goes with them, a caption stays;
+- leaves embedded photos (`data:`, `jgimg:`) and published local paths (`pdf/...`) alone.
+
+It also removes every `<script>`, and `media_gate.clean_html` still removes `<svg>`, `<video>`, `<audio>`, `<iframe>`, `<object>`, `<embed>`, `<canvas>`, `<picture>`, `<track>` and any `<img>` whose address is svg, avif, bmp and the like. Nothing is fetched, cached or looked up: the step imports no network code.
+
+**What the page does.** Patch 06 changes the viewer (`safeImgs`): an `<img>` with an absolute `http(s)` address now stays (before, every remote image was removed); it gets no `srcset`, `no-referrer` and lazy loading. A photo that fails to load is removed after the error, caption kept (the existing `hideBroken`). The saved copy's frame is still sandboxed without scripts, and now carries its own Content-Security-Policy: images (`https:`, `http:`, `data:`, `blob:`, local) and the fonts the tracker already asks for, nothing else (no script, stylesheet, connection, media, frame or form). The server sends `Referrer-Policy: no-referrer` on every response and no policy of its own; the page as a whole is not opened to anything new.
+
+**Make copies.** The PC never runs `make_copies.py`. Run without `--img-cache` it keeps linked photos and exits 0; run with `--img-cache` it would drop remote photos as it always did.
+
+**Where this differs from the old tracker.** This is the one place where the PC's browser (not the program) goes to news sites: when a copy is opened. Photos vanish when a site removes them, and a CSS `background-image` in a saved page loads like any image. The old tracker (claude.ai) embeds photos and never shows a remote one.
 
 ## Tests
 
     python3 -I -m unittest discover -s work/localapp/app/tests -p test_station.py -v       (about 15 minutes: real previews and saves on the real workbook; 13 tests)
+    python3 -I -m unittest discover -s work/localapp/app/tests -p test_photolink.py -v     (PHOTOLINK-v1: LinkPage and Viewer in seconds, Save a few minutes)
+    cd work/localapp/app && python3 -I -m unittest discover -s tests -t tests              (the whole suite)
+
+Every host in test_photolink.py is on the reserved `.test` domain, Playwright answers the requests itself, and every python process of the app runs under a net guard (a `.pth` in the work copy's site-packages) that logs and refuses any non-loopback connection or name lookup.
 
 Needs the Linux test build, node and Playwright at /opt/node-tools. Results are in the report that came with this folder; screenshots in the scratchpad `app_build/test_shots`.
 

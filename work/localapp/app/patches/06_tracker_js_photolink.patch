@@ -1,0 +1,32 @@
+--- a/pipeline/tracker.js
++++ b/pipeline/tracker.js
+@@ -1021,7 +1021,7 @@
+     const f = document.createElement('iframe');
+     f.setAttribute('sandbox','allow-same-origin allow-popups allow-popups-to-escape-sandbox');
+     f.title = 'Saved copy: ' + r.hl;
+-    f.srcdoc = '<base target="_blank"><meta name="referrer" content="no-referrer"><style>@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@600;700&family=Public+Sans:ital,wght@0,400;0,600;1,400&display=swap");html{background:#fff}body{font:var(--fs-h3)/1.65 "Public Sans",system-ui,sans-serif;color:#1b1f24;max-width:680px;margin:28px auto;padding:0 22px}img,video,iframe{max-width:100%;height:auto}figure{margin:18px 0}mark.jg-hit{background:#ffe9a6;color:inherit;border-radius:2px;padding:0 1px}mark.jg-hit.cur{background:#ffb400;box-shadow:0 0 0 2px #132a4a}img:not([src]),img[src=""]{display:none}figcaption{font:var(--fs-md)/1.4 "Public Sans",system-ui,sans-serif;color:#5b6570}h1,h2,h3{font-family:"Roboto Slab",Georgia,serif;font-weight:700;color:#132a4a}h1{font-size:var(--fs-stat);line-height:1.2}a{color:#1f5f99}.src{font:var(--fs-sm)/1.5 "Public Sans",system-ui,sans-serif;color:#5b6570;border-bottom:1px solid #e3e7eb;padding-bottom:10px;margin-bottom:14px}' + PDF_CSS + '</style>' + html.replace(/<\/?a\b[^>]*>|<area\b[^>]*>/gi, '');  // no hyperlinks in saved copies, including ones added in this browser
++    f.srcdoc = '<base target="_blank"><meta name="referrer" content="no-referrer"><meta http-equiv="Content-Security-Policy" content="default-src \'none\'; img-src \'self\' data: blob: https: http:; style-src \'unsafe-inline\' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; script-src \'none\'; connect-src \'none\'; media-src \'none\'; frame-src \'none\'; object-src \'none\'; form-action \'none\'"><style>@import url("https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@600;700&family=Public+Sans:ital,wght@0,400;0,600;1,400&display=swap");html{background:#fff}body{font:var(--fs-h3)/1.65 "Public Sans",system-ui,sans-serif;color:#1b1f24;max-width:680px;margin:28px auto;padding:0 22px}img,video,iframe{max-width:100%;height:auto}figure{margin:18px 0}mark.jg-hit{background:#ffe9a6;color:inherit;border-radius:2px;padding:0 1px}mark.jg-hit.cur{background:#ffb400;box-shadow:0 0 0 2px #132a4a}img:not([src]),img[src=""]{display:none}figcaption{font:var(--fs-md)/1.4 "Public Sans",system-ui,sans-serif;color:#5b6570}h1,h2,h3{font-family:"Roboto Slab",Georgia,serif;font-weight:700;color:#132a4a}h1{font-size:var(--fs-stat);line-height:1.2}a{color:#1f5f99}.src{font:var(--fs-sm)/1.5 "Public Sans",system-ui,sans-serif;color:#5b6570;border-bottom:1px solid #e3e7eb;padding-bottom:10px;margin-bottom:14px}' + PDF_CSS + '</style>' + html.replace(/<\/?a\b[^>]*>|<area\b[^>]*>/gi, '');  // no hyperlinks in saved copies, including ones added in this browser
+     const meta = sheet.querySelector('.sheet-meta');
+     if (meta && matchMedia('(max-width: 640px)').matches){
+       meta.classList.add('fold');
+@@ -1054,6 +1054,7 @@
+    data:/blob:/a published local file (pdf/…, img/…) is removed with the wrapper it leaves empty (captions stay), remote
+    srcset/<source> are stripped, and an embedded photo that still fails to decode is hidden the same way after load. */
+ const IMG_OK = /^(?:data:image\/|blob:|(?:pdf|img)\/[^:]+$)/i;
++const IMG_LINK = /^https?:\/\/[^\s"'<>`]{1,1990}$/i;   /* PHOTOLINK-v1 (PC tracker): a photo kept as a link to the news site's own image */
+ function pruneEmpty(el, stop){
+   while (el && el !== stop && el.parentNode && !(el.textContent || '').trim() && !el.querySelector('img,video,iframe,svg,picture,canvas,audio,table')){
+     const p = el.parentNode; p.removeChild(el); el = p;
+@@ -1066,9 +1067,10 @@
+   let n = 0;
+   d.querySelectorAll('source').forEach(s => { if (s.hasAttribute('srcset') || s.hasAttribute('src')){ const p = s.parentNode; s.remove(); n++; if (p) pruneEmpty(p, d.body); } });
+   d.querySelectorAll('img').forEach(img => {
+-    ['srcset','sizes','data-srcset','data-src','loading'].forEach(a => { if (img.hasAttribute(a)){ img.removeAttribute(a); n++; } });
++    ['srcset','sizes','data-srcset','data-src','loading','referrerpolicy','crossorigin'].forEach(a => { if (img.hasAttribute(a)){ img.removeAttribute(a); n++; } });
+     const src = (img.getAttribute('src') || '').trim();
+-    if (!IMG_OK.test(src)){ dropImg(img, d.body); n++; }
++    if (IMG_LINK.test(src)){ img.setAttribute('referrerpolicy', 'no-referrer'); img.setAttribute('loading', 'lazy'); n++; }   // PHOTOLINK-v1: kept, no referrer, loaded lazily
++    else if (!IMG_OK.test(src)){ dropImg(img, d.body); n++; }
+   });
+   if (!n) return html;
+   const head = d.head ? d.head.innerHTML : '';

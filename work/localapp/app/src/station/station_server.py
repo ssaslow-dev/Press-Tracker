@@ -74,7 +74,7 @@ class Jobs:
 
     def _run(self, j, verb, args):
         cmd = [sys.executable, '-B', '-X', 'utf8', '-I', str(HERE / 'station_cli.py'), verb, '--root', str(self.root)] + args
-        env = dict(os.environ, AJG_NO_NETWORK='1', PYTHONDONTWRITEBYTECODE='1')
+        env = dict(os.environ, AJG_NO_NETWORK='1', AJG_LINK_PHOTOS='1', PYTHONDONTWRITEBYTECODE='1')
         try:
             p = subprocess.run(cmd, cwd=str(self.root), capture_output=True, text=True, encoding='utf-8', errors='replace', env=env, timeout=7200)
             try:
@@ -107,6 +107,11 @@ class StationHandler(S.Handler):
     server_version = 'AJGStation/1.0'
 
     # -- plumbing
+    def end_headers(self):
+        # PHOTOLINK-v1: no response of this server tells a news site where the reader came from (the page, the shards, everything)
+        self.send_header('Referrer-Policy', 'no-referrer')
+        super().end_headers()
+
     def _token_ok(self):
         return hmac.compare_digest(self.headers.get('X-Local-Token') or '', self.server.token)
 

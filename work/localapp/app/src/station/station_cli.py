@@ -6,7 +6,7 @@ Verbs: make | inspect --zip F | preview --update ID | save --update ID --token T
 
 Wrapper around the finished pieces (APP-WRAP): updatefolder/make_for_update.py and take_update.py start their children with
 `python -I` only; here their `subprocess` is replaced by a shim that adds `-B -X utf8` (UTF-8 on Windows, no .pyc written on a
-share) and AJG_NO_NETWORK=1 (patch 02). Temporary files go to data/tmp (inside the tracker folder). No shell, no network.
+share), AJG_NO_NETWORK=1 (winpack patch 02) and AJG_LINK_PHOTOS=1 (PHOTOLINK-v1: app/patches 04, 05; saved copies keep their photos as links). Temporary files go to data/tmp (inside the tracker folder). No shell, no network.
 """
 from __future__ import annotations
 
@@ -30,7 +30,6 @@ import post_save            # noqa: E402
 import refresh as R         # noqa: E402
 
 PY_FLAGS = ['-B', '-X', 'utf8', '-I']
-IMG_CACHE = None      # set by boot(): an empty folder in data/ so the saver runs its photo step offline
 
 
 class _SubprocessShim:
@@ -46,12 +45,9 @@ class _SubprocessShim:
             if rest[:1] == ['-I']:
                 rest = rest[1:]
             cmd = [cmd[0]] + PY_FLAGS + rest
-        if IMG_CACHE and any(str(c).endswith('saver.py') for c in cmd) and any(c in ('preview', 'save') for c in cmd) and '--img-cache' not in cmd:
-            # HANDOFF_PC_APP point 6: without --img-cache the photo step is skipped and remote <img> tags stay in the saved copy.
-            # With an (empty) cache the step runs, every fetch fails at once (patch 02) and the images are removed with their wrappers.
-            cmd += ['--img-cache', str(IMG_CACHE)]
         env = dict(kw.get('env') or os.environ)
         env['AJG_NO_NETWORK'] = '1'
+        env['AJG_LINK_PHOTOS'] = '1'      # PHOTOLINK-v1: no --img-cache; the saver's photo step keeps remote <img> as links (patches 04, 05)
         env['PYTHONDONTWRITEBYTECODE'] = '1'
         kw['env'] = env
         return subprocess.run(cmd, *a, **kw)
@@ -59,9 +55,7 @@ class _SubprocessShim:
 
 def boot(lay):
     os.environ['AJG_NO_NETWORK'] = '1'
-    global IMG_CACHE
-    IMG_CACHE = lay.data / 'img_cache'
-    IMG_CACHE.mkdir(parents=True, exist_ok=True)
+    os.environ['AJG_LINK_PHOTOS'] = '1'
     tmp = lay.data / 'tmp'
     tmp.mkdir(parents=True, exist_ok=True)
     tempfile.tempdir = str(tmp)
@@ -79,7 +73,7 @@ def out(obj, code=0):
 
 def py(args, cwd, timeout=1800):
     return subprocess.run([sys.executable] + PY_FLAGS + [str(a) for a in args], cwd=str(cwd), capture_output=True, text=True, encoding='utf-8',
-                          errors='replace', timeout=timeout, env=dict(os.environ, AJG_NO_NETWORK='1', PYTHONDONTWRITEBYTECODE='1'))
+                          errors='replace', timeout=timeout, env=dict(os.environ, AJG_NO_NETWORK='1', AJG_LINK_PHOTOS='1', PYTHONDONTWRITEBYTECODE='1'))
 
 
 # ---------------------------------------------------------------- verbs

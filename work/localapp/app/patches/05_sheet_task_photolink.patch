@@ -1,0 +1,32 @@
+--- a/pipeline/sheet_task.py
++++ b/pipeline/sheet_task.py
+@@ -1474,12 +1474,13 @@
+                 self.res['pages_error'].append(dict(info, why=chk['reason']))
+                 continue
+             html_out = chk['html']
+-            if IE is not None and self.img_cache:   # PHOTOS-v2 F6: photos embedded at save time; unloadable ones dropped, captions kept
++            if IE is not None and (self.img_cache or _os.environ.get('AJG_LINK_PHOTOS') == '1'):   # PHOTOS-v2 F6; PHOTOLINK-v1 (PC): photos kept as links
+                 try:
+                     html_out, ist = IE.embed_page(html_out, p.get('url', '') or row.get('Publisher link', ''), self.img_cache,
+                                                   story_id=str(self.s.get(r, 'Story ID') or ''), aid=aid, copy_file=f'{year}/{fname}')
+                     info['photos'] = {'embedded': ist.get('embedded', 0) + ist.get('kept', 0), 'dropped': ist.get('dropped', 0),
+-                                      'fetched': ist.get('fetched', 0), 'failed': ist.get('failed', [])[:10]}
++                                      'fetched': ist.get('fetched', 0), 'failed': ist.get('failed', [])[:10],
++                                      'linked': ist.get('linked', 0), 'http_only': ist.get('http_only', [])[:10]}
+                 except Exception as _e:
+                     info['photos'] = {'error': repr(_e)[:200]}
+             self.saved_html[aid] = html_out
+@@ -2643,10 +2644,11 @@
+         out = re.sub(r'(<img\b[^>]*?\bsrc=")(/[^"]*)"', lambda m: m.group(1) + base + m.group(2) + '"', res['html']) if base else res['html']
+         fname = f'{prid}.html'
+         ph = None
+-        if IE is not None and self.img_cache:   # PHOTOS-v2 F6: the release copy's photos embedded too
++        if IE is not None and (self.img_cache or _os.environ.get('AJG_LINK_PHOTOS') == '1'):   # PHOTOS-v2 F6: the release copy's photos embedded too; PHOTOLINK-v1 (PC): kept as links
+             try:
+                 out, ist = IE.embed_page(out, url, self.img_cache, story_id=prid, aid=prid, copy_file=f'Press releases/{year}/{fname}', kind='release')
+-                ph = {'embedded': ist.get('embedded', 0) + ist.get('kept', 0), 'dropped': ist.get('dropped', 0), 'failed': ist.get('failed', [])[:10]}
++                ph = {'embedded': ist.get('embedded', 0) + ist.get('kept', 0), 'dropped': ist.get('dropped', 0), 'failed': ist.get('failed', [])[:10],
++                      'linked': ist.get('linked', 0), 'http_only': ist.get('http_only', [])[:10]}
+             except Exception as _e:
+                 ph = {'error': repr(_e)[:200]}
+         os.makedirs(os.path.join(pages_dir, 'Press releases', year), exist_ok=True)

@@ -150,15 +150,15 @@ def ui(server: Server, steps: list, name='ui', timeout=1800):
     return json.loads(p.stdout.strip().splitlines()[-1])
 
 
-def make_update_zip(root: Path, out: Path, suffix='example1', fake_sha=None) -> Path:
+def make_update_zip(root: Path, out: Path, suffix='example1', fake_sha=None, extra_html='') -> Path:
     """a synthetic update folder from the example db (renamed per suffix so every one is a new find), fingerprint = the workbook's sha"""
     txt = EXAMPLE_DB.read_text(encoding='utf-8')
     if suffix != 'example1':
         txt = (txt.replace('example1', suffix).replace('gabriel-one', f'gabriel-{suffix}').replace('Gabriel bill test story one', f'Gabriel bill test story {suffix}')
                .replace('echotimes.com/gabriel', f'echotimes.com/gabriel').replace('reprintweekly.com/x', f'reprintweekly.com/x-{suffix}'))
     ex = json.loads(txt)
-    # every saved page also carries a remote photo (the PC is offline: it must be dropped, not trip the media gate) and one searchable word
-    mark = f'<img src="https://images.example.com/photo-{suffix}.jpg" alt="photo"><p>Quokka{suffix} searchable marker words.</p>'
+    # every saved page also carries a remote photo (PHOTOLINK-v1: kept as a link, never fetched by the program) and one searchable word
+    mark = f'<img src="https://images.example.test/photo-{suffix}.jpg" alt="photo"><p>Quokka{suffix} searchable marker words.</p>' + extra_html
     for doc in ex.get('pages', {}).values():
         for k, v in list(doc.items()):
             if isinstance(v, str) and '</body>' in v:
@@ -172,3 +172,49 @@ def make_update_zip(root: Path, out: Path, suffix='example1', fake_sha=None) -> 
             p.write_text(json.dumps(v))
     wb = next((root / 'data' / 'workbook').glob('*.xlsx'))
     return F.pack_update_zip(out, d, fake_sha or sha(wb))
+
+
+NETGUARD = """# written by app/tests/support.py: logs (and refuses) every socket connection or name lookup that is not loopback
+import os, socket
+LOG = %(log)r
+_real_connect, _real_connect_ex, _real_gai = socket.socket.connect, socket.socket.connect_ex, socket.getaddrinfo
+
+
+def _note(what, target):
+    with open(LOG, 'a', encoding='utf-8') as f:
+        f.write('%%s %%r (pid %%d)\\n' %% (what, target, os.getpid()))
+
+
+def _loop(host):
+    return host in ('127.0.0.1', '::1', 'localhost', '') or str(host).startswith('127.')
+
+
+def _guard(fn, what):
+    def g(self, addr, *a, **k):
+        if self.family in (socket.AF_INET, socket.AF_INET6) and isinstance(addr, tuple) and not _loop(addr[0]):
+            _note(what, addr[:2])
+            raise OSError('netguard: no network connections')
+        return fn(self, addr, *a, **k)
+    return g
+
+
+def _gai(host, *a, **k):
+    if host is not None and not _loop(host):
+        _note('getaddrinfo', host)
+        raise OSError('netguard: no name lookups')
+    return _real_gai(host, *a, **k)
+
+
+socket.socket.connect, socket.socket.connect_ex, socket.getaddrinfo = _guard(_real_connect, 'connect'), _guard(_real_connect_ex, 'connect_ex'), _gai
+"""
+
+
+def install_netguard(root: Path) -> Path:
+    """a .pth file in the work copy's site-packages makes EVERY python process of the app (server, station_cli, saver, sheet_task ...)
+    log and refuse any non-loopback connection or name lookup. Returns the log file (it exists only when something tried)."""
+    sp = next((root / 'python').glob('lib/python3.*/site-packages'))
+    log = root / 'data' / 'netguard.log'
+    log.unlink(missing_ok=True)
+    (sp / 'ajg_netguard.py').write_text(NETGUARD % {'log': str(log)}, encoding='utf-8')
+    (sp / 'ajg_netguard.pth').write_text('import ajg_netguard\n', encoding='utf-8')
+    return log
