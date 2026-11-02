@@ -1,0 +1,48 @@
+<!doctype html><html><head><meta charset="utf-8"><title>shim test</title></head><body>
+<script>
+/* mirrors code/tracker/00_head.js initTone + 18_team_notes + 16_saved_views + 21_manage_badge.saveFile */
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+async function waitFor(f, ms = 8000){ const t = Date.now(); while (Date.now() - t < ms){ if (f()) return true; await sleep(50); } return false; }
+window.RESULT = null;
+(async () => {
+  const R = {}; const C = window.claude;
+  R.hasUse = !!(C && C.use);
+  const [db, sm] = await Promise.all([C.use('db').catch(() => null), C.use('sample').catch(() => null)]);
+  R.dbOk = !!db; R.sampleNull = sm === null;
+  R.mcpNull = (await C.use('mcp').catch(() => null)) === null;
+  let err = null; try { await C.use('sample'); } catch (e) { err = e.code; } R.sampleCode = err;
+  const snaps = []; let errs = 0;
+  const col = db.collection('tones');
+  const unsub = col.onSnapshot(snap => { snaps.push(snap.docs.map(d => [d.id, d.data()])); }, () => errs++);
+  R.first = await waitFor(() => snaps.length >= 1); R.firstEmpty = snaps[0] && snaps[0].length === 0;
+  const n0 = snaps.length;
+  await col.doc('00123').set({ tone: 'Positive', why: 'x', rated: '2026-11-02', by: 'Team' });
+  R.afterSet = await waitFor(() => snaps.length > n0 && snaps[snaps.length - 1].some(([i]) => i === '00123'));
+  R.setData = (snaps[snaps.length - 1].find(([i]) => i === '00123') || [])[1];
+  // snapshot object shape the page uses
+  const s2 = await col.get(); R.shape = [Array.isArray(s2.docs), typeof s2.docs[0].data, typeof s2.docs[0].id, s2.size];
+  // replace
+  await col.doc('00123').set({ tone: 'Negative' });
+  R.replaced = await waitFor(() => (snaps[snaps.length - 1].find(([i]) => i === '00123') || [])[1]?.tone === 'Negative');
+  // a write by someone else (test harness writes via the file/API) arrives by polling
+  window.EXT_READY = true;
+  R.external = await waitFor(() => snaps[snaps.length - 1].some(([i]) => i === 'ext-1'), 10000);
+  // second listener on same collection gets the current data at once
+  let second = null; const unsub2 = col.onSnapshot(s => { second = s.docs.length; });
+  R.second = await waitFor(() => second !== null) && second >= 2;
+  // delete
+  await db.collection('views').doc('v-1').set({ name: 'A', st: '{}' });
+  const vs = []; db.collection('views').onSnapshot(s => vs.push(s.docs.map(d => d.id)));
+  await waitFor(() => vs.length && vs[vs.length - 1].includes('v-1'));
+  await db.collection('views').doc('v-1').delete();
+  R.deleted = await waitFor(() => vs[vs.length - 1] && !vs[vs.length - 1].includes('v-1'));
+  // bad doc: errors reject like the runtime, page wraps in try/catch
+  let bad = null; try { await col.doc('../x').set({ a: 1 }); } catch (e) { bad = e.code; } R.badId = bad;
+  // unsubscribe stops callbacks
+  unsub(); unsub2(); const k = snaps.length; await col.doc('00124').set({ tone: 'Neutral' }); await sleep(2500); R.unsubQuiet = snaps.length === k;
+  // downloads: same call as saveFile()
+  const dl = await C.use('downloads'); R.dlFn = typeof dl.save;
+  await dl.save({ filename: 'out.csv', data: new Blob(['a,b\n1,2\n'], { type: 'text/csv' }) });
+  R.errs = errs; window.RESULT = R;
+})().catch(e => { window.RESULT = { crash: String(e && e.stack || e) }; });
+</script></body></html>
