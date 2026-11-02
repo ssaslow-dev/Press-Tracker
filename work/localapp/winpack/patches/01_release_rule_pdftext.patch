@@ -1,0 +1,16 @@
+--- a/code/release_rule.py
++++ b/code/release_rule.py	2026-11-02 17:51:53.523399756 +0000
+@@ -157,10 +157,9 @@
+         ev = excerpt_version(RR.html_text(h)[0])
+         return out + ([ev] if ev else [])
+     if path.lower().endswith('.pdf'):
+-        import subprocess
+-        try:
+-            t = subprocess.run(['pdftotext', path, '-'], capture_output=True, text=True, timeout=60).stdout
+-        except Exception:
++        import pdftext_pypdf   # WINPACK: pure-Python pdftotext stand-in (no poppler on the PC)
++        t = pdftext_pypdf.pdf_text(path)
++        if t is None:
+             return []
+         ev = excerpt_version(t)
+         t = re.split(r'\n\s*Citation \(apa Style\)', t)[0]     # NewsBank's citation block is not article text

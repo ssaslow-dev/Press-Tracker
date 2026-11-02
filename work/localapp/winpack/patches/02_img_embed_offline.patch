@@ -1,0 +1,19 @@
+--- a/code/img_embed.py
++++ b/code/img_embed.py	2026-11-02 17:51:53.546033166 +0000
+@@ -235,7 +235,16 @@
+ 
+ 
+ # ---------------------------------------------------------------- fetch (save time)
++class _OfflineSession:
++    """WINPACK: stands in for requests.Session when AJG_NO_NETWORK=1. Every get() fails like an unreachable host, so fetch_one
++    records a 'conn' failure and the photo is dropped, the same outcome as the dead-proxy run. `requests` is never imported."""
++    def get(self, *a, **k):
++        raise ConnectionError('network disabled (AJG_NO_NETWORK=1)')
++
++
+ def _session():
++    if os.environ.get('AJG_NO_NETWORK') == '1':
++        return _OfflineSession()
+     import requests
+     s = requests.Session()
+     px = os.environ.get('HTTPS_PROXY') or os.environ.get('https_proxy')

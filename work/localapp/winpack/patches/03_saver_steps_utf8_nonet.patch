@@ -1,0 +1,19 @@
+--- a/work/saver/src/saver_steps.py
++++ b/work/saver/src/saver_steps.py	2026-11-02 17:52:15.352743954 +0000
+@@ -104,6 +104,7 @@
+     for k in ('NO_PROXY', 'no_proxy', 'REQUESTS_CA_BUNDLE', 'CURL_CA_BUNDLE', 'SSL_CERT_FILE'):
+         env.pop(k, None)
+     env['PYTHONDONTWRITEBYTECODE'] = '1'
++    env['AJG_NO_NETWORK'] = '1'          # WINPACK: img_embed never imports requests; every photo fetch fails at once
+     return env
+ 
+ 
+@@ -116,7 +117,7 @@
+ 
+ 
+ def run_script(work: Path, script: str, args: list, label: str, logdir: Path, env=None, timeout=3600) -> Step:
+-    cmd = [sys.executable, '-I', script] + [str(a) for a in args]
++    cmd = [sys.executable, '-X', 'utf8', '-I', script] + [str(a) for a in args]   # WINPACK: -I ignores PYTHONUTF8; Windows pipes default to cp1252
+     p = subprocess.run(cmd, cwd=str(work), env=env or offline_env(), capture_output=True, text=True, encoding='utf-8', errors='replace',
+                        timeout=timeout)
+     logdir.mkdir(parents=True, exist_ok=True)
