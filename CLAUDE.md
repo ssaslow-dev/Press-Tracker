@@ -21,6 +21,7 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 - Shared read-only copy: https://claude.ai/artifact/6vhKKcNXarhSKwnCMk3Bks. Rebuild it with `code/make_viewer.py` after every tracker publish.
 - Review queue artifact: https://claude.ai/artifact/8yp4a5q8A8PcrQFdYcXPuB.
 - claude.ai Project "AJG Mentions Database" holds copies of the docs under `library/`.
+- **New project's Update station** (private, UPDATESTATION-v1): https://claude.ai/artifact/5uGsM8yQMphjAQbKhvc5SL. Source and build: `work/localapp/station/`. Photo feasibility test page: https://claude.ai/artifact/3BtDeZmwfUwYwo4muRs8Bi.
 - Plan docs (Claude Docs): first draft https://claude.ai/artifact/1DoeTcpiPqYeXemdCk6Jfy; Fable's Windows plan https://claude.ai/artifact/TRc8DoNxDpByjKA5zNevvN.
 
 ## Hard rules (never break these; ask Sammy if one seems wrong)

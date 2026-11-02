@@ -1,0 +1,29 @@
+/* Update station layer: shows only the Update part of the tracker page (masthead, Update panel, run log) and the
+   three-step frame around it. Everything here is station-only; the tracker's own CSS comes from the live page shell. */
+.mast .tabs, #runRefresh, #updBtn, [data-dl], #updRefresh, #updSave, #updScrim, #upd .upd-top, #mgTabs [data-mg="saved"],
+#mgTabs [data-mg="quality"], #mgTabs [data-mg="defs"], #mgBadge, main.wrap > section[id^="view-"] { display: none !important; }
+.mast .hdr-acts { grid-template-columns: auto; }
+/* the Manage side panel becomes the page's step 2: in the flow, always open */
+#upd, #upd[hidden] { position: static !important; width: auto !important; max-width: none; height: auto !important; display: flex !important;
+  box-shadow: none; border: 1px solid var(--line); border-radius: 10px; z-index: auto; transform: none; }
+#upd .upd-body { overflow: visible; }
+#upd .mg-tabs { margin-top: 0; }
+.st { display: grid; gap: 16px; max-width: 980px; margin-inline: auto; }
+.st .card.pad { padding: 16px 20px; }
+.st-h { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.st-n { font: 700 var(--fs-xs)/1 var(--f-body); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-3); }
+.st-done .st-n::after { content: " \2713"; color: var(--good); }
+.st-lock { opacity: .6; }
+.st-lock #stUpdHost { display: none; }
+.st-drop { display: flex; align-items: center; justify-content: center; text-align: center; gap: 8px; min-height: 96px; padding: 16px;
+  border: 2px dashed var(--line); border-radius: 10px; background: var(--panel-2); color: var(--ink-2); font-size: var(--fs-md); cursor: pointer; }
+.st-drop:hover, .st-drop.over, .st-drop:focus-visible { border-color: var(--accent); background: var(--sel); color: var(--ink); }
+.st-facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 4px 16px; margin: 12px 0 0; font-size: var(--fs-md); }
+.st-facts dt { color: var(--ink-3); }
+.st-facts dd { margin: 0; color: var(--ink); overflow-wrap: anywhere; }
+.st-facts code { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: var(--fs-sm); }
+.st-msg { margin-top: 12px; }
+.st-acts { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+.st-note { margin: 8px 0 0; font-size: var(--fs-sm); color: var(--ink-3); }
+.st-list { margin: 8px 0 0; padding-left: 20px; font-size: var(--fs-md); color: var(--ink-2); }
+@media (max-width: 640px) { .st-facts { grid-template-columns: 1fr; } .st-facts dt { margin-top: 6px; } }

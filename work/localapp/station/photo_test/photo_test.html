@@ -1,0 +1,44 @@
+<title>AJG photo test</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+:root{--bg:#f4f6fa;--ink:#0f1e33;--ink2:#425166;--ok:#2c7a4b;--bad:#a63d2a;--line:#d3dae4;--panel:#fff}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b1422;--ink:#e8eef6;--ink2:#a9b7c9;--ok:#5bb383;--bad:#e06a4f;--line:#24344d;--panel:#111d2f;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b1422;--ink:#e8eef6;--ink2:#a9b7c9;--ok:#5bb383;--bad:#e06a4f;--line:#24344d;--panel:#111d2f;color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,"Segoe UI",sans-serif;padding-inline:max(16px,env(safe-area-inset-left,0px));padding-block:20px}
+h1{font:700 20px/1.2 Georgia,serif;margin:0 0 4px}p{color:var(--ink2);margin:4px 0 14px}
+table{border-collapse:collapse;width:100%;background:var(--panel)}td,th{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top;overflow-wrap:anywhere}
+.ok{color:var(--ok);font-weight:700}.bad{color:var(--bad);font-weight:700}.w{overflow-x:auto}
+</style>
+<h1>AJG photo test</h1>
+<p>Can a page in this sandbox get image bytes? Runs once on open and records the answers (nothing else is read or sent). Test images: Wikimedia Commons (open CORS) and the New York Times site logo (public, no CORS).</p>
+<div class="w"><table id="t"><thead><tr><th>Test</th><th>Result</th><th>Detail</th></tr></thead><tbody></tbody></table></div>
+<p id="csp"></p>
+<script>
+(function(){
+const IMGS = [['Wikimedia (CORS open)', 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png'], ['NYT logo (no CORS header)', 'https://static01.nyt.com/images/misc/NYT_logo_rss_250x40.png']];
+const out = [], viol = [];
+document.addEventListener('securitypolicyviolation', e => viol.push({ directive: e.violatedDirective, blocked: e.blockedURI, doc: e.documentURI.slice(0, 60) }));
+function row(name, ok, detail){ out.push({ name, ok, detail: String(detail).slice(0, 300) }); const tr = document.createElement('tr'); tr.innerHTML = '<td></td><td class="' + (ok ? 'ok' : 'bad') + '"></td><td></td>'; tr.children[0].textContent = name; tr.children[1].textContent = ok ? 'works' : 'blocked / fails'; tr.children[2].textContent = detail; document.querySelector('tbody').appendChild(tr); }
+const withTimeout = (p, ms) => Promise.race([p, new Promise((_, r) => setTimeout(() => r(new Error('timeout ' + ms + ' ms')), ms))]);
+function loadImg(url, cors){ return new Promise((res, rej) => { const i = new Image(); if (cors) i.crossOrigin = 'anonymous'; i.onload = () => res(i); i.onerror = () => rej(new Error('image failed to load')); i.src = url; }); }
+async function run(){
+  for (const [label, url] of IMGS){
+    try { const r = await withTimeout(fetch(url, { mode: 'cors' }), 8000); const b = await r.blob(); row('fetch() cors, ' + label, true, r.status + ', ' + b.size + ' bytes, ' + b.type); } catch(e){ row('fetch() cors, ' + label, false, e.message); }
+    try { const r = await withTimeout(fetch(url, { mode: 'no-cors' }), 8000); row('fetch() no-cors, ' + label, r.type === 'opaque' ? false : true, 'response type ' + r.type + ' (opaque = no bytes readable)'); } catch(e){ row('fetch() no-cors, ' + label, false, e.message); }
+    try { const i = await withTimeout(loadImg(url, false), 8000); row('<img> plain load, ' + label, true, i.naturalWidth + 'x' + i.naturalHeight);
+      try { const c = document.createElement('canvas'); c.width = i.naturalWidth; c.height = i.naturalHeight; c.getContext('2d').drawImage(i, 0, 0); const d = c.toDataURL('image/jpeg', .75); row('canvas.toDataURL after plain <img>, ' + label, true, d.length + ' chars'); } catch(e){ row('canvas.toDataURL after plain <img>, ' + label, false, e.name + ': ' + e.message); }
+    } catch(e){ row('<img> plain load, ' + label, false, e.message); }
+    try { const i = await withTimeout(loadImg(url, true), 8000); row('<img crossorigin=anonymous> load, ' + label, true, i.naturalWidth + 'x' + i.naturalHeight);
+      try { const c = document.createElement('canvas'); c.width = i.naturalWidth; c.height = i.naturalHeight; c.getContext('2d').drawImage(i, 0, 0); const d = c.toDataURL('image/jpeg', .75); row('canvas.toDataURL after CORS <img>, ' + label, true, d.length + ' chars'); } catch(e){ row('canvas.toDataURL after CORS <img>, ' + label, false, e.name + ': ' + e.message); }
+    } catch(e){ row('<img crossorigin=anonymous> load, ' + label, false, e.message); }
+  }
+  try { const m = await withTimeout(window.claude.use('mcp'), 8000); row('mcp capability offered', !!m, m ? 'yes' : 'no (not declared here)'); } catch(e){ row('mcp capability offered', false, e.message); }
+  await new Promise(r => setTimeout(r, 400));
+  document.getElementById('csp').textContent = viol.length ? 'Security-policy violations seen: ' + JSON.stringify(viol.slice(0, 12)) : 'No security-policy violation events were reported.';
+  const rec = { at: new Date().toISOString(), ua: navigator.userAgent.slice(0, 120), origin: location.origin.slice(0, 60), results: out, violations: viol.slice(0, 20) };
+  window.__photoResult = rec;
+  try { const db = await withTimeout(window.claude.use('db'), 8000); if (db) await db.collection('photo_test').doc('latest').set({ json: JSON.stringify(rec) }); } catch(e){}
+}
+run();
+})();
+</script>

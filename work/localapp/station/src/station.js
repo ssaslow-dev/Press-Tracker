@@ -1,0 +1,367 @@
+/* AJG Update Station: the station-only layer around the tracker's own Update code (code/tracker/*.js, unmodified).
+   Order of events: step 1 reads the "for Update" file in this browser -> its blocks are put where the tracker code reads them
+   (<script type=application/json id=...>) -> the db collections the Update button remembers things in (runs, clips, reprints, edits)
+   are seeded from the file's memory -> only then the tracker code is started -> step 3 packs what this session wrote into the
+   update folder (a zip of data: manifest.json + db/<collection>/<id>.json, FORMAT.md section 2). */
+(function () {
+'use strict';
+const STATION_VERSION = 'station-1';
+const $ = s => document.querySelector(s);
+const clone = o => JSON.parse(JSON.stringify(o === undefined ? null : o));
+const nowIso = () => new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+const fmtN = n => Number(n).toLocaleString('en-US');
+const SEEDED = ['runs', 'clips', 'reprints', 'edits'];
+const PACK_COLLS = ['runs', 'pages', 'reprints', 'authors', 'translations', 'tones', 'edits'];   // = the saver's load_db, FORMAT.md
+const ID_RX = /^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$/;
+const RESERVED = new Set(['CON', 'PRN', 'AUX', 'NUL'].concat([1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => 'COM' + i), [1, 2, 3, 4, 5, 6, 7, 8, 9].map(i => 'LPT' + i)));
+
+const S = { loaded: false, file: null, seq: 0, lastPacked: 0, lastZip: null, realDb: null, busyPack: false };
+const sess = {};            // collection -> Map(id -> {data, seq}) of documents the tracker code wrote after the file was loaded
+PACK_COLLS.forEach(c => { sess[c] = new Map(); });
+
+/* ---------- the db the tracker code sees: in memory, seeded from the file (nothing is read from or written to a shared store) ---------- */
+function makeMemDb() {
+  const cols = new Map();
+  const col = n => cols.get(n) || cols.set(n, { docs: new Map(), subs: new Set() }).get(n);
+  const snap = c => { const docs = [...c.docs].map(([id, d]) => ({ id, exists: true, data: () => clone(d) })); return { docs, size: docs.length, empty: !docs.length, forEach: f => docs.forEach(f) }; };
+  const notify = c => { const sn = snap(c); c.subs.forEach(cb => queueMicrotask(() => { try { cb(sn); } catch (e) { console.error('snapshot callback', e); } })); };
+  const track = (name, id, data) => {
+    if (!S.loaded || !(sess[name] || name === 'clips')) return;
+    const seq = ++S.seq;
+    if (sess[name]) { if (data === null) sess[name].delete(id); else sess[name].set(id, { data: clone(data), seq }); }
+    if (!S.recovering) mirror(name, id, data === null ? null : clone(data), seq);
+    updatePackUi();
+  };
+  const api = {
+    collection(name) {
+      const c = col(name);
+      return {
+        id: name, path: name,
+        doc(id) {
+          id = String(id);
+          return {
+            id, path: name + '/' + id,
+            async get() { const has = c.docs.has(id); return { id, exists: has, data: () => (has ? clone(c.docs.get(id)) : undefined) }; },
+            async set(data) { const d = clone(data); c.docs.set(id, d); track(name, id, d); notify(c); },
+            async update(data) { const d = Object.assign({}, c.docs.get(id) || {}, clone(data)); c.docs.set(id, d); track(name, id, d); notify(c); },
+            async delete() { c.docs.delete(id); track(name, id, null); notify(c); },
+            onSnapshot(cb) { const f = c.subs.add(cb) && (() => c.subs.delete(cb)); queueMicrotask(() => { try { cb({ id, exists: c.docs.has(id), data: () => clone(c.docs.get(id)) }); } catch (e) {} }); return f; },
+          };
+        },
+        async get() { return snap(c); },
+        onSnapshot(cb, err) {
+          c.subs.add(cb); const sn = snap(c); queueMicrotask(() => { try { cb(sn); } catch (e) { console.error('snapshot callback', e); } });
+          if (name === 'runs' && S.afterRunsSub) { const f = S.afterRunsSub; S.afterRunsSub = null; setTimeout(f, 40); }   // the run history has arrived: the Update panel can draw
+          return () => c.subs.delete(cb);
+        },
+      };
+    },
+    seed(name, id, data) { col(name).docs.set(String(id), clone(data)); },
+  };
+  return api;
+}
+const mem = makeMemDb();
+
+/* ---------- the window the tracker code sees: the real one, except window.claude (its db is the in-memory one above) ---------- */
+const realClaude = window.claude;
+const claudeForTracker = {
+  use: async name => {
+    if (name === 'db') return mem.collection ? mem : null;
+    try { return realClaude && realClaude.use ? await realClaude.use(name) : null; } catch (e) { return null; }
+  },
+};
+const winProxy = new Proxy(window, {
+  get(t, k) { if (k === 'claude') return claudeForTracker; const v = t[k]; return typeof v === 'function' && !/^[A-Z]/.test(String(k)) ? v.bind(t) : v; },
+  set(t, k, v) { t[k] = v; return true; },
+  has(t, k) { return k in t; },
+});
+window.__stationWin = winProxy;
+
+/* The tracker code fetches data/release_texts.json (press-release sentences for the release-pickup searches) and, at start, articles/manifest.json
+   (saved copies, which the station does not have). The first is answered from the file, the second with a plain 404. */
+const origFetch = window.fetch ? window.fetch.bind(window) : null;
+window.fetch = function (input, init) {
+  const u = typeof input === 'string' ? input : (input && input.url) || '';
+  if (/(^|\/)data\/release_texts\.json(\?|$)/.test(u)) return Promise.resolve(new Response(JSON.stringify(S.file && S.file.release_texts ? S.file.release_texts : { v: 1, rel: {} }), { status: 200, headers: { 'Content-Type': 'application/json' } }));
+  if (/^(\.\/)?(articles|img|data|pdf|copies)\//.test(u)) return Promise.resolve(new Response('', { status: 404 }));
+  return origFetch ? origFetch(input, init) : Promise.reject(new Error('fetch unavailable'));
+};
+
+/* ---------- optional recovery (REQ-2): a closed tab must not lose a run ----------
+   Everything the tracker code writes after the file is loaded is also copied, best effort, to the artifact db (collection "recover", one
+   document per tracker document, keyed to this file). It is scratch: the station never reads it for the button's memory. It is read only
+   to offer "Recover" when the same file is loaded again after a reload. Nothing is deleted; a packed point is kept in "recoverstate". */
+const MIRROR = new Set(PACK_COLLS.concat(['clips']));
+const mirrorQ = new Map(); let mirroring = false, mirrorFail = 0;
+const fileKey = () => S.file.fingerprint.workbook_sha256.slice(0, 12) + '-' + String(S.file.created_at || '').replace(/[^0-9]/g, '');
+function mirror(coll, id, data, seq) {
+  if (!S.realDb || !MIRROR.has(coll)) return;
+  mirrorQ.set(coll + '.' + id, { coll, id, data, seq });
+  if (!mirroring) drain();
+}
+async function drain() {
+  mirroring = true;
+  try {
+    while (mirrorQ.size) {
+      const [k, v] = mirrorQ.entries().next().value; mirrorQ.delete(k);
+      const doc = S.realDb.collection('recover').doc(fileKey() + '~' + k);
+      try { await doc.set(v.data === null ? { fk: fileKey(), coll: v.coll, id: v.id, seq: v.seq, deleted: true } : { fk: fileKey(), coll: v.coll, id: v.id, seq: v.seq, json: JSON.stringify(v.data) }); }
+      catch (e) { mirrorFail++; }
+    }
+  } finally { mirroring = false; }
+}
+async function offerRecovery() {
+  if (!S.realDb) return;
+  try {
+    const fk = fileKey(), st = await S.realDb.collection('recoverstate').doc(fk).get(), packedTo = st && st.exists && st.data() ? +st.data().lastPackedSeq || 0 : 0;
+    const snap = await S.realDb.collection('recover').get(), got = [];
+    snap.docs.forEach(d => { const x = d.data(); if (x && x.fk === fk && !x.deleted && x.json && x.seq > packedTo) { try { got.push({ coll: x.coll, id: x.id, seq: x.seq, data: JSON.parse(x.json) }); } catch (e) {} } });
+    const dead = new Set(); snap.docs.forEach(d => { const x = d.data(); if (x && x.fk === fk && x.deleted) dead.add(x.coll + '.' + x.id); });
+    const keep = got.filter(g => !dead.has(g.coll + '.' + g.id)).sort((a, b) => a.seq - b.seq);
+    const runs = keep.filter(g => g.coll === 'runs');
+    if (!runs.length) return;
+    S.recoverable = keep;
+    const el = $('#stRecover'); el.hidden = false;
+    $('#stRecoverTxt').textContent = 'An earlier tab left ' + fmtN(runs.length) + (runs.length === 1 ? ' run' : ' runs') + ' from this file that was not downloaded (' + fmtN(keep.length) + ' saved items). Recover ' + (runs.length === 1 ? 'it' : 'them') + ' to pack them, or ignore this and press Update again.';
+  } catch (e) { console.warn('recovery check failed', e); }
+}
+async function recover() {
+  const items = S.recoverable || []; if (!items.length) return;
+  S.recovering = true;
+  try {
+    S.seq = Math.max(S.seq, ...items.map(g => g.seq));
+    for (const g of items) { const c = mem.collection(g.coll); if (!sess[g.coll] && g.coll !== 'clips') continue; await c.doc(g.id).set(g.data); }
+  } finally { S.recovering = false; }
+  S.recoverable = null; $('#stRecover').hidden = true; updatePackUi();
+}
+
+/* ---------- step 1: read the file ---------- */
+function showErr(msg) { const e = $('#stErr'); e.textContent = msg; e.hidden = !msg; }
+function shortSha(s) { return s ? s.slice(0, 8) + '…' : ''; }
+function setBlock(id, value, type) {
+  let el = document.getElementById(id);
+  if (!el) { el = document.createElement('script'); el.id = id; el.type = 'application/json'; document.body.appendChild(el); }
+  el.textContent = JSON.stringify(value);
+}
+function validate(j) {
+  if (!j || typeof j !== 'object' || Array.isArray(j)) return 'This is not a “for Update” file (it is not a JSON object).';
+  if (j.format !== 'ajg-for-update') return 'This is not a “for Update” file made by the PC tracker (its format is ' + JSON.stringify(j.format) + ').';
+  if (!Number.isInteger(j.format_version) || j.format_version < 1) return 'The file’s version is not understood.';
+  if (j.format_version > 1) return 'This file is version ' + j.format_version + '; this station reads version 1. Open the newest station page.';
+  const fp = j.fingerprint;
+  if (!fp || typeof fp.workbook_sha256 !== 'string' || !/^[0-9a-f]{64}$/.test(fp.workbook_sha256)) return 'The file has no workbook fingerprint, so an update made from it could not be checked on the PC. Make a new file.';
+  if (!Array.isArray(j.stories) || !j.stories.length) return 'The file lists no stories.';
+  if (!j.rows || !Array.isArray(j.rows.rows) || !j.rows.rows.length) return 'The file lacks the list of spreadsheet rows (needed to avoid adding stories twice).';
+  for (const k of ['idmap', 'covcols', 'billsinfo', 'fetchrules', 'ins_release_pickup', 'memory']) if (j[k] === undefined || j[k] === null) return 'The file lacks the “' + k + '” block. Make a new file.';
+  return '';
+}
+function readFile(f) {
+  return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result)); r.onerror = () => rej(r.error || new Error('could not read the file')); r.readAsText(f); });
+}
+async function loadFile(f) {
+  if (S.loaded) return;
+  showErr('');
+  if (!f) return;
+  let j;
+  try { j = JSON.parse(await readFile(f)); } catch (e) { showErr('Could not read “' + f.name + '” as a “for Update” file: ' + (e && e.message ? e.message : e)); return; }
+  const bad = validate(j);
+  if (bad) { showErr(bad); return; }
+  S.file = j; S.fileName = f.name; S.loadedAt = nowIso();
+  // 1. the blocks, where the tracker code reads them
+  $('#data').textContent = JSON.stringify(j.stories);
+  setBlock('rows', j.rows); setBlock('idmap', j.idmap); setBlock('covcols', j.covcols); setBlock('billsinfo', j.billsinfo); setBlock('fetchrules', j.fetchrules);
+  setBlock('ins-release_pickup', j.ins_release_pickup);
+  // 2. the button's memory
+  const m = j.memory || {};
+  Object.entries(m.runs || {}).forEach(([id, d]) => mem.seed('runs', id, d));
+  Object.entries(m.clips || {}).forEach(([id, d]) => mem.seed('clips', id, d));
+  Object.entries(m.reprints || {}).forEach(([id, d]) => mem.seed('reprints', id, d));
+  (m.edits_removed || []).forEach(id => mem.seed('edits', id, { removed: true, at: '' }));
+  // 3. now the tracker code
+  try { S.realDb = realClaude && realClaude.use ? await realClaude.use('db') : null; } catch (e) { S.realDb = null; }
+  S.loaded = true;
+  // the tracker draws its Update panel only when it is opened; here it is always open, so open it once the run history has arrived
+  const openPanel = () => { const b = $('#updBtn'); if (b) b.click(); };
+  S.afterRunsSub = openPanel; setTimeout(() => { if (S.afterRunsSub) openPanel(); }, 6000);   // slow start: draw now, and once more when the history arrives
+  const src = $('#tracker-src').textContent.replace(/<\\\/script/gi, '<' + '/script');
+  const s = document.createElement('script');
+  s.textContent = '(function(window){\n' + src + '\n})(window.__stationWin);';
+  try { document.body.appendChild(s); } catch (e) { S.loaded = false; showErr('The tracker code did not start: ' + (e && e.message ? e.message : e)); return; }
+  showLoaded();
+  offerRecovery();
+  try { const sm = realClaude && realClaude.use ? await realClaude.use('sample') : null; if (!sm) $('#stSampleNote').hidden = false; } catch (e) { $('#stSampleNote').hidden = false; }
+}
+function showLoaded() {
+  const j = S.file, fp = j.fingerprint, m = j.memory || {};
+  const facts = [
+    ['File', esc(S.fileName)],
+    ['Made', esc(j.created_at ? new Date(j.created_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : 'unknown')],
+    ['Workbook', '<code>' + esc(shortSha(fp.workbook_sha256)) + '</code> ' + esc(fp.workbook_name || '')],
+    ['Stories', esc(fmtN(j.stories.length) + ' in the tracker, ' + fmtN(j.rows.rows.length) + ' spreadsheet rows checked for duplicates')],
+    ['Last full update searched to', esc(m.searched_to || 'no record')],
+    ['Earlier finds waiting for a save', esc(fmtN(Object.keys(m.clips || {}).length) + ' stories, ' + fmtN(Object.keys(m.reprints || {}).length) + ' reprints')],
+  ].concat((j.notes || []).map(n => ['Note', esc(n)]));
+  $('#stFacts').innerHTML = facts.map(([k, v]) => '<dt>' + esc(k) + '</dt><dd>' + v + '</dd>').join('');
+  $('#stDrop').hidden = true; $('#stLoaded').hidden = false;
+  $('#st-step1').classList.add('st-done');
+  ['#st-step2', '#st-step3'].forEach(s => $(s).classList.remove('st-lock'));
+  $('#stStep2Cap').textContent = 'Press Update database. Same searches and same checks as the tracker’s button; tone, authors and translations are filled in for each new story.';
+  const f = $('#runFind'); if (f) f.disabled = false;
+  updatePackUi();
+}
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+function wireStep1() {
+  const inp = $('#stFile'), drop = $('#stDrop');
+  inp.addEventListener('change', () => { const f = inp.files && inp.files[0]; if (f) loadFile(f); });
+  ['dragenter', 'dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+  ['dragleave', 'drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+  drop.addEventListener('drop', e => { const f = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]; if (f) loadFile(f); });
+  drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inp.click(); } });
+  // a file dropped anywhere else on the page must not make the browser open it
+  ['dragover', 'drop'].forEach(ev => window.addEventListener(ev, e => { if (!e.target.closest || !e.target.closest('#stDrop')) e.preventDefault(); }));
+  let armed = false;
+  $('#stAnother').addEventListener('click', () => {
+    if (!armed) { armed = true; $('#stAnotherNote').hidden = false; return; }
+    location.reload();
+  });
+}
+
+/* ---------- step 3: pack ---------- */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xEDB88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+function crc32(b) { let c = 0xFFFFFFFF; for (let i = 0; i < b.length; i++) c = CRC_T[(c ^ b[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+/* store-only zip writer: entries = [{name (ASCII), bytes}] -> Uint8Array */
+function zipStore(entries) {
+  const enc = new TextEncoder(), d = new Date();
+  const dosTime = (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), dosDate = ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate();
+  const parts = [], central = []; let off = 0;
+  const u16 = (v, a) => { a.push(v & 0xFF, (v >>> 8) & 0xFF); }, u32 = (v, a) => { a.push(v & 0xFF, (v >>> 8) & 0xFF, (v >>> 16) & 0xFF, (v >>> 24) & 0xFF); };
+  for (const e of entries) {
+    const name = enc.encode(e.name), crc = crc32(e.bytes), h = [];
+    u32(0x04034b50, h); u16(20, h); u16(0x0800, h); u16(0, h); u16(dosTime, h); u16(dosDate, h); u32(crc, h); u32(e.bytes.length, h); u32(e.bytes.length, h); u16(name.length, h); u16(0, h);
+    parts.push(new Uint8Array(h), name, e.bytes);
+    const c = [];
+    u32(0x02014b50, c); u16(20, c); u16(20, c); u16(0x0800, c); u16(0, c); u16(dosTime, c); u16(dosDate, c); u32(crc, c); u32(e.bytes.length, c); u32(e.bytes.length, c);
+    u16(name.length, c); u16(0, c); u16(0, c); u16(0, c); u16(0, c); u32(0, c); u32(off, c);
+    central.push(new Uint8Array(c), name);
+    off += h.length + name.length + e.bytes.length;
+  }
+  const cdSize = central.reduce((a, p) => a + p.length, 0), end = [];
+  u32(0x06054b50, end); u16(0, end); u16(0, end); u16(entries.length, end); u16(entries.length, end); u32(cdSize, end); u32(off, end); u16(0, end);
+  const all = parts.concat(central, [new Uint8Array(end)]), out = new Uint8Array(all.reduce((a, p) => a + p.length, 0));
+  let o = 0; all.forEach(p => { out.set(p, o); o += p.length; });
+  return out;
+}
+async function sha256Hex(bytes) { const h = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes)); return [...h].map(b => b.toString(16).padStart(2, '0')).join(''); }
+
+/* which run docs go into the update: every run this session saved that finished or carries rows, bills, releases, print pages or lookups */
+function runPackable(d) {
+  const has = k => Array.isArray(d[k]) && d[k].length;
+  const content = has('rows') || has('bills_new') || has('releases_new') || has('print_pages') || has('lookups');
+  if (d.status === 'running' || d.status === 'error') return content;
+  return true;
+}
+function pending() {
+  const runs = [...sess.runs].filter(([id, v]) => v.seq > S.lastPacked && runPackable(v.data));
+  const stories = runs.reduce((a, [, v]) => a + ((v.data.stories || []).length), 0), reprints = runs.reduce((a, [, v]) => a + ((v.data.reprints || []).length), 0);
+  const rows = runs.reduce((a, [, v]) => a + ((v.data.rows || []).length), 0);
+  const running = runs.filter(([, v]) => v.data.status === 'running').length;
+  return { runs, stories, reprints, rows, running };
+}
+function trackerBusy() { const f = $('#runFind'); return !!(f && (f.getAttribute('aria-busy') === 'true' || f.classList.contains('busy'))) || !!$('#updStop'); }
+function updatePackUi() {
+  if (!S.loaded) return;
+  const p = pending(), busy = trackerBusy();
+  const parts = [];
+  if (p.runs.length) parts.push(fmtN(p.runs.length) + (p.runs.length === 1 ? ' run' : ' runs') + ': ' + fmtN(p.stories) + ' new ' + (p.stories === 1 ? 'story' : 'stories') + ', ' + fmtN(p.reprints) + (p.reprints === 1 ? ' reprint' : ' reprints') + ' (' + fmtN(p.rows) + ' spreadsheet rows)');
+  let msg = p.runs.length ? 'Ready: ' + parts.join('') + '.' : (S.lastZip ? 'The last update folder was downloaded. Nothing new since.' : 'Nothing to download yet. Press Update database in step 2.');
+  if (busy) msg = 'A run is going. Download the update folder when it is done.';
+  if (p.running && !busy) msg += ' One run was left unfinished; it is included as far as it got.';
+  const st = $('#stPackStatus'); if (st.textContent !== msg) st.textContent = msg;
+  $('#stPack').disabled = busy || S.busyPack || !p.runs.length;
+  $('#stPackAgain').hidden = !S.lastZip;
+}
+async function pack() {
+  if (S.busyPack) return null;
+  const p = pending(); if (!p.runs.length) return null;
+  S.busyPack = true; updatePackUi(); $('#stPackWarn').hidden = true; $('#stPackWarn').innerHTML = '';
+  const warns = [];
+  try {
+    const enc = new TextEncoder(), blobs = [], seen = new Set();
+    const add = (coll, id, data) => {
+      const name = 'db/' + coll + '/' + id + '.json';
+      if (!ID_RX.test(id) || RESERVED.has(id.split('.')[0].toUpperCase())) { warns.push('Left out ' + coll + ' document “' + id + '”: its name is not allowed in an update folder.'); return false; }
+      if (seen.has(name.toLowerCase())) { warns.push('Left out a second ' + coll + ' document named “' + id + '”.'); return false; }
+      seen.add(name.toLowerCase()); blobs.push({ name, bytes: enc.encode(JSON.stringify(data)) }); return true;
+    };
+    const runIds = [];
+    for (const [id, v] of p.runs) if (add('runs', id, v.data)) runIds.push(id);
+    if (!runIds.length) throw new Error('No run could be packed.');
+    for (const c of PACK_COLLS.filter(x => x !== 'runs')) for (const [id, v] of sess[c]) if (v.seq > S.lastPacked) add(c, id, v.data);
+    const files = {};
+    for (const b of blobs) files[b.name] = { sha256: await sha256Hex(b.bytes), bytes: b.bytes.length };
+    const manifest = { format: 'ajg-update-folder', format_version: 1, created_at: nowIso(), source: { workbook_sha256: S.file.fingerprint.workbook_sha256 },
+      runs: runIds.slice().sort(), files, station_version: STATION_VERSION, for_update_created_at: S.file.created_at || '', for_update_name: S.fileName || '' };
+    const entries = [{ name: 'manifest.json', bytes: enc.encode(JSON.stringify(manifest, null, 1) + '\n') }].concat(blobs);
+    const zip = zipStore(entries), zsha = await sha256Hex(zip);
+    const stamp = manifest.created_at.replace(/[-:]/g, '').replace('T', '-').slice(0, 13);
+    const filename = 'ajg_update_' + stamp + '_' + S.file.fingerprint.workbook_sha256.slice(0, 8) + '.zip';
+    S.lastZip = { filename, zip, sha256: zsha, files: blobs.length, runs: runIds, manifest };
+    S.lastPacked = S.seq;
+    S.packedInfo = { at: manifest.created_at, runs: runIds, zip: filename };
+    await saveFile(filename, zip);
+    await recordPacked(runIds, filename, zsha, blobs.length);
+    const w = $('#stPackWarn'); if (warns.length) { w.innerHTML = warns.map(x => '<li>' + esc(x) + '</li>').join(''); w.hidden = false; }
+    const n = $('#stPackNote'); n.hidden = false;
+    n.textContent = filename + ' · ' + fmtN(Math.round(zip.length / 1024)) + ' KB · ' + blobs.length + ' files · made from workbook ' + shortSha(S.file.fingerprint.workbook_sha256) + '. If your browser asked, confirm the save.';
+    return S.lastZip;
+  } catch (e) {
+    const w = $('#stPackWarn'); w.innerHTML = '<li>' + esc('The update folder could not be made: ' + (e && e.message ? e.message : e)) + '</li>'; w.hidden = false;
+    return null;
+  } finally { S.busyPack = false; updatePackUi(); }
+}
+async function saveFile(filename, bytes) {
+  const blob = new Blob([bytes], { type: 'application/zip' });
+  let dl = null; try { dl = realClaude && realClaude.use ? await realClaude.use('downloads') : null; } catch (e) { dl = null; }
+  if (dl) { try { await dl.save({ filename, data: blob }); return; } catch (e) { if (e && e.code === 'declined') return; if (e && e.code === 'rate_limited') { toastMsg('A download is already waiting for you to confirm.'); return; } } }
+  const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 5000);
+}
+function toastMsg(t) { const el = document.getElementById('toast'); if (!el) return; el.textContent = t; el.hidden = false; setTimeout(() => { el.hidden = true; }, 4000); }
+/* the station's own record that these runs were packed (kept in the artifact's db when it is there; nothing is deleted) */
+async function recordPacked(runIds, filename, zsha, nfiles) {
+  try {
+    if (!S.realDb && realClaude && realClaude.use) S.realDb = await realClaude.use('db');
+    if (!S.realDb) return;
+    await S.realDb.collection('recoverstate').doc(fileKey()).set({ lastPackedSeq: S.seq, at: nowIso(), zip: filename });
+    for (const id of runIds) await S.realDb.collection('packed').doc(id).set({ run: id, packed_at: nowIso(), zip: filename, zip_sha256: zsha, files: nfiles, workbook_sha256: S.file.fingerprint.workbook_sha256, station_version: STATION_VERSION });
+  } catch (e) { console.warn('could not record the pack in the station db', e); }
+}
+
+/* the tracker's own sentences that send the user to a chat for saving to the sheet do not apply here */
+const TAKE = 'Download the update folder in step 3 to take it to the PC tracker.';
+const FIX = [[/To put (?:it|them) in the (?:sheet|spreadsheet), ask Claude in chat to “save the last run to the sheet”\./g, TAKE], [/Ask Claude in chat to “save the last run to the sheet”\./g, TAKE],
+  [/when you ask Claude in chat to “save the last run to the sheet”/g, 'when the update folder (step 3) is taken in on the PC tracker']];
+function fixTexts(root) {
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  const hits = []; for (let n = w.nextNode(); n; n = w.nextNode()) if (/save the last run to the sheet/.test(n.nodeValue)) hits.push(n);
+  hits.forEach(n => { let t = n.nodeValue; FIX.forEach(([a, b]) => { t = t.replace(a, b); }); if (t !== n.nodeValue) n.nodeValue = t; });
+}
+
+function init() {
+  const host = $('#stUpdHost'), upd = $('#upd');
+  if (upd && host) host.appendChild(upd);
+  const f = $('#runFind'); if (f) f.disabled = true;
+  const sub = $('#subline'); if (sub) sub.innerHTML = 'Update<br>station';
+  wireStep1();
+  $('#stPack').addEventListener('click', () => { pack(); });
+  $('#stRecoverBtn').addEventListener('click', () => { recover(); });
+  $('#stPackAgain').addEventListener('click', async () => { if (S.lastZip) await saveFile(S.lastZip.filename, S.lastZip.zip); });
+  let moT = 0;
+  const mo = new MutationObserver(() => { clearTimeout(moT); moT = setTimeout(() => { fixTexts($('#st')); const t = document.getElementById('toast'); if (t) fixTexts(t); updatePackUi(); }, 150); });
+  mo.observe($('#st'), { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['aria-busy', 'class'] });
+  const tn = document.getElementById('toast'); if (tn) mo.observe(tn, { subtree: true, childList: true, characterData: true });
+  setInterval(updatePackUi, 1000);
+  window.__station = { state: S, sess, pack, pending, zipStore, loadFile, mirrorBusy: () => mirroring || mirrorQ.size > 0, mirrorFail: () => mirrorFail };   // for the tests
+}
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();

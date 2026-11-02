@@ -1,0 +1,28 @@
+<section class="st" id="st" aria-label="Update station">
+  <div class="card pad" id="st-step1">
+    <div class="st-h"><span class="st-n">Step 1</span><h2 class="sec">Load the “for Update” file</h2></div>
+    <div class="cap">Made by the PC tracker (Make “for Update” file). This page reads it in your browser. It is not uploaded or stored online.</div>
+    <label class="st-drop" id="stDrop" for="stFile" tabindex="0">Drop the file here, or click to choose it</label>
+    <input type="file" id="stFile" accept=".json,application/json" hidden>
+    <div class="upd-msg err st-msg" id="stErr" role="alert" hidden></div>
+    <div id="stLoaded" hidden>
+      <dl class="st-facts" id="stFacts"></dl>
+      <div class="st-acts"><button class="btn" type="button" id="stAnother">Load a different file</button><span class="st-note" id="stAnotherNote" hidden>This clears this page, including any run not yet downloaded. Click again to confirm.</span></div>
+    </div>
+  </div>
+  <div class="card pad st-lock" id="st-step2">
+    <div class="st-h"><span class="st-n">Step 2</span><h2 class="sec">Update</h2></div>
+    <div class="cap" id="stStep2Cap">Load the file in step 1 first. The Update button stays off until then.</div>
+    <div class="upd-msg err st-msg" id="stSampleNote" hidden>Claude (sampling) is not available in this view or was not allowed. New finds cannot be reviewed and classified without it. Allow it in this page’s permissions and reload.</div>
+    <div id="stUpdHost"></div>
+  </div>
+  <div class="card pad st-lock" id="st-step3">
+    <div class="st-h"><span class="st-n">Step 3</span><h2 class="sec">Download the update folder</h2></div>
+    <div class="cap">One zip with the runs made since the file was loaded. Drag it into the PC tracker with Bring in update.</div>
+    <div class="upd-msg st-msg" id="stRecover" hidden><span id="stRecoverTxt"></span> <button class="btn" type="button" id="stRecoverBtn">Recover</button></div>
+    <div id="stPackStatus" class="upd-msg">Nothing to download yet.</div>
+    <div class="st-acts"><button class="btn primary" type="button" id="stPack" disabled>Download update folder</button><button class="btn" type="button" id="stPackAgain" hidden>Download the last one again</button></div>
+    <ul class="st-list" id="stPackWarn" hidden></ul>
+    <p class="st-note" id="stPackNote" hidden></p>
+  </div>
+</section>
