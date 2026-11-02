@@ -79,11 +79,16 @@ def main():
     shutil.copy(os.path.join(SRC, "probe.py"), app)
     whl = os.path.join(BUILD, "wheels")
     subprocess.check_call([sys.executable, "-m", "pip", "download", "--only-binary=:all:", "--platform", "win_amd64",
-                           "--python-version", "3.13", "--no-deps", "-d", whl, "openpyxl", "et_xmlfile"])
+                           "--python-version", "3.13", "--no-deps", "-d", whl, "openpyxl==3.1.5", "et_xmlfile==2.0.0",
+                           "pandas==3.0.5", "numpy==2.5.4", "python_dateutil==4.0.0", "tzdata==2026.6"])
     for w in sorted(glob.glob(os.path.join(whl, "*.whl"))):
         print("wheel", os.path.basename(w), "sha256", sha256(w))
         with zipfile.ZipFile(w) as z:
-            z.extractall(sp)
+            for m in z.namelist():
+                parts = m.split("/")
+                if "tests" in parts[:-1] or ".." in parts or m.startswith("/"):
+                    continue   # the packages' own test suites are not needed (fewer files on a network share)
+                z.extract(m, sp)
     # text files with CRLF
     for name in ("Start test.cmd", "READ ME FIRST.txt"):
         with open(os.path.join(SRC, name), "rb") as f:

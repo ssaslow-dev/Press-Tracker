@@ -65,6 +65,23 @@ def c_bind():
     return True, "bound 127.0.0.1 on port %d" % port
 
 
+def c_pandas():
+    """the save uses pandas and numpy, the only packages with compiled code (.pyd/.dll): do they load from this folder?"""
+    import time
+    if SITE not in sys.path:
+        sys.path.insert(0, SITE)
+    t = time.time()
+    import numpy
+    import pandas
+    took = time.time() - t
+    out = os.path.join(HERE, "_test_output")
+    xl = [f for f in os.listdir(out) if f.endswith(".xlsx")] if os.path.isdir(out) else []
+    if not xl:
+        return False, "pandas %s loaded in %.1f s, but no test .xlsx to read" % (pandas.__version__, took)
+    df = pandas.read_excel(os.path.join(out, sorted(xl)[-1]), dtype=str)
+    return True, "numpy %s and pandas %s loaded in %.1f s; read the test .xlsx (%d rows)" % (numpy.__version__, pandas.__version__, took, len(df))
+
+
 def c_lock():
     """the save program's lock: create a file exclusively, a second exclusive create must fail (checks network-drive locking)"""
     p = os.path.join(HERE, "_probe_lock.tmp")
@@ -115,6 +132,7 @@ def run_checks():
         check("Write a file in this folder", c_write, True),
         check("Load openpyxl from app\\site-packages", c_openpyxl, True),
         check("Create and read an .xlsx", c_xlsx, True),
+        check("Load pandas and numpy, read the .xlsx with them", c_pandas, True),
         check("Open a local port (127.0.0.1)", c_bind, True),
         check("Exclusive lock file (needed for safe saving)", c_lock, True),
         check("Where this folder is (info only)", c_where),

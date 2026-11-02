@@ -2,15 +2,15 @@
 
 **What it is:** a small folder that checks whether a planned office tool can run on this PC. The tool would be a press-clippings tracker for Assemblymember Jesse Gabriel's office. This test does nothing else.
 
-**What is in the zip** ("AJG Tracker test.zip", sha256 `32fc4e5829e1684e815281f6a1f0f18b68497d1de283513d07f31bdec10706a0`):
+**What is in the zip** ("AJG Tracker test.zip", sha256 `9148d84cdca71798b5d7fd7c59527f60c573e3c137a0ff24d963812ced36c629`):
 - `python\`: CPython 3.13.16 for Windows, the official build by the Python Software Foundation, taken from its NuGet package "python". `python.exe` and its DLLs carry the PSF Authenticode signature.
 - `app\probe.py`: the test script, plain readable text (about 200 lines).
-- `app\site-packages\`: openpyxl 3.1.5 and et_xmlfile 2.0.0, unpacked from their official PyPI wheels.
+- `app\site-packages\`: openpyxl 3.1.5, et_xmlfile 2.0.0, pandas 3.0.5, numpy 2.5.4, python-dateutil 4.0.0 and tzdata 2026.6, unpacked from their official PyPI wheels (each checked against a pinned sha256). pandas and numpy contain compiled code (.pyd/.dll files) built by those projects; these files are not Authenticode-signed. Everything else is plain Python text.
 - `Start test.cmd`: a 10-line batch file that runs `python\python.exe -I -s app\probe.py`.
 
 **What it does:**
 - It writes and removes two small files in its own folder (one tests exclusive file locking, which the tool uses so only one person saves at a time).
-- It creates one small Excel file in its own `_test_output` folder.
+- It creates one small Excel file in its own `_test_output` folder, and reads it back with pandas.
 - It listens on 127.0.0.1 (this computer only) on a random port, and opens one local page in Edge showing the results.
 - It stops when its window is closed, or after 15 minutes.
 
