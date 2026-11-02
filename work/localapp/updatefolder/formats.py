@@ -21,7 +21,7 @@ FORMAT_VERSION = 1
 COLLECTIONS = ('runs', 'pages', 'reprints', 'authors', 'translations', 'tones', 'edits')
 ID_PART = r'[A-Za-z0-9][A-Za-z0-9._-]{0,119}'
 ENTRY_RE = re.compile(r'^db/(' + '|'.join(COLLECTIONS) + r')/(' + ID_PART + r')\.json$')
-# NEWSBANKPDF-v1: a NewsBank story's own PDF travels as files/<id>.pdf (binary), named by the pages doc that carries it (pages/<doc>.json nb.file)
+# NEWSBANKPDF-v1 / PROQUESTPDF-v1: a NewsBank story's own PDF (or a ProQuest article's) travels as files/<id>.pdf (binary), named by the pages doc that carries it (pages/<doc>.json nb.file / pq.file)
 PDF_ENTRY_RE = re.compile(r'^files/(' + ID_PART + r')\.pdf$')
 WINDOWS_RESERVED = {'CON', 'PRN', 'AUX', 'NUL', *(f'COM{i}' for i in range(1, 10)), *(f'LPT{i}' for i in range(1, 10))}
 
@@ -318,13 +318,13 @@ def check_manifest(m, entries: dict) -> None:
 
 
 def check_pdfs(entries: dict, docs: dict) -> None:
-    """NEWSBANKPDF-v1: every files/<id>.pdf is a safe PDF, is named by exactly the pages doc(s) that carry it (nb.file, with its sha256), and every
+    """NEWSBANKPDF-v1, PROQUESTPDF-v1: every files/<id>.pdf is a safe PDF, is named by exactly the pages doc(s) that carry it (nb.file or pq.file, with its sha256), and every
     pages doc that names a PDF finds it. Raises UpdateRefused (BAD_PDF, MISSING_FILE, UNLISTED_FILE, HASH_MISMATCH)."""
     refs = {}
     for name, doc in docs.items():
         if not name.startswith('db/pages/'):
             continue
-        nb = doc.get('nb')
+        nb = doc.get('nb') if isinstance(doc.get('nb'), dict) else doc.get('pq')    # PROQUESTPDF-v1: a ProQuest story's PDF is named by the pages doc's `pq` the same way
         f = nb.get('file') if isinstance(nb, dict) else ''
         if not f:
             continue

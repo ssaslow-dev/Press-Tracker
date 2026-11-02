@@ -5,6 +5,10 @@
    Output: the same documents an Update run leaves for the PC save (a run doc with proposed rows, pages docs, reprints, authors, translations),
    plus the per-story PDF names the update zip carries.
 
+   PROQUESTPDF-v1: the same run serves ProQuest article PDFs. Everything source-specific (the record's link, how a story is found already in the
+   tracker, the prompt preface, the row's source columns, the pages doc and the run doc's names) sits in a source object, NBSRC.nb here and NBSRC.pq in
+   proquest.js, passed as opts.src / the last argument; with none given the NewsBank one is used, so the NewsBank behaviour is unchanged.
+
    What is NOT done here, on purpose: a reprint is never decided by text (the PC save does it by the string-of-text rule, as for a web find);
    NewsBank text that lacks his name is not grounds to drop a story (HANDOFF 3: NewsBank drops captions and guest lists). */
 const NBX = { seen: new Map(), docrefs: null, items: [], marked: new Set() };
@@ -25,13 +29,14 @@ const nbCand = p => ({ link: nbLink(p), hl: p.headline, date: p.date, outlet: p.
 
 /* Is this story new? (the checks the Update button makes for a find, plus NewsBank's own id)
    -> { status: 'new' | 'reprint' | 'known' | 'dup_batch' | 'print_page' | 'thin', why, of? (story id for a reprint, first copy for dup_batch) } */
-function nbScreen(p){
+function nbScreen(p, SRC){
+  SRC = SRC || NBSRC.nb;
   const key = p.docref_key;
   if (p.kind === 'print_page') return key && NBX.seen.has(key) ? { status: 'dup_batch', why: 'the same print page appears twice in the PDFs added', of: NBX.seen.get(key) } : { status: 'print_page', why: 'a newspaper page image, not a story: listed as a print page to clip' };
-  if (key && nbDocrefs().has(key)) return { status: 'known', why: 'already in the tracker (same NewsBank link)' };
-  if (key && NBX.seen.has(key)) return { status: 'dup_batch', why: 'the same story appears twice in the PDFs added (same NewsBank link)', of: NBX.seen.get(key) };
+  if (key && SRC.known().has(key)) return { status: 'known', why: 'already in the tracker (same ' + SRC.idName + ')' };
+  if (key && NBX.seen.has(key)) return { status: 'dup_batch', why: 'the same story appears twice in the PDFs added (same ' + SRC.idName + ')', of: NBX.seen.get(key) };
   if (!p.headline) return { status: 'new', why: 'no headline could be read: check it', needs_check: true };
-  const c = nbCand(p), ch = covHit(c);
+  const c = SRC.cand(p), ch = covHit(c);
   if (ch && ch.same) return { status: 'known', why: 'already in the tracker (same outlet and headline as ' + ch.o.aid + ', within 3 days)' };
   const old = dupOf(Object.assign({}, c, { link: '', plink: '' }), D);   // no link: two NewsBank records share one host, which dupOf would read as one outlet
   if (old && old.same) return { status: 'known', why: 'already in the tracker (same story and outlet as ' + old.r.id + ')' };
@@ -54,7 +59,8 @@ function nbOutletHosts(name){
   return NB_OUT_HOSTS.get(nrmName(String(name || '').replace(/\s*\([^)]*\)\s*$/, ''))) || new Set();
 }
 function nbShingles(text, n){ const w = normH(text).split(' ').filter(Boolean), out = new Set(); for (let i = 0; i + n <= w.length && i < 4000; i++) out.add(w.slice(i, i + n).join(' ')); return out; }
-async function nbFindLinks(mcp, items, say){
+async function nbFindLinks(mcp, items, say, SRC){
+  SRC = SRC || NBSRC.nb;
   const cands = [];
   let i = 0;
   for (const it of items){
@@ -88,7 +94,7 @@ async function nbFindLinks(mcp, items, say){
       if (r){
         const t = tfStrip(String(r.text || '')), ns = nbShingles(it.p.text, 6), ps = nbShingles(t, 6); let share = 0; ns.forEach(s => { if (ps.has(s)) share++; });
         const ok = share >= 2 || (!ns.size && (c.strong || c.named)) || ((c.strong || c.named) && NAMES_HIM.test(t));
-        if (ok){ it.pub = { url: r.final_url || c.url, status: 'Publisher URL', how: share >= 2 ? 'same wording as the NewsBank text' : 'same headline on the outlet’s own site' }; return; }
+        if (ok){ it.pub = { url: r.final_url || c.url, status: 'Publisher URL', how: share >= 2 ? 'same wording as the ' + SRC.name + ' text' : 'same headline on the outlet’s own site' }; return; }
         it.linkNote = 'a page with this headline was found but its text does not match the NewsBank text'; return;
       }
       if (blocked && (c.strong || c.named)){ it.pub = { url: c.url, status: 'Search link only', how: 'same headline on the outlet’s site; the page is blocked, so its text could not be compared' }; return; }
@@ -99,13 +105,13 @@ async function nbFindLinks(mcp, items, say){
 
 /* ---------- Claude's reading of each new story (the tracker's own classify prompt, with the NewsBank facts first) ---------- */
 const NB_PREFACE = `These items come from NewsBank's own search for "Jesse Gabriel", read from its PDFs. The url is NewsBank's record, the text is NewsBank's text. Three things differ from web results: (1) NewsBank drops photo captions and guest lists, so a story whose text does not show his name is still kept (keep false only for another person named Jesse Gabriel, or a page that is not press: an advocacy group's or an official's own release, a database or listing); (2) the date and the outlet are NewsBank's and are right: copy them; (3) the headline is NewsBank's own: copy it.\n\n`;
-async function nbClassify(items, sample, say){
+async function nbClassify(items, sample, say, preface){
   const out = new Map(); if (!items.length) return out;
   const CB = 20;
   for (let i = 0; i < items.length && !U.ctl.signal.aborted; i += CB){
     const b = items.slice(i, i + CB); say(`Claude is reading the stories (${Math.min(i + CB, items.length)} of ${items.length})`, (i + CB) / items.length);
     const cs = b.map(it => it.c); let res = null;
-    if (sample){ try { res = await sample.json(NB_PREFACE + classifyPrompt(cs), { signal: U.ctl.signal, modelTier: 'default' }); } catch(e){ if (e && e.code === 'cancelled') break; res = null; } }
+    if (sample){ try { res = await sample.json((preface || NB_PREFACE) + classifyPrompt(cs), { signal: U.ctl.signal, modelTier: 'default' }); } catch(e){ if (e && e.code === 'cancelled') break; res = null; } }
     b.forEach((it, j) => { const k = (Array.isArray(res) && (res.find(o => o && +o.n === j + 1) || res[j])) || null; out.set(it, { k: k || nbGuess(it), claude: !!k }); });
   }
   return out;
@@ -116,30 +122,30 @@ function nbGuess(it){ return { keep: true, why: 'Not read by Claude (no sampling
    items: [{ key, p, screen, fileId, pdf: {sha256, bytes} | null, batch: {name, sha256, index, firstPage, lastPage, span}, include }] (status new or reprint only)
    opts: { say(msg, 0..1), links: bool, sample, mcp, mark(coll, id) }  ->  { run, rows, ids, counts, left, print_pages, ... } */
 async function nbRun(items, opts){
-  const say = opts.say || (() => {}), mark = opts.mark || (() => {});
+  const SRC = opts.src || NBSRC.nb, say = opts.say || (() => {}), mark = opts.mark || (() => {});
   const wasCtl = U.ctl; U.ctl = new AbortController(); U.busy = true; U.failed = 0; U.originPages = U.originPages || new Map();
   const run = newRunId(), at = new Date().toISOString();
   const res = { run, at, rows: [], stories: [], reprints: [], left: [], unconfirmed: [], counts: {}, links: { found: 0, searched: 0 }, errors: [] };
   try {
     const news = items.filter(it => it.screen.status === 'new' && it.include !== false), reps0 = items.filter(it => it.screen.status === 'reprint' && it.include !== false);
-    news.forEach(it => { it.c = { url: nbLink(it.p), title: it.p.headline, published: it.p.date, dateSrc: 'tinyfish', author: it.p.author, text: String(it.p.text || '').slice(0, 20000), site: it.p.outlet_clean, found_by: 'newsbank-pdf' };
+    news.forEach(it => { it.c = { url: SRC.link(it.p), title: it.p.headline, published: it.p.date, dateSrc: 'tinyfish', author: it.p.author, text: (SRC.hint ? SRC.hint(it.p) : '') + String(it.p.text || '').slice(0, 20000), site: it.p.outlet_clean, found_by: SRC.foundBy };
       it.c.gab = NAMES_HIM.test(it.c.title + ' ' + it.c.text) && TF_CONTEXT.test(gabrielContext(it.c.title + '\n' + it.c.text)); it.c.ctx = (it.c.title + '\n' + (it.c.gab ? gabrielContext(it.c.text) + '\n' : '') + it.c.text).slice(0, 1800); });
     // 1. Claude: topic, media, role, tone, language (and the English headline and summary of a non-English story)
-    const cls = await nbClassify(news, opts.sample, say);
+    const cls = await nbClassify(news, opts.sample, say, SRC.preface);
     const kept = [];
     news.forEach(it => {
       const { k, claude } = cls.get(it) || { k: nbGuess(it), claude: false };
       if (k.keep === false){ res.left.push({ hl: VS(it.p.headline, 200), outlet: VS(it.p.outlet_clean, 120), date: it.p.date, why: VS(k.why, 200) || 'Not press coverage about him.' }); it.skipped = VS(k.why, 200) || 'Claude: not press coverage about him'; return; }
       const kk = Object.assign({}, k, { date: it.p.date, outlet: it.p.outlet_clean, hl: it.p.headline, pub: VS(k.pub, 100) || it.p.outlet_clean });
-      const r = toRow(it.c, kk); r._on = true; r._claude = claude; r._text = String(it.p.text || '').slice(0, 6000); r._nb = it; r._found_by = 'newsbank-pdf: ' + it.batch.name;
-      r.src = 'NewsBank'; r.plink = nbLink(it.p); r.lstat = ''; r._pageKey = ''; r._dateSrc = 'newsbank';   // sheet_task.dates_v1 (patch 03) reads 'newsbank' as Date source "NewsBank" ("print edition" for a print record)
-      if (it.p.page) r.fmt = 'Print';
+      const r = toRow(it.c, kk); r._on = true; r._claude = claude; r._text = String(it.p.text || '').slice(0, 6000); r._nb = it; r._found_by = SRC.foundBy + ': ' + it.batch.name;
+      r.src = SRC.srcName; r.plink = SRC.plink(it.p); r.pq = SRC.pq ? SRC.pq(it.p) : ''; r.lstat = ''; r._pageKey = ''; r._dateSrc = SRC.dateSrc;   // sheet_task.dates_v1 (patch 03) reads 'newsbank' as Date source "NewsBank" ("print edition" for a print record)
+      if (SRC.print(it.p)) r.fmt = 'Print';
       it.r = r; it.media = r.media; kept.push(it);
     });
     // 2. the publisher's own link (a search for the headline, then a look at the page): stories and reprints alike
     const lookup = kept.concat(reps0.map(it => { it.media = ''; return it; })), nlook = lookup.length;
-    if (opts.links && opts.mcp && lookup.length){ say('Looking for the publisher’s own pages', 0); res.links.searched = nlook; await nbFindLinks(opts.mcp, lookup, say); res.links.found = lookup.filter(x => x.pub).length; }
-    kept.forEach(it => { if (it.pub){ it.r.link = it.pub.url; it.r.lstat = it.pub.status; } else it.r.link = nbLink(it.p); });
+    if (opts.links && opts.mcp && lookup.length){ say('Looking for the publisher’s own pages', 0); res.links.searched = nlook; await nbFindLinks(opts.mcp, lookup, say, SRC); res.links.found = lookup.filter(x => x.pub).length; }
+    kept.forEach(it => { if (it.pub){ it.r.link = it.pub.url; it.r.lstat = it.pub.status; } else it.r.link = SRC.link(it.p); });
     // 3. the same new story twice in the PDFs: keep the earliest, the other becomes its reprint (the Update button's rule)
     const keep2 = [];
     const cmp = it => Object.assign({}, it.r, { link: it.pub ? it.pub.url : '', plink: '' });   // publisher link or none, never the shared NewsBank host
@@ -148,25 +154,25 @@ async function nbRun(items, opts){
       if (!f){ keep2.push(it); return; }
       const first = keep2.find(x => x.r.id === f.r.id) || keep2[keep2.length - 1];
       if (f.same){ it.skipped = 'the same story and outlet as another story in these PDFs'; res.left.push({ hl: VS(it.p.headline, 200), outlet: VS(it.p.outlet_clean, 120), date: it.p.date, why: it.skipped }); return; }
-      if (!ranIn(first.r, it.p.outlet_clean, '')){ (first.r._reps || (first.r._reps = [])).push({ outlet: it.p.outlet_clean, link: nbLink(it.p), date: it.r.date, hl: it.p.headline, _nb: it }); first.r.also = (first.r.also ? first.r.also + '; ' : '') + it.p.outlet_clean; it.asRep = true; }
+      if (!ranIn(first.r, it.p.outlet_clean, '')){ (first.r._reps || (first.r._reps = [])).push({ outlet: it.p.outlet_clean, link: SRC.link(it.p), date: it.r.date, hl: it.p.headline, _nb: it }); first.r.also = (first.r.also ? first.r.also + '; ' : '') + it.p.outlet_clean; it.asRep = true; }
       else { it.skipped = 'this outlet already has the story in these PDFs'; res.left.push({ hl: VS(it.p.headline, 200), outlet: VS(it.p.outlet_clean, 120), date: it.p.date, why: it.skipped }); }
     });
     const orig = keep2;
     // 4. the outlet that first ran each new story (a wire's or a credited paper's own copy), as the Update button does
     if (opts.mcp && orig.length){ say('Looking for the outlet that first ran each story', 0); try { await originCredit(opts.mcp, orig.map(it => it.r)); } catch(e){ if (STOP_CODES.has(e && e.code)) throw e; res.errors.push('origin search: ' + VS(String(e && e.message || e), 120)); } }
     // 5. the proposed rows, in the Coverage columns with placeholders (the tracker's own proposeRows), then what is NewsBank's
-    const reps = reps0.map(it => ({ story: it.screen.of, outlet: it.p.outlet_clean, link: nbLink(it.p), date: it.p.date, hl: it.p.headline, _on: true, _named: true, _nb: it, _pageKey: 'rp-' + hash12(normU(nbLink(it.p))), _page: { url: nbLink(it.p), title: it.p.headline, clean: '' } }));
+    const reps = reps0.map(it => ({ story: it.screen.of, outlet: it.p.outlet_clean, link: SRC.link(it.p), date: it.p.date, hl: it.p.headline, _on: true, _named: true, _nb: it, _pageKey: 'rp-' + hash12(normU(SRC.link(it.p))), _page: { url: SRC.link(it.p), title: it.p.headline, clean: '' } }));
     orig.forEach(it => (it.r._reps || []).forEach(x => { x._pageKey = 'rp-' + hash12(normU(x.link)); }));
     const stories = orig.map(it => it.r);
     const prop = proposeRows(run, stories, reps);
     const order = []; stories.forEach(r => { order.push(r._nb); (r._reps || []).forEach(x => order.push(x._nb)); }); reps.forEach(p => order.push(p._nb));
     if (order.length !== prop.rows.length) throw new Error('NewsBank rows do not line up with the proposed rows (' + order.length + ' vs ' + prop.rows.length + ')');
-    prop.rows.forEach((row, i) => nbRowFill(row, order[i]));
+    prop.rows.forEach((row, i) => SRC.rowFill(row, order[i]));
     // 6. documents: pages (the story's text as the library's NewsBank text copy, plus where its PDF is), reprints, authors, translations
     const pdb = window.claude && window.claude.use ? await window.claude.use('db').catch(() => null) : null;
     const col = n => pdb ? pdb.collection(n) : null, setDoc = async (n, id, data) => { const c = col(n); if (!c) return; mark(n, id); await c.doc(id).set(data); };
     const pageDoc = (it, key) => { const p = it.p, row = { outlet: p.outlet_clean, date: p.date, headline: p.headline };
-      return { url: nbLink(p), title: VS(p.headline, 300), clean: NBParse.storyHtml(p, row), scoped: '', publine: '', at, nb: nbMeta(it) }; };
+      return { url: SRC.link(p), title: VS(p.headline, 300), clean: SRC.html(p, row), scoped: '', publine: '', at, [SRC.metaKey]: SRC.meta(it) }; };
     for (const it of orig){ await setDoc('pages', it.r.id, pageDoc(it)); res.stories.push(it.r.id);
       (it.r._reps || []).forEach(x => { x._doc = pageDoc(x._nb); }); }
     for (const it of orig) for (const x of (it.r._reps || [])) await setDoc('pages', x._pageKey, x._doc);
@@ -189,9 +195,9 @@ async function nbRun(items, opts){
     items.filter(it => it.screen.status === 'print_page').forEach(it => (res.print_pages = res.print_pages || []).push({ url: nbLink(it.p) || '', outlet: VS(it.p.outlet_clean, 120), date: it.p.date || '', hl: VS(it.p.headline, 200), snippet: 'NewsBank print page from ' + it.batch.name }));
     res.print_pages = res.print_pages || [];
     const batches = [...new Map(items.map(it => [it.batch.sha256, { name: it.batch.name, sha256: it.batch.sha256 }])).values()];
-    const doc = { at, mode: 'newsbank', newsbank: TODAY, status: 'done', stories: stories.map(r => r.id).filter(id => byId.has(id)), reprints: res.reprints.concat(orig.flatMap(it => (it.r._reps || []).map(x => ({ story: it.r.id, outlet: x.outlet })))),
-      rows: covCompact(prop.rows), print_pages: res.print_pages.slice(0, 100), found_by: { newsbank: prop.rows.length }, searched_to: '', since: '', since_manual: false,
-      left: res.left.slice(0, 150), nb: { source: 'NewsBank batch PDFs', batches, pdfs: prop.rows.map((r, i) => order[i].fileId).filter(Boolean).length, links_found: res.links.found, links_searched: res.links.searched } };
+    const doc = { at, mode: SRC.runMode, [SRC.runMark]: TODAY, status: 'done', stories: stories.map(r => r.id).filter(id => byId.has(id)), reprints: res.reprints.concat(orig.flatMap(it => (it.r._reps || []).map(x => ({ story: it.r.id, outlet: x.outlet })))),
+      rows: covCompact(prop.rows), print_pages: res.print_pages.slice(0, 100), found_by: { [SRC.runMark]: prop.rows.length }, searched_to: '', since: '', since_manual: false,
+      left: res.left.slice(0, 150), [SRC.metaKey]: { source: SRC.runSource, batches, pdfs: prop.rows.map((r, i) => order[i].fileId).filter(Boolean).length, links_found: res.links.found, links_searched: res.links.searched } };
     mark('runs', run);
     const saved = await saveRun(run, doc);
     res.rows = prop.rows; res.added = added; res.doc = doc; res.saved = saved;
@@ -223,4 +229,7 @@ function nbRowFill(row, it){
   if (!isRep && !it.pdf) { row['Saved Copy?'] = 'No'; }
   return row;   // an Original finds its pages doc by its temporary code (Tracker story code), a reprint by _page (set by proposeRows)
 }
+/* NewsBank's source object (ProQuest's is in proquest.js) */
+const NBSRC = { nb: { id: 'nb', name: 'NewsBank', idName: 'NewsBank link', foundBy: 'newsbank-pdf', srcName: 'NewsBank', preface: NB_PREFACE, dateSrc: 'newsbank', print: p => !!p.page, runMode: 'newsbank', runMark: 'newsbank', metaKey: 'nb', runSource: 'NewsBank batch PDFs',
+  known: () => nbDocrefs(), cand: nbCand, link: nbLink, plink: nbLink, html: (p, row) => NBParse.storyHtml(p, row), meta: nbMeta, rowFill: nbRowFill } };
 window.__nb = { screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };

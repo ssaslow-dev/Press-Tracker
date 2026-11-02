@@ -116,8 +116,13 @@ def main():
     nb_ui = open(os.path.join(HERE, 'src', 'newsbank_ui.js'), encoding='utf-8').read()
     nb_parse = open(os.path.join(HERE, 'src', 'nbparse.js'), encoding='utf-8').read()
     nb_scope = open(os.path.join(HERE, 'src', 'newsbank.js'), encoding='utf-8').read()
+    pq_parse = open(os.path.join(HERE, 'src', 'pqparse.js'), encoding='utf-8').read()   # PROQUESTPDF-v1
+    pq_scope = open(os.path.join(HERE, 'src', 'proquest.js'), encoding='utf-8').read()
+    pq_ui = open(os.path.join(HERE, 'src', 'proquest_ui.js'), encoding='utf-8').read()
+    nb_scope = nb_scope + '\n' + pq_scope          # one text run inside the tracker's scope: NewsBank first, then the ProQuest source object
     st_js = once(st_js, '/*NB_UI*/', nb_ui)
-    for t in (st_js, nb_parse, nb_scope):
+    st_js = once(st_js, '/*PQ_UI*/', pq_ui)
+    for t in (st_js, nb_parse, nb_scope, pq_parse):
         assert '</script' not in t
     lib = vendor_pdf_libs()
     page = once(page, '<main class="wrap">', '<main class="wrap">\n' + st_html)
@@ -125,6 +130,7 @@ def main():
     doc = ('<title>AJG Update Station</title>\n' + page + '\n<style id="station-fonts">\n' + fonts_css + '</style>\n<style id="station-css">\n' + st_css + '</style>\n'
            '<script type="text/plain" id="tracker-src">' + body_esc + '</script>\n<script type="text/plain" id="nb-scope-src">' + nb_scope + '</script>\n'
            '<script id="nbparse-js">\n' + nb_parse + '</script>\n'
+           '<script id="pqparse-js">\n' + pq_parse + '</script>\n'
            '<script type="text/plain" id="vendor-pdfjs-worker">' + lib['pdfjs_worker'].replace('</script', '<\\/script') + '</script>\n'
            '<script type="text/plain" id="vendor-pdfjs">' + lib['pdfjs'].replace('</script', '<\\/script') + '</script>\n'
            '<script type="text/plain" id="vendor-pdflib">' + lib['pdflib'].replace('</script', '<\\/script') + '</script>\n'
@@ -143,7 +149,7 @@ def main():
     open(p, 'w', encoding='utf-8').write(doc)
     info = {'index_html_bytes': len(doc.encode()), 'index_html_sha256': sha(doc.encode()), 'tracker_js_sha256': sha(js), 'tracker_js_parts_bytes': len(js),
             'shell_sha256': sha(shell.encode()), 'vendor': os.path.basename(vendor),
-            'pdf_libs': lib['info'], 'vendor_urls_in_strings': vend_urls, 'nb_scope_sha256': sha(nb_scope.encode()), 'nbparse_sha256': sha(nb_parse.encode()), 'nb_ui_sha256': sha(nb_ui.encode()),
+            'pdf_libs': lib['info'], 'vendor_urls_in_strings': vend_urls, 'nb_scope_sha256': sha(nb_scope.encode()), 'nbparse_sha256': sha(nb_parse.encode()), 'pqparse_sha256': sha(pq_parse.encode()), 'pq_ui_sha256': sha(pq_ui.encode()), 'pq_scope_sha256': sha(pq_scope.encode()), 'nb_ui_sha256': sha(nb_ui.encode()),
             'fonts_woff2_inlined': nfonts, 'fonts_css_sha256': sha(fonts_css.encode()), 'station_css_sha256': sha(st_css.encode()), 'station_html_sha256': sha(st_html.encode()), 'station_js_sha256': sha(st_js.encode())}
     json.dump(info, open(os.path.join(a.out, 'build_info.json'), 'w'), indent=1)
     print(json.dumps(info, indent=1))

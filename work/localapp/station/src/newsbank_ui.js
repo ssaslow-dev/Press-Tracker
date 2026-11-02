@@ -40,6 +40,9 @@ async function nbStoryPdf(src, st, meta) {
   const { PDFDocument, PDFName, PDFString } = PDFLib;
   const out = await PDFDocument.create({ updateMetadata: false });
   const idx = []; for (let p = st.firstPage; p <= st.lastPage; p++) idx.push(p - 1);
+  // strip BEFORE copying: copyPages brings along every object a page points to, and pdf-lib saves objects nothing points to any more, so a key removed
+  // only from the copy would leave its (Launch, JavaScript ...) objects behind in the file. The source is held in memory only and is never saved.
+  idx.forEach(i => { const pn = src.getPage(i).node; ['Annots', 'AA', 'Metadata', 'PieceInfo', 'B', 'Thumb'].forEach(k => pn.delete(PDFName.of(k))); });
   const copies = await out.copyPages(src, idx);
   const bands = [];
   copies.forEach((pg, i) => {
@@ -51,7 +54,7 @@ async function nbStoryPdf(src, st, meta) {
     }
     out.addPage(pg);
   });
-  out.setTitle(meta.title || 'NewsBank story'); out.setSubject('NewsBank ' + (meta.docref || '')); out.setProducer('AJG Update station (pdf-lib 1.17.1)'); out.setCreator('AJG Update station');
+  out.setTitle(meta.title || (meta.label || 'NewsBank') + ' story'); out.setSubject((meta.label || 'NewsBank') + ' ' + (meta.docref || '')); out.setProducer('AJG Update station (pdf-lib 1.17.1)'); out.setCreator('AJG Update station');
   out.setCreationDate(new Date()); out.setModificationDate(new Date());
   const info = out.getInfoDict();
   info.set(PDFName.of('AJGSource'), PDFString.of(String(meta.source || '').slice(0, 200)));
@@ -156,18 +159,18 @@ function nbDrawAll() {
   if (c.dup_batch) parts.push(fmtN(c.dup_batch) + ' repeated in these PDFs'); if (c.print_page) parts.push(fmtN(c.print_page) + ' print page' + (c.print_page === 1 ? '' : 's')); if (c.added) parts.push(fmtN(c.added) + ' added to the update');
   const sm = $('#nbSummary'); sm.hidden = !items.length; sm.textContent = items.length ? fmtN(NBS.files.filter(f => f.status === 'ok').length) + ' PDF' + (NBS.files.filter(f => f.status === 'ok').length === 1 ? '' : 's') + ', ' + fmtN(items.length) + ' stories: ' + parts.join(', ') + '.' : '';
   const add = $('#nbAdd'); add.textContent = pick.length ? 'Add ' + fmtN(pick.length) + (pick.length === 1 ? ' story' : ' stories') + ' to the update' : 'Add to the update';
-  add.disabled = !pick.length || NBS.busy || NBS.reading || trackerBusy();
+  add.disabled = !pick.length || NBS.busy || NBS.reading || (S.pq && S.pq.busy) || trackerBusy();
   $('#nbLinksRow').hidden = !items.length;
 }
 async function nbAdd() {
-  if (NBS.busy) return;
+  if (NBS.busy || (S.pq && S.pq.busy)) return;
   const take = NBS.items.filter(it => !NBS.added.has(it.key) && (it.screen.status === 'new' || it.screen.status === 'reprint' || it.screen.status === 'print_page'));
   const chosen = take.filter(it => it.screen.status === 'print_page' || it.include);
   if (!chosen.some(it => it.screen.status !== 'print_page')) return;
   NBS.busy = true; nbDrawAll(); const prog = $('#nbProg'), warn = $('#nbWarn'); prog.hidden = false; warn.hidden = true; warn.innerHTML = '';
   const say = (m, f) => { prog.textContent = m; };
   try {
-    const pending = [...NBS.pdfs.values()].reduce((a, x) => a + x.bytes.length, 0);
+    const pending = [...NBS.pdfs.values(), ...(S.pq ? S.pq.pdfs.values() : [])].reduce((a, x) => a + x.bytes.length, 0);
     if (pending > NB_PDF_CAP) throw new Error('The PDFs in this tab add up to ' + fmtN(Math.round(pending / 1048576)) + ' MB, over the ' + (NB_PDF_CAP >> 20) + ' MB one update can hold. Add some now, download the update folder, then reload this page for the rest.');
     let sample = null, mcp = null;
     try { sample = realClaude && realClaude.use ? await realClaude.use('sample') : null; } catch (e) { sample = null; }

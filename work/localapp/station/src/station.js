@@ -208,7 +208,7 @@ function showLoaded() {
   $('#stFacts').innerHTML = facts.map(([k, v]) => '<dt>' + esc(k) + '</dt><dd>' + v + '</dd>').join('');
   $('#stDrop').hidden = true; $('#stLoaded').hidden = false;
   $('#st-step1').classList.add('st-done');
-  ['#st-step2', '#st-step3', '#st-nb'].forEach(s => { const el = $(s); if (el) el.classList.remove('st-lock'); });
+  ['#st-step2', '#st-step3', '#st-nb', '#st-pq'].forEach(s => { const el = $(s); if (el) el.classList.remove('st-lock'); });
   $('#stStep2Cap').textContent = 'Press Update database. Same searches and same checks as the tracker’s button; tone, authors and translations are filled in for each new story.';
   const f = $('#runFind'); if (f) f.disabled = false;
   updatePackUi();
@@ -278,7 +278,8 @@ function updatePackUi() {
   const p = pending(), busy = trackerBusy();
   const parts = [];
   const nbN = S.nb ? [...sess.pages].filter(([, v]) => v.seq > S.lastPacked && v.data && v.data.nb && v.data.nb.file).length : 0;
-  if (p.runs.length) parts.push(fmtN(p.runs.length) + (p.runs.length === 1 ? ' run' : ' runs') + (nbN ? ' (' + fmtN(nbN) + ' NewsBank story PDFs)' : '') + ': ' + fmtN(p.stories) + ' new ' + (p.stories === 1 ? 'story' : 'stories') + ', ' + fmtN(p.reprints) + (p.reprints === 1 ? ' reprint' : ' reprints') + ' (' + fmtN(p.rows) + ' spreadsheet rows)');
+  const pqN = S.pq ? [...sess.pages].filter(([, v]) => v.seq > S.lastPacked && v.data && v.data.pq && v.data.pq.header).length : 0;   // PROQUESTPDF-v1: story text copies from ProQuest PDFs
+  if (p.runs.length) parts.push(fmtN(p.runs.length) + (p.runs.length === 1 ? ' run' : ' runs') + (nbN ? ' (' + fmtN(nbN) + ' NewsBank story PDFs)' : '') + (pqN ? ' (' + fmtN(pqN) + ' ProQuest PDFs)' : '') + ': ' + fmtN(p.stories) + ' new ' + (p.stories === 1 ? 'story' : 'stories') + ', ' + fmtN(p.reprints) + (p.reprints === 1 ? ' reprint' : ' reprints') + ' (' + fmtN(p.rows) + ' spreadsheet rows)');
   let msg = p.runs.length ? 'Ready: ' + parts.join('') + '.' : (S.lastZip ? 'The last update folder was downloaded. Nothing new since.' : 'Nothing to download yet. Press Update database in step 2.');
   if (busy) msg = 'A run is going. Download the update folder when it is done.';
   if (p.running && !busy) msg += ' One run was left unfinished; it is included as far as it got.';
@@ -305,9 +306,10 @@ async function pack() {
     const pdfBlobs = [];   // NEWSBANKPDF-v1: each NewsBank story's own PDF travels as files/<id>.pdf; the pages doc says which (nb.file) and its sha256
     for (const c of PACK_COLLS.filter(x => x !== 'runs')) for (const [id, v] of sess[c]) if (v.seq > S.lastPacked) {
       let data = v.data;
-      if (c === 'pages' && data && data.nb && data.nb.file) {
-        const fid = String(data.nb.file).replace(/^files\//, '').replace(/\.pdf$/, ''), pf = S.nb && S.nb.pdfs.get(fid);
-        if (!pf || pf.sha256 !== data.nb.pdf_sha256) { warns.push('The PDF of “' + (data.title || id) + '” is not in this tab any more: its row goes in without a saved copy.'); data = Object.assign({}, data, { nb: Object.assign({}, data.nb, { file: '', pdf_sha256: '', pdf_bytes: 0 }) }); }
+      const srcKey = data && data.nb && data.nb.file ? 'nb' : data && data.pq && data.pq.file ? 'pq' : '';   // PROQUESTPDF-v1: a ProQuest story's own PDF travels the same way (pages doc pq.file)
+      if (c === 'pages' && srcKey) {
+        const fid = String(data[srcKey].file).replace(/^files\//, '').replace(/\.pdf$/, ''), pf = S[srcKey] && S[srcKey].pdfs.get(fid);
+        if (!pf || pf.sha256 !== data[srcKey].pdf_sha256) { warns.push('The PDF of “' + (data.title || id) + '” is not in this tab any more: ' + (srcKey === 'nb' ? 'its row goes in without a saved copy.' : 'its text copy goes in without the PDF.')); data = Object.assign({}, data, { [srcKey]: Object.assign({}, data[srcKey], { file: '', pdf_sha256: '', pdf_bytes: 0 }) }); }
         else if (!pdfBlobs.some(b => b.name === 'files/' + fid + '.pdf')) pdfBlobs.push({ name: 'files/' + fid + '.pdf', bytes: pf.bytes, kind: 'pdf' });
       }
       add(c, id, data);
@@ -342,6 +344,7 @@ async function saveFile(filename, bytes) {
   const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 5000);
 }
 /*NB_UI*/
+/*PQ_UI*/
 function toastMsg(t) { const el = document.getElementById('toast'); if (!el) return; el.textContent = t; el.hidden = false; setTimeout(() => { el.hidden = true; }, 4000); }
 /* the station's own record that these runs were packed (kept in the artifact's db when it is there; nothing is deleted) */
 async function recordPacked(runIds, filename, zsha, nfiles) {
@@ -370,6 +373,7 @@ function init() {
   const sub = $('#subline'); if (sub) sub.innerHTML = 'Update<br>station';
   wireStep1();
   nbWire();
+  pqWire();
   $('#stPack').addEventListener('click', () => { pack(); });
   $('#stRecoverBtn').addEventListener('click', () => { recover(); });
   $('#stPackAgain').addEventListener('click', async () => { if (S.lastZip) await saveFile(S.lastZip.filename, S.lastZip.zip); });

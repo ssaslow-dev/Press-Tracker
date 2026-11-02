@@ -30,6 +30,20 @@
     <div class="upd-msg st-msg" id="nbProg" hidden></div>
     <ul class="st-list" id="nbWarn" hidden></ul>
   </div>
+  <div class="card pad st-lock" id="st-pq">
+    <div class="st-h"><span class="st-n">Also</span><h2 class="sec">Add ProQuest PDFs</h2></div>
+    <div class="cap">For single ProQuest article PDFs (one story per PDF, as many PDFs as you like at once). Each PDF’s details block (title, publication, date, ProQuest document ID) is read, the story is checked against the tracker by its ProQuest document ID and by headline, outlet and date, rated and translated like any new find, and its publisher’s own page is looked up. The text becomes the saved copy and the PDF is kept with it. A PDF whose details cannot be read is listed as “needs a look” and is not added. The PDFs are read in this browser and kept only in this tab until you download the update folder in step 3.</div>
+    <label class="st-drop" id="pqDrop" for="pqFile" tabindex="0">Drop ProQuest PDFs here, or click to choose them (one or many)</label>
+    <input type="file" id="pqFile" accept=".pdf,application/pdf" multiple hidden>
+    <div class="upd-msg err st-msg" id="pqMsg" role="alert" hidden></div>
+    <ul class="st-list nb-files" id="pqFiles"></ul>
+    <div class="upd-msg st-msg" id="pqSummary" hidden></div>
+    <div class="nb-tblwrap"><table class="nb-tbl" id="pqTbl" hidden><thead><tr><th></th><th>What it is</th><th>Date</th><th>Outlet</th><th>Headline</th><th>Note</th></tr></thead><tbody id="pqBody"></tbody></table></div>
+    <label class="nb-opt" id="pqLinksRow" hidden><input type="checkbox" id="pqLinks" checked> Also look for each story’s own web page (TinyFish: about two calls per story, 30 a minute)</label>
+    <div class="st-acts"><button class="btn primary" type="button" id="pqAdd" disabled>Add to the update</button></div>
+    <div class="upd-msg st-msg" id="pqProg" hidden></div>
+    <ul class="st-list" id="pqWarn" hidden></ul>
+  </div>
   <div class="card pad st-lock" id="st-step3">
     <div class="st-h"><span class="st-n">Step 3</span><h2 class="sec">Download the update folder</h2></div>
     <div class="cap">One zip with the runs made since the file was loaded. Drag it into the PC tracker with Bring in update.</div>

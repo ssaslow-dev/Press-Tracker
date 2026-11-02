@@ -266,6 +266,6 @@ function storyHtml(p, row) {
     + (p.citation ? '<p class="pdf-cap">' + esc(p.citation) + '</p>' : '') + '</article></body></html>';
 }
 
-const api = { linesFromItems, splitBatch, parseStory, parseHeader, parseCitation, paragraphs, docrefFix, docrefKey, canonLink, cleanOutlet, storyHtml, squashCit, MONTHS };
+const api = { linesFromItems, furnitureKeys, splitBatch, parseStory, parseHeader, parseCitation, paragraphs, docrefFix, docrefKey, canonLink, cleanOutlet, storyHtml, squashCit, MONTHS };
 if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.NBParse = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
