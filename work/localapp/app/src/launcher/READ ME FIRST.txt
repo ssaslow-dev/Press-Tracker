@@ -1,0 +1,23 @@
+AJG TRACKER (on this PC)
+
+TO START: double-click "Start Tracker.cmd".
+A black window opens and stays open while you use the tracker, and the tracker appears in a Microsoft Edge window.
+To stop: close the black window.
+If the tracker is already running, double-clicking again just opens it again.
+
+THE TRACKER FILES BUTTON (bottom right of the tracker)
+  Make "for Update" file   a small file that tells Claude what the tracker already has. You drag it into the chat when you ask Claude to look for new stories.
+  Bring in update          drag in the update zip that Claude gives you. The tracker shows what it would change. Nothing is saved until you press Save.
+  Accept the workbook as it is now   use this once after you edit the workbook in Excel yourself (close Excel first).
+
+TO UPDATE THE TRACKER (weekly or monthly)
+  1. Tracker files > Make "for Update" file, and keep the file it downloads.
+  2. In the Update station (the web page), load that file and press Update.
+  3. Download the update zip from the Update station.
+  4. Tracker files > Bring in update, drop the zip in, look at the preview, press Save.
+
+Nothing here goes on the internet. The tracker only talks to this PC. It reads and writes only inside this folder.
+This folder can sit on the shared drive and be opened from several PCs. Only one person can save at a time; if someone else is saving, the tracker says so.
+Do not open the workbook in Excel while saving. After you edit it in Excel yourself, use "Accept the workbook as it is now".
+Nothing is ever deleted: old files are moved aside (backups, replaced page files, _to_delete).
+More detail: app\docs\ (README.md for the folder layout, IT_NOTE.md for IT).
