@@ -5,7 +5,7 @@ Press-coverage database for CA Assemblymember Jesse Gabriel (AD-46), kept by Sam
 ## Where things live
 
 **In this repository:**
-- `docs/`: START_HERE, HANDOFF (operations), DECISIONS (the decision log; tags like `NOSCHED-v1`; newest at the end), CONTRACT (run-doc schema), AGENT_BRIEF, BOARD, TONE_GUIDE. Search DECISIONS by tag; don't read it whole.
+- `docs/`: START_HERE, HANDOFF (operations), HANDOFF_PC_APP (2026-11-02 handoff from the Claude that ran the old tracker: rules, quirks and lessons for the PC app and Update station; read sections 1, 6 and 10 before working on them), DECISIONS (the decision log; tags like `NOSCHED-v1`; newest at the end), CONTRACT (run-doc schema), AGENT_BRIEF, BOARD, TONE_GUIDE. Search DECISIONS by tag; don't read it whole.
 - `code/`: tracker page sources (`code/tracker/NN_*.js`), the save pipeline (`sheet_task.py` plus rule modules), reference data (`outlets.json`, `reporters.json`, `reporter_employment.csv`, `outlet_rules.json`, `lookup_cache.json`), `make_viewer.py` (shared copy), and `sheet_task_prompt.md` (today's manual save procedure).
 - `build/`: build scripts (`apply_all_patches.py`, `build.sh`), tab sources (`build/tabs/`) and tests (`build/tests/run_all.sh`, about 5 min; TABS harness in `build/tests/tabs/`).
 - `work/saver/`: the save program in progress (see Current work).
