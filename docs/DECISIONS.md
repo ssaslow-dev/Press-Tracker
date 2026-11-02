@@ -418,3 +418,4 @@ UPDATEFOLDER-v1 answers (Sammy, 2026-11-02): (1) the PC program writes the workb
 
 ## UPDATESTATION-v1 (Sammy, 2026-11-02)
 Plan a new claude.ai artifact that holds only the Update button, taken out of the current tracker, and works exactly as the button does today. Instead of saving to the Mac master, it produces the update folder (UPDATEFOLDER-v1) that Sammy downloads and drags into the PC tracker. The old tracker is not changed (NEWPROJECT-v1); the new artifact is private and separate.
+UPDATESTATION-v1 (Sammy, 2026-11-02, follow-up): each time the Update station is used, the "for Claude" file from the PC tracker is uploaded first. Everything that needs to know what the tracker already has (duplicate checks, the reprint logic) works from that file. So the file must carry whatever the reprint logic reads today, not only headline, outlet, date and link.
