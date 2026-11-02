@@ -96,7 +96,7 @@
     banners(box);
     // 1. make for update
     box.appendChild(el('h3', { text: '1. Make "for Update" file' }));
-    box.appendChild(el('p', { text: 'A small file that tells Claude which stories the tracker already has (no article text). Drag it into the Update station.' }));
+    box.appendChild(el('p', { text: 'A small file listing the stories the tracker already has (no article text). Load it into the Update station before pressing Update.' }));
     var mk = el('button', { class: 'ajgf-b', type: 'button', text: 'Make "for Update" file', onclick: doMake });
     if (state.busy) mk.disabled = true;
     box.appendChild(mk);
@@ -210,7 +210,7 @@
   function setUpdate(u) { state.update = u; render(); }
 
   function takeFile(file) {
-    if (!/\.zip$/i.test(file.name)) { setUpdate({ error: 'That is not a .zip file. Drop the update zip that Claude gave you.' }); return; }
+    if (!/\.zip$/i.test(file.name)) { setUpdate({ error: 'That is not a .zip file. Drop the update zip from the Update station.' }); return; }
     state.busy = true; setUpdate({ working: 'Sending ' + file.name + ' (' + bytes(file.size) + ') to the tracker...' });
     fetch('/_local/station/upload?name=' + encodeURIComponent(file.name), { method: 'POST', headers: { 'X-Local-Token': TOKEN }, body: file })
       .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); })

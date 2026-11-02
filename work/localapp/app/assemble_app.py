@@ -216,7 +216,7 @@ def copy_app_code(root: Path, pb: Path, info: dict):
     shutil.copy2(LOCALAPP / 'winpack' / 'selfcheck.py', app / 'station' / 'selfcheck.py')
     # docs for whoever opens the folder (IT, Sammy)
     (app / 'docs').mkdir()
-    for src in (LOCALAPP / 'updatefolder' / 'FORMAT.md', LOCALAPP / 'IT_NOTE.md', LOCALAPP / 'winpack' / 'README.md', HERE / 'README.md'):
+    for src in (LOCALAPP / 'updatefolder' / 'FORMAT.md', LOCALAPP / 'IT_NOTE_APP.md', LOCALAPP / 'winpack' / 'README.md', HERE / 'README.md'):
         if src.is_file():
             shutil.copy2(src, app / 'docs' / src.name)
     # the pipeline: the page build's published-pipeline folder + winpack patches 01 and 02 on the copy + pdftext_pypdf.py
