@@ -88,6 +88,7 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 10. **Switch-over** (SWITCHOVER-v1): when ready and tested (end-to-end test, Fable review, one supervised real save). The PC tracker starts fresh (no old notes, views or edit history). The review queue moves into the PC tracker. Plan: `work/localapp/PLAN.md`.
 11. **Government computer** (GOVIT-v1): strict IT. On the PC: no installs, admin, registry, services or network connections; 127.0.0.1 only; files only in the app folder; signed official Python and hash-pinned packages; readable source. Get IT's OK first (`work/localapp/IT_NOTE.md`).
 12. **Several PCs** (MULTIPC-v2, replaces v1): each person keeps a local copy (running from the shared drive failed). One keeper saves; the keeper's tracker makes a "refresh file" the others drag in to match. Notes and views stay personal. Reader copies hide the save buttons.
+13. **Photos** (PHOTOLINK-v1): new saved copies link to the news sites' photos (Edge loads them when a copy is opened); existing copies keep embedded photos. The one exception to "the PC never goes online"; IT's note says so.
 
 ## Open decisions for Sammy (don't assume answers)
 
