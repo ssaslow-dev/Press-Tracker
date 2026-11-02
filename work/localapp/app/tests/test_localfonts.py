@@ -5,7 +5,7 @@ Page      the real page in Chromium: every request that is not for 127.0.0.1 is 
           with no remote photo is opened in the viewer frame. Expected: zero outside requests, from the page and from the frame; Roboto Slab (500-800)
           and Public Sans (400-700, and 400 italic in the frame) load from /fonts/ with latin and latin-ext faces; the frame's policy allows
           font-src 'self' only; the Google hosts appear nowhere in the served page or in the pipeline's shell and tracker.js.
-Files     the font folder in the build equals work/localapp/fonts/files (licences included)."""
+Files     the font folder in the build equals work/localapp/fonts/google (the very files Google serves to the old tracker; licences included)."""
 import json
 import re
 import shutil
@@ -21,7 +21,7 @@ import support as T  # noqa: E402
 from test_photolink import DATA_PNG, OPEN_JS, open_expr  # noqa: E402
 
 BASE = T.SCRATCH / 'app_build' / 'test_localfonts'
-FONTS_SRC = T.REPO / 'work' / 'localapp' / 'fonts' / 'files'
+FONTS_SRC = T.REPO / 'work' / 'localapp' / 'fonts' / 'google'
 
 # latin-ext characters (Lodz, s with acute, Czech r with caron) go to the latin-ext face; the rest to latin
 PAGE = ('<html><head><title>t</title></head><body><div>Test Gazette · 2026-10-01<br>https://news.example.test/2026/fonts<br>Saved 2026-11-02</div>'
@@ -108,7 +108,7 @@ class Page(unittest.TestCase):
                           ('pipeline tracker.js', (T.BUILD / 'app' / 'pipeline' / 'tracker.js').read_text(encoding='utf-8'))):
             self.assertNotIn('fonts.googleapis', txt, name)
             self.assertNotIn('fonts.gstatic', txt, name)
-        self.assertIn('<link rel="stylesheet" href="/fonts/fonts.css">', self.html)
+        self.assertIn('<link rel="stylesheet" href="/fonts/page.css">', self.html)
         self.assertNotIn('rel="preconnect"', self.html.split('</head>')[0])
 
     def _loaded(self, res, key, family, weight, style='normal'):
@@ -127,8 +127,11 @@ class Page(unittest.TestCase):
         self.assertIn('Roboto Slab', res['headFamily'])
         self.assertIn('Public Sans', res['bodyFamily'])
         self.assertFalse([f for f in res['faces'] if f.endswith('|error')], res['faces'])
-        self.assertEqual(sum(1 for f in res['faces'] if f.startswith('Roboto Slab|')), 8)
-        self.assertEqual(sum(1 for f in res['faces'] if f.startswith('Public Sans|')), 10)
+        # SAMELOOK-v2: exactly what the old page's one Google request defines: Roboto Slab 500-800 and Public Sans 400-700, normal style only, in every
+        # script subset Google lists (7 and 3). No italic face in the page: a browser draws its own slanted italic, which is the old look.
+        self.assertEqual(sum(1 for f in res['faces'] if f.startswith('Roboto Slab|')), 28)
+        self.assertEqual(sum(1 for f in res['faces'] if f.startswith('Public Sans|')), 12)
+        self.assertEqual([f for f in res['faces'] if '|italic|' in f], [])
 
     def test_viewer_frame_fonts_load_and_policy_is_self_only(self):
         res = self.out['results']['frame']
@@ -147,9 +150,13 @@ class Page(unittest.TestCase):
         self._loaded(res, 'sans-italic', 'Public Sans', 400, 'italic')
         self._loaded(res, 'sans-italic-ext', 'Public Sans', 400, 'italic')
         self.assertIn('Roboto Slab', res['h1Family'])
+        # the frame asks for Roboto Slab 600 and 700, Public Sans 400 and 600 and Public Sans 400 italic, and nothing else (a bold word uses the 600 face, as before)
+        faces = res['faces']
+        self.assertEqual(sorted({f.split('|')[0] + '|' + f.split('|')[1] + '|' + f.split('|')[2] for f in faces}),
+                         ['Public Sans|400|italic', 'Public Sans|400|normal', 'Public Sans|600|normal', 'Roboto Slab|600|normal', 'Roboto Slab|700|normal'])
 
     def test_server_serves_the_fonts(self):
-        for name in ('fonts.css', 'roboto-slab-latin-700-normal.woff2', 'public-sans-latin-400-italic.woff2', 'LICENSE-roboto-slab', 'LICENSE-public-sans'):
+        for name in ('page.css', 'viewer.css', 'roboto-slab-latin-normal-v36-b6ufN5qU.woff2', 'public-sans-latin-italic-v21-RgDcqd1s.woff2', 'LICENSE-roboto-slab', 'LICENSE-public-sans'):
             with urllib.request.urlopen(self.srv.base + '/fonts/' + name, timeout=60) as r:
                 self.assertEqual(r.status, 200, name)
                 if name.endswith('.woff2'):

@@ -255,7 +255,7 @@ def copy_tree(src: Path, dst: Path, hardlink=False):
     shutil.copytree(src, dst, copy_function=(os.link if hardlink else shutil.copy2), dirs_exist_ok=True)
 
 
-FONTS_SRC = LOCALAPP / 'fonts' / 'files'
+FONTS_SRC = LOCALAPP / 'fonts' / 'google'      # SAMELOOK-v2: the files Google serves to the old tracker (fonts/fetch_google_fonts.py), not the static fontsource ones
 
 
 def patch_index_fonts(idx: Path):
@@ -266,10 +266,11 @@ def patch_index_fonts(idx: Path):
 
 
 def copy_fonts(data: Path):
-    """LOCALFONTS-v1: Roboto Slab and Public Sans (fonts/fetch_fonts.py) into data\\site\\fonts, with their licence texts; served by the page server like any site file"""
+    """LOCALFONTS-v1 / SAMELOOK-v2: Roboto Slab and Public Sans, the very files Google serves (fonts/fetch_google_fonts.py), with page.css (what the page asks
+    for) and viewer.css (what the saved-copy frame asks for) and their licence texts, into data\\site\\fonts; served by the page server like any site file"""
     dst = data / 'site' / 'fonts'
-    if not (FONTS_SRC / 'fonts.css').is_file():
-        raise SystemExit('fonts: run python3 -I work/localapp/fonts/fetch_fonts.py first (work/localapp/fonts/files is missing)')
+    if not (FONTS_SRC / 'page.css').is_file():
+        raise SystemExit('fonts: work/localapp/fonts/google is missing (python3 -I work/localapp/fonts/fetch_google_fonts.py)')
     if dst.is_dir():
         shutil.rmtree(dst)
     dst.mkdir(parents=True)
@@ -370,6 +371,7 @@ def main(argv=None):
     ap.add_argument('--nupkg')
     ap.add_argument('--wheel-cache')
     ap.add_argument('--code-only', action='store_true', help='re-copy only the code (app/ except site-packages, top files) into an existing build')
+    ap.add_argument('--refresh-page', action='store_true', help='with --code-only: also replace data/site/index.html and data/site/data/* from the page build (a test build whose page build changed; a keeper copy that has saved keeps its own page, so never use it there)')
     ap.add_argument('--role', choices=['keeper', 'reader'], default='reader', help='role.json of this copy (MULTIPC-v2); the keeper copy is set once at setup')
     ap.add_argument('--zip', action='store_true', help='also write AJG Tracker.zip (without data/library unless --zip-library)')
     ap.add_argument('--zip-library', action='store_true')
@@ -388,9 +390,21 @@ def main(argv=None):
         idx = root / 'data' / 'site' / 'index.html'      # PHOTOLINK-v1: the page already in data\site gets the viewer patch too (once; a rebuilt page has it already)
         if idx.is_file() and 'PHOTOLINK-v1 (PC tracker)' not in idx.read_text(encoding='utf-8'):
             patched_copy(idx, idx, HERE / 'patches' / '06_tracker_js_photolink.patch')
-        if idx.is_file() and '/fonts/fonts.css' not in idx.read_text(encoding='utf-8'):
-            patch_index_fonts(idx)                        # LOCALFONTS-v1 (same rule)
+        if idx.is_file():                                 # LOCALFONTS-v1 (same rule); a page patched by the first version (one fonts.css) is moved to page.css / viewer.css
+            txt = idx.read_text(encoding='utf-8')
+            if '/fonts/fonts.css' in txt:
+                idx.write_text(txt.replace('href="/fonts/fonts.css"', 'href="/fonts/page.css"').replace('@import url("/fonts/fonts.css")', '@import url("/fonts/viewer.css")'), encoding='utf-8', newline='')
+            elif '/fonts/page.css' not in txt:
+                patch_index_fonts(idx)
         copy_fonts(root / 'data')
+        if a.refresh_page:
+            site = pb / 'site'
+            patched_copy(site / 'index.html', root / 'data' / 'site' / 'index.html', HERE / 'patches' / '06_tracker_js_photolink.patch')
+            patch_index_fonts(root / 'data' / 'site' / 'index.html')
+            for f in (site / 'data').iterdir():
+                tmp = root / 'data' / 'site' / 'data' / (f.name + '.new')      # replaced, never written into (hard links)
+                shutil.copy2(f, tmp)
+                os.replace(tmp, root / 'data' / 'site' / 'data' / f.name)
         top_files(root, a)
         precompile(root)
         app_manifest(root)

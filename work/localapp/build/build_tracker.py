@@ -48,6 +48,29 @@ def run(cmd, cwd, env=None, log=None):
     return r.stdout
 
 
+def merge_related(live_index, state_path):
+    """RELRELATED-v1: release_related.json is merged, never shrunk. The copy in the repository is older than the page the live tracker published (its
+    last save added relations for the newest stories); the published page carries the full list in its tab-releases block ("rel": {release: [[sid, type, lag]]}).
+    Adds the relations the state file lacks (keyed by release and story) and takes the published order and types for the releases the page lists; rows only this copy has are kept after them. Returns how many were added."""
+    import re
+    txt = open(live_index, encoding='utf-8').read()
+    m = re.search(r'<script[^>]*id="?tab-releases"?[^>]*>(.*?)</script>', txt, re.S)
+    if not m:
+        return 0
+    live = json.loads(m.group(1)).get('rel') or {}
+    st = json.load(open(state_path, encoding='utf-8'))
+    rel, n = st.setdefault('rel', {}), 0
+    for k, rows in live.items():
+        have = {r[0] for r in rel.get(k, [])}
+        add = [r for r in rows if r[0] not in have]
+        n += len(add)
+        keep = [r for r in rel.get(k, []) if r[0] not in {x[0] for x in rows}]
+        rel[k] = [r for r in rows] + keep    # the published order and types (ties among equal lags are ordered as the live page has them), then any row only this copy has
+    with open(state_path, 'w', encoding='utf-8', newline='\n') as f:
+        json.dump(st, f, ensure_ascii=False)
+    return n
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--out', required=True, help='output folder (created; an existing stage/ and site/ in it are replaced)')
@@ -56,7 +79,9 @@ def main():
     ap.add_argument('--legacy', default=None,
                     help='legacy_index.html (the old published page: build_data reads its "data" block for fallback fields). It holds '
                          'translated story text, so it is not in the repository; default: vendor/pipeline/legacy_index.html if present')
-    ap.add_argument('--live-site', default=None, help='folder with articles/, img/, copies/ fetched read-only from the live tracker')
+    ap.add_argument('--live-site', default=None, help='folder with articles/, img/, copies/ fetched read-only from the live tracker (and its index.html, when present: see --related-from)')
+    ap.add_argument('--related-from', default=None, help="the live tracker's own index.html: its press-release relations that code/release_related.json lacks are merged "
+                    "into the staged copy (default: <live-site>/index.html when it exists). SAMELOOK-v2: the repository copy of the state file is older than the published page")
     a = ap.parse_args()
 
     vendor = a.vendor
@@ -101,6 +126,9 @@ def main():
             cp(os.path.join(vp, 'insights', f), os.path.join(stage, 'work', 'out', f))
         else:
             cp(os.path.join(vp, 'insights', f), os.path.join(stage, 'build', 'insights', f))
+    seed = a.related_from or (os.path.join(a.live_site, 'index.html') if a.live_site else None)
+    if seed and os.path.isfile(seed):
+        print('release_related.json: merged', merge_related(seed, os.path.join(stage, 'code', 'release_related.json')), 'relations the live page has and the repository copy lacks')
     xlsx = os.path.join(stage, 'work', 'coverage_current.xlsx')
     cp(a.xlsx, xlsx)
     print('workbook copy sha256', sha(xlsx))
