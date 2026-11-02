@@ -1,0 +1,9 @@
+AJG TRACKER TEST - READ ME FIRST
+
+1. Right-click "AJG Tracker test.zip" and choose Extract All. Pick any folder you can write to (Desktop is fine).
+2. Open the new "AJG Tracker test" folder and double-click "Start test.cmd".
+3. A black window opens, then a browser page. It should say "It works" in big letters.
+4. If it says "Partly works", or no page appears, that is still useful. Do not fix anything.
+5. If Windows says "Windows protected your PC", or a security program blocks something, stop there: do not click "Run anyway". Tell Claude the exact message (a photo or screenshot is fine). That answer is what we need.
+6. On the page, click "Copy report" and paste it into a message to Claude. The same text is saved in app\probe_report.txt.
+7. When done, close the black window. The test stops by itself after 15 minutes. It installs nothing and does not change Windows.

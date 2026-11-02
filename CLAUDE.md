@@ -82,7 +82,7 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 5. **The 256 MB artifact cap** (Sammy: "do what you think is best"): keep the current tracker's design for now, with saved copies in per-year files. Revisit only if the new tracker gets near the cap. A browser page can't read a private GitHub repo without credentials, so the copies can't simply be loaded from here.
 6. **Look and feel** (SAMELOOK-v1): the new tracker looks and feels the same as the current one, minus the Update button functionality. Leaving out the Update button is temporary; it comes back later.
 7. **Local software** (LOCALAPP-v1): the new project turns the existing tracker into self-contained software that runs locally. Its only outside connections, later, are Claude and TinyFish, and only for the Update button. Target: the office Windows PC, with nothing installed (portable folder only).
-8. **Update folder** (UPDATEFOLDER-v1): Claude does the searching and saving work and hands Sammy an update folder; he drags it into the local program, which integrates it into the tracker. The program itself does not go online.
+8. **Update folder** (UPDATEFOLDER-v1): Claude does the searching and saving work and hands Sammy an update folder; he drags it into the local program, which integrates it into the tracker. The program itself does not go online. The PC program writes the workbook (all saver checks, workbook never leaves the PC); a program button makes a "for Claude" list of stories already in the tracker (no article text) for Sammy to drag into the chat.
 
 ## Open decisions for Sammy (don't assume answers)
 
