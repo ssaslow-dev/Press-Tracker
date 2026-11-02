@@ -9,6 +9,7 @@
   - pandas and numpy contain compiled code (.pyd/.dll files built by those projects; not Authenticode-signed);
   - everything else is plain Python text.
 - `app\`: the tracker's own programs, as readable Python and JavaScript text.
+- `data\site\fonts\`: the page's two typefaces, bundled so the page never contacts a font service: Roboto Slab (Apache 2.0) and Public Sans (SIL Open Font License 1.1), with their licence files.
 - `data\`: the workbook, the article library, backups and the tracker's notes, all as ordinary files.
 - `Start Tracker.cmd`: a short batch file that starts `python\python.exe` on `app\station\launcher.py`.
 
