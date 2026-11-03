@@ -58,6 +58,8 @@ Agent time: several days of building. The calendar is set by your PC test rounds
 
 ## Switch-over day checklist (SWITCHOVER-v1; keep this list current)
 
+Before the day: CLEANUP-v1: remove outdated or inactive code and move superseded decisions to docs/DECISIONS_ARCHIVE.md (every removal listed; all suites green after); then build the final zip.
+
 Done to the real workbook from the Mac, never to an older copy:
 1. Old tracker: stop Update and saves (it stays read-only by habit).
 2. Old workspace's Claude makes `Tracker library manifest.sha256` (workbook + year folders, _original_html, _original_pdf, Press releases).
