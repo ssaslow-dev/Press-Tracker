@@ -68,7 +68,7 @@ Done to the real workbook from the Mac, never to an older copy:
 5. One-time changes to the new sheet, each with preview, backup and confirm:
    a. DROPUNVERIFIED-v1: delete all "Reprint (unverified)" rows (counted fresh) and their files; IDs stay reserved.
    b. PRCOLOR-v1: recolour every Press release = Yes row purple (#7030A0); only font colour changes.
-   c. PRJUDGE-v1 follow-up: mark Press release = Yes on the 4 missed wire releases (01759, 01190, 01364, 00290), after re-checking them in the real workbook.
+   c. PRJUDGE-v2: mark Press release = Yes on the 3 missed wire releases (01190, 01364, 00290; not 01759), and set Press release = No (font black) on the ~119 other-issuer reposts on news outlets; own-release copies untouched; 13 organisation-site posts listed for Sammy. All re-checked on the real workbook first.
 6. Move the Update station to the office claude.ai account (work/localapp/station/MOVE_TO_OFFICE.md); connect TinyFish there.
 7. First real update: Make "for Update" file, Update run in the station, Bring in update, preview, Save (Sammy present). This is the end-to-end test.
 8. Make refresh file (full) for each colleague.
