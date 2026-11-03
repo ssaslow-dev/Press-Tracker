@@ -518,3 +518,4 @@ SWITCHOVER-v1 (Sammy, 2026-11-03, follow-up): the repo snapshot in data/ stays a
 ## PCEDITS-v1 and BACKUPS-PC (Sammy, 2026-11-03)
 - PCEDITS-v1: story edits and removals made in the PC tracker's Manage panel are saved into the workbook together with the next update brought in, and a "Save my edits" button saves them on their own when there is no update; same checks as any save. Matches today's "Save to sheet" (REVIEW_2 lesser note 7).
 - BACKUPS-PC: SAVE_RULES answer 5's second half (moving pre-saver backups to Backups/_to_delete after the first confirmed save) is skipped: those backups stay on the Mac and are not copied to the PC; the saver keeps the newest 3 of its own as usual.
+NEWSBANKPDF-v1 (Sammy, 2026-11-03, follow-up): NewsBank PDFs need not be batches of 20; any number of stories per PDF (one to many) is fine. The station no longer warns about the count and its caption says so.

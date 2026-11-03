@@ -168,13 +168,15 @@ def main(out):
     exp = {}
     gen19 = [dict(k=f'g{i}', hl=f'Second search story {i}: {TOPICS[i + 4]}', d=(2026, 10, 1 + i), src=f'Second Gazette {i} (CA)', au=f'Reporter {i}', sec='Metro', pg='', n=60 + 7 * i) for i in range(1, 20)]
     for s_ in gen19: s_['dup19'] = True
-    for name, sts, flow in (('batch_A', stories, 'continuous'), ('batch_B', stories, 'newpage'), ('batch_19', gen19, 'newpage')):
+    one = [dict(gen19[0], k='solo1')]; seven = [dict(g, k='sev' + g['k']) for g in gen19[1:8]]   # any number of stories per PDF (Sammy 2026-11-03)
+    for name, sts, flow in (('batch_A', stories, 'continuous'), ('batch_B', stories, 'newpage'), ('batch_19', gen19, 'newpage'),
+                            ('batch_1', one, 'continuous'), ('batch_7', seven, 'continuous')):
         rec = []
         n = make(os.path.join(out, name + '.pdf'), sts, flow, rec)
         exp[name] = dict(pages=n, items=rec, n=len(rec))
     import shutil
     shutil.copy(os.path.join(out, 'batch_A.pdf'), os.path.join(out, 'batch_A_copy.pdf'))
-    exp['stories'] = {s['k']: {k: v for k, v in s.items()} for s in STORIES + gen19}
+    exp['stories'] = {s['k']: {k: v for k, v in s.items()} for s in STORIES + gen19 + one + seven}
     json.dump(exp, open(os.path.join(out, 'expected.json'), 'w'), indent=1, ensure_ascii=False)
     # hostile PDFs (a story PDF with /OpenAction JavaScript; one with an embedded file): made with pypdf from a one-page file
     from pypdf import PdfReader, PdfWriter

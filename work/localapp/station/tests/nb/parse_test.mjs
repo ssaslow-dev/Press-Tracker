@@ -13,7 +13,7 @@ async function readBatch(file) {
   for (let p = 1; p <= doc.numPages; p++) { const pg = await doc.getPage(p), tc = await pg.getTextContent(), v = pg.getViewport({ scale: 1 }); pages.push({ page: p, height: v.height, lines: NB.linesFromItems(tc.items) }); }
   return pages;
 }
-for (const name of ['batch_A', 'batch_B', 'batch_19']) {
+for (const name of ['batch_A', 'batch_B', 'batch_19', 'batch_1', 'batch_7']) {
   const pages = await readBatch(path.join(dir, name + '.pdf')), r = NB.splitBatch(pages), e = exp[name];
   ok(name + ': ' + e.n + ' stories found', r.stories.length === e.n, r.stories.length);
   ok(name + ': nothing left after the last citation', r.tail.length === 0, JSON.stringify(r.tail));

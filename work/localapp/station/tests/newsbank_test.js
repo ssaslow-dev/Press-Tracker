@@ -90,7 +90,7 @@ const INIT = ({ today, hl }) => {
   check('batch_A: 20 stories found in ' + exp.batch_A.pages + ' pages', files[0].status === 'ok' && files[0].stories === 20 && files[0].pages === exp.batch_A.pages, JSON.stringify(files[0]));
   check('batch_A: mid-page starts are noticed', /mid-page/.test(files[0].note), files[0].note);
   check('the byte-identical copy is skipped and says so', files[1].status === 'same' && /identical to “batch_A.pdf”/.test(files[1].note), JSON.stringify(files[1]));
-  check('batch_19: 19 stories found and flagged as not 20', files[2].stories === 19 && (files[2].warn || []).some(w => /19 stories/.test(w)), JSON.stringify(files[2]));
+  check('batch_19: 19 stories found, no warning about the count (any number per PDF is fine)', files[2].stories === 19 && !(files[2].warn || []).some(w => /stories \(a batch/.test(w)), JSON.stringify(files[2]));
   check('a full batch gets no count warning', !(files[0].warn || []).length, JSON.stringify(files[0].warn));
 
   const items = await page.evaluate(() => window.__station.state.nb.items.map(it => ({ key: it.key, st: it.screen.status, of: it.screen.of, why: it.screen.why, hl: it.p.headline, date: it.p.date, outlet: it.p.outlet_clean, docref: it.p.docref, file: it.batch.name, idx: it.batch.index, pdf: it.pdf && it.pdf.bytes, pdfid: it.fileId, kind: it.p.kind, shared: !!(it.batch.sharedFirst || it.batch.sharedLast), pages: it.batch.firstPage + '-' + it.batch.lastPage })));

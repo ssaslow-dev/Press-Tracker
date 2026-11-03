@@ -64,7 +64,6 @@ async function nbStoryPdf(src, st, meta) {
 
 function nbBatchWarn(r) {
   const w = [];
-  if (r.stories.length !== 20) w.push(r.stories.length + ' stories (a batch should hold 20; only the last one of a search may hold fewer). If it is not the last, the download may be cut short: do that page again.');
   if (r.noheader) w.push(r.noheader + ' of its stories have no readable header (details come from the citation).');
   if (r.tail.length) w.push('text after the last citation was left out: ' + r.tail.slice(0, 2).join(' / ').slice(0, 120));
   return w;
