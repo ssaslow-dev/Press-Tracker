@@ -58,7 +58,7 @@ Agent time: several days of building. The calendar is set by your PC test rounds
 
 ## Switch-over day checklist (SWITCHOVER-v1; keep this list current)
 
-Before the day: CLEANUP-v1: remove outdated or inactive code and move superseded decisions to docs/DECISIONS_ARCHIVE.md (every removal listed; all suites green after); then build the final zip.
+Before the day: CLEANUP-v1: remove outdated or inactive code and move superseded decisions to docs/DECISIONS_ARCHIVE.md (every removal listed; all suites green after); then run CHAINCHECK-v1 (work/localapp/chaincheck/: PC for-Update file -> station -> update folder -> PC preview/save -> page -> reader refresh) on the final builds; it must pass before the final zip is sent and the station is moved.
 
 Done to the real workbook from the Mac, never to an older copy:
 1. Old tracker: stop Update and saves (it stays read-only by habit).
