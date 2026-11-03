@@ -18,3 +18,6 @@ python3 -I "$R/work/localapp/newsbank_pc/tests/e2e_sheet_task.py" "$S/out/nb_upd
 node "$ST/tests/newsbank_real_test.js" --page "$ST/dist/index.html" | grep -E "^(FAIL|SKIP|all|[0-9]+ FAILED)"
 node "$ST/tests/newsbank_real2_test.js" --page "$ST/dist/index.html" | grep -E "^(FAIL|SKIP|all|[0-9]+ FAILED)"
 node "$ST/tests/newsbank_tv_real_test.js" | grep -E "^(FAIL|SKIP|all|[0-9]+ FAILED)"   # NBTV-v1: the real CNN transcript (AJG_REAL_NB2)
+node "$ST/tests/newsbank_print_test.js" | grep -E "^(FAIL|SKIP|all|[0-9]+ FAILED)"   # PRINTPAGES-v1: the two real print pages (AJG_REAL_NB2)
+node "$ST/proposals/print_known_test.js" | grep -E "^(FAIL|SKIP|all|[0-9]+ FAILED)"   # proposal side (for_update_printtab.patch)
+python3 -I "$ST/proposals/test_for_update_printtab.py" | grep -E "^(FAIL|all|[0-9]+ FAILED)"

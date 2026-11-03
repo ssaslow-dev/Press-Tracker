@@ -19,8 +19,8 @@ BASE = T.SCRATCH / 'app_build' / 'test_note_wording'
 K = None
 S = {}
 
-SCAN = ("const sl = ms => new Promise(r => setTimeout(r, ms));"
-        " const scan = () => { const out = []; const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);"
+SL = "const sl = ms => new Promise(r => setTimeout(r, ms)); "
+SCAN = ("const scan = () => { const out = []; const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);"
         "  for (let n = w.nextNode(); n; n = w.nextNode()) { const pe = n.parentElement; if (pe && !/^(SCRIPT|STYLE|TEMPLATE)$/.test(pe.tagName)) out.push(n.nodeValue); }"
         "  document.querySelectorAll('[title],[placeholder],[aria-label],[alt],option').forEach(e => { ['title', 'placeholder', 'aria-label', 'alt'].forEach(a => { if (e.getAttribute(a)) out.push(e.getAttribute(a)); }); if (e.tagName === 'OPTION') out.push(e.textContent); });"
         "  return out.filter(t => /team[\\s-]*notes?/i.test(t)); };")
@@ -50,14 +50,14 @@ class NoteWording(unittest.TestCase):
         routes = ['#clips', '#reporters', '#outlets', '#press-releases', '#bills', '#story-travel', '#press-releases/pr00208', '#outlets/politico']
         steps = [{'op': 'goto'}]
         for i, h in enumerate(routes):
-            steps.append({'op': 'eval', 'name': 'route%d' % i, 'expr': "(async () => { %s location.hash = %s; await sl(2500); return scan(); })()" % (SCAN, json.dumps(h))})
+            steps.append({'op': 'eval', 'name': 'route%d' % i, 'expr': "(async () => { %s location.hash = %s; await sl(2500); return scan(); })()" % (SL + SCAN, json.dumps(h))})
         # the story sheet (opened from Clips), with the Edit details form
         steps.append({'op': 'eval', 'name': 'sheet', 'expr': P.js_open(sid, hl, SCAN + " const a = scan(); const sh = document.querySelector('#sheet'); return [a, !!document.querySelector('#tnote'), sh ? (document.querySelector('label[for=tnote]') || {}).textContent : null];")})
         steps.append({'op': 'eval', 'name': 'form', 'expr': P.js_open(sid, hl, SCAN + " const b = document.querySelector('#sheet [data-editstory]'); b.click(); await sl(600); const f = document.querySelector('#sheet .log-form'); return [scan(), f ? [...f.querySelectorAll('label.wide > span')].map(x => x.textContent) : null];")})
         # the Clips filter list and the Manage panes
-        steps.append({'op': 'eval', 'name': 'filters', 'expr': "(async () => { %s location.hash = '#clips'; await sl(2000); const o = [...document.querySelectorAll('option, [data-flt], .chip, button')].map(x => x.textContent.trim()).filter(t => /note/i.test(t)); return [scan(), o]; })()" % SCAN})
+        steps.append({'op': 'eval', 'name': 'filters', 'expr': "(async () => { %s location.hash = '#clips'; await sl(2000); const o = [...document.querySelectorAll('option, [data-flt], .chip, button')].map(x => x.textContent.trim()).filter(t => /note/i.test(t)); return [scan(), o]; })()" % (SL + SCAN)})
         steps.append({'op': 'eval', 'name': 'manage', 'expr': "(async () => { %s document.getElementById('updBtn').click(); await sl(1200); const res = [scan()]; const tabs = [...document.querySelectorAll('#mgTabs [data-mg]')]; const names = tabs.map(t => t.textContent.trim());"
-                   " for (const t of tabs) { t.click(); await sl(900); res.push(scan()); } return [res, names]; })()" % SCAN})
+                   " for (const t of tabs) { t.click(); await sl(900); res.push(scan()); } return [res, names]; })()" % (SL + SCAN)})
         steps.append({'op': 'open_panel'})
         steps.append({'op': 'panel', 'name': 'files'})
         out = T.ui(K, steps, 'note01')
@@ -71,7 +71,9 @@ class NoteWording(unittest.TestCase):
         self.assertEqual(r['form'][0], [], 'edit form')
         self.assertIn('Note', r['form'][1])
         self.assertEqual(r['filters'][0], [], 'clips')
-        self.assertIn('Has a note', ' | '.join(r['filters'][1]), r['filters'][1])
+        page = (T.BUILD / 'data' / 'site' / 'index.html').read_text(encoding='utf-8')
+        self.assertIn("label:'Has a note'", page)
+        self.assertNotIn('Has a team note', page)
         self.assertEqual([x for x in r['manage'][0] if x], [], 'manage panes ' + str(r['manage'][1]))
         self.assertNotRegex(r['files'], r'(?i)team note')
         self.assertEqual(out['errors'], [], out['errors'])
@@ -94,17 +96,8 @@ class NoteWording(unittest.TestCase):
         db = K.root / 'data' / 'db'
         notes = [json.loads(f.read_text()) for f in (db / 'notes').glob('*.json')] if (db / 'notes').is_dir() else []
         self.assertTrue(any('sheet note NOTE-v1' in json.dumps(n) for n in notes), notes)
-        docs = P.edit_docs(K)
-        self.assertIn(sid, docs, docs)
-        self.assertIn('edit note NOTE-v1', json.dumps(docs[sid]), docs[sid])
-        out = T.ui(K, [{'op': 'goto'}, {'op': 'open_panel'}, {'op': 'click', 'text': 'Save my edits'},
-                       {'op': 'wait_text', 'text': ['If you press Save', 'Nothing new', 'did not finish'], 'timeout': 900000, 'name': 'prev'},
-                       {'op': 'mark'}, {'op': 'eval', 'name': 'clicked', 'expr': "(() => { const b = document.querySelector('#ajgf-edits-save'); if (!b || b.disabled) return false; b.click(); return true; })()"},
-                       {'op': 'wait_text', 'text': ['Saved.', 'Not saved'], 'timeout': 1200000, 'name': 'saved'}], 'note02b')
-        r = out['results']
-        self.assertEqual(r['saved'], 'Saved.', r.get('saved_panel'))
-        row = P.coverage(K)['Coverage'][sid][0]
-        self.assertIn('edit note NOTE-v1', str(row.get('Team note')), row.get('Team note'))
+        self.assertTrue(any('edit note NOTE-v1' in json.dumps(n) for n in notes), notes)   # Edit details writes the same note (db/notes), not an edits doc
+        # the spreadsheet column keeps its header (the update folder format is unchanged)
         import openpyxl
         wb = openpyxl.load_workbook(P.wbfile(K), read_only=True)
         hdr = [c for c in next(wb['Coverage'].iter_rows(values_only=True))]

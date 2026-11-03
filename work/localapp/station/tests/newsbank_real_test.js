@@ -35,7 +35,7 @@ const TRUTH = [
     check(c + 'no parse flags, no bands', !it.flags.length && !it.bands.length, JSON.stringify([it.flags, it.bands]));
   });
   check('unique story keys and no shared story file name', new Set(items.map(i => i.key)).size === 3 && new Set(items.map(i => i.docref)).size === 3);
-  check('nothing to add: no row in the table is offered, the button says so', await page.evaluate(() => !document.querySelector('#nbBody input[type=checkbox]')) && await page.$eval('#nbAdd', b => b.disabled), '');
+  check('no new story: the 3 known stories are offered only as extra original copies (ORIGCOPIES-v1: the for-Update file does not say which rows hold a NewsBank PDF, so the PC decides), none as a story', await page.evaluate(() => window.__station.state.nb.items.every(it => it.screen.status === 'known' && (!it.pdf || it.include))) && await page.$eval('#nbAdd', b => /^Add 3 stories/.test(b.textContent)), await page.$eval('#nbAdd', b => b.textContent));
   check('summary says 3 already in the tracker', /3 stories: 3 already in the tracker/.test(await page.textContent('#nbSummary')), await page.textContent('#nbSummary'));
   check('no junk rows: every headline is a headline, every outlet an outlet', items.every(i => i.hl.length > 20 && i.hl.length < 200 && !/Available from|Date:|openurl/.test(i.hl + i.outlet)));
   // PRJUDGE-v1 on the real text: the two US Fed News items are releases (found in their text), the CE Noticias article is not

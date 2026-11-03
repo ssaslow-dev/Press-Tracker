@@ -261,6 +261,11 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   check('“download the last one again” is offered', await page.locator('#stPackAgain').isVisible());
   await page.screenshot({ path: path.join(OUT, 'shot_4_packed.png'), fullPage: true });
   fs.writeFileSync(path.join(OUT, 'pageerrors.txt'), errors.join('\n'));
+  // NOTE-v1: nobody sees "team note" anywhere on the page (text, tooltips, placeholders), also in the details of each proposed row
+  const teamNoteSeen = await page.evaluate(() => { const out = []; const rx = /team[\s-]*notes?/i; const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let n = w.nextNode(); n; n = w.nextNode()) { const pe = n.parentElement; if (pe && !/^(SCRIPT|STYLE|TEMPLATE)$/.test(pe.tagName) && rx.test(n.nodeValue)) out.push(n.nodeValue.slice(0, 80)); }
+    document.querySelectorAll('[title],[placeholder],[aria-label]').forEach(e => ['title', 'placeholder', 'aria-label'].forEach(a => { if (rx.test(e.getAttribute(a) || '')) out.push(e.getAttribute(a)); })); return out; });
+  check('NOTE-v1: no visible "team note" on the station page', teamNoteSeen.length === 0, JSON.stringify(teamNoteSeen));
   check('no page errors in the console', errors.length === 0, errors.slice(0, 5).join(' | '));
 
   /* 6. drag and drop in a fresh page */
