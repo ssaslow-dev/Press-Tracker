@@ -88,7 +88,8 @@ def norm_url(u):
     u = canon_mirror(re.sub(r'^https?://(www\.)?', '', u.lower()).split('#')[0])
     host = u.split('/')[0]
     # NewsBank / proxy / Google links identify the article only in the query string: keep it
-    if not re.search(r'newsbank|oclc|google\.|proquest', host): u = u.split('?')[0]
+    # YTLINK-v1: a YouTube watch link identifies the video only in its query string (?v=ID): keep it
+    if not re.search(r'newsbank|oclc|google\.|proquest|(^|\.)youtube\.com$', host): u = u.split('?')[0]
     return u.rstrip('/')
 def disp(o):  # NewsBank style "Sacramento Bee, The" -> "The Sacramento Bee" for display only
     o = s(o); m = re.match(r'^(.*), (The|La|El|Los|Las|Le|Les|Die|Der|Il)$', o)
@@ -276,12 +277,21 @@ _AV_SKIP = {'sid', 'medium', 'from'}
 def _av_of(aid):
     v = AVB['rows'].get(aid)
     return {k: x for k, x in zip(AVB['cols'], v) if x and k not in _AV_SKIP} if v else None
+def _yt_link(rec):   # YTBROADCAST-v1: the AV tab's YouTube link joins the link list as ['yt', url], right after the publisher / archive link
+    u = (rec.get('av') or {}).get('lyoutube', '')
+    if not re.match(r'^https?://', u or ''): return
+    same = [p for p in rec['lk'] if p[1] == u]
+    if same:   # the Publisher link is already that YouTube URL (e.g. 10315): same link, drawn with the YouTube label
+        for p in same: p[0] = 'yt'
+        report['yt_links'] += 1
+    else:
+        i = max([k + 1 for k, p in enumerate(rec['lk']) if p[0] in ('pub', 'tv')] or [0]); rec['lk'].insert(i, ['yt', u]); report['yt_links'] += 1
 for _x in data:
     _a = _av_of(_x['aid'])
-    if _a: _x['av'] = _a; report['av_stories'] += 1
+    if _a: _x['av'] = _a; report['av_stories'] += 1; _yt_link(_x)
     for _rp in _x['reps']:
         _a = _av_of(_rp['aid'])
-        if _a: _rp['av'] = _a; report['av_reprints'] += 1
+        if _a: _rp['av'] = _a; report['av_reprints'] += 1; _yt_link(_rp)
 _hid = set(C_ALL['Article ID']) - set(C['Article ID'])   # HIDEUNVERIFIED-v1: no AV facts for hidden rows either
 AVB['rows'] = {k: v for k, v in AVB['rows'].items() if k not in _hid}; report['unverified_hidden'] = len(C_ALL) - len(C)
 report['av_tab_rows'] = len(AVB['rows'])
@@ -369,6 +379,10 @@ try:
                         # an LA Times story with a blogspot mirror link) is kept; blog-type, unknown or blank outlets on those hosts are not coverage
                         'never_keep_outlets': sorted(k for k, rec in ((json.load(open(os.path.join(_here, 'outlets.json'), encoding='utf-8')).get('records') or {}) if os.path.exists(os.path.join(_here, 'outlets.json')) else {}).items() if isinstance(rec, dict) and str(rec.get('type') or '').lower() not in ('', 'blog')),
                         'blocked_hosts': sorted(set(_or2.get('fetch_blocked_hosts') or []) | set(_or2.get('blocked_hosts') or [])),
+                        # RECALLFIX-v1: priority local outlets, TV caps, podcasts, ethnic-media outlets (recall_sources.json + ems_ca_outlets.json next to this script)
+                        'recall': (lambda rs, em: dict(rs, ethnic=dict(rs.get('ethnic') or {}, outlets=[[o.get('host'), o.get('language'), o.get('region'), o.get('city'), o.get('name')] for o in (em.get('outlets') or [])])))(
+                            json.load(open(os.path.join(_here, 'recall_sources.json'), encoding='utf-8')) if os.path.exists(os.path.join(_here, 'recall_sources.json')) else {},
+                            json.load(open(os.path.join(_here, 'ems_ca_outlets.json'), encoding='utf-8')) if os.path.exists(os.path.join(_here, 'ems_ca_outlets.json')) else {}),
                         # LEARN-v1: code/lookup_cache.json, compact (v = verdict) so the Update button asks it before any fetch
                         **(lambda lc: {'lookups': {k: {'v': e.get('verdict')} for k, e in (lc.get('urls') or {}).items() if e.get('verdict') in ('dead', 'not_found', 'blocked')},
                                        'lookup_hosts': {h: 1 for h in (lc.get('blocked_hosts') or {})},

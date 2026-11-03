@@ -19,6 +19,7 @@ module.exports = async (pg, ok, h) => {
 
   /* ---- independent model ---- */
   const ci = n => B.cols.indexOf(n);
+  const DA = new Map(h.dataAll().map(r => [r.id, r])), NWs = new Set(T.nw || []);
   const RU = T.rules || {}, BCW = RU.bc || [-7, -2, -1, 7], TIER = t => (RU.t && RU.t[t] ? RU.t[t][0] : t === 'possible' ? 2 : /^later/.test(t) ? 3 : 1);
   const RANKL = ['nearcopy', 'text', 'quote', 'anchor', 'pre', 'bill', 'topic', 'laterquote', 'later', 'possible'], RNK = t => { const i = RANKL.indexOf(t); return i < 0 ? RANKL.length : i; };
   const canon = (name, aid) => (C.a && C.a[aid]) || (C.n && C.n[name]) || name;
@@ -38,6 +39,14 @@ module.exports = async (pg, ok, h) => {
     const best = new Map(); rr.forEach(q => { const b = best.get(q[0]); if (!b || RNK(q[1]) < RNK(b)) best.set(q[0], q[1]); });
     const ofTier = n => [...best].filter(([, t]) => TIER(t) === n).map(([sid]) => sid);
     o.related = ofTier(1); o.possible = ofTier(2); o.later = ofTier(3);
+    /* RELRECS-v1 R1/R2 (independent model): Picked up = tier-1 related stories that are not nearcopy, not Medium Wire, not at a tab-releases "nw" outlet,
+       + copies at outlets not in "nw"; reporters / outlets of the tier-1 related stories (people only, Gabriel left out) */
+    const best2 = new Map(); (REL[o.prid || o.key] || []).filter(q => DA.has(q[0])).forEach(q => { const b = best2.get(q[0]); if (!b || RNK(q[1]) < RNK(b)) best2.set(q[0], q[1]); });   /* the page's byId also finds List-only stories */
+    o.rel1 = [...best2].filter(([, t]) => TIER(t) === 1).map(([sid]) => sid);
+    o.rp = o.rel1.filter(sid => { const r = DA.get(sid); return r && best2.get(sid) !== 'nearcopy' && r.media !== 'Wire' && !NWs.has(canon(r.outlet, r.aid)); }).length;
+    o.cp = o.rows.filter(q => !NWs.has(canon(q[1], q[0]))).length; o.picked = o.rp + o.cp;
+    o.relOut = new Set(o.rel1.map(sid => canon(DA.get(sid).outlet, DA.get(sid).aid)));
+    o.relRep = new Set(o.rel1.flatMap(sid => { const r = DA.get(sid); return (r.authors || []).filter((a, i) => (!r.akinds || r.akinds[i] === 'person') && F(a) !== 'jesse gabriel').map(a => F(a)); }));
     o.body = (TX[url] || {}).body || ''; return o; });
   const cnt = f => R.filter(f).length;
   const textHit = (o, q, withBody) => { const t = F(o.title + ' ' + o.dek + (withBody ? ' ' + o.body : '')); return F(q).split(' ').filter(Boolean).every(w => t.includes(w)); };
@@ -62,9 +71,80 @@ module.exports = async (pg, ok, h) => {
   const rk = await h.rowKeys(), want = R.slice().sort((a, b) => b.date.localeCompare(a.date))[0];
   ok('default sort: newest first', rk[0] && R.find(o => o.key === rk[0]).date === want.date, rk[0]);
   { const th = await pg.evaluate(() => [...document.querySelectorAll('#tbBody .tt-tab thead th')].map(t => t.textContent.trim()).join('|'));
-    ok('columns: release, date, source, ran it, related (RELUI-v1)', th === 'Release|Date|Source|Ran it|Related', th); }
+    ok('columns: release, date, source, picked up, ran it, related (RELUI-v1, RELRECS-v1)', th === 'Release|Date|Source|Picked up|Ran it|Related', th); }
   if (h.phone) ok('phone: 25 rows then Show more', (await h.rowKeys()).length === 25);
   ok('no horizontal overflow (list)', !(await h.overflowX()));
+
+  /* ---- RELRECS-v1 R1: Picked up leads ---- */
+  const npk = cnt(o => o.picked > 0);
+  ok('R1 independent model: nw list present, some releases picked up and some not', (T.nw || []).length > 20 && npk > 0 && npk < R.length, `nw ${(T.nw || []).length} picked ${npk}/${R.length}`);
+  ok('R1 answer line leads with the percentage picked up = independent', a0.includes(`${Math.round(100 * npk / R.length)}% picked up (${npk} of ${R.length})`), a0 + ` vs ${npk}/${R.length}`);
+  ok('R1 answer line keeps "run by outlets" after it', a0.indexOf('% picked up') > 0 && a0.indexOf('% picked up') < a0.indexOf('run by outlets'), a0);
+  { const pk = await pg.evaluate(() => { const ix = [...document.querySelectorAll('#tbBody .tt-tab thead th')].findIndex(t => /Picked up/.test(t.textContent)); return [...document.querySelectorAll('#tbBody .tt-tab tbody tr[data-ttk]')].slice(0, 12).map(tr => [tr.dataset.ttk, tr.children[ix].textContent.trim()]); });
+    ok('R1 Picked up column = independent (first 12 rows)', pk.length > 0 && pk.every(([k, v]) => (v === '–' ? 0 : +v.replace(/,/g, '')) === R.find(o => o.key === k).picked), JSON.stringify(pk.filter(([k, v]) => (v === '–' ? 0 : +v) !== R.find(o => o.key === k).picked))); }
+  { const bad = R.filter(o => o.picked > o.rel1.length + o.rows.length || o.picked < 0); ok('R1 picked up never exceeds related + copies', !bad.length, bad.map(o => o.key).join(',')); }
+  /* AB 2244's Aug 30 passage release was shown as "No pickups" on the bill page (copies only); its Picked up is its related stories */
+  { const ab = R.filter(o => o.date === '2026-08-30' && o.bills.includes('AB 2244'))[0];
+    if (ab){ ok('R1 AB 2244 Aug 30 passage release: Picked up > 0 and = related non-wire stories (not copies only)', ab.picked > 0 && ab.cp === 0 && ab.picked === ab.rp && ab.rel1.length >= ab.picked, `${ab.key} picked ${ab.picked} related ${ab.related.length} copies ${ab.rows.length}`);
+      await h.open({}, ab.prid || ab.key); await sleep(500);
+      const f = await pg.evaluate(() => { const dt = [...document.querySelectorAll('#tbBody dt')].find(d => d.textContent.trim() === 'Picked up'); return dt && dt.nextElementSibling ? dt.nextElementSibling.textContent.replace(/\s+/g, ' ').trim() : ''; });
+      ok('R1 release page: Coverage facts lead with Picked up = independent', new RegExp('^' + ab.picked + '\\b').test(f) && f.includes(`${ab.rel1.length} related stor`) && f.includes(`${ab.rows.length} cop`), JSON.stringify(f));
+      const order = await pg.evaluate(() => { const g = [...document.querySelectorAll('#tbBody dt')].map(d => d.textContent.trim()); const i = g.indexOf('Picked up'); return g.slice(i, i + 3).join('|'); });
+      ok('R1 release page: Picked up comes before Ran it and Related stories', order === 'Picked up|Related stories|Later coverage' || order.startsWith('Picked up|Ran it|Related stories') || order.startsWith('Picked up|Related stories'), order);
+      await h.open(); } else ok('R1 AB 2244 Aug 30 release present in the fixture', false, 'no release dated 2026-08-30 on AB 2244'); }
+
+  /* ---- RELRECS-v1 R3: the quarter chart ---- */
+  const chartNums = () => pg.evaluate(() => { const v = document.querySelector('#tbBody .tb-view[data-tb="releases"]:not([hidden])'), t = v && v.querySelector('.rl-ctable table');
+    if (!t) return null; const hd = [...t.querySelectorAll('th')].map(x => x.textContent.trim()); const rows = [...t.querySelectorAll('tbody tr')].map(tr => [...tr.children].map(x => x.textContent.trim()));
+    return { hd, rows, bars: v.querySelectorAll('.rl-cchart svg path[fill]').length, title: (v.querySelector('.rl-ctitle') || {}).textContent, cap: (v.querySelector('.rl-ccap') || {}).textContent, legend: (v.querySelector('.rl-cleg') || {}).textContent }; });
+  const dated = R.filter(o => /^\d{4}/.test(o.date));
+  await h.open(); await sleep(300);
+  { const c = await chartNums(); const tot = c && c.rows.reduce((a, r) => a + +r[r.length - 1], 0), pk = c && c.rows.reduce((a, r) => a + (+r[1] || 0), 0);
+    ok('R3 chart draws bars; table header names the series', !!c && c.bars > 5 && c.hd.join('|') === 'Quarter|Picked up|Not picked up|Total', c && JSON.stringify([c.bars, c.hd]));
+    ok('R3 chart totals = independent (dated releases, picked up)', !!c && tot === dated.length && pk === dated.filter(o => o.picked > 0).length, c && `${tot}/${dated.length} ${pk}/${dated.filter(o => o.picked > 0).length}`);
+    ok('R3 chart caption has the share = independent; legend names both series', !!c && c.cap.includes(`${dated.filter(o => o.picked > 0).length} of ${dated.length} dated releases (${Math.round(100 * dated.filter(o => o.picked > 0).length / dated.length)}%) picked up`) && /Picked up/.test(c.legend) && /Not picked up/.test(c.legend), c && c.cap + ' | ' + c.legend);
+    ok('R3 chart is under the filter chips and above the list', await pg.evaluate(() => { const v = document.querySelector('#tbBody .tb-view[data-tb="releases"]:not([hidden])'), c = v.querySelector('.rl-chart').getBoundingClientRect(), l = v.querySelector('.tt-list').getBoundingClientRect(), ch = v.querySelector('.tt-chips').getBoundingClientRect(); return ch.bottom <= c.top + 1 && c.bottom <= l.top + 1; })); }
+  await h.facet('src', 'Jewish Caucus');
+  { const sub = dated.filter(o => o.src === 'Jewish Caucus'), c = await chartNums();
+    if (sub.length >= 3) ok('R3 chart follows the filters (Source = Jewish Caucus)', !!c && c.rows.reduce((a, r) => a + +r[r.length - 1], 0) === sub.length && c.rows.reduce((a, r) => a + (+r[1] || 0), 0) === sub.filter(o => o.picked > 0).length, c && JSON.stringify(c.rows.slice(0, 3)));
+    const an = await answer(); ok('R3 answer line carries the percentage for the filtered set', new RegExp(`${Math.round(100 * R.filter(o => o.src === 'Jewish Caucus' && o.picked > 0).length / R.filter(o => o.src === 'Jewish Caucus').length)}% picked up`).test(an), an); }
+  await h.open();
+  await pg.selectOption('#tbBody .tb-view[data-tb="releases"]:not([hidden]) select[data-rlc="show"]', 'pct'); await sleep(400);
+  { const c = await chartNums(); ok('R3 "Share of releases" view: title and 100% scale', !!c && /Share of releases picked up/.test(c.title) && (await pg.evaluate(() => /100%/.test(document.querySelector('#tbBody .rl-cchart').textContent))), c && c.title); }
+  await pg.selectOption('#tbBody .tb-view[data-tb="releases"]:not([hidden]) select[data-rlc="show"]', 'n'); await sleep(300);
+  { const q = (() => { const c = {}; dated.forEach(o => { const k = o.date.slice(0, 4) + '-Q' + Math.ceil(+o.date.slice(5, 7) / 3); c[k] = (c[k] || 0) + 1; }); return Object.entries(c).sort((a, b) => b[1] - a[1])[0]; })(), m = /^(\d{4})-Q(\d)$/.exec(q[0]);
+    const idx = await pg.evaluate(k => { const rows = [...document.querySelectorAll('#tbBody .rl-ctable tbody tr')].map(tr => tr.children[0].textContent.trim()); return rows.indexOf(k); }, q[0].replace('-', ' '));
+    ok('R3 chart table lists the busiest quarter', idx >= 0, q[0]);
+    const nb = await pg.evaluate(() => document.querySelectorAll('#tbBody .rl-cchart .hit').length), all = await pg.evaluate(() => [...document.querySelectorAll('#tbBody .rl-cchart .hit')].map((_, i) => i));
+    /* click the bar of that quarter: the hit rects are one per quarter from the first year, so its index = quarters since the first dated release's year */
+    const y0 = Math.min(...dated.map(o => +o.date.slice(0, 4))), at = (+m[1] - y0) * 4 + (+m[2] - 1);
+    await pg.evaluate(i => { const r = document.querySelectorAll('#tbBody .rl-cchart .hit')[i]; r.dispatchEvent(new MouseEvent('click', { bubbles: true })); }, at); await sleep(700);
+    const pr = await h.params(), n = await h.count();
+    ok('R3 clicking a bar filters the list to that quarter', /^c:\d{4}-\d\d-\d\d\.\.\d{4}-\d\d-\d\d$/.test(pr.date || '') && n === q[1], JSON.stringify(pr) + ` ${n} vs ${q[1]}`);
+    const c1 = await chartNums(); ok('R3 one quarter left: a sentence instead of a one-bar chart (CHARTRULE-v1)', !c1 || c1.bars === 0 || await pg.evaluate(() => !!document.querySelector('#tbBody .rl-cnote:not([hidden])') && !document.querySelector('#tbBody .rl-cchart').offsetParent), c1 && c1.bars); }
+  await h.open();
+
+  /* ---- RELRECS-v1 R5: the Pickup facet ---- */
+  const csv0 = await (async () => { await h.open(); return h.exportCsv(); })(), today = (/AJG press releases (\d{4}-\d\d-\d\d)\.csv/.exec(csv0.filename) || [])[1] || '';
+  const addDay = (iso, n) => { const d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); };
+  for (const d of [7, 30]) { const want = R.filter(o => o.picked === 0 && o.date.length >= 10 && o.date < addDay(today, -d));
+    await h.open(); await h.facet('quiet', String(d)); const n = await h.count();
+    ok(`R5 Pickup facet "Nothing after ${d} days": ${n} = independent`, !!today && n === want.length, `${n} vs ${want.length} (today ${today})`);
+    ok(`R5 Pickup facet ${d}: every listed release has Picked up 0`, (await h.rowKeys()).every(k => R.find(o => o.key === k).picked === 0)); }
+  { const n7 = R.filter(o => o.picked === 0 && o.date.length >= 10 && o.date < addDay(today, -7)).length, n30 = R.filter(o => o.picked === 0 && o.date.length >= 10 && o.date < addDay(today, -30)).length;
+    ok('R5 Pickup facet: 7 days >= 30 days', n7 >= n30); }
+
+  /* ---- RELRECS-v1 R2: reporter and outlet facets from the related stories ---- */
+  const facetOpts = async key => { await h.open(); await h.openRail(); await pg.evaluate(([v, k]) => { const d = document.querySelector(`${v} details[data-ttfacet="${k}"]`); if (d) d.open = true; }, [`#tbBody .tb-view[data-tb="releases"]:not([hidden])`, key]); await sleep(150);
+    return pg.evaluate(([v, k]) => [...document.querySelectorAll(`${v} details[data-ttfacet="${k}"] label.opt`)].map(l => [l.querySelector('input').value, +(/(\d+)$/.exec(l.textContent.trim()) || [0, 0])[1]]), ['#tbBody .tb-view[data-tb="releases"]:not([hidden])', key]); };
+  { const oo = await facetOpts('rout'); await h.closeRail();
+    ok('R2 outlet facet (related stories): options listed, counts = independent', oo.length >= 5 && oo.every(([v, n]) => n === R.filter(o => o.relOut.has(v)).length), JSON.stringify(oo.filter(([v, n]) => n !== R.filter(o => o.relOut.has(v)).length).map(([v, n]) => [v, n, R.filter(o => o.relOut.has(v)).length])));
+    await h.facet('rout', oo[0][0]); ok(`R2 outlet facet ${oo[0][0]}: ${await h.count()} = independent`, (await h.count()) === R.filter(o => o.relOut.has(oo[0][0])).length); }
+  { const rr = await facetOpts('rrep'); await h.closeRail();
+    ok('R2 reporter facet (related stories): options listed, counts = independent (people only)', rr.length >= 5 && rr.every(([v, n]) => n === R.filter(o => o.relRep.has(F(v))).length), JSON.stringify(rr.filter(([v, n]) => n !== R.filter(o => o.relRep.has(F(v))).length).slice(0, 4)));
+    await h.facet('rrep', rr[0][0]); const n = await h.count(); ok(`R2 reporter facet ${rr[0][0]}: ${n} = independent`, n === R.filter(o => o.relRep.has(F(rr[0][0]))).length);
+    ok('R2 facet chip shows the facet name', (await h.chips()).some(c => /Reporter, related stories/.test(c))); }
+  ok('R2 existing Outlet facet keeps its key and is labelled "Outlet that ran it"', await pg.evaluate(() => { const d = document.querySelector('#tbBody details[data-ttfacet="outlet"] summary'); return !!d && /^Outlet that ran it/.test(d.textContent); }));
 
   /* each facet vs independent */
   const fcase = async (key, val, f, label) => { await h.open(); await h.facet(key, val); const n = await h.count(); ok(`facet ${key}=${label || val}: ${n} = independent`, n === cnt(f), `${n} vs ${cnt(f)}`); };
@@ -119,6 +199,8 @@ module.exports = async (pg, ok, h) => {
   await h.open(); await h.facet('pick', 'yes');
   const csv = await h.exportCsv(), recs = (() => { let n = 0, q = false; const s = csv.text.replace(/^﻿/, ''); for (let i = 0; i < s.length; i++){ const ch = s[i]; if (ch === '"') q = !q; else if (ch === '\n' && !q) n++; } return n + (s.endsWith('\n') ? 0 : 1); })();
   ok('CSV rows = count + header', recs === np + 1, `${recs} vs ${np + 1}`);
+  { const hd = csv.text.replace(/^﻿/, '').split('\n')[0];
+    ok('R1/R2 CSV: Picked up before Ran it; reporters and outlets of related stories columns', hd.indexOf('Picked up') > 0 && hd.indexOf('Picked up') < hd.indexOf('Ran it') && /Reporters of related stories/.test(hd) && /Outlets of related stories/.test(hd), hd); }
   ok('CSV has official link + bill coverage columns', /Official link/.test(csv.text.split('\n')[0]) && /Bill stories the week before/.test(csv.text.split('\n')[0]), csv.text.split('\n')[0]);
   const cp = await h.exportCopy(0);
   ok('Copy titles and links: one line per release', cp && cp.split('\n').length === np, cp && cp.split('\n').length);

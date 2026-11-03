@@ -141,9 +141,12 @@ function tfPlan(){
   [...new Set(D.map(r => hostOf(r.link)).filter(h => h && RC_LANG_SUB.test(h)))].forEach(h => {
     const lang = (D.find(r => hostOf(r.link) === h && r.lang) || {}).lang, nq = TF_NATIVE.find(([l]) => l === lang);
     q(`${nq ? nq[1] : '"Jesse Gabriel"'} site:${h} ${yr}`, `Second-language edition: ${h}`, 'fresh', { host: h, keepDate: true }); });
-  // NOBLOGS-v1 (Sammy 2026-10-30): no YouTube searches; YouTube videos and channels are not coverage (the station-channel pass is gone)
+  // NOBLOGS-v1 (Sammy 2026-10-30): no general YouTube searches; YTSTATION-v1 (Sammy 2026-11-02) brings back one pass, station channels only (below)
+  ytPlan(q);           /* YTSTATION-v1: two YouTube searches on every run */
   // sister editions: each masthead by name on the group's site
   RC_SISTERS.forEach(sg => sg.mastheads.forEach(m => q(`"Gabriel" "${m}" site:${sg.host}`, `Sister edition: ${m}`, 'sister', { host: sg.host, keepDate: true })));
+  rcPriorityPlan(q);   /* RECALLFIX-v1 (2): priority local outlets on every run */
+  rcEthnicPlan(q);     /* RECALLFIX-v1 (5): ethnic media not yet on record */
   return P;
 }
 const TF_NATIVE = [['Hebrew', '"ג\'סי גבריאל"'], ['Farsi', '"جسی گابریل"'], ['Armenian', '"Ջեսի Գաբրիել"'], ['Russian', '"Джесси Габриэль" Калифорния'],
@@ -155,6 +158,105 @@ const TF_NATIVE = [['Hebrew', '"ג\'סי גבריאל"'], ['Farsi', '"جسی گ�
    stays until the A/B; every find records found_by), YouTube station channels, sister editions, second-language editions,
    a late-pickup window and the AP / health-wire long tail for reprint headlines, Google News RSS feeds (one fetch_content
    call), and the NewsBank refresh reminder (Sammy logs in: monthly + after Sept 30, the June budget and January). */
+/* RECALLFIX-v1: the lists behind the extra passes (priority local outlets, TV caps, podcast search, ethnic-media outlets) come from the `fetchrules` block's
+   `recall` key (code/recall_sources.json + code/ems_ca_outlets.json through build_data.py); a page without it plans none of them */
+const RC_DATA = (() => { const b = covBlock('fetchrules'); return (b && b.recall && typeof b.recall === 'object') ? b.recall : {}; })();
+const RC_HOST_KEY = s => String(s || '').toLowerCase().replace(/^www\./, '');
+/* YTSTATION-v1 (Sammy 2026-11-02): a TV or radio station's own YouTube channel is broadcast coverage (NOBLOGS-v1 judges by outlet). Two TinyFish searches per run
+   (include_domains youtube.com, the run's date filter); a watch / shorts result whose title or snippet names him is opened, its channel is read from the page, and it is
+   kept only when the channel is a key of recall_sources.json youtube.channels. Every other uploader (Forbes Breaking News, his office's or the Assembly's channels,
+   advocacy groups, campaign ads, webinars, personal channels) is skipped. A kept find is a Broadcast segment of the mapped station (Medium TV / Radio). */
+const YT_DATA = RC_DATA.youtube || {};
+function ytPlan(q){
+  (YT_DATA.queries || []).forEach((query, i) => q(query, `Station YouTube channels ${i + 1} of ${YT_DATA.queries.length}: ${query.replace(/"/g, '').slice(0, 50)}`, 'youtube', { include_domains: YT_DATA.include_domains || 'youtube.com', keepDate: true, yt: true }));
+}
+const ytId = u => { const s = String(u || ''); let m = /^https?:\/\/(?:www\.|m\.)?youtube\.com\/watch\?(?:[^#]*&)?v=([\w-]{11})/i.exec(s) || /^https?:\/\/(?:www\.|m\.)?youtube\.com\/shorts\/([\w-]{11})/i.exec(s) || /^https?:\/\/youtu\.be\/([\w-]{11})/i.exec(s); return m ? m[1] : ''; };
+const ytKey = s => String(s || '').toLowerCase().replace(/&amp;/g, '&').replace(/[^a-z0-9]+/g, ' ').trim();
+/* the channel by its name as YouTube shows it, else by the @handle in the channel URL (entries may list `handles`) */
+function ytChannelEntry(name, authorUrl){ const k = ytKey(name), ch = YT_DATA.channels || {};
+  if (k) for (const n of Object.keys(ch)) if (ytKey(n) === k) return ch[n];
+  const h = ((/youtube\.com\/@([\w.-]+)/i.exec(String(authorUrl || '')) || [])[1] || '').toLowerCase();
+  if (h) for (const n of Object.keys(ch)) if ((ch[n].handles || []).some(x => String(x).toLowerCase().replace(/^@/, '') === h)) return ch[n];
+  return null; }
+/* the channel from YouTube's free oEmbed endpoint (author_name + author_url), through fetch_content, 10 videos a call; the watch page's text often lacks the channel.
+   A video whose oEmbed cannot be read keeps no channel here; its opened page is the fallback (ytRead). */
+function ytOembedParse(text){
+  const t = String(text || '').replace(/\\([^"\\\/bfnrtu])/g, '$1'), a = t.indexOf('{'), b = t.lastIndexOf('}'); if (a < 0 || b < a) return null;
+  try { const j = JSON.parse(t.slice(a, b + 1)); return j && j.author_name ? { name: String(j.author_name).trim(), url: String(j.author_url || '') } : null; } catch(e){ return null; }
+}
+async function ytOembed(mcp, list){
+  const yts = list.filter(c => c.yt); if (!yts.length) return;
+  const oe = c => 'https://www.youtube.com/oembed?' + new URLSearchParams({ url: 'https://www.youtube.com/watch?v=' + c.yt, format: 'json' });
+  for (let i = 0; i < yts.length && !U.ctl.signal.aborted; i += 10){
+    const batch = yts.slice(i, i + 10);
+    try {
+      const pages = tfResults(tfPayload(await tfCall(mcp, 'fetch_content', { urls: batch.map(oe), format: 'markdown', links: false, image_links: false, iframe_links: false, page_metadata: false, per_url_timeout_ms: 30000 })));
+      batch.forEach(c => { const r = pages.get(normU(oe(c))), o = r ? ytOembedParse(r.text) : null; if (o){ c.ytChannel = o.name.slice(0, 120); c.ytAuthorUrl = o.url; } });
+    } catch(e){ if (STOP_CODES.has(e && e.code)) throw e; }
+  }
+}
+const ytUn = x => String(x || '').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/\s+/g, ' ').trim();
+/* what the fetched watch page says: the channel (the name in the owner block, else the line after the title), the date shown under "Video details", the description */
+function ytRead(c, r, t){
+  const raw = String(r.text || ''), desc = ytUn((/<yt-attributed-string>([\s\S]*?)<\/yt-attributed-string>/i.exec(raw) || [])[1] || r.description || '');
+  let ch = ytUn((/<ytd-channel-name[^>]*>[\s\S]*?<yt-formatted-string[^>]*>([\s\S]*?)<\/yt-formatted-string>/i.exec(raw) || [])[1] || '')
+    || ytUn((/"ownerChannelName"\s*:\s*"([^"]+)"/.exec(raw) || [])[1] || '') || ytUn((/<link[^>]+itemprop="name"[^>]+content="([^"]+)"/i.exec(raw) || [])[1] || '');
+  if (!ch){ const lines = String(t || '').split(/\n+/).map(x => x.trim()).filter(Boolean), i = lines.findIndex(x => x === String(r.title || c.title || '').trim()); if (i >= 0 && lines[i + 1]) ch = lines[i + 1].replace(/[\s·|].*subscribers?$/i, '').trim(); }
+  c.ytChannel = c.ytChannel || ch.slice(0, 120);   /* the oEmbed name, when it came, wins */
+  const dm = /Date<\/p>\s*(?:<[^>]+>\s*)*([A-Z][a-z]{2,8})\.? (\d{1,2}), (\d{4})/.exec(raw) || /<p>(\d{4})([A-Z][a-z]{2}) (\d{1,2})<\/p>/.exec(raw);
+  if (dm){ const mon = (/^\d{4}$/.test(dm[1]) ? dm[2] : dm[1]).slice(0, 3).toLowerCase(), day = /^\d{4}$/.test(dm[1]) ? dm[3] : dm[2], yr = /^\d{4}$/.test(dm[1]) ? dm[1] : dm[3], mi = MONTHS_FULL.findIndex(x => x.startsWith(mon));
+    if (mi >= 0){ c.published = `${yr}-${String(mi + 1).padStart(2, '0')}-${String(+day).padStart(2, '0')}`; c.dateSrc = 'page'; } }
+  c.ytNamed = NAMES_HIM.test(String(c.title || '') + ' ' + desc);   /* title or description, not just the search snippet */
+  c.ytDesc = desc.slice(0, 600);
+}
+/* '' = keep; else the reason it is skipped */
+function ytJudge(c){
+  if (!c.ytChannel) return 'YouTube video whose channel could not be read from its page (NOBLOGS-v1: only a station’s own channel is kept).';
+  if (!ytChannelEntry(c.ytChannel, c.ytAuthorUrl)) return `YouTube video not on a station's own channel (NOBLOGS-v1): channel “${c.ytChannel}”.`;
+  return '';
+}
+/* the same segment as a story already tracked: the station's outlet has a story within 2 days of the video's date (the page's date; with no date, any story since the run's
+   start date). Not a new story: the video link is attached to that row (sheet_task.apply_yt_attach). Returns the tracked record or null. */
+function ytSameSegment(r, c){
+  const k = nrmName(r.pub || r.outlet); if (!k) return null;
+  const d = c.dateSrc === 'page' && c.published ? c.published : '';
+  let best = null;
+  D.forEach(x => { if (!x.date || (nrmName(x.pub || x.outlet) !== k && nrmName(x.outlet) !== k) || ytId(x.link)) return;
+    let gap; if (d){ gap = Math.abs(Date.parse(x.date) - Date.parse(d)) / 864e5; if (!(gap <= 2)) return; } else { if (x.date < (U.since || '')) return; gap = 0; }
+    if (!best || gap < best.gap) best = { x, gap }; });
+  return best ? best.x : null;
+}
+/* the row for a kept find: Outlet / Medium / Format / Data Source and the Audio & video details values */
+function ytRow(r, c){
+  const e = ytChannelEntry(c.ytChannel, c.ytAuthorUrl) || {};
+  r.outlet = e.outlet || r.outlet; r.pub = e.outlet || r.pub; r.media = e.medium || 'TV'; r.fmt = 'Broadcast segment'; r.lstat = 'Publisher URL'; r.ds = 'Web search (TinyFish, YouTube station channel)';
+  r._av = { 'Item type': 'Broadcast segment', 'Channel': c.ytChannel, 'Station': e.station || '', 'Network': e.network || '', 'Episode/segment title': VS(c.title, 300), 'Air/publish date': c.dateSrc === 'page' ? (c.published || '') : '', 'YouTube link': c.url, 'Details from': 'YouTube page' };
+  if (!c.ytNamed){ r._ycheck = true; r.why = ('CHECK: neither the video title nor its description names him (only the search snippet did). ' + (r.why || '')).trim(); }
+}
+/* priority local outlets (LA TV and radio, Valley weeklies): searched on EVERY run, whatever SINCE-v2's 24-month rule says; OR-grouped site: searches with the date filter */
+function rcPriorityPlan(q){
+  const pr = RC_DATA.priority || {}, size = Math.max(1, Math.min(10, +pr.or_size || 4));
+  (pr.groups || []).forEach(g => { const sites = (g.sites || []).filter(x => x && x.site);
+    for (let i = 0; i < sites.length; i += size){ const part = sites.slice(i, i + size);
+      q(`"Jesse Gabriel" (${part.map(x => 'site:' + x.site).join(' OR ')})`, `Priority outlets, ${g.label || 'local'} ${i + 1}–${i + part.length} of ${sites.length}: ${part.map(x => x.outlet).join(', ').slice(0, 80)}`, 'fresh',
+        { hosts: part.map(x => RC_HOST_KEY(String(x.site).split('/')[0])), keepDate: true }); } });
+}
+/* ethnic-media outlets (Ethnic Media Services directory, California) that are not on record: OR-of-8 site searches by language group with the date filter, Southern California first, capped at max_calls */
+function rcEthnicPlan(q){
+  const E = RC_DATA.ethnic || {}, list = E.outlets || []; if (!list.length) return;
+  const have = new Set(); outletGroups().flat().forEach(o => { if (o.host) have.add(RC_HOST_KEY(o.host)); }); D.forEach(r => { const h = hostOf(r.link); if (h) have.add(RC_HOST_KEY(h)); });
+  const known = h => { const p = RC_HOST_KEY(h).split('.'); for (let i = 0; i < p.length - 1; i++) if (have.has(p.slice(i).join('.'))) return true; return false; };
+  const size = Math.max(1, Math.min(10, +E.or_size || 8)), cap = Math.max(0, +E.max_calls || 0), nat = E.native || {};
+  const open = new Map(), groups = []; let n = 0;
+  list.forEach(o => { const host = RC_HOST_KEY(o[0]); if (!host || known(host) || NEVER_COV.some(e => host === e.host || host.endsWith('.' + e.host))) return;
+    n++; const lang = nat[o[1]] ? o[1] : '', g = open.get(lang) || { lang, hosts: [], first: n };
+    if (!open.has(lang)) open.set(lang, g); g.hosts.push(host);
+    if (g.hosts.length >= size){ groups.push(g); open.delete(lang); } });
+  open.forEach(g => groups.push(g));
+  groups.filter(g => g.lang).sort((a, b) => a.first - b.first).slice(0, cap)   /* RECALLTRIM-v1: native-script groups only (the 3-month test's one find came from one; the English-name groups returned nothing) */.forEach((g, i, all) => {
+    const names = ['"Jesse Gabriel"'].concat(g.lang ? nat[g.lang] : []);
+    q(`${names.length > 1 ? '(' + names.join(' OR ') + ')' : names[0]} (${g.hosts.map(h => 'site:' + h).join(' OR ')})`, `Ethnic media ${i + 1} of ${all.length}${g.lang ? ' (' + g.lang + ')' : ''}: ${g.hosts.length} sites`, 'fresh', { hosts: g.hosts, keepDate: true }); });
+}
 const RC_LATE_DAYS = 21;        // late, derivative pickups: reprint headlines of stories up to 21 days before the since date
 const RC_OR_SIZE = 10;          // hosts per OR-of-sites query
 const RC_REPRINT_CAP = 60;
@@ -187,14 +289,17 @@ function gnewsFeeds(since, opens){
   const F = [['"Jesse Gabriel"', 'en'], ['"Jesse Gabriel"', 'es'], ['"Jesse Gabriel" OR "加布里埃尔" OR "加布里爾"', 'zh'], ['"Jesse Gabriel" OR "제시 가브리엘"', 'ko'],
     ['"Assemblymember Gabriel" OR "Asm. Gabriel" OR "Assemblyman Gabriel" OR "Budget Chair Gabriel"', 'en']];
   (opens || []).slice(0, 3).forEach(r => { const t = String(r.title || '').replace(/["“”]/g, '').slice(0, 100).trim(); if (t.split(/\s+/).length >= 5) F.push([`"${t}"`, 'en', r]); });
-  const yr = +TODAY.slice(0, 4), bc = new Map(); D.forEach(r => { if (r.date >= since) (r.bills || []).forEach(b => bc.set(b, (bc.get(b) || 0) + 1)); });
-  BILL_INFO.filter(b => +b.session.slice(0, 4) >= yr - 2 && bc.get(b.bill)).sort((a, b) => bc.get(b.bill) - bc.get(a.bill)).slice(0, 10 - F.length)
-    .forEach(b => F.push([`"${b.bill}" California`, 'en']));
+  /* RECALLTRIM-v1 (Sammy 2026-11-02): the bill-number feeds are dropped (3-month test: mostly stories about the bill that never name him); name and release-title feeds stay */
   return F.slice(0, 10).map(([q, loc, rel]) => ({ url: gnUrl(q, loc, days), q, loc, rel }));
 }
 // an RSS feed as TinyFish returns it (raw XML, HTML or markdown): items with title, link, pubDate, source
 function gnewsParse(text){
-  const t = String(text || ''), out = [], un = x => String(x || '').replace(/<!\[CDATA\[|\]\]>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").trim();
+  let t = String(text || '');
+  /* RECALLFIX-v1 (1): fetch_content format html returns the feed as a rendered XML viewer: every tag arrives entity-escaped (&lt;item&gt;) inside <p> lines, so the item
+     match found nothing (0 items in the last real run). Un-escape the tags first; markdown output backslash-escapes _ * [ ] ( ) in text, undone too. */
+  if (!/<item[\s>]/i.test(t) && /&lt;item[\s&]/i.test(t)) t = t.replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+  t = t.replace(/\\([_*\[\]()#.!-])/g, '$1');
+  const out = [], un = x => String(x || '').replace(/<!\[CDATA\[|\]\]>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;/g, "'").trim();
   const items = t.match(/<item[\s>][\s\S]*?<\/item>/gi) || [];
   items.forEach(it => { const g = re => { const m = it.match(re); return m ? un(m[1]) : ''; };
     const link = g(/<link>([\s\S]*?)<\/link>/i) || g(/<guid[^>]*>([\s\S]*?)<\/guid>/i), title = g(/<title>([\s\S]*?)<\/title>/i);
@@ -369,24 +474,65 @@ async function originCredit(mcp, rows){
   }
 }
 /* TV: closed captions in the Internet Archive's TV News Archive (national networks and the San Francisco market), read
-   through the GDELT TV API with TinyFish fetch_content. One clip per station per day. */
+   through the GDELT TV API with TinyFish fetch_content. One clip per station per day; RECALLFIX-v1 (3): up to 3 per day for the
+   Los Angeles stations listed in recall_sources.json (tv.la_stations), and the caption query names him four ways (full name and the
+   "Assemblymember / Assemblyman / Budget Chair Gabriel" second references). Checked 2026-11-02: the API accepts no LA station
+   or LA market ("Invalid Station", "Invalid Market"), so today the LA cap changes nothing and LA TV comes from the priority
+   outlet searches; the markets are read from the data so an LA market can be added the day the API lists one. */
 const TV_MARKETS = ['National', 'San Francisco'];
+function tvQuery(market){
+  const T = RC_DATA.tv || {}, names = (T.names && T.names.length ? T.names : ['jesse gabriel']).map(n => `"${String(n).replace(/"/g, '')}"`);
+  return `${names.length > 1 ? '(' + names.join(' OR ') + ')' : names[0]} (market:"${market}")`;
+}
+function tvCap(station){
+  const T = RC_DATA.tv || {}, la = new Set((T.la_stations || []).map(x => String(x).toUpperCase())), base = Math.max(1, +T.per_station_per_day || 1), lcap = Math.max(base, +T.la_per_station_per_day || 3);
+  return la.has(String(station || '').toUpperCase().replace(/[^A-Z0-9]/g, '')) ? lcap : base;
+}
 async function tvCaptions(mcp){
-  const out = [], seen = new Set(), d = s => s.replace(/-/g, '') + '000000';
-  for (const m of TV_MARKETS){
-    const url = 'https://api.gdeltproject.org/api/v2/tv/tv?' + new URLSearchParams({ query: `"jesse gabriel" (market:"${m}")`, mode: 'clipgallery', format: 'json',
+  const out = [], per = new Map(), seenUrl = new Set(), d = s => s.replace(/-/g, '') + '000000', T = RC_DATA.tv || {};
+  for (const m of (T.markets && T.markets.length ? T.markets : TV_MARKETS)){
+    const url = 'https://api.gdeltproject.org/api/v2/tv/tv?' + new URLSearchParams({ query: tvQuery(m), mode: 'clipgallery', format: 'json',
       startdatetime: d(U.since), enddatetime: d(TODAY), maxrecords: '500' });
     try {
       const pages = tfResults(tfPayload(await tfCall(mcp, 'fetch_content', { urls: [url], format: 'markdown', per_url_timeout_ms: 45000 })));
       const t = String(([...pages.values()][0] || {}).text || ''), j = JSON.parse(t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1));
       (j.clips || []).forEach(c => {
-        const date = String(c.show_date || c.date || '').slice(0,10), key = c.station + date;
-        if (seen.has(key) || !/assembl|lawmaker|legislat|bill|california|sacramento|budget/i.test(c.snippet || '')) return;
-        seen.add(key);
+        const date = String(c.show_date || c.date || '').slice(0,10), key = c.station + date, pu = String(c.preview_url || '');
+        if (!/assembl|lawmaker|legislat|bill|california|sacramento|budget/i.test(c.snippet || '')) return;
+        if (pu && seenUrl.has(pu)) return;   /* the same clip from two markets or two name variants */
+        if ((per.get(key) || 0) >= tvCap(c.station)) return;
+        per.set(key, (per.get(key) || 0) + 1); if (pu) seenUrl.add(pu);
         out.push({ url: c.preview_url, title: `${c.show} (${c.station})`, published: date, author: '', text: String(c.snippet || ''), site: c.station, tv: true });
       });
     } catch(e){ if (STOP_CODES.has(e && e.code)) throw e; U.failed++; }
   }
+  return out;
+}
+/* RECALLFIX-v1 (4): podcasts. The free iTunes Search API (no key) through fetch_content; the search is fuzzy (an Oct 2026 test returned 50 episodes, none naming him),
+   so only episodes dated on or after the since / searched_to date whose title or description names him (recall_sources.json podcasts.name_regex) become candidates.
+   Medium Podcast, Format Podcast episode, the show as the outlet (SHOWNET-v1); the episode page is not opened (it carries no transcript); the sheet task judges them as usual. */
+function podcastParse(text, since){
+  const P = RC_DATA.podcasts || {}; let re; try { re = new RegExp(P.name_regex || '\\bjesse\\s+gabriel\\b', 'i'); } catch(e){ return []; }
+  const t = String(text || '').replace(/\\([^"\\\/bfnrtu])/g, '$1'), a = t.indexOf('{'), b = t.lastIndexOf('}'); if (a < 0 || b < a) return [];
+  const j = JSON.parse(t.slice(a, b + 1)), out = [];
+  (j.results || []).forEach(e => {
+    const title = String(e.trackName || ''), desc = String(e.description || e.shortDescription || ''), show = String(e.collectionName || '');
+    if (!re.test(title + ' ' + desc)) return;
+    const date = tfDate(String(e.releaseDate || '')), url = String(e.trackViewUrl || e.episodeUrl || '').replace(/[&?]uo=\d+$/, '');
+    if (!/^https?:\/\//.test(url) || (date && since && date < since)) return;
+    out.push({ url, title, published: date, author: '', text: (desc || title).slice(0, 1200), site: show, podcast: true, noFetch: true, found_by: 'podcast: iTunes Search' });
+  });
+  return out;
+}
+async function podcastSearch(mcp){
+  const P = RC_DATA.podcasts || {}; if (!P.url) return [];
+  let out = [];
+  try {
+    const pages = tfResults(tfPayload(await tfCall(mcp, 'fetch_content', { urls: [P.url], format: 'markdown', per_url_timeout_ms: 45000 })));
+    const r = [...pages.values()][0]; if (!r || !r.text) throw new Error('no page');
+    out = podcastParse(r.text, sinceFloor());
+  } catch(e){ if (STOP_CODES.has(e && e.code)) throw e; U.failed++; }
+  U.podcasts = out.length;
   return out;
 }
 /* pages that name someone else, or aren't press: dropped before Claude sees them (the all-time search's screen) */
@@ -472,6 +618,14 @@ function relKnown(){ const urls = new Set(), newest = { office: '', caucus: '' }
     ((b && b.also) || []).forEach(u => urls.add(String(u).replace(/\/+$/, '').toLowerCase())); } catch(e){}   /* RELBUTTON-v1 (#6): "Also on caucus site (URL)" values, when the block carries them */
   return { urls, newest, rels, ok: urls.size > 0 }; }
 function relDate(t){ const d = Date.parse(String(t || '').replace(/^[A-Za-z]+,\s*/, '')); return isNaN(d) ? '' : new Date(d - new Date(d).getTimezoneOffset() * 6e4).toISOString().slice(0, 10); }
+/* RECALLFIX-v1 (6): the listing's <time datetime="2026-10-24T21:30:11Z"> carries the time of day the release page was stamped (checked 2026-11-02 on
+   gabriel.asmdc.org and jewishcaucus.legislature.ca.gov). It is the page's created stamp, not an e-mail send time. A midnight-UTC stamp is a date only: ignored. */
+function relStamp(dt){
+  const m = /^(\d{4}-\d\d-\d\d)T(\d\d):(\d\d)(?::\d\d)?(?:\.\d+)?Z$/.exec(String(dt || '').trim()); if (!m || (m[2] === '00' && m[3] === '00')) return null;
+  const d = new Date(`${m[1]}T${m[2]}:${m[3]}:00Z`); if (isNaN(d)) return null;
+  let pt = ''; try { pt = new Intl.DateTimeFormat('en-US', { timeZone: 'America/Los_Angeles', hour: 'numeric', minute: '2-digit', hour12: true }).format(d).replace(/\s+/g, ' ') + ' PT'; } catch(e){}
+  return { utc: `${m[1]}T${m[2]}:${m[3]}:00Z`, pt };
+}
 function relParseList(html, site){
   const doc = new DOMParser().parseFromString(String(html || ''), 'text/html'), out = [];
   (site.src === 'office' ? doc.querySelectorAll('article') : doc.querySelectorAll('.views-row')).forEach(n => {
@@ -480,7 +634,9 @@ function relParseList(html, site){
     if (!a || !tm) return;
     const href = a.getAttribute('href'), url = /^https?:/.test(href) ? href : site.base + href;
     const sub = n.querySelector('.field--name-field-subtitle');
-    out.push({ url, title: a.textContent.replace(/\s+/g, ' ').trim(), date: relDate(tm.textContent) || String(tm.getAttribute('datetime') || '').slice(0, 10), dek: sub ? sub.textContent.replace(/\s+/g, ' ').trim() : '' });
+    const st = relStamp(tm.getAttribute('datetime'));
+    out.push(Object.assign({ url, title: a.textContent.replace(/\s+/g, ' ').trim(), date: relDate(tm.textContent) || String(tm.getAttribute('datetime') || '').slice(0, 10), dek: sub ? sub.textContent.replace(/\s+/g, ' ').trim() : '' },
+      st ? { time_utc: st.utc, time_pt: st.pt } : {}));   /* RECALLFIX-v1 (6) */
   });
   return out;
 }
@@ -684,11 +840,12 @@ async function runUpdate(){
   const mcp = C && C.use ? await C.use('mcp').catch(() => null) : null;
   if (!mcp){ U.err = 'Finding stories needs the tracker open in Claude with the TinyFish connector. The clips you see are still current as of the last rebuild.'; U.phase = 'idle'; drawUpd(); return; }
   const sample = await C.use('sample').catch(() => null);
-  U.busy = true; U.err = ''; U.found = []; U.reprints = []; U.skipped = []; U.failed = 0; U.phase = 'run'; U.ctl = new AbortController(); U.opened = 0; U.paywalled = 0; U.lookups = []; U.printPages = [];
+  U.busy = true; U.err = ''; U.found = []; U.reprints = []; U.skipped = []; U.attach = []; U.failed = 0; U.phase = 'run'; U.ctl = new AbortController(); U.opened = 0; U.paywalled = 0; U.lookups = []; U.printPages = [];
   { const sd = sinceDefault(), panel = ($('#updSince') && $('#updSince').value) || '', pick = RA.sinceManual || (panel && panel !== sd ? panel : '');   /* SINCE-v1: a date from the dialog (or the panel's field when changed) is manual */
     U.sinceDefault0 = sd; U.sinceManual = pick && !sinceError(pick) ? pick : ''; U.since = U.sinceManual || (panel && !sinceError(panel) ? panel : '') || sd; }
   $('#updBtn').classList.add('busy'); drawUpd();
-  const known = knownIndex(); const cands = new Map(); const UQ = tfDedupe(tfPlan()).plan; U.plan = UQ.length;
+  const known = knownIndex(); known.ytIds = new Set(); D.forEach(r => [r.link, r.plink].forEach(u => { const v = ytId(u); if (v) known.ytIds.add(v); }));   /* YTSTATION-v1 */
+  const cands = new Map(); const UQ = tfDedupe(tfPlan()).plan; U.plan = UQ.length;
   try {
     /* RELBUTTON-v1 (backend review #3): the release check runs first (it reads only the two listing pages), so this run's new
        releases get their own pickup searches; they join the plan */
@@ -704,7 +861,7 @@ async function runUpdate(){
       if ((it.alltime || /\bsite:/.test(it.query)) && !it.keepDate && !U.sinceManual) delete inp.after_date;   /* RECALL-v1: fresh passes keep the date filter; SINCE-v1: a manual date limits every pass */
       if (U.sinceManual && inp.after_date && inp.after_date < U.since) inp.after_date = U.since;   /* SINCE-v1: release pickups and late-pickup windows never reach before a manual date */
       delete inp.label; delete inp.kind; delete inp.host; delete inp.alltime; delete inp.rel; delete inp.minDate; if (!inp.page) delete inp.page;
-      delete inp.keepDate; delete inp.hosts;
+      delete inp.keepDate; delete inp.hosts; delete inp.yt;   /* YTSTATION-v1 */
       try { p = tfPayload(await tfCall(mcp, 'search', inp)); }
       catch(e){ if (STOP_CODES.has(e && e.code)) throw e; U.failed++; return; }
       const got = ((p && p.results) || []).filter(r => r && /^https?:\/\//i.test(r.url)).map(r => ({ url: r.url, title: String(r.title||''), published: tfDate(r.date), author: '', text: String(r.snippet||''), site: r.publisher || r.site_name || '' }));
@@ -712,6 +869,10 @@ async function runUpdate(){
       for (const c of got){
         const key = normU(c.url);
         if (cands.has(key) || known.urls.has(key) || covLink(c.url)) continue;
+        if (it.yt){   /* YTSTATION-v1: watch / shorts pages whose title or snippet names him, not seen before (by video id); the channel is judged after the page is opened */
+          const vid = ytId(c.url); if (!vid || !NAMES_HIM.test(c.title + ' ' + c.text) || known.ytIds.has(vid) || [...cands.values()].some(x => x.yt && x.yt === vid) || isOwned(c)) continue;
+          if (!sinceKeep(c.published, sinceFloor(it.minDate))) continue;
+          c.yt = vid; c.found_by = `${it.kind}: ${it.label}`; cands.set(key, c); fresh++; continue; }
         if (isPrintPage(c.url)){ (U.printPages = U.printPages || []).some(x => x.url === c.url) || U.printPages.push({ url: c.url, outlet: hostOf(c.url), date: c.published || '', hl: VS(c.title, 200), snippet: VS(c.text, 200) }); continue; }   /* REQ-11: a print page needs clipping, it is not a story */
         { const nc = neverCoverage(c.url, c.site); if (nc){ if (U.skipped.length < 400) U.skipped.push({ c, why: nc }); continue; } }   /* REQ-12 / NOBLOGS-v1 */
         if (SKIP_HOSTS.test(hostOf(c.url)) || TF_SKIP_URLS.some(x => x.test(c.url)) /* AUTO-v1: listing pages */ || TF_NOT_NEWS.test(c.url) || (it.host && !(hostOf(c.url) === it.host || hostOf(c.url).endsWith('.' + it.host))) || (it.hosts && !it.hosts.some(h => hostOf(c.url) === h || hostOf(c.url).endsWith('.' + h))) || isOwned(c) /* OWNED-v1 */ || /\/(tag|tags|author|authors|people|category|topics?|search)\//i.test(c.url) || /\.(jpe?g|png|gif|webp)\b/i.test(c.title + ' ' + c.url)) continue;
@@ -756,6 +917,8 @@ async function runUpdate(){
     }
     U.step = 'TV captions'; drawProg(); hbTick();
     (await tvCaptions(mcp)).forEach(c => { const key = normU(c.url); if (!cands.has(key) && !known.urls.has(key) && !covLink(c.url)) cands.set(key, c); });
+    U.step = 'Podcast episodes'; drawProg(); hbTick();   /* RECALLFIX-v1 (4): one fetch_content call */
+    (await podcastSearch(mcp)).forEach(c => { const key = normU(c.url); if (!cands.has(key) && !known.urls.has(key) && !covLink(c.url) && !knownHl(known, normH(c.title), c.published)) cands.set(key, c); });
     U.step = 'Google News feeds'; drawProg(); hbTick();   /* RECALL-v1: one fetch_content call, up to 10 feeds; links resolve when the page is opened */
     { const seenT = new Set([...cands.values()].map(c => normH(c.title)));
       (await gnewsSearch(mcp, relOpen(await relTexts()))).forEach(c => { const key = normU(c.url);
@@ -768,14 +931,18 @@ async function runUpdate(){
     // TOKENS-v1: free pre-filters. A result naming no Gabriel (any script) and none of his bills is dropped unopened; a
     // known-blocked host isn't opened (its snippet goes to review and the row is marked BLOCKED)
     { const keep = [];
-      list.forEach(c => { if (c.tv){ keep.push(c); return; }
+      list.forEach(c => { if (c.tv || c.yt){ keep.push(c); return; }   /* YTSTATION-v1: judged by its channel after the page is read */
         if (isPrintPage(c.url)){ (U.printPages = U.printPages || []).some(x => x.url === c.url) || U.printPages.push({ url: c.url, outlet: hostOf(c.url), date: c.published || '', hl: VS(c.title, 200), snippet: VS(c.text, 200) }); return; }   /* REQ-11 */
         { const nc = neverCoverage(c.url, c.site || c.outlet); if (nc){ U.skipped.push({ c, why: nc }); return; } }   /* REQ-12 / NOBLOGS-v1 */
+        if (/(^|\.)valleynewsgroup\.com$/i.test(hostOf(c.url) || '') && !TF_ANY_GAB.test(String(c.title + ' ' + c.text).replace(/Jesse\s+Gabriel\s+for\s+Assembly/gi, ''))){ U.skipped.push({ c, why: 'Valley News Group page whose only mention of him is the "Jesse Gabriel for Assembly" sidebar.' }); return; }   /* RECALLTRIM-v1 */
         if (!c._release && !c.gnews && !TF_ANY_GAB.test(c.title + ' ' + c.text) && !hasHisBill(c.title + ' ' + c.text)){ U.skipped.push({ c, why: 'The search result names no Gabriel (in any script) and none of his bills.' }); return; }
         if (lkDead(c.url)){ U.skipped.push({ c, why: 'Cached lookup: this link is dead or has no page (lookup_cache); not opened.' }); return; }
         if (TF_BLOCKED_HOSTS.test(hostOf(c.url)) || lkBlockedHost(c.url)){ c.blocked = true; c.noFetch = true; U.paywalled++; }
         keep.push(c); });
       list = keep; }
+    U.step = 'Station YouTube channels'; drawProg(); hbTick();   /* YTSTATION-v1: channel from oEmbed before any page is opened; other uploaders are dropped here */
+    await ytOembed(mcp, list);
+    list = list.filter(c => { if (!c.yt || !c.ytChannel) return true; const why = ytJudge(c); if (why){ U.skipped.push({ c, why }); return false; } return true; });
     const toFetch = list.filter(c => !c.tv && !c.noFetch);
     /* FETCHRETRY-v1: a thrown fetch_content (one TinyFish error for a batch of 10) used to leave the batch without pages, and the drop below then called
        every one "Gabriel isn't named" although no page had been read. Now the batch is flagged (_fetchfail), pass 2 retries the flagged ones once in batches
@@ -803,7 +970,8 @@ async function runUpdate(){
             else if (/^\d{4}-\d\d-\d\d/.test(r.published_date || '')){ const ld = localDay(r.published_date, zoneForHost(host), host);   /* v22 zone guard */ c.published = ld; c.dateSrc = ld ? 'tinyfish' : 'none'; }   /* never .slice(0,10) of a UTC stamp */
             else if (c.published){ c.dateSrc = c.dateSrc || 'snippet'; } }
           c.author = tfAuthor(r.author) || c.author;
-          const stub = t.split(/\s+/).length < 250 && TF_STUB.test(t);
+          if (c.yt) ytRead(c, r, t);   /* YTSTATION-v1 */
+          const stub = !c.yt && t.split(/\s+/).length < 250 && TF_STUB.test(t);
           if (stub){ U.paywalled++; c.blocked = true; lkNote(U, c, 'stub page (login or paywall)'); }   /* AUTO-v1 */
           if (t.length > c.text.length) c.text = t.slice(0, 20000);
           if (html && (NAMES_HIM.test(t) || c._release) && !stub) c.page = { url: r.final_url || c.url, title: String(r.title || c.title), clean: html.slice(0, 400000) };
@@ -819,8 +987,9 @@ async function runUpdate(){
           b.forEach(c => { const r = pgs.get(normU(c.url)); if (!r) return; const tx = String(r.text || ''), pd = pageDate(tx, r.final_url || c.url);
             if (pd){ c.published = pd; c.dateSrc = 'page'; if (c.page) c.page.pubLine = ((tx.match(/Published on[^\n|]{0,60}/i) || [''])[0]).trim(); } });
         } catch(e){ if (STOP_CODES.has(e && e.code)) throw e; } } }
+    list.filter(c => c.yt && !c._dupe).forEach(c => { const why = c._fetchfail ? 'Its page could not be fetched (TinyFish error), so the channel was not read. Try again later.' : ytJudge(c); if (why){ c._dupe = true; U.skipped.push({ c, why }); } });   /* YTSTATION-v1 */
     list = list.filter(c => !c._dupe && !(c.gnews && /(^|\.)news\.google\.com$/.test(hostOf(c.url))));   /* RECALL-v1: known, owned or unresolved feed links */
-    list.forEach(c => { c.gab = NAMES_HIM.test(c.title + ' ' + c.text) && TF_CONTEXT.test(gabrielContext(c.title + '\n' + c.text)); c.ctx = (c.title + '\n' + (c.gab ? gabrielContext(c.text) + '\n' : '') + c.text).slice(0, 1800); });
+    list.forEach(c => { c.gab = c.yt ? true : NAMES_HIM.test(c.title + ' ' + c.text) && (c.podcast || TF_CONTEXT.test(gabrielContext(c.title + '\n' + c.text)));   /* RECALLFIX-v1: a podcast's description is short; the screen and the sheet task judge it */ c.ctx = (c.title + '\n' + (c.gab ? gabrielContext(c.text) + '\n' : '') + c.text).slice(0, 1800); });
     // CLEAN-v1: Gabriel named only in reader comments, teasers or tags (on the cleaned page): skipped (DECISIONS 2026-10-27)
     list.filter(c => c.outside).forEach(c => U.skipped.push({ c, why: 'Gabriel is named only outside the article (reader comments, teasers or tags).' }));
     list = list.filter(c => !c.outside);
@@ -830,10 +999,10 @@ async function runUpdate(){
     // TOKENS-v1: a quick yes/no screen (lightest model tier, 25 results a call); the full review below sees only what it kept
     const relFinds = list.filter(c => c._release && !c.gab); list = list.filter(c => !(c._release && !c.gab));   /* RELBUTTON-v1: past the quick screen */
     if (sample && list.length){
-      const SCR = 25, kept = new Set();
-      for (let i = 0; i < list.length && !U.ctl.signal.aborted; i += SCR){
-        const b = list.slice(i, i + SCR); let o = null;
-        U.step = `Claude is screening results (${Math.min(i + SCR, list.length)} of ${list.length})`; U.pct = 70 + i/Math.max(1,list.length)*4; drawProg();
+      const SCR = 25, kept = new Set(list.filter(c => c.yt)), scrL = list.filter(c => !c.yt);   /* YTSTATION-v1: a station clip skips the quick screen (its channel already passed) */
+      for (let i = 0; i < scrL.length && !U.ctl.signal.aborted; i += SCR){
+        const b = scrL.slice(i, i + SCR); let o = null;
+        U.step = `Claude is screening results (${Math.min(i + SCR, scrL.length)} of ${scrL.length})`; U.pct = 70 + i/Math.max(1,scrL.length)*4; drawProg();
         try { o = await sample.json(screenPrompt(b), { signal: U.ctl.signal, modelTier: 'quick' }); } catch(e){ if (e && e.code === 'cancelled') break; o = null; }
         if (!Array.isArray(o)){ b.forEach(c => kept.add(c)); continue; }   // screen failed: the full review decides
         b.forEach((c, j) => { const k = o.find(x => x && +x.n === j + 1) || o[j]; if (k && k.keep === false) U.skipped.push({ c, why: VS(k.why, 300) || 'Not press coverage about him.' }); else kept.add(c); });
@@ -855,7 +1024,10 @@ async function runUpdate(){
       batch.forEach((c, j) => {
         const k = (Array.isArray(out) && (out.find(o => o && +o.n === j+1) || out[j])) || guessRow(c);
         if (k.keep === false && !c._release) U.skipped.push({ c, why: VS(k.why, 300) || 'Not press coverage.' });
-        else { const r = toRow(c, k); if (c._release) r._release = c._release; if (c.found_by) r._found_by = c.found_by;   /* RECALL-v1 */   /* RELBUTTON-v1 */ r._on = true; r._claude = !!(Array.isArray(out)); r._page = c.page || null; r._blocked = !!c.blocked && !c.page; /* AUTO-v1 */ r._text = String(c.text || '').slice(0, 6000); U.found.push(r); }
+        else { const r = toRow(c, k); if (c.podcast){ r.media = 'Podcast'; r.fmt = 'Podcast episode'; r.outlet = VS(c.site, 120) || r.outlet; r.pub = VS(c.site, 100) || r.pub; }
+          if (c.yt){ ytRow(r, c); const same = ytSameSegment(r, c);   /* YTSTATION-v1 */
+            if (same){ (U.attach = U.attach || []).push({ story: same.id, row_link: same.link, date: same.date, hl: same.hl, outlet: r.outlet, link: c.url, title: VS(c.title, 300), channel: c.ytChannel, station: (r._av || {}).Station || '', network: (r._av || {}).Network || '', medium: r.media, vdate: c.dateSrc === 'page' ? c.published : '' }); return; } }   /* RECALLFIX-v1 (4): the show is the outlet (SHOWNET-v1) */
+          if (c._release) r._release = c._release; if (c.found_by) r._found_by = c.found_by;   /* RECALL-v1 */   /* RELBUTTON-v1 */ r._on = true; r._claude = !!(Array.isArray(out)); r._page = c.page || null; r._blocked = !!c.blocked && !c.page; /* AUTO-v1 */ r._text = String(c.text || '').slice(0, 6000); U.found.push(r); }
       });
     }
     U.step = 'Looking for the outlet that first ran each story'; drawProg(); hbTick();
@@ -871,14 +1043,14 @@ async function runUpdate(){
         r._dup = true;
         const st = !ch.same && byId.get(ch.o.sid), nm = r.pub || r.outlet;
         if (st && !ranIn(st, nm, hostOf(r.link)) && !U.reprints.some(x => x.story === st.id && nrmName(x.outlet) === nrmName(nm)))
-          U.reprints.push({ story: st.id, outlet: nm, link: r.link, date: r.date, hl: r.hl, _on: true, _named: true });
+          U.reprints.push({ story: st.id, outlet: nm, link: r.link, date: r.date, hl: r.hl, _on: true, _named: true, _av: r._av });
         return;
       }
       const old = dupOf(r, D);
       if (old){
         r._dup = true;
         if (!old.same && !ranIn(old.r, r.pub || r.outlet, hostOf(r.link)) && !U.reprints.some(x => x.story === old.r.id && nrmName(x.outlet) === nrmName(r.pub || r.outlet)))
-          U.reprints.push({ story: old.r.id, outlet: r.pub || r.outlet, link: r.link, date: r.date, hl: r.hl, _on: true, _named: true });
+          U.reprints.push({ story: old.r.id, outlet: r.pub || r.outlet, link: r.link, date: r.date, hl: r.hl, _on: true, _named: true, _av: r._av });
         return;
       }
       const f = dupOf(r, kept);
@@ -887,7 +1059,7 @@ async function runUpdate(){
       if (!f.same && !ranIn(f.r, r.pub || r.outlet, hostOf(r.link))){
         f.r.also = (f.r.also ? f.r.also + '; ' : '') + (r.pub || r.outlet);
         // and a Reprint row under the new story when it goes into the spreadsheet
-        (f.r._reps || (f.r._reps = [])).push({ outlet: r.pub || r.outlet, link: r.link, date: r.date, hl: r.hl });
+        (f.r._reps || (f.r._reps = [])).push({ outlet: r.pub || r.outlet, link: r.link, date: r.date, hl: r.hl, _av: r._av });
       }
     });
     U.found = U.found.filter(r => !r._dup);
@@ -1094,6 +1266,7 @@ function drawUpd(){
       <div class="w">Reprint of the ${esc(r ? r.outlet.replace(/\s*\(\+.*$/,'') : '')} story from ${esc(r ? dateLabel(r) : '')}${r && r.pick ? `, which has ${pl(r.pick,'reprint')} so far` : ''}.</div>
       ${p._checked ? `<div class="w">${p._page ? 'Its text is checked against the story’s when it goes into the spreadsheet; if it isn’t the same story it goes in as a story of its own.' : 'Its page couldn’t be read; it goes in as a reprint listed for review.'}</div>` : ''}
       <div class="fields"><input data-rf="outlet" data-ri="${i}" value="${esc(p.outlet)}" aria-label="Outlet" placeholder="Outlet name"></div></div></div>`; }).join('') + `</div>`;
+    if ((U.attach || []).length) h += `<details open><summary>${pl(U.attach.length,'station video')} added to a tracked story (same segment)</summary><div class="upd-list">${U.attach.map(a => `<div class="upd-item"><div><div class="k"><span>${esc(a.vdate||'No date')}</span><span>${esc(a.channel)}</span></div><div class="h">${cpBtn(a.link)}<a href="${esc(a.link)}" target="_blank" rel="noopener">${esc(a.title||a.link)}</a></div><div class="w">Same segment as ${esc(a.date)} ${esc(a.hl)} becomes a broadcast story (video attached). The sheet task makes that story a Broadcast segment and attaches the link on the next save.</div></div></div>`).join('')}</div></details>`;   /* YTSTATION-v1 */
     if (U.skipped.length) h += `<details><summary>${pl(U.skipped.length,'result')} left out</summary><div class="upd-list">${U.skipped.map(s => `<div class="upd-item"><div><div class="k"><span>${esc(s.c.published||'No date')}</span><span>${esc(hostOf(s.c.url))}</span></div><div class="h">${cpBtn(s.c.url)}<a href="${esc(s.c.url)}" target="_blank" rel="noopener">${esc(s.c.title||s.c.url)}</a></div><div class="w">${esc(s.why)}</div></div></div>`).join('')}</div></details>`;
   }
   if ((U.phase==='review' || U.phase==='done') && (U.printPages || []).length) h += `<details open class="upd-print"><summary><b>${pl(U.printPages.length,'print page')}</b> to clip (e-paper pages, not stories)</summary><p class="upd-rp-h">These are page images of a printed paper (for example the Sing Tao flipbook). They name him but are not article rows, so they are not in the finds above. Clip them into the Unlinked print pages tab by hand.</p><div class="upd-list">${U.printPages.map(p => `<div class="upd-item"><div><div class="k"><span>${esc(p.date || 'No date')}</span><span>${esc(p.outlet)}</span></div><div class="h">${cpBtn(p.url)}<a href="${esc(p.url)}" target="_blank" rel="noopener">${esc(p.hl || p.url)}</a></div></div></div>`).join('')}</div><button class="btn" id="updCopyPrint" type="button">Copy list</button></details>`;   /* S2: e-paper finds are shown, not silent */

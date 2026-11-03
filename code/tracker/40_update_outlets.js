@@ -97,7 +97,7 @@ function covBlock(id){ const el = typeof document !== 'undefined' && document.ge
 // as in build_data.py: scheme, www., fragment, query and trailing slash dropped
 // links that stop naming one article once the query is dropped (NewsBank's document-view, Google searches, library proxies) never match
 const COV_SHARED = /^google\.[a-z.]+\/search|^[^/]+$/;
-const covNormU = u => { let s = String(u || '').trim().toLowerCase(); s = canonMirror(s.replace(/^[a-z][a-z0-9+.-]*:\/\//, '').replace(/^www\./, '').split('#')[0]); const host = s.split('/')[0]; if (!/newsbank|oclc|google\.|proquest/.test(host)) s = s.split('?')[0]; return s.replace(/\/+$/, ''); };
+const covNormU = u => { let s = String(u || '').trim().toLowerCase(); s = canonMirror(s.replace(/^[a-z][a-z0-9+.-]*:\/\//, '').replace(/^www\./, '').split('#')[0]); const host = s.split('/')[0]; if (!/newsbank|oclc|google\.|proquest|(^|\.)youtube\.com$/.test(host)) s = s.split('?')[0]; return s.replace(/\/+$/, ''); };   /* YTLINK-v1: a YouTube watch link is identified by ?v=ID */
 // "Sacramento Bee, The", "The Sacramento Bee" and "The Sacramento Bee (CalMatters)" are one outlet
 const covOutlet = s => String(s || '').toLowerCase().replace(/\s*\([^)]*\)\s*$/, '').replace(/,\s*the$/, '').replace(/^the\s+/, '').replace(/[^a-z0-9]+/g, '');
 /* REQ-14 (UPDFIX-v1): a headline's first segment when split at " - ", " | ", " — ", " – " (normalized; only when it is REPRINT_MIN characters or more) */
@@ -224,17 +224,17 @@ function proposeRows(run, stories, reps){
   stories.forEach(r => sidOf.set(r.id, `sNEW-${run}-${++ctr.s}`));
   const repRow = (p, sid, st, code) => covRow({ 'Article ID': aid(), 'Story ID': sid, 'Original or reprint': 'Reprint', 'Data Source': COV_DS,
     'Date': /^\d{4}-\d{2}-\d{2}$/.test(p.date || '') ? p.date : '', 'Year': /^\d{4}/.test(p.date || '') ? +p.date.slice(0, 4) : '',
-    'Outlet': covOutletName(yahooUnit(p.link, p.outlet), covMedium(p.outlet)), 'Outlet county': covCounty(p.outlet), 'Medium': covMedium(p.outlet), 'Format': fmtOfLink(p.link, covMedium(p.outlet)), 'Reach': covReach(p.outlet), 'Language': st ? lang(st) : '', 'Headline': p.hl || '', 'Edition': 'Web',
+    'Outlet': covOutletName(yahooUnit(p.link, p.outlet), covMedium(p.outlet)), 'Outlet county': covCounty(p.outlet), 'Medium': covMedium(p.outlet), 'Format': p._av ? 'Broadcast segment' : fmtOfLink(p.link, covMedium(p.outlet)), 'Reach': covReach(p.outlet), 'Language': st ? lang(st) : '', 'Headline': p.hl || '', 'Edition': 'Web',
     'Role': covRole('', p.hl), 'Publisher link': p.link || '', 'Link status': 'Publisher URL', 'Tracker story code': code || '' });
   /* BUTTONOPT-v1 (A-B1): the reprint's page, saved as pages/<_page>, is tested against its story by the string-of-text rule in the
      sheet task (not in this page); _page is not a sheet column */
-  const repRow2 = (p, sid, st, code) => { const o = repRow(p, sid, st, code); if (p._pageKey) o._page = p._pageKey; return o; };
+  const repRow2 = (p, sid, st, code) => { const o = repRow(p, sid, st, code); if (p._pageKey) o._page = p._pageKey; if (p._av){ o._av = p._av; o['Data Source'] = 'Web search (TinyFish, YouTube station channel)'; } return o; };   /* YTSTATION-v1: a station video as a reprint is a Broadcast segment */
   stories.forEach(r => {
     const sid = sidOf.get(r.id), own = covOutlet(r.pub || r.outlet), reps2 = r._reps || [];
     const tone = TONE_OK.has(r.tone);
     const bf = isBackfill(r);   /* REQ-13: an old story re-found by the outlet sweep is labelled so weekly runs stay legible */
-    out.push(covRow({ 'Article ID': aid(), 'Story ID': sid, 'Original or reprint': 'Original', 'Data Source': r._release ? COV_DS_REL : bf ? COV_DS_BF : COV_DS,
-      'Date': r.date, 'Year': r.date ? (r.year || +String(r.date).slice(0, 4)) : '', 'Team note': [!r.date && r._dateSrc === 'none' ? 'undated page; fetch-dated' : '', r._futureNote || '', bf ? 'found by outlet backfill ' + TODAY : ''].filter(Boolean).join('; '), 'Outlet': covOutletName(yahooUnit(r.link, r.pub || r.outlet), r.media),   /* DATES-v1 check 8 */ 'Outlet county': covCounty(r.pub || r.outlet),
+    out.push(covRow({ 'Article ID': aid(), 'Story ID': sid, 'Original or reprint': 'Original', 'Data Source': r._release ? COV_DS_REL : bf ? COV_DS_BF : r.ds || COV_DS,
+      'Date': r.date, 'Year': r.date ? (r.year || +String(r.date).slice(0, 4)) : '', 'Team note': [!r.date && r._dateSrc === 'none' ? 'undated page; fetch-dated' : '', r._futureNote || '', bf ? 'found by outlet backfill ' + TODAY : '', r._ycheck ? 'YouTube station clip: neither title nor description names him; check' : ''].filter(Boolean).join('; '), 'Outlet': covOutletName(yahooUnit(r.link, r.pub || r.outlet), r.media),   /* DATES-v1 check 8 */ 'Outlet county': covCounty(r.pub || r.outlet),
       'Medium': r.media || '', 'Format': r.fmt || fmtOfLink(r.link, r.media), 'Reach': covReach(r.pub || r.outlet), 'Language': lang(r), 'Headline': r.hl || '', 'Translated Headline': r.lang ? r.hl_en || '' : '', 'Story in English': r.lang ? r.text_en || '' : '',
       'Author / byline': r.author || '', 'Edition': 'Web', 'Mentions "Gabriel" in text': r.conf === 'Confirmed' || r.src === 'Web, verified' ? 'Yes' : '',
       'Role': covRole(r.author, (r.hl || '') + ' ' + (r.hl_en || ''), r._release), '# of reprints': new Set(reps2.map(p => covOutlet(p.outlet)).filter(x => x && x !== own)).size,
@@ -247,6 +247,7 @@ function proposeRows(run, stories, reps){
     if (r._blocked){ const o0 = out[out.length - 1]; o0['Link status'] = 'Publisher URL (blocked site, no copy)'; o0._nocopy_find = true; }   /* PAYWALL-v1: NOCOPY-v2 label; the sheet task dedupes, notes and adds the row */
     if (r._datecheck) out[out.length - 1]._date_check = 'yes';
     if (bf) out[out.length - 1]._backfill = true;
+    if (r._av) out[out.length - 1]._av = r._av;   /* YTSTATION-v1: Audio & video details values (not a sheet column; sheet_task.apply_av) */
     if (r._found_by) out[out.length - 1]._found_by = r._found_by;   /* RECALL-v1: which search found it (not a sheet column) */
     if (r._release) out[out.length - 1]._release = r._release;   /* RELBUTTON-v1: {prid, url}; the sheet task tests the page against the releases */
     if (r._origin) out[out.length - 1]._origin = r._origin;   /* BUTTONOPT-v1 (ORIGINCREDIT): the originator's copy, judged by the sheet task */

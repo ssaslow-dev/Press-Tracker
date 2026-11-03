@@ -1,4 +1,9 @@
-/* TABS-v1 Press releases tab (agent-tab-releases, 2026-10-27). Replaces Insights › Press releases (release_pickup.js).
+/* RELRECS-v1 (Sammy 2026-11-02: R1, R2, R3, R5 facet only): "Picked up" leads (one number per release = related stories that are not wire
+   and not reposts + copies at real outlets, FINDINGS definition D; tab-releases "nw" lists the wire / distributor / prservice /
+   aggregator outlets); "Ran it" (copies) is the second number. Reporter and outlet facets + CSV columns from the related stories;
+   a releases-per-quarter chart (ctx.timeChart, TIMEAXIS-v1) under the filter chips; the Pickup facet (nothing after 7 / 30 days).
+   window.AJGRelPick(ctx, key) gives the Bills tab the same numbers.
+   TABS-v1 Press releases tab (agent-tab-releases, 2026-10-27). Replaces Insights › Press releases (release_pickup.js).
    One row per release in ins-release_pickup (the sheet's Press releases tab in scope: Gabriel's office always, Jewish Caucus
    from the tenure date, plus the releases outlets ran that are not posted officially). Copies ("Ran it") = the sheet rows
    that are the release (RELRULE-v1 / EXCERPT-v1 / RELCOPIES-v2); they are not tracker stories. Type / quoted / dek / source
@@ -21,7 +26,7 @@
   var SRC_ORDER = ['Gabriel’s office', 'Jewish Caucus', 'Both sites', 'Not posted officially'];
   /* display order of evidence (strongest first); unknown types go last */
   var RANK = ['nearcopy', 'text', 'quote', 'anchor', 'pre', 'bill', 'topic', 'roundup', 'laterquote', 'later', 'subject', 'possible'];   /* v23: roundup, subject */
-  var M = { v: null, items: null, bySlug: null, byKey: null, R: null, thr: null, people: [] }, FT = { state: 'idle', map: null }, cur = { q: '', ctx: null };
+  var M = { v: null, items: null, bySlug: null, byKey: null, R: null, thr: null, people: [], nw: null }, FT = { state: 'idle', map: null }, cur = { q: '', ctx: null };
 
   function dayNum(iso){ var p = iso.split('-'); return Date.UTC(+p[0], +p[1] - 1, +p[2]) / 864e5; }
   function lagOf(d0, d){ return (d0 && d && d.length >= 10 && d0.length >= 10) ? Math.round(dayNum(d.slice(0, 10)) - dayNum(d0.slice(0, 10))) : null; }
@@ -42,7 +47,8 @@
     if (M.v === ctx.version && M.items) return M.items;
     var blk = ctx.block('release_pickup'), tb = ctx.block('releases') || { r: {}, c: {} };
     if (!blk || !blk.rel){ M = { v: ctx.version, items: [], bySlug: new Map(), byKey: new Map(), R: null, thr: null, people: [] }; return M.items; }
-    M.R = tb.rules || null; M.thr = tb.thr || null; M.tenure = (M.R && M.R.tenure) || blk.tenure || '';
+    M.R = tb.rules || null; M.thr = tb.thr || null; M.nw = new Set(tb.nw || []);
+    var NW = M.nw; M.tenure = (M.R && M.R.tenure) || blk.tenure || '';
     var cols = blk.cols || [], ci = function(n){ return cols.indexOf(n); };
     var iT = ci('type'), iQ = ci('quoted'), iDk = ci('dek'), iS = ci('source'), iP = ci('prid');
     var thr = M.thr || {}, TX = thr.x || {}, PP = thr.pp || [], TH = thr.th || [];
@@ -67,6 +73,19 @@
       rr.forEach(function(x){ var r = ctx.byId(x[0]); if (!r) return; var o = best.get(x[0]); if (!o || rk(x[1]) < rk(o.type)) best.set(x[0], { r: r, type: String(x[1] || ''), lag: x[2] }); });
       it.related = []; it.possible = []; it.later = []; it.ev = best;
       best.forEach(function(e){ var n = tierOf(e.type); (n === 2 ? it.possible : n === 3 ? it.later : it.related).push(e); });
+      /* RELRECS-v1 R1: Picked up = related stories that are not wire and not reposts (not a wire / distributor / prservice / aggregator
+         outlet, Medium not Wire, evidence not nearcopy) + copies at outlets that are not one of those. R2: the reporters and outlets of the related stories */
+      var reps = [], outs = [], seenR = {}, seenO = {};
+      it.nRelPick = 0;
+      it.related.forEach(function(e){ var r = e.r, o = ctx.outlet(r.outlet, r.aid);
+        if (e.type !== 'nearcopy' && r.media !== 'Wire' && !NW.has(o)) it.nRelPick++;
+        if (o && !seenO[o]){ seenO[o] = 1; outs.push(o); }
+        (r.authors || []).forEach(function(a){ a = String(a || '').trim(); var k = a && ctx.authorKey ? ctx.authorKey(a) : '';
+          if (!k || k === 'jesse gabriel' || seenR[k] || (ctx.authorKind && ctx.authorKind(a) !== 'person')) return;
+          seenR[k] = 1; reps.push(String(ctx.canonAuthors ? ctx.canonAuthors([a])[0] || a : a).replace(/([a-z])([’'])S\b/g, '$1$2s')); }); });
+      it.relReporters = reps; it.relOutlets = outs;
+      it.nCopyPick = it.copies.filter(function(q){ return !NW.has(q.outlet); }).length;
+      it.picked = it.nRelPick + it.nCopyPick;
       /* RELTHREAD-v1 people, milestone, threads, pairs */
       var tx = TX[it.prid || it.key] || {};
       it.named = (tx.n || []).map(function(i){ return { i: i, title: (PP[i] || [])[0] || '', name: pName(i) }; }).filter(function(p){ return p.name; });
@@ -84,9 +103,13 @@
       while (bySlug.has(s)) s = base + '-' + (k++);
       it.old = s; it.slug = it.prid || s; bySlug.set(s, it); if (it.prid) bySlug.set(it.prid, it); });   /* RELCOPIES-v1: #press-releases/<prid>; the old date-title slug still finds it */
     items.forEach(function(it){ byKey.set(it.prid || it.key, it); byKey.set(it.key, it); });
-    M = { v: ctx.version, items: items, bySlug: bySlug, byKey: byKey, R: M.R, thr: M.thr, tenure: M.tenure };
+    M = { v: ctx.version, items: items, bySlug: bySlug, byKey: byKey, R: M.R, thr: M.thr, tenure: M.tenure, nw: NW };
     return items;
   }
+
+  /* RELRECS-v1 R1: the Bills tab's per-release line reads the same numbers (one definition of "Picked up") */
+  window.AJGRelPick = function(ctx, key){ var its = prep(ctx), it = M.byKey && M.byKey.get(key);
+    return it ? { picked: it.picked, related: it.related.length, copies: it.n } : null; };
 
   /* ---- full release text: fetched once, lazily ---- */
   function loadTexts(){
@@ -163,6 +186,40 @@
     return Object.keys(c).sort(function(a, b){ return rk(a) - rk(b); }).map(function(k){ return [k, c[k]]; });
   }
 
+  /* RELRECS-v1 R3: releases per quarter, split picked up / not, over the releases the filters leave (Data's timeChart, TIMEAXIS-v1) */
+  var CH = { show: 'n', res: null, ctx: null };
+  function chartHtml(){
+    return '<div class="card chartcard rl-chart"><h2 class="sec rl-ctitle">Releases by quarter</h2><div class="cap rl-ccap"></div><div class="legend rl-cleg"></div><div class="chart rl-cchart"></div><div class="rl-cnote cap" hidden></div>'
+      + '<div class="an-controls rl-copts"><label>Show<select data-rlc="show"><option value="n">Number</option><option value="pct">Share of releases</option></select></label>'
+      + '<label hidden><input type="checkbox" data-rlc="avg"></label><label hidden><select data-rlc="only"></select></label></div>'
+      + '<details class="dt"><summary>Show the numbers</summary><div class="rl-ctable" style="overflow-x:auto"></div></details></div>';
+  }
+  function qEnd(y, q){ return y + '-' + String(q * 3).padStart(2, '0') + '-' + (q === 1 || q === 4 ? '31' : '30'); }
+  function drawChart(el){
+    var res = CH.res || [], ctx = CH.ctx, q = function(s){ return el.querySelector(s); }, note = q('.rl-cnote'), chart = q('.rl-cchart');
+    if (!q('.rl-chart') || !ctx || !ctx.timeChart) return;
+    var rows = res.filter(function(it){ return /^\d{4}/.test(it.date); }).map(function(it){
+      return { id: it.key, date: it.date, prec: it.date.length >= 10 ? 'day' : 'year', year: +it.date.slice(0, 4), pickup: it.picked ? 'Picked up' : 'Not picked up' }; });
+    var per = {}; rows.forEach(function(r){ per[r.date.slice(0, 4) + '-Q' + Math.ceil((+r.date.slice(5, 7) || 1) / 3)] = 1; });
+    var np = Object.keys(per).length, parts = ['.rl-cchart', '.rl-cleg', '.rl-copts', '.dt', '.rl-ccap'];
+    q('.rl-chart select[data-rlc="show"]').value = CH.show;
+    if (np < 2){   /* CHARTRULE-v1: no chart that would be a single bar; a sentence instead */
+      parts.forEach(function(k){ var x = q(k); if (x) x.hidden = true; });
+      note.hidden = false;
+      note.textContent = !rows.length ? 'No dated releases match these filters, so there is nothing to chart.' : 'All ' + ctx.pl(rows.length, 'release', 'releases') + ' here went out in ' + Object.keys(per)[0].replace('-', ' ') + ', so there is no chart.';
+      return;
+    }
+    parts.forEach(function(k){ var x = q(k); if (x) x.hidden = false; }); note.hidden = true; note.textContent = '';
+    var y0 = Math.min.apply(null, rows.map(function(r){ return r.year; })), pk = rows.filter(function(r){ return r.pickup === 'Picked up'; }).length, pct = CH.show === 'pct';
+    ctx.timeChart(rows, { iv: 'quarter', bk: 'pickup', meas: 'stories', from: y0, pct: pct, avgOn: false, avgEl: q('[data-rlc="avg"]'), onlyEl: q('[data-rlc="only"]'),
+      title: q('.rl-ctitle'), cap: q('.rl-ccap'), legend: q('.rl-cleg'), chart: chart, table: q('.rl-ctable'), quick: false, foot: 'Click to list this quarter’s releases',
+      pick: function(b){ var m = /^(\d{4})-Q(\d)$/.exec(b); if (!m || !CH.ctx) return; var n = +m[2];
+        CH.ctx.go('releases', Object.assign({}, CH.ctx.params, { date: 'c:' + m[1] + '-' + String(n * 3 - 2).padStart(2, '0') + '-01..' + qEnd(m[1], n) })); } });
+    Array.prototype.forEach.call(el.querySelectorAll('.rl-ctable th'), function(th){ if (th.textContent === 'Other') th.textContent = 'Not picked up'; });
+    q('.rl-ctitle').textContent = pct ? 'Share of releases picked up, by quarter' : 'Releases by quarter';
+    q('.rl-ccap').textContent = ctx.fmt(pk) + ' of ' + ctx.pl(rows.length, 'dated release', 'dated releases') + ' (' + Math.round(100 * pk / rows.length) + '%) picked up. “Picked up” leaves out wire services and reposts. Click a bar to list that quarter’s releases.';
+  }
+
   var list = {
     noun: ['release', 'releases'], title: 'Press releases',
     get cap(){
@@ -170,7 +227,7 @@
       return 'Releases from Gabriel’s office and the Jewish Caucus. '
         + (M.tenure && c ? 'Jewish Caucus releases count from ' + c.esc(dl(c, M.tenure)) + ', when he became its chair. ' : '')
         + (np ? 'Also lists ' + np + ' releases outlets ran that were never posted officially. ' : '')
-        + '“Ran it” = outlets that printed the release itself; “Related” = tracker stories tied to it by evidence. Search covers the full text of each release.';
+        + '“Picked up” = related stories that are not wire or reposts, plus copies at real outlets; “Ran it” = outlets that printed the release itself; “Related” = tracker stories tied to it by evidence. Search covers the full text of each release.';
     },
     placeholder: 'Search release titles and text',
     items: function(ctx){ cur.ctx = ctx; return prep(ctx); },
@@ -183,6 +240,8 @@
       { key: 'iss', label: 'Issue', vals: function(it){ return it.topic; }, search: true, limit: 8 },
       { key: 'bill', label: 'Bills', vals: function(it){ return it.bills; }, search: true, limit: 8 },
       { key: 'quoted', label: 'Gabriel quoted', vals: function(it){ return it.quoted; }, order: ['Yes', 'No'] },
+      { key: 'quiet', label: 'Pickup', type: 'one', hint: 'Releases with nothing picked up (no related story that is not wire or a repost, no copy at a real outlet) after this many days.', options: [7, 30].map(function(d){
+        return { id: String(d), label: 'Nothing after ' + d + ' days', test: function(it, ctx){ var c = ctx && ctx.cut0 ? ctx.cut0(d) : ''; return !it.picked && it.date.length >= 10 && !!c && it.date < c; } }; }) },
       { key: 'pick', label: 'Ran it', type: 'one', any: 'Any', options: [
         { id: 'yes', label: 'At least 1', test: function(it){ return it.n > 0; } },
         { id: 'no', label: 'None', test: function(it){ return !it.n; } },
@@ -197,15 +256,18 @@
         { id: 'no', label: 'None', test: function(it){ return !it.possible.length; } }] },
       { key: 'joint', label: 'Joint with', vals: function(it){ return it.joint; }, search: true, limit: 8 },
       { key: 'named', label: 'Others named', vals: function(it){ return it.namedF; }, search: true, limit: 8 },
-      { key: 'outlet', label: 'Outlet', vals: function(it){ return it.outlets; }, search: true, limit: 8 }
+      { key: 'outlet', label: 'Outlet that ran it', vals: function(it){ return it.outlets; }, search: true, limit: 8 },
+      { key: 'rout', label: 'Outlet, related stories', vals: function(it){ return it.relOutlets; }, search: true, limit: 8 },
+      { key: 'rrep', label: 'Reporter, related stories', vals: function(it){ return it.relReporters; }, search: true, limit: 8 }
     ],
     columns: [
       { key: 'title', label: 'Release', sortable: false, val: function(it){ return it.title; }, cell: function(it, ctx){
           var meta = (it.type && it.type !== 'Press release' ? '<span class="rl-type">' + ctx.esc(it.type) + '</span>' : '') + (it.topic ? '<span>' + ctx.esc(it.topic) + '</span>' : '') + chips(it.bills, it.date, ctx);
-          var pm = [ctx.esc(dl(ctx, it.date)), ctx.esc(it.src), it.n ? 'Ran it ' + ctx.fmt(it.n) : '', it.related.length ? 'Related ' + ctx.fmt(it.related.length) : ''].filter(Boolean).join(' · ');
+          var pm = [ctx.esc(dl(ctx, it.date)), ctx.esc(it.src), it.picked ? 'Picked up ' + ctx.fmt(it.picked) : 'Not picked up', it.n ? 'Ran it ' + ctx.fmt(it.n) : '', it.related.length ? 'Related ' + ctx.fmt(it.related.length) : ''].filter(Boolean).join(' · ');
           return '<button type="button" class="linkbtn tt-open">' + ctx.esc(it.title) + '</button>' + (meta ? '<div class="sub rl-sub">' + meta + '</div>' : '') + '<div class="sub rl-pm">' + pm + '</div>' + snippet(it, ctx); } },
       { key: 'date', label: 'Date', dir: -1, cls: 'nw rl-dk', val: function(it){ return it.date; }, cell: function(it, ctx){ return ctx.esc(dl(ctx, it.date)); } },
       { key: 'src', label: 'Source', cls: 'rl-dk', val: function(it){ return it.src; } },
+      { key: 'pk', label: 'Picked up', num: true, dir: -1, cls: 'rl-dk', val: function(it){ return it.picked; }, cell: function(it, ctx){ return zero(it.picked, ctx); } },
       { key: 'n', label: 'Ran it', num: true, dir: -1, cls: 'rl-dk', val: function(it){ return it.n; }, cell: function(it, ctx){ return zero(it.n, ctx); } },
       { key: 'rel', label: 'Related', num: true, dir: -1, cls: 'rl-dk', val: function(it){ return it.related.length; }, cell: function(it, ctx){ return zero(it.related.length, ctx); } }
     ],
@@ -215,20 +277,27 @@
       if (st.q && FT.state === 'idle') loadTexts();
       if (st.q && FT.state === 'loading') return 'Searching full text…';
       if (!res.length) return '';
-      var np = res.filter(function(it){ return it.n; }).length, nc = res.reduce(function(s, it){ return s + it.n; }, 0);
-      return ctx.pl(res.length, 'release', 'releases') + ' · ' + ctx.fmt(np) + ' run by outlets (' + ctx.pl(nc, 'copy', 'copies') + ') · '
+      var np = res.filter(function(it){ return it.n; }).length, nc = res.reduce(function(s, it){ return s + it.n; }, 0), pk = res.filter(function(it){ return it.picked; }).length;
+      return ctx.pl(res.length, 'release', 'releases') + ' · ' + Math.round(100 * pk / res.length) + '% picked up (' + ctx.fmt(pk) + ' of ' + ctx.fmt(res.length) + ') · ' + ctx.fmt(np) + ' run by outlets (' + ctx.pl(nc, 'copy', 'copies') + ') · '
         + ctx.fmt(res.filter(function(it){ return it.related.length; }).length) + ' with related stories'
         + (FT.state === 'failed' && st.q ? ' · Full text could not be loaded; searched titles and deks.' : '');
     },
     empty: function(){ return 'No releases match.'; },
     copies: [{ label: 'Copy titles and links', sub: 'Date, title and official link, one release per line',
       text: function(res, st, ctx){ return res.map(function(it){ return dl(ctx, it.date) + ' – ' + it.title + (it.url ? ' – ' + it.url : ''); }).join('\n'); } }],
+    extra: function(el, res, ctx){
+      CH.res = res; CH.ctx = ctx;
+      if (!el.firstChild){ el.innerHTML = chartHtml();
+        el.addEventListener('change', function(e){ var t = e.target; if (t && t.dataset && t.dataset.rlc === 'show'){ CH.show = t.value; drawChart(el); } }); }
+      drawChart(el);
+    },
     csvName: function(st, ctx){ return 'AJG press releases ' + ctx.TODAY + '.csv'; },
     csvExtra: [['Type', function(it){ return it.type; }], ['Issue', function(it){ return it.topic; }], ['Bills', function(it){ return it.bills.join('; '); }],
       ['Gabriel quoted', function(it){ return it.quoted; }], ['Dek', function(it){ return it.dek; }], ['Official link', function(it){ return it.url; }],
       ['Joint with', function(it){ return it.joint.join('; '); }], ['Others named', function(it){ return it.named.map(function(p){ return p.name; }).join('; '); }],
       ['Milestone', function(it){ return it.m ? it.m[0] + ' ' + it.m[3] + ' (' + it.m[1] + ')' : ''; }],
       ['Outlets that ran it', function(it){ return it.outlets.join('; '); }],
+      ['Reporters of related stories', function(it){ return it.relReporters.join('; '); }], ['Outlets of related stories', function(it){ return it.relOutlets.join('; '); }],
       ['Possibly related stories', function(it){ return it.possible.length; }], ['Later coverage stories', function(it){ return it.later.length; }],
       ['Bill stories the week before', function(it){ return it.bc ? it.bc[0] : ''; }], ['Bill stories the week after', function(it){ return it.bc ? it.bc[1] : ''; }],
       ['Bill stories after, not linked', function(it){ return it.bc ? it.bc[2] : ''; }],
@@ -284,7 +353,9 @@
       var fWhat = [['Issue', ctx.issueLink ? ctx.issueLink(it.topic) : e(it.topic)],
         ['Bills', chips(it.bills.filter(function(b){ return it.bg.indexOf(b) < 0; }), it.date, ctx) + (it.bg.length ? '<span class="sub rl-bg">Also mentions ' + e(it.bg.join(', ')) + '</span>' : '')], ['Milestone', ms]];
       var ab = it.bills.filter(function(b){ return it.bg.indexOf(b) < 0; }), bcl = it.bc && ab.length ? 'Bill coverage' : '', bcb = ab.length === 1 ? ab[0] : 'these bills';   /* rp-final: plain words, detail in the ⓘ */
-      var fCov = [['Ran it', it.n ? ctx.pl(it.n, 'copy', 'copies') + (it.outlets.length !== it.n ? ' <span class="sub">' + ctx.pl(it.outlets.length, 'outlet', 'outlets') + '</span>' : '') + info(ctx, R.copy ? 'Outlets that ' + R.copy + '.' : '', 'Ran it') : '0'],
+      var fCov = [['Picked up', ctx.fmt(it.picked) + ' <span class="sub">(' + ctx.pl(it.related.length, 'related story', 'related stories') + ', ' + ctx.pl(it.n, 'copy', 'copies') + ')</span>'
+          + info(ctx, 'Related stories that are not wire services or reposts of the release, plus copies at outlets that are not wire or distribution services.', 'Picked up')],
+        ['Ran it', it.n ? ctx.pl(it.n, 'copy', 'copies') + (it.outlets.length !== it.n ? ' <span class="sub">' + ctx.pl(it.outlets.length, 'outlet', 'outlets') + '</span>' : '') + info(ctx, R.copy ? 'Outlets that ' + R.copy + '.' : '', 'Ran it') : '0'],
         ['Related stories', ctx.fmt(it.related.length) + (it.possible.length ? ' <span class="sub">+ ' + ctx.fmt(it.possible.length) + ' possibly</span>' : '')],
         ['Later coverage', it.later.length ? ctx.fmt(it.later.length) : '']];
       if (bcl) fCov.push([bcl, (it.bc[1] ? ctx.pl(it.bc[1], 'story', 'stories') : 'No stories') + ' on ' + e(bcb) + ' that week'

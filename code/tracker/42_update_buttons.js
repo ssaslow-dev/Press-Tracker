@@ -83,6 +83,7 @@ async function runAll(mode, since){
       releases_new: mode === 'find' ? (U.newrels || []).slice(0, 10) : [],   /* RELBUTTON-v1: 5 to fetch + dual-post caucus copies (dup_of, unfetched) */ relcheck: mode === 'find' ? VS(U.relcheck || '', 300) : '',   /* RELCHECK-v1 */
       print_pages: mode === 'find' ? (U.printPages || []).slice(0, 100) : [],   /* REQ-11: e-paper pages (needs clipping), not stories */
       lookups: mode === 'find' ? (U.lookups || []).slice(0, 100) : [],   /* LEARN-v1: new confirmed answers; the sheet task appends them to lookup_cache.json */
+      attach: mode === 'find' ? (U.attach || []).slice(0, 100) : [],   /* YTSTATION-v1: station videos that are the same segment as a tracked story (sheet_task.apply_yt_attach) */
       left: mode === 'find' ? U.skipped.slice(0, 150).map(x => ({ hl: VS(x.c.title || x.c.url, 200), outlet: hostOf(x.c.url), date: VS(x.c.published, 10), why: VS(x.why, 200) })) : [],
       unconfirmed: mode === 'find' ? U.found.filter(r => !r._on).slice(0, 150).map(r => ({ hl: VS(r.hl, 200), outlet: VS(r.outlet, 120), date: VS(r.date, 10), link: VS(r.link, 500), why: VS(r.why, 200) })) : [] });
     if (!saved){ set('sheet', 'warn', 'The run log could not be saved, so nothing is queued for the sheet. Use “Copy for spreadsheet” to keep the rows, or run it again once you are signed in.'); return; }   /* RUNPERSIST-v1 (e) */

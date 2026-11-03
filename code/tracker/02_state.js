@@ -147,7 +147,7 @@ function badges(r, link, norel){   /* norel: entity page asks for no press-relea
     if (avRole(r)) b += B('lang', 'avrole', avRole(r), `On air: ${esc(avRole(r))}`, 'His role in this audio or video item'); }
   if (r.quoted === 'Yes') b += B('lang', 'quoted', 'Yes', 'Quoted', 'Gabriel is directly quoted: his own words in quotation marks, or his spoken words in a transcript');   /* QUOTED-v1: same look as the Language / Tone tags */
   if (r.lang) b += B('lang', 'flag', 'foreign', esc(r.lang), r.hl_en ? 'English headline shown under the original' : 'Not translated yet');
-  if (hasHtml(r.id)) b += B('saved', 'saved', 'yes', 'Saved copy');
+  if (hasHtml(r.id)) b += B('saved', 'saved', 'yes', fmtOf(r) === 'Broadcast segment' ? 'Saved copy (station’s web story)' : 'Saved copy');   /* YTBROADCAST-v1: a broadcast story keeps the station’s web page as its saved copy */
   if (NOTES.has(r.id)) b += B('', 'flag', 'notes', 'Note', 'This story has a team note');
   if (rated(r)) b += B('tone', 'tone', r.tone, `<i style="background:${colorFor('tone',r.tone)}"></i>${esc(r.tone)}`, 'Tone toward Gabriel');
   if (!norel) { const a = relsOf(r.id), fr = a.filter(x => relIndex().from(x.type)), g = fr.length ? fr : a;   /* RELCLIPS-v1 (was RELEASES-v2 copies only): every release relation, From vs Related as the panel line; Related only where badges link (story panel, Clips table), not Home/tab lists */

@@ -165,6 +165,17 @@ module.exports = async (pg, ok, h) => {
   const relLinks = await pg.evaluate(v => [...document.querySelectorAll(v + ' .tbe-head .clip')].map(c => ({ pg: !!c.querySelector('[data-tb-go="releases"][data-tb-sub]:not([data-tb-sub=""])'),
     off: [...c.querySelectorAll('a[target="_blank"]')].every(a => a.previousElementSibling && a.previousElementSibling.classList.contains('cpb')) })), V);
   ok('release titles open the release page; official links have the copy icon on the left', relLinks.length && relLinks.every(x => x.pg && x.off), JSON.stringify(relLinks.filter(x => !x.pg || !x.off).slice(0, 3)));
+  /* RELRECS-v1 R1: the bill page's release line leads with Picked up (related stories that are not wire or reposts + copies at real outlets); "No pickups" only when that is 0 */
+  { const TR = h.block('tab_releases'), TIER = t => (TR.rules && TR.rules.t && TR.rules.t[t] ? TR.rules.t[t][0] : 1);
+    const relOf = x => { const id = (iPid >= 0 && x[iPid]) || x[0]; return new Set((TR.rel[id] || TR.rel[x[0]] || []).filter(q => TIER(q[1]) === 1).map(q => q[0])).size; };
+    await h.open({}, 'ab-2244-2025-26'); await h.sleep(300);
+    const lines = await pg.evaluate(v => [...document.querySelectorAll(v + ' .tbe-head .clip')].map(c => c.textContent.replace(/\s+/g, ' ').trim()), V);
+    const aug = REL.find(x => x[1] === '2026-08-30' && (x[4] || []).includes('AB 2244')), nAug = aug ? relOf(aug) : 0, line = aug ? lines.find(l => l.startsWith(aug[3])) : '';
+    ok('R1 AB 2244 Aug 30 passage release: not "No pickups"; line reads "<n> related stories · 0 copies" = independent', !!aug && nAug > 0 && !!line && !/No pickups/.test(line) && /Picked up \d+/.test(line) && line.includes(`${nAug} related stories · ${aug[8].length} cop`), `${nAug} ${line}`);
+    ok('R1 every AB 2244 release line says Picked up N or No pickups, never both', lines.length > 0 && lines.every(l => (/Picked up \d+/.test(l)) !== (/No pickups/.test(l))), JSON.stringify(lines.filter(l => /Picked up/.test(l) === /No pickups/.test(l))));
+    ok('R1 "No pickups" lines have no related story that counts: Picked up 0 (zero copies at real outlets, no non-wire related story)', lines.every(l => !/No pickups/.test(l) || !/Picked up/.test(l)));
+    ok('R1 old wording gone: no "outlets ran it" on the bill page lines', lines.every(l => !/outlets? ran it/.test(l)), lines[0]);
+    await h.open({}, 'ab-418-2023-24'); await h.sleep(250); }
   /* milestone timeline: auto-scaled axis */
   await h.sleep(150);
   const plot = ab418.rs.filter(r => r.prec === 'day' && r.date.length === 10 && r.date >= '2022-12-01'), wk = new Map(); plot.forEach(r => wk.set(weekOf(r.date), (wk.get(weekOf(r.date)) || 0) + 1));

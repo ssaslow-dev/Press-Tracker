@@ -43,7 +43,7 @@ function avtInfo(r){
 function avtLine(r){ const i = avtInfo(r); return i ? [i.date, i.when].filter(Boolean).join(' ') : ''; }
 
 /* REVIEW4-PAGE-v1 A7: exports list the publisher's (or archive) link first; a library-login link is labelled and never the raw infoweb form */
-function exportLinkSets(r){ const ls = linksOf(r); return { open: ls.filter(p => p[0] === 'pub' || p[0] === 'tv').map(p => p[1]), lib: ls.filter(p => p[0] !== 'pub' && p[0] !== 'tv').map(p => p[1]) }; }
+function exportLinkSets(r){ const ls = linksOf(r); return { open: ls.filter(p => p[0] === 'pub' || p[0] === 'tv' || p[0] === 'yt').map(p => p[1]), lib: ls.filter(p => p[0] !== 'pub' && p[0] !== 'tv' && p[0] !== 'yt').map(p => p[1]) }; }
 function exportLinkBest(r){ const s = exportLinkSets(r); return s.open[0] || s.lib[0] || r.plink || r.link || ''; }
 function exportLibLink(r){ const s = exportLinkSets(r); return s.open.length ? (s.lib[0] || '') : ''; }
 function exportLinkText(r){ const s = exportLinkSets(r), out = []; if (s.open[0]) out.push(s.open[0]); if (s.lib[0]) out.push(s.lib[0] + ' (library login)');

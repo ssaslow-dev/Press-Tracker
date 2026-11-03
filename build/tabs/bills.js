@@ -17,6 +17,12 @@
   var memo = { v: null, M: null }, CTX = null, GEO = new Map();
 
   /* RELSES-v1: how a listed release relates to the bill, when it doesn't simply name it */
+  /* RELRECS-v1 R1: the release's line leads with Picked up (related stories that are not wire or reposts + copies at real outlets, the Press releases tab's number);
+     "No pickups" only when that is 0. Without the Press releases tab: the old copies-only wording. */
+  var pickMeta = function(r, ctx){ var pk = typeof window.AJGRelPick === 'function' ? window.AJGRelPick(ctx, r.key) : null;
+    if (!pk) return [r.picks ? ctx.pl(r.picks, 'outlet ran it', 'outlets ran it') : 'No pickups'];
+    var det = pk.related || pk.copies ? ctx.pl(pk.related, 'related story', 'related stories') + ' · ' + ctx.pl(pk.copies, 'copy', 'copies') : '';
+    return [pk.picked ? 'Picked up ' + ctx.fmt(pk.picked) : 'No pickups'].concat(det ? [det] : []); };
   var relHow = function(r){ return r.later ? '<span class="note" title="A release from a later session that names the bill in its title (a law taking effect, an anniversary)">Later release</span>' : r.how === 'i' ? '<span class="note" title="The release names no bill; it continues this bill’s thread by text">Matched by text</span>' : r.how === 'r' ? '<span class="note" title="Announced under another bill number; joined to this bill’s thread by text">Renumbered bill</span>' : r.bg ? '<span class="note" title="Names the bill as background (the bill was already done)">Background mention</span>' : ''; };
   var bkey = function(b){ return String(b || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); };
   /* RELSES-v2 (rp-final 2026-10-28, coordinator): does a release TITLE name the bill ("AB 418", "A.B. 418", "Assembly Bill 418")? */
@@ -307,15 +313,15 @@
         + it.ev.map(function(e){ return '<tr><td>' + esc(e.label) + '</td><td>' + dayLabel(e.date) + '</td><td>' + ctx.fmt(e.date.length >= 10 ? (it.wk.get(weekOf(e.date)) || []).length : 0) + '</td></tr>'; }).join('')
         + '</tbody></table></div></details>' : '<div class="note">' + (memo.M && memo.M.hasBlock ? 'No LegInfo milestones for this bill in the Bills tab snapshot.' : 'Milestones not loaded yet.') + '</div>')
       + '</div>';
-    out += '<div class="rp-sec"><div><h2 class="sec">Press releases</h2><div class="cap">' + (it.nrel ? 'Official releases from the ' + esc(it.sesL) + ' session that name ' + esc(it.bill) + ' (or continue its thread), newest first, with how many outlets ran each.' + (it.nrel > it.nrelS ? ' Later releases that name it in the title are marked.' : '') : 'No official release from this session names this bill.') + '</div></div>'
+    out += '<div class="rp-sec"><div><h2 class="sec">Press releases</h2><div class="cap">' + (it.nrel ? 'Official releases from the ' + esc(it.sesL) + ' session that name ' + esc(it.bill) + ' (or continue its thread), newest first, with how many stories picked each up.' + (it.nrel > it.nrelS ? ' Later releases that name it in the title are marked.' : '') : 'No official release from this session names this bill.') + '</div></div>'
       + (it.nrel ? '<div class="clip-list">' + it.rels.map(function(r){
           /* RELREVERSE-v1 (rp-reverse): the title opens the release page (link rules: release -> its page); the official link stays on the right */
           var rx = ctx.rels ? ctx.rels().byKey.get(r.key) : null, pg = rx && rx.sub ? ctx.pageLink('releases', rx.sub, r.title + ' ›', 'Open the release page') : '';
           var t = pg ? '<span class="ct">' + pg + '</span>' : r.url ? '<span class="lkw">' + ctx.cpBtn(r.url) + '<a class="ct" href="' + esc(r.url) + '" target="_blank" rel="noopener">' + esc(r.title) + '</a></span>' : '<span class="ct">' + esc(r.title) + '</span>';
           if (ctx.row) return ctx.row({ title: pg || '<span>' + esc(r.title) + '</span>',   /* ROWLIST-v1; LINKUI: the release link (copy icon on its left) is on the right */
-            meta: [dayLabel(r.date), esc(ISSUER[r.iss] || ''), r.picks ? ctx.pl(r.picks, 'outlet ran it', 'outlets ran it') : 'No pickups', r.issue ? esc(r.issue) : '', relHow(r)],
+            meta: [dayLabel(r.date), esc(ISSUER[r.iss] || '')].concat(pickMeta(r, ctx), [r.issue ? esc(r.issue) : '', relHow(r)]),
             right: r.url ? '<div class="dlinks"><span class="lkw">' + ctx.cpBtn(r.url) + '<a href="' + esc(r.url) + '" target="_blank" rel="noopener"><b>Release</b> ↗</a></span></div>' : '<span class="note">Not posted</span>' });
-          return '<div class="clip">' + t + '<div class="cm"><span>' + dayLabel(r.date) + '</span><span>' + esc(ISSUER[r.iss] || '') + '</span><span>' + (r.picks ? ctx.pl(r.picks, 'outlet ran it', 'outlets ran it') : 'No pickups') + '</span>' + (r.issue ? '<span>' + esc(r.issue) + '</span>' : '') + (relHow(r) ? '<span>' + relHow(r) + '</span>' : '') + '</div></div>'; }).join('') + '</div>' : '')
+          return '<div class="clip">' + t + '<div class="cm"><span>' + dayLabel(r.date) + '</span><span>' + esc(ISSUER[r.iss] || '') + '</span>' + pickMeta(r, ctx).map(function(m){ return '<span>' + m + '</span>'; }).join('') + (r.issue ? '<span>' + esc(r.issue) + '</span>' : '') + (relHow(r) ? '<span>' + relHow(r) + '</span>' : '') + '</div></div>'; }).join('') + '</div>' : '')
       + '</div>';
     return out;
   }

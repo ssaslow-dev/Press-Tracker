@@ -94,7 +94,8 @@ function renderReprint(rows){
    [kind, url]). Records without lk (finds from the Update button, live reprints) get the same kinds from link/plink/pq. */
 const LINK_KIND = { pub: ['Publisher site', ''], nb: ['NewsBank via CA State Library', 'library card login'],
   nbpa: ['NewsBank print edition via CA State Library', 'library card login'],  /* LINKUI-v1: no NewsBank print-page (nbpg) links */
-  pq: ['ProQuest via CA State Library', 'library card login'], tv: ['Internet Archive (TV clip)', 'archive.org'] };  /* LINKS-v2 */
+  pq: ['ProQuest via CA State Library', 'library card login'], tv: ['Internet Archive (TV clip)', 'archive.org'],
+  yt: ['YouTube (station clip)', 'youtube.com'] };  /* LINKS-v2; YTBROADCAST-v1: the AV tab's YouTube link, drawn like the archive.org one */
 const CSL_PQ = 'https://castatelib.idm.oclc.org/login?url=', CSL_NB = 'https://infoweb-newsbank-com.castatelib.idm.oclc.org/';
 /* PRINTLINK-v1 (Sammy thread 131f0b47, "apply throughout"): the NewsBank print-edition link (nbpa) is listed only when the item
    has no regular-edition link (a NewsBank article link nb or the publisher's own link pub) */

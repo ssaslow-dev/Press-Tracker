@@ -22,6 +22,7 @@ r removal_links  python3 -I $T/sheet_task/test_removal_links.py
 r print_tab      python3 -I $T/sheet_task/test_print_tab.py
 r nocopy_owned   python3 -I $T/sheet_task/test_nocopy_owned.py
 r relbutton      python3 -I $T/sheet_task/test_relbutton.py
+r ytstation      python3 -I $T/sheet_task/test_ytstation.py
 r av_date_rows   python3 -I $T/sheet_task/test_av_date_existing.py
 r unverified_hit python3 -I $T/sheet_task/test_unverified_hit.py
 r final_int      python3 -I $T/sheet_task/test_final_int.py
@@ -47,6 +48,8 @@ r audit_avdate   python3 -I $T/sheet_task/audit/test_av_date_verify.py
 r reprint        python3 -I $T/reprint/test_reprint_v2.py
 r outlets        python3 -I $T/outlets/test_outlets.py
 r recall         node $T/recall/test_recall.js
+r recallfix      node $T/recallfix/test_recallfix.js
+r ytstation_js   node $T/recallfix/test_ytstation.js
 r handoff        python3 -I $T/handoff/test_read_map.py
 r dates          python3 -I $T/dates/test_dates.py
 r dates_js       node $T/dates/test_dates_js.js

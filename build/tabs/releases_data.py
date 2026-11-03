@@ -20,6 +20,8 @@ RELTHREAD-v1 (rp-threads 2026-10-28): "thr": {"th", "x", "pp"} = code/relthread.
   session incl. renumbered / inherited bills, follow-up and similar-text pairs, milestone label, Others named / Joint with
   people). Shape: build/relplan_contract.md "rp-threads". Inputs: the tab rows, the "Bills" tab (or bill_milestones.json via
   bill_timeline_data.py), release_texts.json; relthread.py / bill_timeline_data.py are found next to the pipeline or in <lib>.
+RELRECS-v1 (2026-11-02): "nw": [outlet display names] whose type in code/outlets.json is wire, distributor, prservice or aggregator
+  (the page's "Picked up" leaves their related stories and copies out, FINDINGS definition D).
 RELUI-v1 (rp-ui 2026-10-28, RELPLAN phase 2 + backend review #8/#9/#10):
 - "rules": the ONE rules table the page's labels and ⓘ tooltips are drawn from (no thresholds typed in releases.js):
   {"t": {type: [tier, label, tag, how]}, "copy": how, "bc": [before_from, before_to, after_from, after_to], "bch": how,
@@ -117,12 +119,33 @@ def build(cov, data, ctx):
         out["rel"] = rel
     if thr:
         out["thr"] = thr
+    nw = _nonpick_outlets(ctx)
+    if nw:
+        out["nw"] = nw
     if rules:
         out["rules"] = rules
         bc = _bill_cov(df, cov, data, rel, sids, rules["bc"], {k: set(v.get("bg") or []) for k, v in ((thr or {}).get("x") or {}).items()})
         if bc:
             out["bc"] = bc
     return out
+
+
+NONPICK_TYPES = ("wire", "distributor", "prservice", "aggregator")   # FINDINGS definition D: these outlet types are not a pickup
+
+
+def _nonpick_outlets(ctx):
+    """RELRECS-v1 (R1): the outlets whose stories and copies do not count as "Picked up" (FINDINGS definition D): the display names
+    in code/outlets.json whose type is wire, distributor, prservice or aggregator. The page matches them against ctx.outlet(...)."""
+    here = os.path.dirname(os.path.abspath(__file__))
+    lib = (ctx or {}).get("lib", "") or os.path.dirname(os.path.dirname(here))
+    for p in (os.path.join(os.path.dirname(here), "outlets.json"), os.path.join(lib, "code", "outlets.json")):
+        if os.path.exists(p):
+            try:
+                recs = json.load(open(p, encoding="utf-8")).get("records", {})
+            except Exception:
+                return []
+            return sorted({_s(v.get("name")) for v in recs.values() if isinstance(v, dict) and v.get("type") in NONPICK_TYPES and _s(v.get("name"))})
+    return []
 
 
 def _load(name, rel_paths):

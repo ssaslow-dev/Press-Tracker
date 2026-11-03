@@ -441,7 +441,7 @@ function tbCtx(id){
     block: name => tbBlock(name) || insBlock(name),
     fold: tbFold, slug: tbSlug, tone: tbTone, toneText: tbToneText, toneLabel: tbToneLabel, toneHtml: tbToneHtml, hlist: tbHList, lines: tbLines, affOf: tbAffOf, affOutlets: tbAffOutlets, repInfo: tbRepInfo, outlet: tbOutlet, house: (n, aid) => repHouse(n, aid), publishers: tbPublishers, publisherOf: tbPublisherOf,
     link: tbLink, storyLinks: tbStoryLinks, linksOf,   /* PRINTLINK-v1: modules list links through linksOf */ pageLink: tbPageLink, billLink: tbBillLink, authorLink: tbAuthorLink, issueLink: t => tbIssueLink(t, c.scope), facetLink: (f, v) => tbFacetLink(f, v, c.scope), outletSub: tbOutletSub, miniList: tbMiniList, scope: null, hasSaved: tbHasSaved, openSaved: tbOpenSaved, clip: tbClip, row: tbRow, cpBtn, embed: tbEmbed, dates: TB_DATES, cut: tbCut,
-    niceScale, niceMax, axis, usMap: (h, o, p) => geoUsOutlets(h, o, Object.assign({ scope: c.scope }, p || {})), outModel: geoUsModel, drawCountyMap: gmDrawCounty, geoMap: (h, sp) => geoMap(h, Object.assign({ scope: c.scope }, sp || {})), langOf, vals, FACETS, cut0: n => addDays(TODAY, -n), mod: m,
+    timeChart, niceScale, niceMax, axis, usMap: (h, o, p) => geoUsOutlets(h, o, Object.assign({ scope: c.scope }, p || {})), outModel: geoUsModel, drawCountyMap: gmDrawCounty, geoMap: (h, sp) => geoMap(h, Object.assign({ scope: c.scope }, sp || {})), langOf, vals, FACETS, cut0: n => addDays(TODAY, -n), mod: m,
     rels: relIndex,   /* RELREVERSE-v1 (rp-reverse): releases + story -> releases index (01_authors.js) */
     info: tbInfo   /* RELUI-v1: the shared ⓘ tooltip */
   });
@@ -1294,6 +1294,9 @@ function tbInfo(text, about){ text = String(text || '').trim(); if (!text) retur
 .rl-sub{display:flex;flex-wrap:wrap;gap:3px 10px;align-items:center;margin-top:2px}.rl-sub .bchips{margin-top:0}
 .rl-type{font-weight:600;color:var(--ink-2)}
 .rl-pm{display:none}
+/* RELRECS-v1 R3: the release list's quarter chart sits under the filter chips, above the list */
+.tt[data-tt-id="releases"] .tt-bar{order:0}.tt[data-tt-id="releases"] .tt-chips{order:1}.tt[data-tt-id="releases"] .tt-extra{order:2}.tt[data-tt-id="releases"] .tt-list{order:3}
+.rl-chart .rl-copts{margin-top:6px}
 @media (max-width:760px){.tt[data-tt-id="releases"] table.db td.rl-dk{display:none}.tt[data-tt-id="releases"] .rl-pm{display:block;margin-top:3px}}
 #sheet.sheet-copy .meta-tog{display:none}#sheet.sheet-copy .sheet-meta.fold>.dlinks{display:flex}
 </style>`);

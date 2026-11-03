@@ -127,7 +127,7 @@ const DEPTH_ORDER = ['Featured', 'Quoted', 'Named', 'List-only', ''];   /* INCL-
 const FMT_ORDER = ['Article', 'Print', 'Broadcast segment', 'Video clip', 'Audio segment', 'Podcast episode', 'Unknown'];   /* v23: Unknown = low-confidence backfill */
 const AV_FMT = {'Broadcast segment': 'Broadcast segment', 'Video clip': 'Video clip', 'Episode': 'Podcast episode', 'Web story': 'Article'};
 const fmtOf = (r, med) => { if (r.fmt) return r.fmt; const t = r.av && r.av.type; let f = t ? AV_FMT[t] || 'Article' : 'Article'; if (f === 'Podcast episode' && (med || r.media) !== 'Podcast') f = 'Audio segment'; if (f === 'Broadcast segment' && (med || r.media) === 'Radio') f = 'Audio segment'; return f; };
-const RANK = {quoted: ['Yes'], depth: DEPTH_ORDER, topic: rankOf('topic'), media: rankOf('media'), fmt: FMT_ORDER, pub: rankOf('pub'), role:['Op-ed by Gabriel','Named in headline','Mentioned in story'], reach: REACH_ORDER, tone: TONE_ORDER};
+const RANK = {quoted: ['Yes'], depth: DEPTH_ORDER, topic: rankOf('topic'), media: rankOf('media'), fmt: FMT_ORDER, pub: rankOf('pub'), role:['Op-ed by Gabriel','Named in headline','Mentioned in story'], pickup: ['Picked up'], reach: REACH_ORDER, tone: TONE_ORDER};
 // issue, format and outlet lists follow the data, so stories added while the page is open show up in every filter and chart
 function refreshRanks(){ ['topic','media','pub'].forEach(k => RANK[k] = rankOf(k)); }
 function colorFor(key, val){ if (key==='tone') return `var(${TONE_VAR[val]||'--tnr'})`; if (key==='reach') return REACH_SLOT[val] ? `var(${REACH_SLOT[val]})` : 'var(--sother)'; const i = RANK[key].indexOf(val); return i >= 0 && i < 7 ? `var(${SLOTS[i]})` : 'var(--sother)'; }

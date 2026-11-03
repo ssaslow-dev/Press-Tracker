@@ -200,7 +200,8 @@ def norm_url(u):
     u = canon_mirror(re.sub(r'^https?://(www\.)?', '', u.lower()).split('#')[0])   # REQ-14: mirror hosts
     host = u.split('/')[0]
     # NewsBank / proxy / Google links identify the article only in the query string: keep it
-    if not re.search(r'newsbank|oclc|google\.|proquest', host):
+    # YTLINK-v1: a YouTube watch link identifies the video only in its query string (?v=ID): keep it
+    if not re.search(r'newsbank|oclc|google\.|proquest|(^|\.)youtube\.com$', host):
         u = u.split('?')[0]
     return u.rstrip('/')
 
@@ -565,6 +566,14 @@ def is_owned(row):
             return True
         return any(OWNED_CHANNEL.search(norm_val(row.get(c))) for c in ('Outlet', 'Show', 'Channel', 'Author / byline') if norm_val(row.get(c)))
     return False
+
+
+def is_station_youtube(obj):
+    """YTSTATION-v1: a find the Update button took from a station's own YouTube channel (its `_av` says Details from 'YouTube page', Item type Broadcast segment, a Channel) on a TV / Radio row"""
+    av = obj.get('_av')
+    return (isinstance(av, dict) and norm_val(av.get('Details from')) == 'YouTube page' and norm_val(av.get('Item type')) == 'Broadcast segment'
+            and bool(norm_val(av.get('Channel'))) and norm_val(obj.get('Medium')) in ('TV', 'Radio')
+            and bool(re.search(r'(^|\.)(youtube\.com|youtu\.be)$', host_of(norm_val(obj.get('Publisher link'))) or '')))
 
 
 def print_page_url(url, rules=None):
@@ -981,7 +990,7 @@ class Task:
             else:
                 vals.pop('Author title', None)
         if 'Format' in self.s.col and blank(vals.get('Format')):   # FORMAT-v1
-            vals['Format'] = format_of(vals)
+            vals['Format'] = format_of(vals, (obj.get('_av') or {}).get('Item type', '') if isinstance(obj.get('_av'), dict) else '')   # YTSTATION-v1: a station's YouTube find says Broadcast segment
         if 'Press release' in self.s.col and is_press_release(vals):   # CLEAN-v1
             vals['Press release'] = 'Yes'
             self.res['press_releases'].append({'run': run_id, 'placeholder': ph_aid, 'aid': aid, 'outlet': vals.get('Outlet', ''),
@@ -1383,7 +1392,8 @@ class Task:
                 why = 'californiafiles.org: never added (DECISIONS 2026-10-27)'
             elif is_owned(obj):
                 why = 'his own channel (office / caucus site, his YouTube channel): owned media, never coverage (OWNED-v1)'
-            elif nc_why := never_coverage_reason(obj.get('Publisher link'), obj.get('Outlet')):   # REQ-12 / NOBLOGS-v1 (after the owned-channel reason, which is more specific)
+            elif not is_station_youtube(obj) and (nc_why := never_coverage_reason(obj.get('Publisher link'), obj.get('Outlet'))):   # YTSTATION-v1: a station's own YouTube clip is broadcast coverage (the channel was judged by the Update button)
+                  # REQ-12 / NOBLOGS-v1 (after the owned-channel reason, which is more specific)
                 why = nc_why
             elif CH is not None and hasattr(CH, 'skip_url') and CH.skip_url(obj.get('Publisher link'), self.rules()):   # AUTO-v1
                 why = 'database, results or listing page: never added (DECISIONS 2026-10-27)'
@@ -2515,6 +2525,12 @@ class Task:
             body = _pg['body'] if (_pg and _pg['body']) else self._rel_body(str(x.get('text') or ''), title)
             rel = {'url': url, 'date': d, 'title': title, 'dek': ((_pg or {}).get('dek') or str(x.get('dek', ''))).strip(), 'body': body,
                    'src': 'caucus' if caucus else 'office'}
+            # RECALLFIX-v1 (6): the listing page's time stamp (run doc time_utc / time_pt) goes into the release doc, and below into the tab
+            _tu, _tp = str(x.get('time_utc') or '').strip(), str(x.get('time_pt') or '').strip()
+            if re.match(r'^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$', _tu) and not _tu.endswith('T00:00:00Z'):
+                rel['time_utc'] = _tu
+                if _tp:
+                    rel['time_pt'] = _tp
             if body:
                 texts[url] = rel
             if REL is None or RR is None or not body:
@@ -2542,6 +2558,8 @@ class Task:
             quoted = 'Yes' if re.search(r'(said|says|stated)\s+(Assembly(member| Budget Chair)?|Assemblymember|Budget Chair|Asm\.?)?\s*(Jesse\s+)?Gabriel|Gabriel\s+(said|says|stated)', body) else ''
             cm = re.search(r'(?i)contact:?\s*([^\n]{3,160})', body)   # BUTTONOPT-v1 (S6): "CONTACT:" too
             note = f"Added by the Update button's release check ({self.today})" + ('' if body else '; release page not read')
+            if rel.get('time_utc'):   # RECALLFIX-v1 (6): the tab has no time column, so the Note carries it (and a "Posted time (PT)" column when the tab has one)
+                note += f"; page time stamp {rel.get('time_pt') or rel['time_utc']} ({rel['time_utc']}; the page's created stamp, not an e-mail send time)"
             vals = RT.row_values(d, title, str(x.get('dek', '')).strip(), caucus, url, bills, quoted, RT.officials(body),
                                  cm.group(1).strip() if cm else '', len(body.split()) if body else '', sids,
                                  len(hits) if hits else '', note)   # RELTAB-v1 sheet_task: one value per cell
@@ -2576,6 +2594,8 @@ class Task:
                 ws.cell(r, c).value = v if v != '' else None
                 if k in RT.DATE_COLS and v:
                     ws.cell(r, c).number_format = 'yyyy-mm-dd'
+            if rel.get('time_pt') and H.get('Posted time (PT)'):   # RECALLFIX-v1 (6): optional column, filled only when the tab has it
+                ws.cell(r, H['Posted time (PT)']).value = rel['time_pt']
             ws.cell(r, H['URL']).hyperlink = url
             self._rel_counts(ws, H, r)   # RELBUTTON-v1: Copies (rows) / First copy date from the copies
             have.add(url.rstrip('/').lower())
@@ -3372,11 +3392,15 @@ class Task:
             self.res['av_skipped'].append({'why': 'avtab.py not loaded', 'n': len(added)}); return
         ph = {}      # real Article ID -> placeholder, and the run doc's av values
         extra = {}
+        forced = {}
         for rid, run in (self.db.get('runs') or {}).items():
             for p, real in ((self.res['runs'].get(rid) or {}).get('ids') or {}).items():
                 ph[real] = p
             for p, vals in ((run or {}).get('av') or {}).items():
                 extra[p] = vals or {}
+            for o in (run or {}).get('rows') or []:   # YTSTATION-v1: a row's own `_av` (the Update button's station-channel find) states the item; it wins over the extract
+                if isinstance(o, dict) and isinstance(o.get('_av'), dict) and o.get('Article ID'):
+                    forced[o['Article ID']] = o['_av']
         page_of = {x['aid']: x for x in self.res.get('pages', [])}
         rows = []
         for aid in dict.fromkeys(added):
@@ -3395,6 +3419,9 @@ class Task:
                 out = AV.extract(cells, html, '', src='Update button ' + self.today)
             for c, v in (extra.get(ph.get(aid, ''), {}) or {}).items():
                 if c in AV.COLS and v not in ('', None) and not out.get(c) and c not in ('Article ID', 'Story ID', 'Medium'):
+                    out[c] = v
+            for c, v in (forced.get(ph.get(aid, ''), {}) or {}).items():   # YTSTATION-v1
+                if c in AV.COLS and v not in ('', None) and c not in ('Article ID', 'Story ID', 'Medium'):
                     out[c] = v
             clip = AV.archive_clip(cells.get('Publisher link'))   # AVTAB-v2 sheet_task: Coverage Date = Pacific air date
             if clip and out.get('Air/publish date') and r > self.first_new_row:   # rows THIS run added only: an existing Date is never changed (verify would refuse the run)
@@ -3453,6 +3480,53 @@ class Task:
                     pi['display_error'] = repr(_e)[:200]
         if rows:
             AV.write_tab(self.s.wb, rows)
+
+    def apply_yt_attach(self):
+        """YTSTATION-v1 (Sammy 2026-11-02): a run doc's `attach` = [{row_link, link, title, channel, station, network, medium, ...}]: a kept station YouTube video whose outlet already has a
+        story within 2 days (the same segment). Not a new story: that story becomes a broadcast story (one story, both). The tracked row's Format is set to "Broadcast segment" (an
+        explicit override of fill-blanks, this case only) and a Medium of "Video" becomes the channel's TV / Radio; its saved copy and every other cell stay. On its Audio & video details
+        row Item type is set to "Broadcast segment" (same override) and blank Channel / Station / Network / YouTube link are filled; a row with no AV row gets one (Item type Broadcast
+        segment, Channel, Station, Network, Episode/segment title = the row's headline, YouTube link, Details from "YouTube page"). Unplaceable items: res['yt_attach_unplaced']. Idempotent."""
+        self.res.setdefault('yt_attached', []); self.res.setdefault('yt_attach_unplaced', [])
+        if AV is None:
+            return
+        seen = set()
+        for rid, run in sorted((self.db.get('runs') or {}).items()):
+            for a in (run or {}).get('attach') or []:
+                link = norm_val(a.get('link')); key = (rid, link)
+                if not link or key in seen:
+                    continue
+                seen.add(key)
+                aid = self.s.links.get(norm_url(a.get('row_link')))
+                r = self.s.rows.get(aid) if aid else None
+                if r is None:
+                    self.res['yt_attach_unplaced'].append({'run': rid, 'link': link, 'row_link': a.get('row_link', ''), 'why': 'the tracked story\'s row was not found'}); continue
+                if norm_url(link) == norm_url(norm_val(self.s.get(r, 'Publisher link'))):
+                    continue
+                changed, cells = [], []
+                med = norm_val(self.s.get(r, 'Medium'))
+                newmed = norm_val(a.get('medium')) or 'TV'
+                if 'Medium' in self.s.col and med in ('Video', ''):
+                    self.s.put(r, 'Medium', newmed); cells.append('Medium'); changed.append('Medium ' + (med or 'blank') + ' -> ' + newmed); med = newmed
+                if 'Format' in self.s.col and norm_val(self.s.get(r, 'Format')) != 'Broadcast segment':
+                    changed.append('Format ' + (norm_val(self.s.get(r, 'Format')) or 'blank') + ' -> Broadcast segment'); self.s.put(r, 'Format', 'Broadcast segment'); cells.append('Format')
+                ws = self.s.wb['Audio & video details'] if 'Audio & video details' in self.s.wb.sheetnames else None
+                H = {ws.cell(1, i).value: i for i in range(1, ws.max_column + 1)} if ws is not None else {}
+                ar = next((i for i in range(2, ws.max_row + 1) if norm_val(ws.cell(i, H['Article ID']).value) == str(aid)), None) if H.get('Article ID') else None
+                vals = {'Channel': norm_val(a.get('channel')), 'Station': norm_val(a.get('station')), 'Network': norm_val(a.get('network')), 'YouTube link': link}
+                if ar is not None:
+                    if norm_val(ws.cell(ar, H['Item type']).value) != 'Broadcast segment':
+                        changed.append('AV Item type ' + (norm_val(ws.cell(ar, H['Item type']).value) or 'blank') + ' -> Broadcast segment'); ws.cell(ar, H['Item type']).value = 'Broadcast segment'
+                    for c, v in vals.items():
+                        if v and c in H and not norm_val(ws.cell(ar, H[c]).value):
+                            ws.cell(ar, H[c]).value = v; changed.append('AV ' + c)
+                else:
+                    row = AV.blank_row()
+                    row.update({'Article ID': str(aid), 'Story ID': norm_val(self.s.get(r, 'Story ID')), 'Medium': med or newmed, 'Item type': 'Broadcast segment',
+                                'Episode/segment title': norm_val(self.s.get(r, 'Headline')), 'Details from': 'YouTube page'}); row.update(vals)
+                    AV.write_tab(self.s.wb, [row]); changed.append('AV row added')
+                if changed:
+                    self.res['yt_attached'].append({'run': rid, 'aid': str(aid), 'link': link, 'channel': a.get('channel', ''), 'cells': cells, 'changed': changed})
 
     # ---------- BUTTONOPT-v1: removal requests execute (Sammy 2026-10-28) ----------
     def execute_removals(self):
@@ -3625,6 +3699,7 @@ class Task:
         self.apply_release_finds()   # RELCHECK-v2
         self.apply_related_cols(getattr(self, 'release_related', None))   # RELBUTTON-v1: Copies (rows) / First copy date / Related
         self.apply_av()   # AVTAB-v1
+        self.apply_yt_attach()   # YTSTATION-v1: a station video that is the same segment as a tracked story
         self.recount()
         self.queue_recount()   # QUEUEAPPLY-v1
         self.mark_red()   # BUTTONOPT-v1 (DECISIONS 102)
@@ -4321,6 +4396,7 @@ def verify_tabs(before_path, after_path, res):
     if not problems and nb != na:
         problems.append(f'sheet order changed: {nb} -> {na}')
     removed_aids = {str(x.get('aid')) for e in (res or {}).get('removed', []) for x in e.get('rows', []) if x.get('aid')}
+    yt_aids = {str(e.get('aid')) for e in (res or {}).get('yt_attached', [])}   # YTSTATION-v1: Item type of these AV rows becomes Broadcast segment
     for name, (bh, brows) in bt.items():
         if name not in at:
             continue
@@ -4366,6 +4442,8 @@ def verify_tabs(before_path, after_path, res):
                     continue
                 av = norm_val(ar[c]) if c < len(ar) else ''
                 if bv != av:
+                    if name == 'Audio & video details' and h == 'Item type' and k[0] in yt_aids and av == 'Broadcast segment':
+                        continue
                     problems.append(f'{name} / {lab} / {h}: {bv[:50]!r} -> {av[:50]!r}')
         extra = [k for k in ak if k not in bk]
         if extra and name not in VT_NEW_OK:
@@ -4389,6 +4467,7 @@ def verify(before_path, after_path, res):
     swapped = {(aid, col) for e in res.get('origin_swaps', []) for aid, col in e.get('cells', [])}   # REPRINT-v2: the old Original's cells
     swapped |= {(x['aid'], col) for x in res.get('retry_cleared', []) for col in ('File name', 'Saved Copy?')}   # AUDIT F5
     swapped |= {(str(aid), col) for e in res.get('queue_applied', []) for aid, col in e.get('cells', [])}   # QUEUEAPPLY-v1: merged rows
+    swapped |= {(str(e['aid']), col) for e in res.get('yt_attached', []) for col in e.get('cells', [])}   # YTSTATION-v1: Format / Medium of a story that became a broadcast story
     removed = {x['aid'] for e in res.get('removed', []) for x in e.get('rows', [])}   # BUTTONOPT-v1: moved to the Removed tab
     if removed:
         try:

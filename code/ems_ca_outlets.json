@@ -1,0 +1,1710 @@
+{
+ "version": 1,
+ "source": "Ethnic Media Services, Directory of California Ethnic Media, Spring 2020 (free PDF at dgs.ca.gov); fetched 2026-11-02 with TinyFish fetch_content. Outlet name, website, language group, city and region only; no contact details kept.",
+ "url": "https://www.dgs.ca.gov/-/media/Divisions/PD/OSDS/Statewide-Supplier-Diversity-Program/Resources/EMS_CADirectoryEthnicMediaSpring20_5-1-20.pdf",
+ "fetched": "2026-11-02",
+ "note": "The directory is dated spring 2020: some sites may have closed or moved. outlets lists every entry with a working website; the Update button searches only those not already on record.",
+ "outlets": [
+  {
+   "name": "Payam E Afghan TV",
+   "host": "payameafghantv.com",
+   "language": "Afghan",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Black Voice News",
+   "host": "blackvoicenews.com",
+   "language": "African American",
+   "city": "Riverside",
+   "region": "Southern California"
+  },
+  {
+   "name": "Compton Herald",
+   "host": "comptonherald.org",
+   "language": "African American",
+   "city": "Compton",
+   "region": "Southern California"
+  },
+  {
+   "name": "Inglewood Today",
+   "host": "inglewoodtoday.com",
+   "language": "African American",
+   "city": "Ingelwood",
+   "region": "Southern California"
+  },
+  {
+   "name": "KJLH 102.3 FM",
+   "host": "kjlhradio.com",
+   "language": "African American",
+   "city": "Compton",
+   "region": "Southern California"
+  },
+  {
+   "name": "LA Focus",
+   "host": "lafocusnewspaper.com",
+   "language": "African American",
+   "city": "Inglewood",
+   "region": "Southern California"
+  },
+  {
+   "name": "LA Sentinel",
+   "host": "lasentinel.net",
+   "language": "African American",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "LA Watts Times",
+   "host": "lawattstimes.com",
+   "language": "African American",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Liberated Sisters TV and Radio",
+   "host": "kpfk.org",
+   "language": "African American",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Our Weekly",
+   "host": "ourweekly.com",
+   "language": "African American",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Pace News",
+   "host": "pacenewsonline.com",
+   "language": "African American",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Precinct Reporter",
+   "host": "precinctreporter.com",
+   "language": "African American",
+   "city": "San Bernardino",
+   "region": "Southern California"
+  },
+  {
+   "name": "San Bernardino American News",
+   "host": "sb-american.com",
+   "language": "African American",
+   "city": "San Bernardino",
+   "region": "Southern California"
+  },
+  {
+   "name": "San Diego Voice & Viewpoint",
+   "host": "sdvoice.info",
+   "language": "African American",
+   "city": "San Diego",
+   "region": "Southern California"
+  },
+  {
+   "name": "The African Times",
+   "host": "theafricantimes.com",
+   "language": "African American",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Westside Story Newspaper",
+   "host": "westsidestorynewspaper.com",
+   "language": "African American",
+   "city": "San Bernardino",
+   "region": "Southern California"
+  },
+  {
+   "name": "Al Akhbar",
+   "host": "alakhbar-usa.com",
+   "language": "Arab",
+   "city": "Glendora",
+   "region": "Southern California"
+  },
+  {
+   "name": "Al Arab",
+   "host": "m.alarab.qa",
+   "language": "Arab",
+   "city": "Glendale",
+   "region": "Southern California"
+  },
+  {
+   "name": "Arab America",
+   "host": "arabamerica.com",
+   "language": "Arab",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Beirut Times",
+   "host": "en.beiruttimes.com",
+   "language": "Arab",
+   "city": "Pasadena",
+   "region": "Southern California"
+  },
+  {
+   "name": "Watan Newspaper",
+   "host": "watan.com",
+   "language": "Arab",
+   "city": "Anaheim",
+   "region": "Southern California"
+  },
+  {
+   "name": "ARTN Television",
+   "host": "artn.tv",
+   "language": "Armenian",
+   "city": "Glendale",
+   "region": "Southern California"
+  },
+  {
+   "name": "Armenian Media Network",
+   "host": "groong.com",
+   "language": "Armenian",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Asbarez Daily Newspaper",
+   "host": "asbarez.com",
+   "language": "Armenian",
+   "city": "Little Armenia",
+   "region": "Southern California"
+  },
+  {
+   "name": "Massis Weekly",
+   "host": "massisweekly.com",
+   "language": "Armenian",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "The California Courier",
+   "host": "thecaliforniacourier.com",
+   "language": "Armenian",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "USA Armenian Life",
+   "host": "armenianlife.com",
+   "language": "Armenian",
+   "city": "Glendale",
+   "region": "Southern California"
+  },
+  {
+   "name": "Ekush News Media",
+   "host": "ekush.info",
+   "language": "Bangladeshi",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Myanmar Gazette",
+   "host": "myanmargazette.net",
+   "language": "Burmese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Khmer TV",
+   "host": "khmertv.com",
+   "language": "Cambodian",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "CaribPress",
+   "host": "caribpress.com",
+   "language": "Caribbean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "American Multimedia Television",
+   "host": "amtvusa.tv",
+   "language": "Chinese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "China Press",
+   "host": "uschinapress.com",
+   "language": "Chinese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Chinese Daily News",
+   "host": "chinesedaily.com",
+   "language": "Chinese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "ChineseinLA.com",
+   "host": "chineseinla.com",
+   "language": "Chinese",
+   "city": "Ontario",
+   "region": "Southern California"
+  },
+  {
+   "name": "EDI Media",
+   "host": "edimediainc.com",
+   "language": "Chinese",
+   "city": "San Bernardino",
+   "region": "Southern California"
+  },
+  {
+   "name": "ETTV America",
+   "host": "ettvamerica.com",
+   "language": "Chinese",
+   "city": "City of Industry",
+   "region": "Southern California"
+  },
+  {
+   "name": "International Daily News",
+   "host": "guojiribao.com",
+   "language": "Chinese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "MultiCultural Radio Broadcasting (KAZN AM 1300, KMRB AM 1430, KHIZ SINO TV)",
+   "host": "am1300.com",
+   "language": "Chinese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "NewsAgencyAmerica.com",
+   "host": "chinesenewsusa.com",
+   "language": "Chinese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Sing Tao Daily",
+   "host": "singtaousa.com",
+   "language": "Chinese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Sino TV",
+   "host": "sinotv.us",
+   "language": "Chinese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Sky Link TV LA",
+   "host": "skylinktv.us",
+   "language": "Chinese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "The Los Angeles Post",
+   "host": "lapost.us",
+   "language": "Chinese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "US News Express",
+   "host": "usnewsexpress.us",
+   "language": "Chinese",
+   "city": "San Dimas",
+   "region": "Southern California"
+  },
+  {
+   "name": "World Journal",
+   "host": "worldjournal.com",
+   "language": "Chinese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "ZWTV",
+   "host": "wantblogger.com",
+   "language": "Chinese",
+   "city": "El Monte",
+   "region": "Southern California"
+  },
+  {
+   "name": "Asian Journal",
+   "host": "asianjournal.com",
+   "language": "Filipino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Balita Media",
+   "host": "balita.com",
+   "language": "Filipino",
+   "city": "Glendale",
+   "region": "Southern California"
+  },
+  {
+   "name": "INQUIRER.net",
+   "host": "inquirer.net",
+   "language": "Filipino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Jannelle So Productions",
+   "host": "sojannelle.com",
+   "language": "Filipino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Philippine News",
+   "host": "philippinenews.com",
+   "language": "Filipino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "India Journal/India West",
+   "host": "indiajournal.com",
+   "language": "Indian",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Indonesia Media",
+   "host": "indonesiamedia.com",
+   "language": "Indonesian",
+   "city": "Glendora",
+   "region": "Southern California"
+  },
+  {
+   "name": "Hafteh Bazaar",
+   "host": "haftehbazaar.com",
+   "language": "Iranian",
+   "city": "Encino",
+   "region": "Southern California"
+  },
+  {
+   "name": "Iran TV Network",
+   "host": "irantelevisionnetwork.com",
+   "language": "Iranian",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Javanan Magazine",
+   "host": "javanan.com",
+   "language": "Iranian",
+   "city": "Canoga Park",
+   "region": "Southern California"
+  },
+  {
+   "name": "PARSTV",
+   "host": "parstv.tv",
+   "language": "Iranian",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Peyk Magazine",
+   "host": "peykmagazine.com",
+   "language": "Iranian",
+   "city": "San Diego",
+   "region": "Southern California"
+  },
+  {
+   "name": "Radio Iran KIRN 670 AM",
+   "host": "socalpersian.com",
+   "language": "Iranian",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Rafu Shimpo",
+   "host": "rafu.com",
+   "language": "Japanese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Hankook TV",
+   "host": "tvhankook.com",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "KBS America",
+   "host": "kbs-america.com",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Koogle.tv",
+   "host": "koogle.tv",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Korea Daily",
+   "host": "koreadaily.com",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Korea Herald Business",
+   "host": "heraldk.com",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Korea Times Los Angeles",
+   "host": "koreatimesus.com",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Korean Christian Press",
+   "host": "chpress.net",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Koreatown Daily",
+   "host": "koreatowndaily.com",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "MBC America",
+   "host": "mbc-america.com",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Radio Korea",
+   "host": "radiokorea.com",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Radio Seoul",
+   "host": "radioseoul1650.com",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "SBS International",
+   "host": "sbs-int.com",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Woori Radio",
+   "host": "radiok1230.com",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "YTV America",
+   "host": "ytvamerica.com",
+   "language": "Korean",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Adelante Magazine",
+   "host": "adelantemagazine.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "American Latino TV",
+   "host": "americanlatino.tv",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Azteca America",
+   "host": "aztecaamerica.com",
+   "language": "Latino",
+   "city": "Glendale",
+   "region": "Southern California"
+  },
+  {
+   "name": "Boyle Heights Beat",
+   "host": "boyleheightsbeat.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "EC Hispanic Media",
+   "host": "echispanicmedia.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "El Aviso",
+   "host": "elaviso.com",
+   "language": "Latino",
+   "city": "Bell",
+   "region": "Southern California"
+  },
+  {
+   "name": "El Informador",
+   "host": "elinformadordelvalle.net",
+   "language": "Latino",
+   "city": "Indio",
+   "region": "Southern California"
+  },
+  {
+   "name": "El Latino Online",
+   "host": "ellatinoonline.com",
+   "language": "Latino",
+   "city": "San Diego",
+   "region": "Southern California"
+  },
+  {
+   "name": "El Mundo US",
+   "host": "elmundous.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "El Nuevo Sol",
+   "host": "elnuevosol.net",
+   "language": "Latino",
+   "city": "Northridge",
+   "region": "Southern California"
+  },
+  {
+   "name": "Entravision",
+   "host": "entravision.com",
+   "language": "Latino",
+   "city": "Santa Monica",
+   "region": "Southern California"
+  },
+  {
+   "name": "Estrella TV & Radio",
+   "host": "estrellatv.com",
+   "language": "Latino",
+   "city": "Burbank",
+   "region": "Southern California"
+  },
+  {
+   "name": "Excelsior",
+   "host": "excelsiorcalifornia.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Highlander News",
+   "host": "highlandernews.org",
+   "language": "Latino",
+   "city": "Riverside",
+   "region": "Southern California"
+  },
+  {
+   "name": "Hispanic LA",
+   "host": "hispanicla.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Hoy",
+   "host": "hoylosangeles.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Impremedia",
+   "host": "impremedia.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Impulso de Oaxaca",
+   "host": "impulsonews.info",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Kiosko News",
+   "host": "kioskonews.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "L.A. Taco",
+   "host": "lataco.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "LATV",
+   "host": "latv.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "La Nueva Voz",
+   "host": "lanuevavoz.net",
+   "language": "Latino",
+   "city": "Pomona",
+   "region": "Southern California"
+  },
+  {
+   "name": "La Opinion",
+   "host": "laopinion.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "La Prensa San Diego",
+   "host": "laprensa-sandiego.org",
+   "language": "Latino",
+   "city": "San Diego",
+   "region": "Southern California"
+  },
+  {
+   "name": "La Prensa de Los Angeles",
+   "host": "laprensadelosangeles.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "LatinoLA",
+   "host": "latinola.com",
+   "language": "Latino",
+   "city": "Riverside",
+   "region": "Southern California"
+  },
+  {
+   "name": "Meruelo Media",
+   "host": "power106.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Miniondas Newspaper",
+   "host": "miniondas.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "NBC Latino",
+   "host": "nbcnews.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Orale Magazine",
+   "host": "oooraleusa.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Radio Bilingue",
+   "host": "radiobilingue.org",
+   "language": "Latino",
+   "city": "Fresno",
+   "region": "Southern California"
+  },
+  {
+   "name": "Radio Indigena 94.1FM",
+   "host": "mixteco.org",
+   "language": "Latino",
+   "city": "Oxnard",
+   "region": "Southern California"
+  },
+  {
+   "name": "Spanish Broadcasting System",
+   "host": "spanishbroadcasting.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Telemundo 20 San Diego",
+   "host": "telemundo20.com",
+   "language": "Latino",
+   "city": "San Diego",
+   "region": "Southern California"
+  },
+  {
+   "name": "Telemundo 52 Los Angeles",
+   "host": "telemundo52.com",
+   "language": "Latino",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Univision San Diego",
+   "host": "univision.com",
+   "language": "Latino",
+   "city": "San Diego",
+   "region": "Southern California"
+  },
+  {
+   "name": "Vida Newspaper",
+   "host": "vidanewspaper.com",
+   "language": "Latino",
+   "city": "Oxnard",
+   "region": "Southern California"
+  },
+  {
+   "name": "Alhambra Source",
+   "host": "alhambrasource.org",
+   "language": "Multiethnic",
+   "city": "Alhambra",
+   "region": "Southern California"
+  },
+  {
+   "name": "Capital & Main",
+   "host": "capitalandmain.com",
+   "language": "Multiethnic",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Hannibal Media Group",
+   "host": "hannibalmediagroup.com",
+   "language": "Multiethnic",
+   "city": "Long Beach",
+   "region": "Southern California"
+  },
+  {
+   "name": "Inland Empire Community News",
+   "host": "iecn.com",
+   "language": "Multiethnic",
+   "city": "Riverside",
+   "region": "Southern California"
+  },
+  {
+   "name": "KCAA 1050 AM",
+   "host": "kcaaradio.com",
+   "language": "Multiethnic",
+   "city": "Loma Linda",
+   "region": "Southern California"
+  },
+  {
+   "name": "San Fernando Valley Sun Newspaper",
+   "host": "sanfernandosun.com",
+   "language": "Multiethnic",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Tri-County Sentry",
+   "host": "tricountysentry.com",
+   "language": "Multiethnic",
+   "city": "Oxnard",
+   "region": "Southern California"
+  },
+  {
+   "name": "Yes We Can Newspaper",
+   "host": "yeswecannewspaper.com",
+   "language": "Multiethnic",
+   "city": "Riverside",
+   "region": "Southern California"
+  },
+  {
+   "name": "First Nations Experience (FNX)",
+   "host": "fnx.org",
+   "language": "Native American",
+   "city": "San Bernardino",
+   "region": "Southern California"
+  },
+  {
+   "name": "Indian Voices",
+   "host": "indianvoices.net",
+   "language": "Native American",
+   "city": "San Diego",
+   "region": "Southern California"
+  },
+  {
+   "name": "KUAV 105.1",
+   "host": "kuav105.org",
+   "language": "Native American",
+   "city": "El Centro",
+   "region": "Southern California"
+  },
+  {
+   "name": "Pala Rez Radio 91.3FM",
+   "host": "rezradio.fm",
+   "language": "Native American",
+   "city": "Pala",
+   "region": "Southern California"
+  },
+  {
+   "name": "Nepal24Hours.com",
+   "host": "nepal24hours.com",
+   "language": "Nepali",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Island Block Radio",
+   "host": "dashradio.com",
+   "language": "Pacific Islander",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Pakistan Link",
+   "host": "pakistanlink.org",
+   "language": "Pakistani",
+   "city": "Anaheim",
+   "region": "Southern California"
+  },
+  {
+   "name": "LA Kurier",
+   "host": "lakurier.com",
+   "language": "Russian",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Panorama Media Group",
+   "host": "panorama-e.com",
+   "language": "Russian",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Sri Lanka Foundation",
+   "host": "srilankafoundation.org",
+   "language": "Sri Lankan",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Siam Media Newspaper",
+   "host": "siammedia.org",
+   "language": "Thai",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "SiamTownUS",
+   "host": "news.siamtownus.com",
+   "language": "Thai",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Thai LA",
+   "host": "thailanewspaper.com",
+   "language": "Thai",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Little Saigon Radio",
+   "host": "littlesaigonradio.com",
+   "language": "Vietnamese",
+   "city": "Westminster",
+   "region": "Southern California"
+  },
+  {
+   "name": "Little Saigon TV",
+   "host": "mylstv.com",
+   "language": "Vietnamese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "Nguoi Viet Daily News",
+   "host": "nguoi-viet.com",
+   "language": "Vietnamese",
+   "city": "Los Angeles",
+   "region": "Southern California"
+  },
+  {
+   "name": "SBTN",
+   "host": "sbtn.tv",
+   "language": "Vietnamese",
+   "city": "Garden Grove",
+   "region": "Southern California"
+  },
+  {
+   "name": "Saigon Radio",
+   "host": "saigonradio.com",
+   "language": "Vietnamese",
+   "city": "Westminster",
+   "region": "Southern California"
+  },
+  {
+   "name": "Tieng Nuoc Toi",
+   "host": "radiotiengnuoctoi.com",
+   "language": "Vietnamese",
+   "city": "San Diego",
+   "region": "Southern California"
+  },
+  {
+   "name": "VBS Television",
+   "host": "vbstelevision.com",
+   "language": "Vietnamese",
+   "city": "Huntington Beach",
+   "region": "Southern California"
+  },
+  {
+   "name": "VNA 57.3",
+   "host": "vnatv.com",
+   "language": "Vietnamese",
+   "city": "Garden Grove",
+   "region": "Southern California"
+  },
+  {
+   "name": "Vien Dong Daily News",
+   "host": "viendongdaily.com",
+   "language": "Vietnamese",
+   "city": "Westminster",
+   "region": "Southern California"
+  },
+  {
+   "name": "Viet Bao Daily News",
+   "host": "vietbao.com",
+   "language": "Vietnamese",
+   "city": "Westminster",
+   "region": "Southern California"
+  },
+  {
+   "name": "Viet Pho TV",
+   "host": "us.vietphotv.net",
+   "language": "Vietnamese",
+   "city": "Garden Grove",
+   "region": "Southern California"
+  },
+  {
+   "name": "Vietface TV",
+   "host": "vietfacetv.com",
+   "language": "Vietnamese",
+   "city": "Fountain Valley",
+   "region": "Southern California"
+  },
+  {
+   "name": "Abernathy Magazine",
+   "host": "abernathymagazine.com",
+   "language": "African American",
+   "city": "Oakland",
+   "region": "Northern California"
+  },
+  {
+   "name": "California Black Media",
+   "host": "cablackmedia.org",
+   "language": "African American",
+   "city": "Sacramento",
+   "region": "Northern California"
+  },
+  {
+   "name": "Post News Group",
+   "host": "postnewsgroup.com",
+   "language": "African American",
+   "city": "Oakland",
+   "region": "Northern California"
+  },
+  {
+   "name": "SF Bay View",
+   "host": "sfbayview.com",
+   "language": "African American",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Sacramento Observer",
+   "host": "sacobserver.com",
+   "language": "African American",
+   "city": "Sacramento",
+   "region": "Northern California"
+  },
+  {
+   "name": "Sun Reporter",
+   "host": "sunreportermedia.com",
+   "language": "African American",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "San Francisco World Television",
+   "host": "spiritrisingproductions.com",
+   "language": "Assyrian",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Bhutan News Service",
+   "host": "bhutannewsservice.org",
+   "language": "Bhutanese",
+   "city": "Oakland",
+   "region": "Northern California"
+  },
+  {
+   "name": "China Press",
+   "host": "chinapress.com.my",
+   "language": "Chinese",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Chinese Bay Area Chinese Radio 96.1 FM",
+   "host": "chineseradio.com",
+   "language": "Chinese",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Chinese Ding Ding TV",
+   "host": "dingdingtv.com",
+   "language": "Chinese",
+   "city": "Santa Clara",
+   "region": "Northern California"
+  },
+  {
+   "name": "KTSF Channel 26",
+   "host": "ktsf.com",
+   "language": "Chinese",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "New Tang Dynasty Television",
+   "host": "ntddigital.com",
+   "language": "Chinese",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "News For Chinese",
+   "host": "newsforchinese.com",
+   "language": "Chinese",
+   "city": "Redwood City",
+   "region": "Northern California"
+  },
+  {
+   "name": "Sound of Hope Radio",
+   "host": "soundofhope.org",
+   "language": "Chinese",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "ABS-CBN (Balitang America)",
+   "host": "balitangamerica.tv",
+   "language": "Filipino",
+   "city": "Redwood City",
+   "region": "Northern California"
+  },
+  {
+   "name": "GMA Pinoy TV",
+   "host": "gmanetwork.com",
+   "language": "Filipino",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Philippines Today",
+   "host": "philippinestodayus.com",
+   "language": "Filipino",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "KJAY Radio",
+   "host": "kjayradio.com",
+   "language": "Hmong",
+   "city": "Sacramento",
+   "region": "Northern California"
+  },
+  {
+   "name": "Amritsar Times Inc",
+   "host": "amritsartimes.com",
+   "language": "Indian",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Bolly 92.3 FM",
+   "host": "bolly923fm.com",
+   "language": "Indian",
+   "city": "San Jose",
+   "region": "Northern California"
+  },
+  {
+   "name": "Diya TV",
+   "host": "diyatvusa.com",
+   "language": "Indian",
+   "city": "San Jose",
+   "region": "Northern California"
+  },
+  {
+   "name": "India Currents",
+   "host": "indiacurrents.com",
+   "language": "Indian",
+   "city": "San Jose",
+   "region": "Northern California"
+  },
+  {
+   "name": "India West",
+   "host": "indiawest.com",
+   "language": "Indian",
+   "city": "Fremont",
+   "region": "Northern California"
+  },
+  {
+   "name": "Indica News",
+   "host": "indicanews.com",
+   "language": "Indian",
+   "city": "San Ramon",
+   "region": "Northern California"
+  },
+  {
+   "name": "Punjabi Radio USA",
+   "host": "punjabiradiousa.com",
+   "language": "Indian",
+   "city": "San Jose",
+   "region": "Northern California"
+  },
+  {
+   "name": "Radio Punjab",
+   "host": "radiopunjab.ca",
+   "language": "Indian",
+   "city": "Sacramento",
+   "region": "Northern California"
+  },
+  {
+   "name": "Radio Zindagi 1170 AM",
+   "host": "radiozindagi.com",
+   "language": "Indian",
+   "city": "Fremont",
+   "region": "Northern California"
+  },
+  {
+   "name": "Siliconeer Magazine",
+   "host": "siliconeer.com",
+   "language": "Indian",
+   "city": "Fremont",
+   "region": "Northern California"
+  },
+  {
+   "name": "Nichi Bei Weekly",
+   "host": "nichibei.org",
+   "language": "Japanese",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "J Weekly",
+   "host": "jweekly.com",
+   "language": "Jewish",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Hanmi Radio",
+   "host": "hanmiradio.com",
+   "language": "Korean",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "KEMS TV",
+   "host": "kemstv.com",
+   "language": "Korean",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Korea 24 News",
+   "host": "korea24news.com",
+   "language": "Korean",
+   "city": "Santa Clara",
+   "region": "Northern California"
+  },
+  {
+   "name": "Korea Daily Times",
+   "host": "koreadailytimes.com",
+   "language": "Korean",
+   "city": "Foster City",
+   "region": "Northern California"
+  },
+  {
+   "name": "Kyocharo SF",
+   "host": "kyocharoamerica.com",
+   "language": "Korean",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "SFKorean.com",
+   "host": "sfkorean.com",
+   "language": "Korean",
+   "city": "Santa Clara",
+   "region": "Northern California"
+  },
+  {
+   "name": "The Korea Times San Francisco",
+   "host": "sf.koreatimes.com",
+   "language": "Korean",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Acción Latina",
+   "host": "accionlatina.org",
+   "language": "Latino",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Alianza Metropolitan News",
+   "host": "noticias.alianzanews.com",
+   "language": "Latino",
+   "city": "San Jose",
+   "region": "Northern California"
+  },
+  {
+   "name": "BrasilBest",
+   "host": "brasilbest.com",
+   "language": "Latino",
+   "city": "San Rafael",
+   "region": "Northern California"
+  },
+  {
+   "name": "El Observador",
+   "host": "el-observador.com",
+   "language": "Latino",
+   "city": "San Jose",
+   "region": "Northern California"
+  },
+  {
+   "name": "El Reportero",
+   "host": "elreporterosf.com",
+   "language": "Latino",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "El Tecolote",
+   "host": "eltecolote.org",
+   "language": "Latino",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Informacion es Poder Productions",
+   "host": "infoep.com",
+   "language": "Latino",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "La Opinion de la Bahia",
+   "host": "laopiniondebahia.com",
+   "language": "Latino",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "La Prensa Sonoma",
+   "host": "laprensasonoma.com",
+   "language": "Latino",
+   "city": "Sonoma",
+   "region": "Northern California"
+  },
+  {
+   "name": "Radio Ambulante",
+   "host": "radioambulante.org",
+   "language": "Latino",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Rodriguez Media Productions",
+   "host": "radiocelina.com",
+   "language": "Latino",
+   "city": "San Jose",
+   "region": "Northern California"
+  },
+  {
+   "name": "Telemundo 48 Area de la Bahia",
+   "host": "telemundoareadelabahia.com",
+   "language": "Latino",
+   "city": "San Jose",
+   "region": "Northern California"
+  },
+  {
+   "name": "All Digitocracy",
+   "host": "alldigitocracy.org",
+   "language": "Multiethnic",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Bay City News Service",
+   "host": "baycitynews.com",
+   "language": "Multiethnic",
+   "city": "Oakland",
+   "region": "Northern California"
+  },
+  {
+   "name": "Brentwood Press & Publishing",
+   "host": "thepress.net",
+   "language": "Multiethnic",
+   "city": "Brentwood",
+   "region": "Northern California"
+  },
+  {
+   "name": "ChicoSol News",
+   "host": "chicosol.org",
+   "language": "Multiethnic",
+   "city": "Chico",
+   "region": "Northern California"
+  },
+  {
+   "name": "East Bay Express",
+   "host": "eastbayexpress.com",
+   "language": "Multiethnic",
+   "city": "Oakland",
+   "region": "Northern California"
+  },
+  {
+   "name": "East Palo Alto Today",
+   "host": "epatoday.org",
+   "language": "Multiethnic",
+   "city": "East Palo Alto",
+   "region": "Northern California"
+  },
+  {
+   "name": "KPFA",
+   "host": "kpfa.org",
+   "language": "Multiethnic",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "KPOO 89.5 FM",
+   "host": "kpoo.com",
+   "language": "Multiethnic",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Redeemed World Magazine",
+   "host": "redeemedworld.org",
+   "language": "Multiethnic",
+   "city": "",
+   "region": "Northern California"
+  },
+  {
+   "name": "Richmond Pulse",
+   "host": "richmondpulse.org",
+   "language": "Multiethnic",
+   "city": "Point Richmond",
+   "region": "Northern California"
+  },
+  {
+   "name": "Richmond Review",
+   "host": "sfrichmondreview.com",
+   "language": "Multiethnic",
+   "city": "Point Richmond",
+   "region": "Northern California"
+  },
+  {
+   "name": "SF Public Press",
+   "host": "sfpublicpress.org",
+   "language": "Multiethnic",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "The Sonoma Index-Tribune",
+   "host": "sonomanews.com",
+   "language": "Multiethnic",
+   "city": "Sonoma",
+   "region": "Northern California"
+  },
+  {
+   "name": "Hoopa Radio",
+   "host": "kidefm.org",
+   "language": "Native American",
+   "city": "Hoopa",
+   "region": "Northern California"
+  },
+  {
+   "name": "News from Native California",
+   "host": "newsfromnativecalifornia.com",
+   "language": "Native American",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Plumas News",
+   "host": "plumasnews.com",
+   "language": "Native American",
+   "city": "Quincy",
+   "region": "Northern California"
+  },
+  {
+   "name": "Two Rivers Tribune",
+   "host": "tworiverstribune.com",
+   "language": "Native American",
+   "city": "Hoopa",
+   "region": "Northern California"
+  },
+  {
+   "name": "OSNepal",
+   "host": "osnepal.com",
+   "language": "Nepali",
+   "city": "Oakland",
+   "region": "Northern California"
+  },
+  {
+   "name": "PolyByDesign",
+   "host": "polybydesign.com",
+   "language": "Pacific Islander",
+   "city": "Fair Oaks",
+   "region": "Northern California"
+  },
+  {
+   "name": "Radio Tonga",
+   "host": "tonga-broadcasting.net",
+   "language": "Pacific Islander",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Pakistan Times USA",
+   "host": "pakistantimesusa.net",
+   "language": "Pakistani",
+   "city": "El Sobrante",
+   "region": "Northern California"
+  },
+  {
+   "name": "Portuguese Radio KSQQ 96.1 FM",
+   "host": "ksqq.com",
+   "language": "Portugese",
+   "city": "San Jose",
+   "region": "Northern California"
+  },
+  {
+   "name": "Afi sha News Group",
+   "host": "diasporanews.com",
+   "language": "Russian",
+   "city": "Sacramento",
+   "region": "Northern California"
+  },
+  {
+   "name": "Kstati",
+   "host": "kstati.net",
+   "language": "Russian",
+   "city": "San Francisco",
+   "region": "Northern California"
+  },
+  {
+   "name": "Slavic Sacramento",
+   "host": "slavicsac.com",
+   "language": "Russian",
+   "city": "Sacramento",
+   "region": "Northern California"
+  },
+  {
+   "name": "Dan Sinh Media",
+   "host": "dansinh.org",
+   "language": "Vietnamese",
+   "city": "San Jose",
+   "region": "Northern California"
+  },
+  {
+   "name": "KVVN 1430AM",
+   "host": "kvvn.net",
+   "language": "Vietnamese",
+   "city": "Santa Clara",
+   "region": "Northern California"
+  },
+  {
+   "name": "Vietnam Daily",
+   "host": "vietnamdaily.com",
+   "language": "Vietnamese",
+   "city": "San Jose",
+   "region": "Northern California"
+  },
+  {
+   "name": "Bakersfi eld News Observer",
+   "host": "ognsc.com",
+   "language": "African American",
+   "city": "Bakersfi eld",
+   "region": "Central California"
+  },
+  {
+   "name": "California Advocate Newspaper",
+   "host": "caladvocate.com",
+   "language": "African American",
+   "city": "Fresno",
+   "region": "Central California"
+  },
+  {
+   "name": "Inland Valley News",
+   "host": "inlandvalleynews.com",
+   "language": "African American",
+   "city": "Bakersfi eld",
+   "region": "Central California"
+  },
+  {
+   "name": "ONME News",
+   "host": "onmenews.com",
+   "language": "African American",
+   "city": "Fresno",
+   "region": "Central California"
+  },
+  {
+   "name": "Assyrian National Broadcasting",
+   "host": "anbsat.com",
+   "language": "Assyrian",
+   "city": "Bakersfi eld",
+   "region": "Central California"
+  },
+  {
+   "name": "Hmong TV",
+   "host": "hmongtvnetwork.com",
+   "language": "Hmong",
+   "city": "Clovis",
+   "region": "Central California"
+  },
+  {
+   "name": "KBIF 900 Hmong Radio",
+   "host": "900hmongradio.com",
+   "language": "Hmong",
+   "city": "Bakersfi eld",
+   "region": "Central California"
+  },
+  {
+   "name": "El Popular",
+   "host": "elpopularnews.com",
+   "language": "Latino",
+   "city": "Bakersfi eld",
+   "region": "Central California"
+  },
+  {
+   "name": "El Quinto Sol de America",
+   "host": "elquintosoldeamerica.org",
+   "language": "Latino",
+   "city": "Visalia",
+   "region": "Central California"
+  },
+  {
+   "name": "Joaquin Magazine",
+   "host": "joaquinmag.com",
+   "language": "Latino",
+   "city": "Stockton",
+   "region": "Central California"
+  },
+  {
+   "name": "KFCF Radio 88.1 FM",
+   "host": "kfcf.org",
+   "language": "Latino",
+   "city": "Fresno",
+   "region": "Central California"
+  },
+  {
+   "name": "KIWI Radio Lobo/KPSL",
+   "host": "radiolobo.com",
+   "language": "Latino",
+   "city": "Bakersfi eld",
+   "region": "Central California"
+  },
+  {
+   "name": "KPSL La Ley 96.5",
+   "host": "laley965.com",
+   "language": "Latino",
+   "city": "Bakersfi eld",
+   "region": "Central California"
+  },
+  {
+   "name": "KUFW Radio Campesina",
+   "host": "campesina.net",
+   "language": "Latino",
+   "city": "Visalia",
+   "region": "Central California"
+  },
+  {
+   "name": "Vida en el Valle",
+   "host": "vidaenelvalle.com",
+   "language": "Latino",
+   "city": "Fresno",
+   "region": "Central California"
+  },
+  {
+   "name": "College of the Sequoias Campus News",
+   "host": "thecampusjournal.com",
+   "language": "Multiethnic",
+   "city": "Visalia",
+   "region": "Central California"
+  },
+  {
+   "name": "Dinuba Sentinel",
+   "host": "midvalleytimes.com",
+   "language": "Multiethnic",
+   "city": "Dinuba",
+   "region": "Central California"
+  },
+  {
+   "name": "Kaweah Commonwealth",
+   "host": "3riversnews.com",
+   "language": "Multiethnic",
+   "city": "Visalia",
+   "region": "Central California"
+  },
+  {
+   "name": "South Kern Sol",
+   "host": "southkernsol.org",
+   "language": "Multiethnic",
+   "city": "Bakersfi eld",
+   "region": "Central California"
+  },
+  {
+   "name": "Valley Voice",
+   "host": "ourvalleyvoice.com",
+   "language": "Multiethnic",
+   "city": "Ivanhoe",
+   "region": "Central California"
+  }
+ ]
+}

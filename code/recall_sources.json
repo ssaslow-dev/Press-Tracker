@@ -1,0 +1,400 @@
+{
+ "version": 1,
+ "note": "RECALLFIX-v1 (2026-11-02): data for the Update button's extra recall passes. build_data.py puts it, with ems_ca_outlets.json, into the page's fetchrules block as `recall`. Edit the lists here, not the page code.",
+ "priority": {
+  "note": "Searched on EVERY run, whatever SINCE-v2's 24-month rule says: OR-grouped site: searches with after_date. `site` may carry a path (the search term); results are held to the host.",
+  "or_size": 4,
+  "groups": [
+   {
+    "label": "LA TV and radio",
+    "sites": [
+     {
+      "outlet": "KTLA",
+      "site": "ktla.com"
+     },
+     {
+      "outlet": "ABC7 Los Angeles",
+      "site": "abc7.com"
+     },
+     {
+      "outlet": "NBC Los Angeles",
+      "site": "nbclosangeles.com"
+     },
+     {
+      "outlet": "CBS Los Angeles",
+      "site": "cbsnews.com/losangeles"
+     },
+     {
+      "outlet": "FOX 11 Los Angeles",
+      "site": "foxla.com"
+     },
+     {
+      "outlet": "Spectrum News 1",
+      "site": "spectrumnews1.com"
+     },
+     {
+      "outlet": "Spectrum News 1 (spectrumlocalnews.com)",
+      "site": "spectrumlocalnews.com"
+     },
+     {
+      "outlet": "KNX News",
+      "site": "audacy.com/knxnews"
+     },
+     {
+      "outlet": "KFI AM 640",
+      "site": "kfiam640.iheart.com"
+     },
+     {
+      "outlet": "LAist",
+      "site": "laist.com"
+     },
+     {
+      "outlet": "Telemundo 52",
+      "site": "telemundo52.com"
+     },
+     {
+      "outlet": "Univision 34",
+      "site": "univision.com/local/los-angeles-kmex"
+     }
+    ]
+   },
+   {
+    "label": "Valley weeklies",
+    "sites": [
+     {
+      "outlet": "Encino Enterprise / Valley Vantage / Valley News Group",
+      "site": "valleynewsgroup.com"
+     },
+     {
+      "outlet": "Van Nuys News Press",
+      "site": "vannuysnewspress.com"
+     },
+     {
+      "outlet": "San Fernando Valley Sun / El Sol",
+      "site": "sanfernandosun.com"
+     },
+     {
+      "outlet": "Los Angeles Daily News",
+      "site": "dailynews.com"
+     },
+     {
+      "outlet": "Adelante Valle",
+      "site": "ivpressonline.com"
+     }
+    ]
+   },
+   {
+    "label": "Podcast episode pages",
+    "note": "PODSITE-v1 (Sammy 2026-11-02): web search of podcast episode pages, which carry title + description and are indexed; complements the iTunes API pass. A find's outlet is the show, not the platform (SHOWNET-v1); fix at save.",
+    "sites": [
+     {
+      "outlet": "Apple Podcasts (show named on page)",
+      "site": "podcasts.apple.com"
+     },
+     {
+      "outlet": "Spotify (show named on page)",
+      "site": "open.spotify.com/episode"
+     },
+     {
+      "outlet": "iHeart podcasts (show named on page)",
+      "site": "iheart.com/podcast"
+     }
+    ]
+   }
+  ]
+ },
+ "tv": {
+  "note": "GDELT TV (Internet Archive TV News Archive). Checked 2026-11-02: the API rejects every Los Angeles station (KTLA, KABC, KCBS, KCAL, KNBC, KTTV: 'Invalid Station') and the market 'Los Angeles' ('Invalid Market'), so LA stations reach the tracker through the priority site searches. The per-station cap below applies the day an LA station appears in a listed market.",
+  "markets": [
+   "National",
+   "San Francisco"
+  ],
+  "names": [
+   "jesse gabriel",
+   "assemblymember gabriel",
+   "assemblyman gabriel",
+   "budget chair gabriel"
+  ],
+  "per_station_per_day": 1,
+  "la_stations": [
+   "KTLA",
+   "KABC",
+   "KCBS",
+   "KCAL",
+   "KNBC",
+   "KTTV",
+   "KCOP",
+   "KMEX",
+   "KVEA",
+   "KDOC",
+   "KSCI",
+   "KCET",
+   "KOCE"
+  ],
+  "la_per_station_per_day": 3
+ },
+ "podcasts": {
+  "note": "iTunes Search API (free, no key) through fetch_content. The search is fuzzy: only episodes whose title or description names him are kept.",
+  "url": "https://itunes.apple.com/search?term=Jesse+Gabriel&entity=podcastEpisode&limit=50",
+  "name_regex": "\\bjesse\\s+gabriel\\b|\\bassembly\\s?(?:member|man|woman)\\s+(?:jesse\\s+)?gabriel\\b|\\bbudget\\s+chair\\s+(?:jesse\\s+)?gabriel\\b|\\basm\\.?\\s+(?:jesse\\s+)?gabriel\\b"
+ },
+ "ethnic": {
+  "note": "California ethnic-media outlets (ems_ca_outlets.json, from the Ethnic Media Services directory) not already on record: OR-grouped site: searches with after_date, Southern California first, at most max_calls searches a run. A group of Korean / Chinese / Armenian / Russian / Farsi outlets also searches his name in that script.",
+  "or_size": 8,
+  "max_calls": 28,
+  "native": {
+   "Korean": [
+    "\"제시 가브리엘\"",
+    "\"개브리엘\" 의원"
+   ],
+   "Chinese": [
+    "\"加布里埃尔\"",
+    "\"加布里爾\""
+   ],
+   "Armenian": [
+    "\"Ջեսի Գաբրիել\""
+   ],
+   "Russian": [
+    "\"Джесси Габриэль\""
+   ],
+   "Iranian": [
+    "\"جسی گابریل\""
+   ]
+  }
+ },
+ "release_time": {
+  "note": "The office and caucus listing pages carry <time datetime=...Z> with a time of day (the page's created stamp, not an e-mail send time). Captured into the run doc, release_texts.json and the tab's Note. A midnight-UTC stamp (T00:00:00Z) is a date only and is ignored."
+ },
+ "youtube": {
+  "note": "YTSTATION-v1 (Sammy 2026-11-02): station YouTube channels. Two TinyFish searches per run (include_domains youtube.com, after_date = the run's since date). A video is kept only when its channel (as shown on the video page) is a key of `channels`; every other uploader is skipped (NOBLOGS-v1: judge by outlet; a TV or radio station's own clips stay). Add a station by adding its channel name here; `outlet` should be the tracker's existing Outlet name. The channel comes from YouTube's oEmbed endpoint (author_name, author_url) fetched through fetch_content; an entry may list `handles` (the @name in author_url, without @). Handles are matched case-insensitively and only listed where known; the name match is tried first.",
+  "queries": [
+   "\"Jesse Gabriel\"",
+   "\"Assemblymember Gabriel\" OR \"Assemblyman Gabriel\""
+  ],
+  "include_domains": "youtube.com",
+  "channels": {
+   "FOX 11 Los Angeles": {
+    "outlet": "FOX 11 Los Angeles",
+    "station": "KTTV",
+    "network": "FOX",
+    "medium": "TV",
+    "handles": [
+     "foxla"
+    ]
+   },
+   "KTLA 5": {
+    "outlet": "KTLA",
+    "station": "KTLA",
+    "network": "CW",
+    "medium": "TV"
+   },
+   "ABC7": {
+    "outlet": "ABC7 Los Angeles",
+    "station": "KABC",
+    "network": "ABC",
+    "medium": "TV"
+   },
+   "ABC7 Los Angeles": {
+    "outlet": "ABC7 Los Angeles",
+    "station": "KABC",
+    "network": "ABC",
+    "medium": "TV"
+   },
+   "NBCLA": {
+    "outlet": "NBC Los Angeles",
+    "station": "KNBC",
+    "network": "NBC",
+    "medium": "TV"
+   },
+   "NBC Los Angeles": {
+    "outlet": "NBC Los Angeles",
+    "station": "KNBC",
+    "network": "NBC",
+    "medium": "TV"
+   },
+   "CBS Los Angeles": {
+    "outlet": "CBS Los Angeles",
+    "station": "KCBS",
+    "network": "CBS",
+    "medium": "TV"
+   },
+   "KCAL News": {
+    "outlet": "KCAL News",
+    "station": "KCAL",
+    "network": "CBS",
+    "medium": "TV"
+   },
+   "Telemundo 52": {
+    "outlet": "Telemundo 52",
+    "station": "KVEA",
+    "network": "Telemundo",
+    "medium": "TV"
+   },
+   "Univision 34 Los Angeles": {
+    "outlet": "Univision 34",
+    "station": "KMEX",
+    "network": "Univision",
+    "medium": "TV"
+   },
+   "Spectrum News": {
+    "outlet": "Spectrum News 1",
+    "station": "",
+    "network": "Spectrum",
+    "medium": "TV"
+   },
+   "Spectrum News 1 SoCal": {
+    "outlet": "Spectrum News 1",
+    "station": "",
+    "network": "Spectrum",
+    "medium": "TV"
+   },
+   "KCRA 3": {
+    "outlet": "KCRA 3",
+    "station": "KCRA",
+    "network": "NBC",
+    "medium": "TV"
+   },
+   "ABC10": {
+    "outlet": "ABC10",
+    "station": "KXTV",
+    "network": "ABC",
+    "medium": "TV"
+   },
+   "FOX40 News": {
+    "outlet": "FOX40",
+    "station": "KTXL",
+    "network": "FOX",
+    "medium": "TV"
+   },
+   "KTVU FOX 2 San Francisco": {
+    "outlet": "KTVU FOX 2",
+    "station": "KTVU",
+    "network": "FOX",
+    "medium": "TV"
+   },
+   "KRON 4": {
+    "outlet": "KRON 4",
+    "station": "KRON",
+    "network": "MyNetworkTV",
+    "medium": "TV"
+   },
+   "ABC7 News Bay Area": {
+    "outlet": "ABC7 San Francisco",
+    "station": "KGO",
+    "network": "ABC",
+    "medium": "TV"
+   },
+   "NBC Bay Area": {
+    "outlet": "NBC Bay Area",
+    "station": "KNTV",
+    "network": "NBC",
+    "medium": "TV"
+   },
+   "CBS News Bay Area": {
+    "outlet": "KPIX CBS News Bay Area",
+    "station": "KPIX",
+    "network": "CBS",
+    "medium": "TV"
+   },
+   "CapRadio": {
+    "outlet": "CapRadio",
+    "station": "KXJZ",
+    "network": "NPR",
+    "medium": "Radio"
+   },
+   "KQED": {
+    "outlet": "KQED",
+    "station": "KQED",
+    "network": "NPR",
+    "medium": "Radio",
+    "handles": [
+     "KQED"
+    ]
+   },
+   "CNN": {
+    "outlet": "CNN",
+    "station": "",
+    "network": "CNN",
+    "medium": "TV",
+    "handles": [
+     "CNN"
+    ]
+   },
+   "Fox News": {
+    "outlet": "Fox News",
+    "station": "",
+    "network": "Fox News Channel",
+    "medium": "TV",
+    "handles": [
+     "FoxNews"
+    ]
+   },
+   "NBC News": {
+    "outlet": "NBC News",
+    "station": "",
+    "network": "NBC",
+    "medium": "TV",
+    "handles": [
+     "NBCNews"
+    ]
+   },
+   "CBS News": {
+    "outlet": "CBS News",
+    "station": "",
+    "network": "CBS",
+    "medium": "TV",
+    "handles": [
+     "CBSNews"
+    ]
+   },
+   "ABC News": {
+    "outlet": "ABC News",
+    "station": "",
+    "network": "ABC",
+    "medium": "TV",
+    "handles": [
+     "ABCNews"
+    ]
+   },
+   "NewsNation": {
+    "outlet": "NewsNation",
+    "station": "",
+    "network": "NewsNation",
+    "medium": "TV",
+    "handles": [
+     "NewsNation"
+    ]
+   },
+   "PBS NewsHour": {
+    "outlet": "PBS NewsHour",
+    "station": "",
+    "network": "PBS",
+    "medium": "TV",
+    "handles": [
+     "PBSNewsHour"
+    ]
+   },
+   "MSNBC": {
+    "outlet": "MSNBC",
+    "station": "",
+    "network": "MSNBC",
+    "medium": "TV",
+    "handles": [
+     "msnbc"
+    ]
+   },
+   "N+ UNIVISION": {
+    "outlet": "Univision",
+    "station": "",
+    "network": "Univision",
+    "medium": "TV"
+   },
+   "Sky Link TV Cantonese News 天下衛視 粵語新聞頻道": {
+    "outlet": "Sky Link TV",
+    "station": "",
+    "network": "Sky Link TV",
+    "medium": "TV"
+   }
+  }
+ }
+}

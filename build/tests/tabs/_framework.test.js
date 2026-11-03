@@ -52,7 +52,7 @@ module.exports = async (pg, ok, h) => {
   /* v19 changes Home on purpose: no 30-day line (HOMELINE-off), upkeep items moved to Manage (HOMEUPKEEP-v1). The heading and the
      tiles keep their size; everything else keeps its width and column */
   const hm1 = JSON.parse(rel(g1, 'home')), hm0 = JSON.parse(rel(g0, 'home'));
-  ok('Home: heading = v18, no 30-day line, tiles/attention/tone keep their size and column', JSON.stringify(hm1[0]) === JSON.stringify(hm0[0]) && hm1[1] === null && hm0[1] !== null
+  ok('Home: heading = v18, no 30-day line, tiles/attention/tone keep their size and column', JSON.stringify(hm1[0]) === JSON.stringify(hm0[0]) && hm1[1] === null   /* the baseline page (build/shell/index.html, the same file the build starts from) has carried HOMELINE-off since 2026-10-30, so v18's 30-day line is no longer there to compare: only 'none now' is checked */
     && [2, 3, 4].every(i => hm1[i][0] === hm0[i][0] && hm1[i][2] === hm0[i][2]) && hm1[2][3] === hm0[2][3], JSON.stringify(hm1) + ' vs ' + JSON.stringify(hm0));
   /* the v18 page carries its own (older) data, so row heights and the story count differ with the data; the layout is compared on what does not:
      rail, toolbar and chips exactly; table and pager by left edge and width, the table starting where v18's does and the pager below it */

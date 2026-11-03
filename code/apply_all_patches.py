@@ -51,6 +51,7 @@ PIPELINE = {'sheet_task.py': 'code/sheet_task.py', 'build_data.py': 'code/build_
             'wrong_copies.csv': 'code/wrong_copies.csv',   # REPRINT-v2: saved copies known to hold another article (make_copies / sheet_task guard)
             'billmatch.py': 'code/billmatch.py', 'bills_extra.json': 'code/bills_extra.json',   # TAGS-v1: shared names-a-bill rule (sheet_task queue_after, build_data billsinfo)
             'lookup_cache.py': 'code/lookup_cache.py', 'lookup_cache.json': 'code/lookup_cache.json',   # LEARN-v1: answered lookups; sheet_task.fetch_plan / apply_lookups, build_data fetchrules
+            'recall_sources.json': 'code/recall_sources.json', 'ems_ca_outlets.json': 'code/ems_ca_outlets.json',   # RECALLFIX-v1: priority outlets / TV caps / podcasts / ethnic-media list (build_data puts them in the fetchrules block)
             'outlets.json': 'code/outlets.json',   # OUTLETREC-v1: one record per outlet (sheet_task.outlet_record)
             'copy_check.py': 'code/copy_check.py',   # COPYCHECK-v1: saved-copy gates (reprint_rule imports it; sheet_task.check_page)
             'dates_lib.py': 'code/dates_lib.py', 'date_rules.py': 'code/date_rules.py',   # DATES-v1: zones, local day, 8 checks, Date source (sheet_task imports)
