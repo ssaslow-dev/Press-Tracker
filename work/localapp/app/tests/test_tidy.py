@@ -193,10 +193,12 @@ class TidyPanel(unittest.TestCase):
         p = out['results']['p']
         self.assertEqual(p['heads'], ['1. Make "for Update" file', '2. Bring in update', '3. Save my edits (0)', '4. Make refresh file (for the other copies)'], p['heads'])
         self.assertFalse(p['repOpen'], 'Repairs is closed')
-        self.assertEqual(p['repHeads'], ['Accept the workbook as it is now', 'Make a full refresh file (for a new person)', 'Rebuild the tracker page'])
+        SW = ('Check the files', 'Remove unverified reprints', 'Set up again from the Mac library', 'Set up from the Mac library', 'Switch-over changes')   # one-time switch-over items; they live in the Switch-over changes screen
+        rh = [h for h in p['repHeads'] if not h.startswith(SW)]
+        self.assertEqual(rh, ['Accept the workbook as it is now', 'Make a full refresh file (for a new person)', 'Rebuild the tracker page'])
         outside = [b['t'] for b in p['btns'] if not b['rep']]
         self.assertEqual([t for t in outside if 'refresh' in t.lower()], ['Make refresh file'], 'one refresh button outside Repairs')
-        inside = [b['t'] for b in p['btns'] if b['rep']]
+        inside = [b['t'] for b in p['btns'] if b['rep'] and not b['t'].startswith(SW)]
         self.assertEqual(inside, ['Accept the workbook as it is now', 'Make a FULL refresh file', 'Rebuild the page'])
         self.assertNotIn('5.', ' '.join(p['heads'])); self.assertNotIn('6.', ' '.join(p['heads']))
 

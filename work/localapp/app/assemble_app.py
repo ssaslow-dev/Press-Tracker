@@ -282,6 +282,8 @@ def copy_app_code(root: Path, pb: Path, info: dict):
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '14_sheet_task_pq_outlet_aliases.patch')
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '19_sheet_task_reserved_ids.patch')       # DROPUNVERIFIED-v1: ids of rows deleted for good stay reserved
     patched_copy(pipe / 'build_data.py', pipe / 'build_data.py', ap_ / '20_build_data_reserved_ids.patch')
+    patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '25_sheet_task_otherfiles.patch')            # OTHERFILES-v1 / ORIGCOPIES-v1: extra original copies, Other files column, print originals by name
+    patched_copy(pipe / 'build_data.py', pipe / 'build_data.py', ap_ / '26_build_data_printorig.patch')            # PRINTORIG-v1 (option B): rec['po'] from the library's _original_pdf names
     shutil.copy2(LOCALAPP / 'station' / 'data' / 'proquest_outlets.json', pipe / 'proquest_outlets.json')    # PROQUESTPDF-v1 answer 2 (one source: the station's data)
     patched_copy(pipe / 'shell.html', pipe / 'shell.html', ap_ / '08_shell_localfonts.patch')
     patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '07_tracker_js_localfonts.patch')
