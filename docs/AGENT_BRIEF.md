@@ -24,3 +24,5 @@ Before any web fetch or search: (1) check the reference data (`code/outlets.json
 ## Reporting
 Final report ≤ the line count in your brief: counts, outputs (paths), decisions needed, errors. Hand-check a sample of your own output and give the rate.
 - Models: Haiku for fetch/save loops and rote steps; Sonnet for light-judgment mechanical work; Fable for judgment only (MODELS-v1).
+
+- CHECKCLAIMS-v1: before stating anything about what the data contains (counts, which outlets are thin or missing, gaps), query the workbook and cite the number. A site blocking fetches does not mean its stories lack saved copies (NewsBank fills most; e.g. the Bee is 147/153 saved). Treat any "known limits" in your brief as unverified until you check them.
