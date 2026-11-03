@@ -4,7 +4,7 @@
  "about": "Built by tools/build_pq_aliases.py from data/proquest_outlets_curated.json (rules and hand-kept pairs), code/outlet_rules.json (the tracker's own folding) and the workbook's ProQuest rows. How a ProQuest PDF's outlet is named: (1) clean_rules turn the Publication title into a name (text before ';', edition and '(Online)' suffixes off); (2) the name gets a key: key_steps then the PC's feeds and aliases then key_post (exact = before the PC aliases, fold = after); (3) a pair (below) wins; a generic name (generic_needs_city) with no pair for its place is never matched; else the tracker's own spelling for the same exact key, then the same fold key; else the cleaned name is kept and the row's Team note says 'outlet name from ProQuest; check'. Nothing is guessed.",
  "inputs": {
   "outlet_rules_sha256": "90bab6b4c0b0e1a4be3892ae08b82f6fa34a6f9e9b7a8c9b26f3b09d227c0568",
-  "curated_sha256": "b987da0243c0447fe9aed176a6226b0910b12ef7115d58677316a28f9b4a574d",
+  "curated_sha256": "707293416701ff628bd33ec30e3206b3bce62fc30b9b52d4819b48f4b1462bca",
   "workbook_rows": 8193,
   "proquest_rows": 336,
   "proquest_html_copies": 460
@@ -224,6 +224,15 @@
    "tracker_rows": 46,
    "kind": "data",
    "source": "Data: 7 ProQuest rows carry Outlet 'Daily News' and 4 other rows 'Daily News' with Outlet city Los Angeles; outlet_rules.json lists 'daily news' as a generic name (one outlet per city) and aliases it to 'los angeles daily news'. ProQuest prints the city after the title, so only 'Daily News; Los Angeles, Calif.' is taken as the tracker's Daily News."
+  },
+  {
+   "pq": "Politico, U.S. edition",
+   "place": "",
+   "key": "politico u s edition",
+   "tracker": "Politico",
+   "tracker_rows": 184,
+   "kind": "data",
+   "source": "real PDF 2026-11-03: ProQuest document 2830163640 (Politico, 2023-06-28) has Publication title 'Politico, U.S. edition; Arlington'; the tracker files it (Article ID 08882, s03441) under Outlet 'Politico'."
   }
  ],
  "seen_in_proquest_rows": [
@@ -540,7 +549,7 @@
   "library_note": "The library's ProQuest html copies are text made from the PDFs and carry no ProQuest publication title. The only 'Publication:' lines are inside University Wire items, naming the student paper; every ProQuest row among them is filed under 'University Wire', the wire's own name (the one exception is a NewsBank row, Daily Bruin, whose second source is such a copy), so they give no alias. The workbook's 64 ProQuest Outlet names (seen_in_proquest_rows) show only the tracker's side."
  },
  "stats": {
-  "pairs": 2,
+  "pairs": 3,
   "clean_rules": 5,
   "key_steps": 7,
   "outlet_rules_aliases": 78,

@@ -169,7 +169,8 @@ async function loadFile(f) {
   S.file = j; S.fileName = f.name; S.loadedAt = nowIso();
   // 1. the blocks, where the tracker code reads them
   $('#data').textContent = JSON.stringify(j.stories);
-  setBlock('rows', j.rows); setBlock('idmap', j.idmap); setBlock('covcols', j.covcols); setBlock('billsinfo', j.billsinfo); setBlock('fetchrules', j.fetchrules);
+  setBlock('rows', j.rows); setBlock('idmap', j.idmap); setBlock('covcols', j.covcols); setBlock('billsinfo', j.billsinfo); if (!j.fetchrules.recall || typeof j.fetchrules.recall !== 'object') { try { j.fetchrules.recall = JSON.parse(document.getElementById('recall-default').textContent); S.recallDefault = true; } catch (e) { } }   // follow-up 9: a file made before RECALLFIX-v1 lacks the extra-search lists; the station's own copy of the same reference data stands in
+  setBlock('fetchrules', j.fetchrules);
   setBlock('ins-release_pickup', j.ins_release_pickup);
   // 2. the button's memory
   const m = j.memory || {};

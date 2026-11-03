@@ -129,11 +129,19 @@ def main():
     st_js = once(st_js, '/*PQ_UI*/', pq_ui)
     for t in (st_js, nb_parse, nb_scope, pq_parse):
         assert '</script' not in t
+    # UPDATESTATION-v1 follow-up 9: the v64 button's extra passes (RECALLFIX-v1, PODSITE-v1, YTSTATION-v1) read fetchrules.recall. A new for-Update file carries it
+    # (make_for_update runs the PC's build_data); this default is the same block built from the repository's reference files, used only for a file that lacks it.
+    rs = json.load(open(os.path.join(REPO, 'code', 'recall_sources.json'), encoding='utf-8'))
+    em = json.load(open(os.path.join(REPO, 'code', 'ems_ca_outlets.json'), encoding='utf-8'))
+    recall_default = dict(rs, ethnic=dict(rs.get('ethnic') or {}, outlets=[[o.get('host'), o.get('language'), o.get('region'), o.get('city'), o.get('name')] for o in (em.get('outlets') or [])]))
+    assert recall_default.get('priority') and recall_default.get('youtube', {}).get('channels') and recall_default.get('podcasts'), 'recall_sources.json is incomplete'
+    recall_json = json.dumps(recall_default, separators=(',', ':')).replace('</', '<\\/')
     lib = vendor_pdf_libs()
     page = once(page, '<main class="wrap">', '<main class="wrap">\n' + st_html)
     fonts_css, nfonts = inline_fonts_css()
     doc = ('<title>AJG Update Station</title>\n' + page + '\n<style id="station-fonts">\n' + fonts_css + '</style>\n<style id="station-css">\n' + st_css + '</style>\n'
            '<script type="text/plain" id="tracker-src">' + body_esc + '</script>\n<script type="text/plain" id="nb-scope-src">' + nb_scope + '</script>\n'
+           '<script type="application/json" id="recall-default">' + recall_json + '</script>\n'
            '<script id="nbparse-js">\n' + nb_parse + '</script>\n'
            '<script id="pqparse-js">\n' + pq_parse + '</script>\n'
            '<script type="text/plain" id="vendor-pdfjs-worker">' + lib['pdfjs_worker'].replace('</script', '<\\/script') + '</script>\n'
@@ -154,7 +162,7 @@ def main():
     open(p, 'w', encoding='utf-8').write(doc)
     info = {'index_html_bytes': len(doc.encode()), 'index_html_sha256': sha(doc.encode()), 'tracker_js_sha256': sha(js), 'tracker_js_parts_bytes': len(js),
             'shell_sha256': sha(shell.encode()), 'vendor': os.path.basename(vendor),
-            'pdf_libs': lib['info'], 'vendor_urls_in_strings': vend_urls, 'nb_scope_sha256': sha(nb_scope.encode()), 'nbparse_sha256': sha(nb_parse.encode()), 'pqparse_sha256': sha(pq_parse.encode()), 'proquest_outlets_sha256': sha(pq_outlets_raw), 'proquest_outlets_pairs': len(pq_outlets['pairs']), 'pq_ui_sha256': sha(pq_ui.encode()), 'pq_scope_sha256': sha(pq_scope.encode()), 'nb_ui_sha256': sha(nb_ui.encode()),
+            'pdf_libs': lib['info'], 'vendor_urls_in_strings': vend_urls, 'nb_scope_sha256': sha(nb_scope.encode()), 'nbparse_sha256': sha(nb_parse.encode()), 'pqparse_sha256': sha(pq_parse.encode()), 'proquest_outlets_sha256': sha(pq_outlets_raw), 'proquest_outlets_pairs': len(pq_outlets['pairs']), 'recall_default_sha256': sha(recall_json.encode()), 'recall_default_priority_sites': sum(len(g['sites']) for g in recall_default['priority']['groups']), 'recall_default_youtube_channels': len(recall_default['youtube']['channels']), 'pq_ui_sha256': sha(pq_ui.encode()), 'pq_scope_sha256': sha(pq_scope.encode()), 'nb_ui_sha256': sha(nb_ui.encode()),
             'fonts_woff2_inlined': nfonts, 'fonts_css_sha256': sha(fonts_css.encode()), 'station_css_sha256': sha(st_css.encode()), 'station_html_sha256': sha(st_html.encode()), 'station_js_sha256': sha(st_js.encode())}
     json.dump(info, open(os.path.join(a.out, 'build_info.json'), 'w'), indent=1)
     print(json.dumps(info, indent=1))

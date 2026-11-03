@@ -13,6 +13,12 @@
    "tracker": "Daily News",
    "kind": "data",
    "source": "Data: 7 ProQuest rows carry Outlet 'Daily News' and 4 other rows 'Daily News' with Outlet city Los Angeles; outlet_rules.json lists 'daily news' as a generic name (one outlet per city) and aliases it to 'los angeles daily news'. ProQuest prints the city after the title, so only 'Daily News; Los Angeles, Calif.' is taken as the tracker's Daily News."
+  },
+  {
+   "pq": "Politico, U.S. edition",
+   "tracker": "Politico",
+   "kind": "data",
+   "source": "real PDF 2026-11-03: ProQuest document 2830163640 (Politico, 2023-06-28) has Publication title 'Politico, U.S. edition; Arlington'; the tracker files it (Article ID 08882, s03441) under Outlet 'Politico'."
   }
  ],
  "clean_rules": [

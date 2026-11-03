@@ -172,6 +172,16 @@ function parsePdf(pages, opts) {
   valid.forEach(c => c.items.forEach(f => { if (f.k) { f.lines.forEach(i => { seq[i].use = 'meta'; }); if (f.k !== 'other' && !(f.k in fields) && f.v) fields[f.k] = f.v; } else seq[f.lines[0]].use = 'head'; }));
   // "Details" heading lines directly above a valid cluster
   valid.forEach(c => { for (let j = c.start - 1; j >= Math.max(0, c.start - 2); j--) if (MARK_RX.test(seq[j].text)) seq[j].use = 'meta'; else break; });
+  // the generic labels that open the block (Subject, Location, People, Company / organization, Lexile score ...) sit above the first ProQuest-only label (a real PDF has nine
+  // lines of them before "Publication title"): walk up over "Label: value" lines and their indented continuation lines to the "Details" heading
+  valid.forEach(c => { const x0 = seq[c.start].x;
+    for (let j = c.start - 1; j >= 0; j--) { const t = seq[j].text;
+      if (seq[j].use !== 'body') break;
+      if (MARK_RX.test(t)) { seq[j].use = 'meta'; break; }
+      if (labelOf(t) || (ANY_LABEL.test(t) && t.split(':')[0].split(/\s+/).length <= 5) || (seq[j].x >= x0 + 40 && t.length < 160)) { seq[j].use = 'meta'; continue; }
+      break; } });
+  // after the "Links" heading of the details block everything is ProQuest's closing furniture (Check for Full Text, copyright line, Terms and Conditions)
+  valid.forEach(c => { const m = c.items.find(f => f.marker && /^links$/i.test(seq[f.lines[0]].text)); if (m) for (let j = m.lines[0] + 1; j < seq.length; j++) if (seq[j].use === 'body') seq[j].use = 'meta'; });
   out.fields = fields;
   // several articles in one PDF
   const idsAll = []; valid.forEach(c => c.items.forEach(f => { if (f.k === 'docid') { const m = /\d{5,}/.exec(f.v); if (m) idsAll.push(m[0]); } }));
@@ -190,7 +200,7 @@ function parsePdf(pages, opts) {
   if (out.ids.length > 1) { out.status = 'needs_look'; out.problems.push('This PDF holds more than one article (ProQuest document IDs ' + out.ids.slice(0, 4).join(', ') + '). Download each article as its own PDF.'); }
   // 3. the details
   out.pubtitle = fields.pubtitle || ''; out.outlet = outletOf(fields.pubtitle || ''); out.outlet_clean = NB.cleanOutlet ? NB.cleanOutlet(out.outlet) : out.outlet;
-  out.author = bylineOf(fields.author || ''); out.section = squash(fields.section || ''); out.publisher = squash(fields.publisher || ''); out.place = squash(fields.place || '');
+  out.author = bylineOf(fields.author || '');   // (no Author field: the line under the heading, below) out.section = squash(fields.section || ''); out.publisher = squash(fields.publisher || ''); out.place = squash(fields.place || '');
   out.source_type = squash(fields.sourcetype || ''); out.doc_type = squash(fields.doctype || ''); out.language = squash(fields.lang || ''); out.issn = squash(fields.issn || '');
   out.copyright = squash(fields.copyright || ''); out.database = squash(fields.database || '');
   { const pg = squash(fields.pages || fields.firstpage || ''); out.page = pg && !/^[-–—]+$/.test(pg) ? pg.split(/\s*[,;]\s*/)[0].slice(0, 20) : ''; }
@@ -225,6 +235,12 @@ function parsePdf(pages, opts) {
   if (fields.title) { out.headline = squash(fields.title); }
   else if (heading.length) { out.headline = squash(heading.map(l => l.text).join(' ')); out.flags.push('headline read from the page heading (no Title in the details): check it'); out.how = 'heading'; }
   heading.forEach(l => { l.use = 'head'; });
+  // the real layout: heading, a line with the authors (given twice: "A; B . A; B."), then "ProQuest document link", then "Full text"
+  { const hi = heading.length ? seq.indexOf(heading[heading.length - 1]) : -1;
+    if (hi >= 0 && ftIdx > hi && ftIdx - hi <= 4 && seq.slice(hi + 1, ftIdx).some(l => /^proquest document link$/i.test(l.text))) {
+      if (!fields.author) { const ln = seq[hi + 1]; if (ln && !/^proquest document link$/i.test(ln.text) && ln.text.length < 300) { const first = ln.text.split(/\s+\.\s+/)[0].replace(/\.$/, ''); out.author = bylineOf(first); if (out.author) ln.use = 'head'; } }
+      const ix = out.flags.findIndex(f => /^headline read from the page heading/.test(f)); if (ix >= 0) out.flags.splice(ix, 1);   // heading, authors and document link in a row: the layout ProQuest prints, not a guess
+    } }
   if (ftIdx >= 0) for (let i = 0; i <= ftIdx; i++) if (seq[i].use === 'body') seq[i].use = 'head';
   seq.forEach(l => { if (l.use === 'body' && MARK_RX.test(l.text)) l.use = 'head'; });
   // a citation line right under the heading ("Author. Publication; Place. 13 Sep 2024.") when there is no Full text marker
