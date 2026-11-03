@@ -6352,6 +6352,7 @@ function tbInfo(text, about){ text = String(text || '').trim(); if (!text) retur
 .rl-det>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:6px}.rl-det>summary::-webkit-details-marker{display:none}
 .rl-det>summary::before{content:'';width:0;height:0;border-style:solid;border-width:4px 0 4px 6px;border-color:transparent transparent transparent currentColor;transition:transform .12s;flex:none}
 .rl-det[open]>summary::before{transform:rotate(90deg)}
+#tbBody table.db.tbe-xtab thead th{padding:9px 12px}#tbBody table.db.tbe-xtab thead th.c-r{text-align:center}.rl-xh{margin-top:6px}.rl-xdet{display:grid;gap:8px;margin-top:6px}.rl-xdet>summary.tb-us-h{margin:0;padding:6px 2px 0;font:600 var(--fs-xs)/1.35 var(--f-body);letter-spacing:.07em;text-transform:uppercase;color:var(--ink-3)}
 .rl-thr{display:grid;gap:2px}.rl-thr+.rl-thr{margin-top:10px}.rl-thr-h{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center}
 .rl-sub{display:flex;flex-wrap:wrap;gap:3px 10px;align-items:center;margin-top:2px}.rl-sub .bchips{margin-top:0}
 .rl-type{font-weight:600;color:var(--ink-2)}
