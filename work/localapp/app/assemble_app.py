@@ -126,6 +126,7 @@ def tidy_pipeline(pipe: Path):
     patched_copy(pipe / 'tabs' / 'reporters.js', pipe / 'tabs' / 'reporters.js', ap_ / '16_tabs_reporters_tidy.patch')
     patched_copy(pipe / 'tabs' / 'outlets.js', pipe / 'tabs' / 'outlets.js', ap_ / '17_tabs_outlets_tidy.patch')
     apply_subs([pipe / 'tracker.js', pipe / 'shell.html'] + sorted((pipe / 'tabs').glob('*.js')), ap_ / '18_wording_tidy.subs.json')
+    apply_subs([pipe / 'tracker.js', pipe / 'shell.html'] + sorted((pipe / 'tabs').glob('*.js')), ap_ / '21_note_wording.subs.json')   # NOTE-v1
 
 
 def patch_index_tidy(idx: Path):
@@ -134,6 +135,7 @@ def patch_index_tidy(idx: Path):
     for n in ('15_tracker_js_tidy_css', '16_tabs_reporters_tidy', '17_tabs_outlets_tidy'):
         patched_copy(idx, idx, ap_ / (n + '.patch'))
     apply_subs([idx], ap_ / '18_wording_tidy.subs.json')
+    apply_subs([idx], ap_ / '21_note_wording.subs.json')   # NOTE-v1
 
 
 TIDY_MARK = 'TIDY-v1: layout fixes of the PC tracker'
