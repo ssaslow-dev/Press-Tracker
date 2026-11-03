@@ -3,7 +3,7 @@
  "version": 1,
  "about": "Built by tools/build_pq_aliases.py from data/proquest_outlets_curated.json (rules and hand-kept pairs), code/outlet_rules.json (the tracker's own folding) and the workbook's ProQuest rows. How a ProQuest PDF's outlet is named: (1) clean_rules turn the Publication title into a name (text before ';', edition and '(Online)' suffixes off); (2) the name gets a key: key_steps then the PC's feeds and aliases then key_post (exact = before the PC aliases, fold = after); (3) a pair (below) wins; a generic name (generic_needs_city) with no pair for its place is never matched; else the tracker's own spelling for the same exact key, then the same fold key; else the cleaned name is kept and the row's Team note says 'outlet name from ProQuest; check'. Nothing is guessed.",
  "inputs": {
-  "outlet_rules_sha256": "ae1ead772e4826ffa970d4247d71cf3a1288de09acc82b6058ab045f0940a9de",
+  "outlet_rules_sha256": "90bab6b4c0b0e1a4be3892ae08b82f6fa34a6f9e9b7a8c9b26f3b09d227c0568",
   "curated_sha256": "b987da0243c0447fe9aed176a6226b0910b12ef7115d58677316a28f9b4a574d",
   "workbook_rows": 8193,
   "proquest_rows": 336,

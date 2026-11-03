@@ -194,7 +194,7 @@ const INIT = ({ today, hl }) => {
   const zipBytes = await page.evaluate(async () => { const b = window.__lastDl; let s = ''; const CH = 0x8000; for (let i = 0; i < b.length; i += CH) s += String.fromCharCode.apply(null, b.subarray(i, i + CH)); return btoa(s); });
   fs.writeFileSync(path.join(OUT, 'nb_update.zip'), Buffer.from(zipBytes, 'base64'));
   console.log('   zip', dl.name, dl.size);
-  check('the update folder downloaded', /^ajg_update_\d{8}-\d{4}_bc21c9fb\.zip$/.test(dl.name) && dl.size > 100000, dl.name + ' ' + dl.size);
+  check('the update folder downloaded', new RegExp("^ajg_update_\\d{8}-\\d{4}_" + fu.fingerprint.workbook_sha256.slice(0, 8) + "\\.zip$").test(dl.name) && dl.size > 100000, dl.name + ' ' + dl.size);
   check('no worker was started, no outside request, no CSP violation, no page error', (await page.evaluate(() => window.__workers)) === 0 && outside.length === 0 && cspViol.length === 0 && errors.length === 0, JSON.stringify({ outside, cspViol: cspViol.slice(0, 2), errors: errors.slice(0, 3) }));
   console.log(failed ? failed + ' FAILED' : 'all passed');
   await browser.close(); server.close(); process.exit(failed ? 1 : 0);

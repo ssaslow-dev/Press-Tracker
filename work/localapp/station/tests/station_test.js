@@ -221,7 +221,7 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   await page.waitForFunction(() => window.__dl.length > 0, null, { timeout: 30000 });
   const dl = await page.evaluate(() => ({ name: window.__dl[0].filename, bytes: Array.from(window.__lastDl) }));
   const zipPath = path.join(OUT, dl.name); fs.writeFileSync(zipPath, Buffer.from(dl.bytes));
-  check('zip downloaded with a name carrying the workbook short sha', /^ajg_update_\d{8}-\d{4}_bc21c9fb\.zip$/.test(dl.name), dl.name);
+  check('zip downloaded with a name carrying the workbook short sha', new RegExp("^ajg_update_\\d{8}-\\d{4}_" + fu.fingerprint.workbook_sha256.slice(0, 8) + "\\.zip$").test(dl.name), dl.name);
   await page.waitForTimeout(500);
   const recorded = await page.evaluate(id => !!(window.__realdb.packed || {})[id], S.runs[0][0]);
   check(DBMODE === 'none' ? 'no db capability: packing still works, nothing recorded' : 'station db records the run as packed (write only)', recorded === (DBMODE !== 'none'), JSON.stringify(await page.evaluate(() => window.__realdb)).slice(0, 300));
