@@ -20,6 +20,7 @@ from __future__ import annotations
 import argparse
 import base64
 import datetime as dt
+import hashlib
 import json
 import os
 import re
@@ -38,6 +39,8 @@ KEEP_BACKUPS = 3
 LOCK_MINUTES = 30
 TOKEN_MINUTES = 30
 JUDGMENT_CAP = 200
+PREVIEW_STATE = 'preview_state.json'      # what a preview leaves in its --out so a later `save --from-preview` can reuse its finished passes
+PREVIEW_STATE_USED = 'preview_state.used.json'
 REVIEW_CAP = 50
 
 # prompt step 5 "Run doc review" lists (first 50 each, only the non-empty ones)
@@ -309,6 +312,101 @@ class LibLock:
             move_unique(self.path, self.lib / '_to_delete' / f'.sheet_task.lock.{self.run or "refresh"}')
 
 
+
+def library_lock_check(lib: Path, keep_lock: bool) -> list:
+    """the library lock of the manual procedure (read only here): a fresh one refuses (LOCKED); a stale one is noted. Returns the warnings."""
+    warnings = []
+    libl = lib / '.sheet_task.lock'
+    if libl.is_file():
+        age = (utc_now().timestamp() - libl.stat().st_mtime) / 60
+        try:
+            parts = libl.read_text(encoding='utf-8').split()
+            t = parse_iso(parts[-1]) if parts else None
+            if t:
+                age = (utc_now() - t).total_seconds() / 60
+        except OSError:
+            pass
+        if age < LOCK_MINUTES:
+            raise Refuse('LOCKED', f'another save was writing (library lock {age:.0f} min old); ask me to save again in a few minutes.',
+                         {'lock': str(libl)})
+        warnings.append(f'stale library lock {libl.name} ({age:.0f} min old) ignored; ' +
+                        ('it is set aside under _to_delete/' if keep_lock else 'preview does not move it'))
+    return warnings
+
+
+# ---------------------------------------------------------------- reusing a preview's finished passes (`save --from-preview`)
+
+
+class NoReuse(Exception):
+    """the preview in --from-preview cannot be reused; the message says why. save then runs the whole pipeline as usual."""
+
+
+def saver_version() -> str:
+    """a fingerprint of the save program itself (its three source files): a preview made by other code is never reused"""
+    h = hashlib.sha256()
+    for n in ('saver.py', 'saver_diff.py', 'saver_steps.py'):
+        h.update(n.encode() + b'\0' + (Path(__file__).resolve().parent / n).read_bytes() + b'\0')
+    return h.hexdigest()[:16]
+
+
+def tree_sha(p) -> str:
+    """sha256 over (relative path, content sha) of every file under p (a folder or one file); '' when p is None"""
+    if not p:
+        return ''
+    p = Path(p)
+    h = hashlib.sha256()
+    files = [p] if p.is_file() else sorted(f for f in p.rglob('*') if f.is_file())
+    for f in files:
+        h.update((f.name if p.is_file() else f.relative_to(p).as_posix()).encode('utf-8') + b'\0' + S.sha256_file(f).encode() + b'\0')
+    return h.hexdigest()
+
+
+def stat_sha(p) -> str:
+    """like tree_sha but from (relative path, size) only: for big folders the preview merely reads (copies, photo cache)"""
+    if not p:
+        return ''
+    p = Path(p)
+    h = hashlib.sha256()
+    for f in sorted(f for f in p.rglob('*') if f.is_file()):
+        h.update(f.relative_to(p).as_posix().encode('utf-8') + b'\0' + str(f.stat().st_size).encode() + b'\0')
+    return h.hexdigest()
+
+
+def cand_stamp(lib: Path, cands) -> str:
+    """release candidate files the passes read from the library in place: path, size, mtime"""
+    h = hashlib.sha256()
+    for c in sorted(cands or []):
+        f = lib / Path(*c.split('/'))
+        try:
+            st = f.stat()
+            h.update(f'{c}\0{st.st_size}\0{st.st_mtime_ns}\0'.encode('utf-8'))
+        except OSError:
+            h.update(f'{c}\0missing\0'.encode('utf-8'))
+    return h.hexdigest()
+
+
+def reuse_inputs(a, today: str, cands, collided) -> dict:
+    """everything the finished passes depend on, besides the files they leave in --out. A preview is reused only if all of it is unchanged."""
+    return {'workbook': str(Path(a.workbook).resolve()), 'library': str(Path(a.library).resolve()), 'today': today,
+            'run_arg': a.run or '', 'refresh': bool(a.refresh), 'source_id': getattr(a, 'source_id', None) or '',
+            'pipeline_list_sha': S.sha256_file(Path(a.pipeline) / S.PIPELINE_SHA), 'saver_version': saver_version(),
+            'db_sha': tree_sha(a.db), 'queue_sha': tree_sha(a.queue), 'idmap_sha': tree_sha(a.idmap), 'img_cache': stat_sha(a.img_cache),
+            'copies': stat_sha(a.copies), 'candidates': cand_stamp(Path(a.library), cands), 'collided': sorted(collided),
+            'env': {k: os.environ.get(k, '') for k in ('AJG_LINK_PHOTOS', 'AJG_NO_NETWORK')}}
+
+
+def write_preview_state(out: Path, res: dict, ctx: dict, inputs: dict, cands) -> None:
+    keys = ('run', 'today', 'out_name', 'before_sha', 'after_sha', 'pages', 'removed_files', 'token', 'rows_before', 'rows_after', 'rows_added', 'cells_filled')
+    try:
+        # the preview's outputs the save will use, as they are now (the pipeline copy is not among them: sheet_task updates its own copy of
+        # lookup_cache.json, outlets.json ... while it runs, as it does in a full save)
+        files = {'pages': tree_sha(out / 'pages'), 'writeback': S.sha256_file(out / 'writeback.json')}
+        write_json(out / PREVIEW_STATE, {'format': 1, 'at': res['at'], 'inputs': inputs, 'cands': list(cands or []), 'files': files,
+                                         'ctx': {k: ctx[k] for k in keys}, 'res': res})
+    except OSError:
+        pass       # a preview that cannot leave its state is simply not reusable
+
+
 # ---------------------------------------------------------------- the preview
 
 
@@ -345,7 +443,11 @@ def build_parser():
         p.add_argument('--idmap')
         p.add_argument('--img-cache')
         p.add_argument('--json')
+        p.add_argument('--source-id', help='opaque id of what the --db was made from (the update zip\'s sha256); recorded by a preview and compared by save --from-preview')
         if verb == 'save':
+            p.add_argument('--from-preview', metavar='DIR', help='reuse the finished passes of the preview made in DIR (its --out) when it is still valid '
+                           '(same workbook, update, pipeline, program, token, younger than 30 minutes); otherwise run everything as usual. '
+                           'All of save\'s own checks (locks, Excel, checksum, backup, checked swap, ledger, library) run either way.')
             p.add_argument('--token', help='preview token; save refuses (TOKEN_STALE) unless its own fresh diff gives the same token')
             p.add_argument('--master-is-local', action='store_true', help='--workbook is the master itself: the ledger entry is confirmed at once')
             p.add_argument('--no-rebuild', action='store_true', help='skip step 14 (rebuild into OUT/site)')
@@ -584,22 +686,7 @@ def run_preview(a, keep_lock=False) -> tuple:
     try:
         # --- step 2: process lock; the library lock of the manual procedure (read only here)
         lock.acquire()
-        libl = lib / '.sheet_task.lock'
-        warnings = []
-        if libl.is_file():
-            age = (utc_now().timestamp() - libl.stat().st_mtime) / 60
-            try:
-                parts = libl.read_text(encoding='utf-8').split()
-                t = parse_iso(parts[-1]) if parts else None
-                if t:
-                    age = (utc_now() - t).total_seconds() / 60
-            except OSError:
-                pass
-            if age < LOCK_MINUTES:
-                raise Refuse('LOCKED', f'another save was writing (library lock {age:.0f} min old); ask me to save again in a few minutes.',
-                             {'lock': str(libl)})
-            warnings.append(f'stale library lock {libl.name} ({age:.0f} min old) ignored; ' +
-                            ('it is set aside under _to_delete/' if keep_lock else 'preview does not move it'))
+        warnings = library_lock_check(lib, keep_lock)
         if keep_lock:
             liblock.write()
         # --- step 3: Excel
@@ -782,13 +869,14 @@ def run_preview(a, keep_lock=False) -> tuple:
         })
         if not a.queue and res['queue']['queue_applied']:
             raise Refuse('VERIFY_FAILED', 'queue items were applied although no --queue was given', {})
+        ctx = {'liblock': liblock, 'w': w, 'lib': lib, 'backups': Path(a.backups), 'state': state, 'out': out, 'pipe': pipe, 'run': run,
+               'today': today, 'out_xlsx': out_xlsx, 'out_name': out_name, 'before_sha': before_sha, 'after_sha': after_sha,
+               'pages': pages, 'removed_files': removed_files, 'result': result, 'result2': result2, 'token': token,
+               'rows_before': rep.rows_before.get('Coverage'), 'rows_after': rep.rows_after.get('Coverage'),
+               'rows_added': summ['rows_added'].get('Coverage', 0), 'cells_filled': sum(summ['cells_filled'].values())}
+        write_preview_state(out, res, ctx, reuse_inputs(a, today, cands, collided), cands)     # so a later `save --from-preview` can skip the passes
         if keep_lock:
             handed_over = True
-            ctx = {'liblock': liblock, 'w': w, 'lib': lib, 'backups': Path(a.backups), 'state': state, 'out': out, 'pipe': pipe, 'run': run,
-                   'today': today, 'out_xlsx': out_xlsx, 'out_name': out_name, 'before_sha': before_sha, 'after_sha': after_sha,
-                   'pages': pages, 'removed_files': removed_files, 'result': result, 'result2': result2, 'token': token,
-                   'rows_before': rep.rows_before.get('Coverage'), 'rows_after': rep.rows_after.get('Coverage'),
-                   'rows_added': summ['rows_added'].get('Coverage', 0), 'cells_filled': sum(summ['cells_filled'].values())}
             return res, EXIT_OK, lock, ctx
         return res, EXIT_OK
     finally:
@@ -1008,15 +1096,127 @@ def release_all(lock, liblock):
                 pass
 
 
+def reuse_preview(a, today: str):
+    """`save --from-preview DIR` (SAVER_SPEC section 6, token window): take the preview's finished passes (sheet_task pass 1 and 2, build_data, relmatch
+    and the independent diff) instead of running them again, when everything they depended on is unchanged. Returns (res, EXIT_OK, lock, ctx) like
+    run_preview(keep_lock=True), working in DIR itself. Raises NoReuse (nothing held) for any reason to run the whole pipeline instead, and Refuse for
+    what a full run would refuse as well (LOCKED, EXCEL_OPEN, SHA_MISMATCH ...). The locks, Excel, ledger and sha checks run here, under the lock."""
+    d = Path(a.from_preview)
+    sf = d / PREVIEW_STATE
+    if not sf.is_file():
+        raise NoReuse('that preview was already used by a save' if (d / PREVIEW_STATE_USED).is_file() else f'{d} holds no reusable preview')
+    try:
+        st = read_json(sf)
+        pv = read_json(d / 'preview.json')
+        c0, inp, res = st['ctx'], st['inputs'], st['res']
+    except (OSError, ValueError, KeyError):
+        raise NoReuse('the preview state is unreadable')
+    if st.get('format') != 1:
+        raise NoReuse('the preview state is from another format')
+    w, lib, pipe = Path(a.workbook), Path(a.library), Path(a.pipeline)
+    # age: the token window of SAVER_SPEC section 6, from the preview's own time stamp
+    at = parse_iso(st.get('at'))
+    age = (utc_now() - at).total_seconds() / 60 if at else None
+    if age is None or age > TOKEN_MINUTES or age < -1:
+        raise NoReuse(f'the preview is {"of unknown age" if age is None else f"{age:.0f} minutes old"} (limit {TOKEN_MINUTES})')
+    # token: the caller's, the preview's, and one recomputed from the diff file kept with the preview
+    if not a.token:
+        raise NoReuse('no token was given')
+    try:
+        tsv = (d / 'diff.tsv').read_text(encoding='utf-8')
+        again = D.preview_token(c0['run'] or '', c0['before_sha'], tsv)
+    except OSError:
+        raise NoReuse('the preview has no diff file')
+    if not (a.token == c0['token'] == pv.get('token') == again):
+        raise NoReuse('the token does not match the preview')
+    if S.sha256_file(d / 'diff.tsv') != pv.get('diff_sha'):
+        raise NoReuse('the preview\'s diff file changed')
+    # the inputs the passes depended on
+    now = reuse_inputs(a, today, st.get('cands'), [p for p in c0['pages'] if (lib / Path(*p.split('/'))).exists()])
+    why = {'workbook': 'a different workbook file', 'library': 'a different library', 'today': 'a different date', 'run_arg': 'a different run',
+           'refresh': 'a different refresh setting', 'source_id': 'the update zip changed', 'pipeline_list_sha': 'the pipeline changed',
+           'saver_version': 'the save program changed', 'db_sha': 'the update\'s data changed', 'queue_sha': 'the queue changed',
+           'idmap_sha': 'the id map changed', 'img_cache': 'the photo cache changed', 'copies': 'the tracker copies changed',
+           'candidates': 'a release page in the library changed', 'collided': 'library files appeared or went since the preview',
+           'env': 'the environment differs'}
+    for k, v in inp.items():
+        if now.get(k) != v:
+            raise NoReuse(why.get(k, f'{k} changed'))
+    try:
+        pv_ = S.verify_pipeline(pipe)
+    except FileNotFoundError:
+        raise NoReuse('PIPELINE.sha256 is missing')
+    if pv_['missing'] or pv_['mismatch']:
+        raise NoReuse('pipeline files differ from their checksum list')
+    out_xlsx = d / c0['out_name']
+    try:
+        if S.sha256_file(d / 'in.xlsx') != c0['before_sha']:
+            raise NoReuse('the preview\'s copy of the workbook changed')
+        if S.sha256_file(out_xlsx) != c0['after_sha']:
+            raise NoReuse('the preview\'s staged workbook changed')
+    except OSError:
+        raise NoReuse('a file of the preview is missing')
+    for need in ('writeback.json', 'result.json', 'result2.json'):
+        if not (d / need).is_file():
+            raise NoReuse(f'the preview has no {need}')
+    if any(not (d / 'pages' / Path(*p.split('/'))).is_file() for p in c0['pages']):
+        raise NoReuse('a library page of the preview is missing')
+    if tree_sha(d / 'pages') != (st.get('files') or {}).get('pages') or S.sha256_file(d / 'writeback.json') != (st.get('files') or {}).get('writeback'):
+        raise NoReuse('the preview\'s pages or write-back file changed')
+    # under the lock, the same checks a full save makes first
+    run = c0['run']
+    lock = ProcessLock(Path(a.state) if a.state else w.parent / '.saver', run)
+    liblock = LibLock(lib, run)
+    handed = False
+    try:
+        lock.acquire()
+        warnings = library_lock_check(lib, True)
+        liblock.write()
+        check_excel(w)
+        ident = check_identity(w, lock.state)
+        if ident['before_sha'] != c0['before_sha']:
+            raise NoReuse('the workbook changed since the preview')
+        lock.refresh()
+        res = dict(res)
+        res.update(verb='save', warnings=list(res.get('warnings') or []) + warnings,
+                   reused_preview={'dir': str(d), 'preview_at': st['at'], 'age_minutes': round(age, 1),
+                                   'reused': ['sheet_task pass 1', 'build_data', 'relmatch', 'sheet_task pass 2', 'independent diff'],
+                                   'rechecked': ['locks', 'Excel', 'workbook checksum and ledger', 'token', 'pipeline checksums', 'inputs']})
+        ctx = {k: c0[k] for k in ('run', 'today', 'out_name', 'before_sha', 'after_sha', 'pages', 'removed_files', 'token', 'rows_before',
+                                  'rows_after', 'rows_added', 'cells_filled')}
+        ctx.update(liblock=liblock, w=w, lib=lib, backups=Path(a.backups), state=lock.state, out=d, pipe=pipe, out_xlsx=out_xlsx)
+        handed = True
+        return res, EXIT_OK, lock, ctx
+    finally:
+        if not handed:
+            release_all(lock, liblock)
+
+
+
 def cmd_save(a) -> int:
     today = a.today or la_today()
+    reused, full_reason = False, None
 
     def jp():
+        if reused:       # the preview's own result file stays as it is
+            return a.json or str(Path(a.from_preview) / 'saver_result_save.json')
         return a.json or (str(Path(a.out) / 'saver_result.json') if getattr(a, '_out_ready', False) else None)
     try:
-        res, code, lock, ctx = run_preview(a, keep_lock=True)
+        if getattr(a, 'from_preview', None):
+            try:
+                res, code, lock, ctx = reuse_preview(a, today)
+                reused = True
+            except NoReuse as e:
+                full_reason = str(e)
+        if not reused:
+            res, code, lock, ctx = run_preview(a, keep_lock=True)
+            if full_reason:
+                res['full_run_reason'] = 'the preview was not reused: ' + full_reason
     except Refuse as e:
-        return emit(refusal_result('save', a.run, today, e), jp(), e.exit_code)
+        r = refusal_result('save', a.run, today, e)
+        if full_reason:
+            r['full_run_reason'] = 'the preview was not reused: ' + full_reason
+        return emit(r, jp(), e.exit_code)
     except Exception as e:
         return emit(refusal_result('save', a.run, today, Refuse('BAD_ARGS', f'unexpected error: {e!r}'[:300], {}, EXIT_BAD)), jp(), EXIT_BAD)
     liblock, out, state = ctx['liblock'], ctx['out'], ctx['state']
@@ -1038,6 +1238,11 @@ def cmd_save(a) -> int:
                'pages': ctx['pages'], 'removed_files': ctx['removed_files']}
         done = commit(job, lock)       # steps 11 and 12
         committed = True
+        if reused:                     # the preview's passes belong to the workbook that was just replaced: never reusable again
+            try:
+                os.replace(out / PREVIEW_STATE, out / PREVIEW_STATE_USED)
+            except OSError:
+                pass
         at = iso(utc_now())
         rec = {'at': at, 'verb': 'save', 'run': ctx['run'], 'before_sha': ctx['before_sha'], 'after_sha': ctx['after_sha'], 'backup': done['backup'],
                'out_name': ctx['out_name'], 'rows_before': ctx['rows_before'], 'rows_after': ctx['rows_after'], 'rows_added': ctx['rows_added'],
@@ -1084,6 +1289,8 @@ def cmd_save(a) -> int:
     except Refuse as e:
         r = refusal_result('save', ctx.get('run'), today, e)
         r['workbook'] = {'path': str(ctx.get('w')), 'before_sha': ctx.get('before_sha')}
+        if res.get('full_run_reason'):
+            r['full_run_reason'] = res['full_run_reason']
         if e.detail.get('backup'):
             r['workbook']['backup'] = Path(str(e.detail['backup'])).name
         return emit(r, jp(), e.exit_code, post_commit=committed)

@@ -24,12 +24,27 @@
 | `--token T` | Save refuses (`TOKEN_STALE`) unless its own fresh diff gives this token. |
 | `--master-is-local` | `W` is the master itself: the ledger entry is confirmed at once. Otherwise run `confirm --sha` after the adapter has put the file where the master lives. |
 | `--no-rebuild` | Skip the page rebuild. |
+| `--source-id ID` | (preview and save) An opaque id of what `--db` was made from, for the PC the update zip's sha256. A preview records it; `--from-preview` compares it. |
+| `--from-preview DIR` | (save) Reuse the finished passes of the preview made in `DIR` (its `--out`): see "Reusing a preview" below. |
 
 `init` seeds the ledger; it is also how Sammy's own Excel edit is accepted as the new baseline. A save refuses while the last save is unconfirmed.
 
 ## What save does
 
 Steps 1 to 9 are the preview (the same code). Then, under the same lock with no gap: token check; backup (`<stem> BACKUP before run <run> <date time LA>.xlsx`, checksum verified, never overwrites); re-check of checksum and Excel; the new workbook copied beside the master under a unique name and swapped in with `os.replace`; checksum verified. Then library pages (add-only; an existing name is skipped and listed), removed stories' files moved to `LIB/_to_delete/<same path>` with a line in `_moves_<date>.tsv` (never overwritten there; a numbered name is used). Then the ledger line, the log (`S/logs/save-<run>-<time>.log`), backup retention, the rebuild. Both locks are moved, never deleted (`S/logs/lock.*`, `LIB/_to_delete/.sheet_task.lock.<run>`).
+
+## Reusing a preview (`save --from-preview DIR`)
+
+A preview and the save that follows it would run the slow part (sheet_task pass 1, build_data, relmatch, sheet_task pass 2, the independent diff) twice. A preview now leaves `preview_state.json` in its `--out`, and `save --from-preview DIR` works in `DIR` itself, skipping those passes, when all of these still hold. If any fails, save says why (`full_run_reason` in the result) and runs everything as before in its own `--out`.
+
+- the token given to save is the preview's token, and it matches the one recomputed from the preview's `diff.tsv`;
+- the preview is not older than 30 minutes (`preview_state.json` `at`; SAVER_SPEC section 6);
+- the same workbook (checksum, ledger) and the same save program (a checksum of `saver.py`, `saver_diff.py`, `saver_steps.py`);
+- the same pipeline (`PIPELINE.sha256` file unchanged, every listed file still matches, in the pipeline folder and in the preview's copy);
+- the same update: `--source-id` equal, and the `--db` folder's contents equal (checksum of every file); also queue, id map, today, run, `--refresh`, the tracker copies folder (names and sizes), the photo cache, the release pages read from the library, and which library pages already existed;
+- the preview's input and staged workbook, its diff file and its pages are byte for byte as the preview left them.
+
+What still runs at save time, under the lock, as in a full save: the process lock and library lock, the Excel check, the workbook checksum against the ledger, the token check, the backup (checksum verified), the re-check just before the swap, the checked swap, library pages (add-only, existing names skipped and listed), removals moved, the ledger line, backup retention, the rebuild. The result carries `reused_preview` (folder, age, what was reused and rechecked). A used preview is renamed `preview_state.used.json` and cannot be reused again; a refused save leaves it usable. A reused save writes its result to `DIR/saver_result_save.json` (not over the preview's own result).
 
 Token: valid when it matches; there is no clock, because save recomputes the diff itself. The token covers the diff of changed cells, not the workbook's bytes.
 

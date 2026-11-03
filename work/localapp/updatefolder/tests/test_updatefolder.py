@@ -449,6 +449,9 @@ class ThroughSaver(unittest.TestCase):
         sv = TU.save(self.lay, uid, pv['diff']['token'], saver=SAVER, today='2026-10-30')
         self.assertEqual((sv['exit_code'], sv.get('refusal')), (0, None), sv)
         self.assertTrue(sv['written'] and sv['confirmed'])
+        self.assertIn('reused_preview', sv)                                        # the save took the preview's finished passes
+        self.assertEqual(sv['out_dir'], pv['out_dir'])
+        self.assertEqual(sorted(p.name for p in (self.lay.updates / 'work' / uid).iterdir() if p.is_dir()), [Path(pv['out_dir']).name])   # no second pipeline folder
         self.assertNotEqual(sha(self.lay.workbook), self.sha)
         self.assertEqual(sha(next(self.lay.backups.glob('*.xlsx'))), self.sha)     # backup of the old workbook
         # the run doc is now in the tracker's store, marked written, with the real ids
@@ -463,6 +466,30 @@ class ThroughSaver(unittest.TestCase):
         # the next for-Update memory sees the run as saved
         mem = MFU.button_memory(self.lay.db)
         self.assertNotIn('unsaved_rows', mem['runs']['run-example1'])
+
+    def test_save_without_reuse_runs_everything_again(self):
+        r = TU.inspect_update(self.zip, self.lay)
+        uid = r['update_id']
+        pv = TU.preview(self.lay, uid, saver=SAVER, today='2026-10-30')
+        sv = TU.save(self.lay, uid, pv['diff']['token'], saver=SAVER, today='2026-10-30', reuse_preview=False)
+        self.assertEqual((sv['exit_code'], sv.get('refusal')), (0, None), sv)
+        self.assertNotIn('reused_preview', sv)
+        self.assertNotEqual(sv['out_dir'], pv['out_dir'])
+        self.assertTrue(sv['written'])
+
+    def test_save_after_the_workbook_changed_does_not_reuse(self):
+        r = TU.inspect_update(self.zip, self.lay)
+        uid = r['update_id']
+        pv = TU.preview(self.lay, uid, saver=SAVER, today='2026-10-30')
+        mini = load_mini()
+        mini.make(str(self.lay.workbook), [mini.row(**{'Article ID': '10001', 'Story ID': 's00001', 'Original or reprint': 'Original',
+                                                      'Date': '2026-10-01', 'Year': '2026', 'Outlet': 'Old Gazette', 'Headline': 'Edited by hand'})])
+        TU.init_baseline(self.lay, saver=SAVER)                                    # the hand edit is accepted as the new baseline
+        sv = TU.save(self.lay, uid, pv['diff']['token'], saver=SAVER, today='2026-10-30', accept_mismatch=True)
+        self.assertNotIn('reused_preview', sv)
+        self.assertEqual(sv['refusal']['code'], 'TOKEN_STALE')                     # a fresh full diff is against another workbook
+        self.assertIn('workbook', sv['full_run_reason'])
+        self.assertTrue((self.lay.updates / 'staging' / uid).is_dir())
 
     def test_save_with_wrong_token_changes_nothing(self):
         r = TU.inspect_update(self.zip, self.lay)

@@ -3,7 +3,7 @@
 
     python3 -I take_update.py inspect --app-root APP --zip UPDATE.zip
     python3 -I take_update.py preview --app-root APP --update ID [--accept-mismatch] [--today D]
-    python3 -I take_update.py save    --app-root APP --update ID --token T [--accept-mismatch] [--rebuild]
+    python3 -I take_update.py save    --app-root APP --update ID --token T [--accept-mismatch] [--rebuild] [--no-reuse]
     python3 -I take_update.py init    --app-root APP        (accept the workbook as it is now as the baseline; saver init)
 
 Data only (GOVIT-v1): the zip is checked against an allow-list (manifest.json and db/<collection>/<id>.json), size and file-count caps
@@ -175,8 +175,26 @@ def _db_for_saver(layout: PCLayout, stage: Path, work: Path, include_local_edits
     return comp
 
 
+def staged_zip_sha(stage: Path) -> str:
+    """the sha256 of the update zip this staged update came from (written by inspect_update)"""
+    try:
+        return (stage / 'zip_sha256.txt').read_text(encoding='utf-8').split()[0]
+    except (OSError, IndexError):
+        return ''
+
+
+def latest_preview_dir(work: Path):
+    """the newest preview output folder of this update that still holds a reusable preview (the saver decides whether it is valid)"""
+    best = None
+    for d in work.glob('preview-*'):
+        sf = d / 'preview_state.json'
+        if sf.is_file() and (best is None or sf.stat().st_mtime_ns > best[0]):
+            best = (sf.stat().st_mtime_ns, d)
+    return best[1] if best else None
+
+
 def run_saver(layout: PCLayout, verb: str, update_id: str, *, accept_mismatch=False, token=None, today=None, saver=None, rebuild=False,
-              include_local_edits=False, run=None) -> dict:
+              include_local_edits=False, run=None, reuse_preview=True) -> dict:
     stage = _stage(layout, update_id)
     fp = _check_fingerprint(stage, layout, accept_mismatch)
     sv = find_saver(layout, saver)
@@ -188,6 +206,9 @@ def run_saver(layout: PCLayout, verb: str, update_id: str, *, accept_mismatch=Fa
            '--copies', str(layout.copies), '--library', str(layout.library), '--backups', str(layout.backups), '--out', str(out),
            '--state', str(layout.state), '--json', str(out.with_name(out.name + '.result.json'))]
     # NOQUEUE-v1: the review queue is gone from the PC tracker; the save is never given --queue
+    zsha = staged_zip_sha(stage)
+    if zsha:
+        cmd += ['--source-id', zsha]       # the saver records it in a preview and compares it in a save (REUSE: same update zip)
     if today:
         cmd += ['--today', today]
     if run:
@@ -196,6 +217,9 @@ def run_saver(layout: PCLayout, verb: str, update_id: str, *, accept_mismatch=Fa
         if not token:
             raise ValueError('save needs the token from the preview')
         cmd += ['--token', token, '--master-is-local']
+        pdir = latest_preview_dir(work) if reuse_preview else None
+        if pdir:
+            cmd += ['--from-preview', str(pdir)]     # the saver reuses that preview's finished passes if it is still valid, else runs them again
         if not rebuild:
             cmd += ['--no-rebuild']
     layout.backups.mkdir(parents=True, exist_ok=True)
@@ -206,7 +230,7 @@ def run_saver(layout: PCLayout, verb: str, update_id: str, *, accept_mismatch=Fa
     except (ValueError, IndexError):
         res = {'ok': False, 'line': 'the save program gave no result', 'stderr': p.stderr[-800:], 'raw': p.stdout[-800:]}
     res['exit_code'] = p.returncode
-    res['out_dir'] = str(out)
+    res['out_dir'] = str((res.get('reused_preview') or {}).get('dir') or out)     # a reused save works in the preview's own folder
     res['fingerprint'] = fp
     res['update_id'] = update_id
     return res
@@ -445,6 +469,7 @@ def main(argv=None) -> int:
     ap.add_argument('--accept-mismatch', action='store_true', help='go on although the update was made from a different workbook')
     ap.add_argument('--rebuild', action='store_true')
     ap.add_argument('--include-local-edits', action='store_true')
+    ap.add_argument('--no-reuse', action='store_true', help='save: run the whole pipeline again instead of reusing the preview\'s finished passes')
     a = ap.parse_args(argv)
     lay = PCLayout(a.app_root)
     try:
@@ -462,7 +487,7 @@ def main(argv=None) -> int:
         if not a.update:
             ap.error(f'{a.verb} needs --update')
         kw = dict(accept_mismatch=a.accept_mismatch, today=a.today, saver=a.saver, include_local_edits=a.include_local_edits)
-        r = preview(lay, a.update, **kw) if a.verb == 'preview' else save(lay, a.update, a.token, rebuild=a.rebuild, **kw)
+        r = preview(lay, a.update, **kw) if a.verb == 'preview' else save(lay, a.update, a.token, rebuild=a.rebuild, reuse_preview=not a.no_reuse, **kw)
         print(json.dumps(r, default=str))
         return r['exit_code']
     except F.UpdateRefused as e:

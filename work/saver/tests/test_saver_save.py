@@ -570,5 +570,225 @@ class EndToEnd(unittest.TestCase):
         self.assertTrue(e.untouched())
 
 
-if __name__ == '__main__':
-    unittest.main()
+# ---------------------------------------------------------------- save --from-preview (reuse of a preview's finished passes)
+
+
+def cells(path):
+    import openpyxl
+    wb = openpyxl.load_workbook(path, read_only=True)
+    return {ws.title: [list(r) for r in ws.iter_rows(values_only=True)] for ws in wb.worksheets}
+
+
+class ReusePreview(unittest.TestCase):
+    """save --from-preview DIR takes the finished passes of the preview in DIR when it is still valid, and runs everything as before otherwise.
+    Save's own checks (locks, Excel, checksum, backup, checked swap, ledger, library add-only) run in both cases."""
+
+    def preview(self, e, *extra):
+        out1 = e.out()
+        code, pv = cli(*e.args('preview', out1), *extra)
+        self.assertEqual(code, 0, pv)
+        return out1, pv['diff']['token']
+
+    def save(self, e, out1, token, *extra, out2=None):
+        out2 = out2 or e.out()
+        code, res = cli(*e.args('save', out2), '--no-rebuild', '--master-is-local', '--token', token, '--from-preview', out1, *extra)
+        return code, res, out2
+
+    def logs(self, out):
+        return {f.name: f.stat().st_mtime_ns for f in (out / 'logs').iterdir()}
+
+    def test_valid_preview_is_reused_and_the_pipeline_is_not_run_again(self):
+        e = Env()
+        before = sha(e.master)
+        out1, tok = self.preview(e)
+        logs0 = self.logs(out1)
+        self.assertTrue(any(n.startswith('pass1') for n in logs0) and any(n.startswith('pass2') for n in logs0))
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertEqual((code, res['refusal']), (0, None), res)
+        self.assertTrue(res['written'] and res['confirmed'])
+        self.assertEqual(res['reused_preview']['dir'], str(out1))
+        self.assertNotIn('full_run_reason', res)
+        self.assertFalse(out2.exists(), 'a reused save needs no working folder of its own')
+        self.assertEqual(self.logs(out1), logs0, 'no pass ran again (no log file added or rewritten)')
+        # save's own work was done
+        wb = res['workbook']
+        self.assertEqual(sha(e.master), wb['after_sha'])
+        self.assertEqual(sha(e.backups / wb['backup']), before)
+        led = SV.read_ledger(e.state)[-1]
+        self.assertEqual((led['verb'], led['before_sha'], led['after_sha'], led['confirmed']), ('save', before, wb['after_sha'], True))
+        self.assertEqual(res['library']['pages_added'], ['2026/ws10002o-s04297.html', '_original_html/2026/ws10002o-s04297.html'])
+        self.assertTrue((e.lib / '2026' / 'ws10002o-s04297.html').is_file())
+        self.assertFalse((e.state / 'saver.lock').exists())
+        self.assertFalse((e.lib / '.sheet_task.lock').exists())
+        self.assertTrue((e.lib / '_to_delete' / '.sheet_task.lock.run-example1').is_file())
+        self.assertTrue(Path(res['log']).is_file())
+        self.assertTrue((out1 / 'writeback.json').is_file())
+        self.assertTrue(json.loads((out1 / 'saver_result_save.json').read_text())['written'])
+        # the preview is used up
+        self.assertFalse((out1 / 'preview_state.json').exists())
+        self.assertTrue((out1 / 'preview_state.used.json').is_file())
+        # the workbook's cells are those of a full save of the same update
+        f = Env()
+        code, fres = f.save('--no-rebuild', '--master-is-local')
+        self.assertEqual(code, 0, fres)
+        self.assertEqual(cells(e.master), cells(f.master))
+        self.assertEqual(fres['diff']['rows_added'], res['diff']['rows_added'])
+
+    def test_token_given_by_the_caller_must_match(self):
+        e = Env()
+        out1, tok = self.preview(e)
+        code, res, out2 = self.save(e, out1, 'deadbeefdeadbeef')
+        self.assertEqual((code, res['refusal']['code']), (2, 'TOKEN_STALE'))
+        self.assertIn('token', res['full_run_reason'])
+        self.assertTrue((out2 / 'logs').is_dir(), 'the whole pipeline ran instead')
+        self.assertEqual(list(e.backups.iterdir()), [])
+        self.assertTrue((out1 / 'preview_state.json').is_file(), 'a refused save leaves the preview usable')
+
+    def test_workbook_changed_runs_the_whole_pipeline(self):
+        e = Env()
+        out1, tok = self.preview(e)
+        import openpyxl
+        wb = openpyxl.load_workbook(e.master)
+        wb['Coverage']['A1'].value = wb['Coverage']['A1'].value       # same values, new bytes
+        wb.properties.title = 'edited in Excel'
+        wb.save(e.master)
+        cli('init', '--workbook', e.master, '--state', e.state, '--sha', sha(e.master))       # Sammy's own edit accepted as the baseline
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertTrue((out2 / 'logs').is_dir(), 'the whole pipeline ran instead')
+        self.assertNotIn('reused_preview', res)
+        self.assertIn('workbook', res['full_run_reason'])
+        self.assertEqual(res['refusal']['code'], 'TOKEN_STALE')       # the token covers the workbook's checksum: a fresh diff gives another one
+        self.assertEqual(list(e.backups.iterdir()), [])
+
+    def test_zip_changed_runs_the_whole_pipeline(self):
+        e = Env()
+        out1, tok = self.preview(e, '--source-id', 'zip-sha-A')
+        code, res, out2 = self.save(e, out1, tok, '--source-id', 'zip-sha-B')
+        self.assertEqual((code, res['refusal']), (0, None), res)
+        self.assertIn('zip', res['full_run_reason'])
+        self.assertTrue(any(n.name.startswith('pass1') for n in (out2 / 'logs').iterdir()))
+
+    def test_same_zip_is_reused(self):
+        e = Env()
+        out1, tok = self.preview(e, '--source-id', 'zip-sha-A')
+        code, res, out2 = self.save(e, out1, tok, '--source-id', 'zip-sha-A')
+        self.assertEqual((code, res['refusal']), (0, None), res)
+        self.assertIn('reused_preview', res)
+        self.assertFalse(out2.exists())
+
+    def test_db_changed_runs_the_whole_pipeline(self):
+        e = Env()
+        out1, tok = self.preview(e)
+        (e.db / 'edits').mkdir(exist_ok=True)
+        (e.db / 'edits' / 'sXXXXX.json').write_text('{"note":"x"}')
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertIn('data changed', res['full_run_reason'])
+        self.assertTrue((out2 / 'logs').is_dir())
+
+    def test_pipeline_changed_runs_the_whole_pipeline(self):
+        e = Env()
+        pipe = ROOT / f'pipe_reuse{Env.n}'
+        shutil.copytree(PIPE, pipe)
+        e.pipeline = pipe
+        out1, tok = self.preview(e)
+        with open(pipe / 'sheet_task.py', 'a', encoding='utf-8') as f:
+            f.write('\n# changed after the preview\n')
+        pipe_sha(pipe)
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertEqual((code, res['refusal']), (0, None), res)
+        self.assertIn('pipeline changed', res['full_run_reason'])
+        self.assertTrue(any(n.name.startswith('pass1') for n in (out2 / 'logs').iterdir()))
+
+    def test_preview_too_old_runs_the_whole_pipeline(self):
+        e = Env()
+        out1, tok = self.preview(e)
+        sf = out1 / 'preview_state.json'
+        st = json.loads(sf.read_text())
+        old = SV.iso(SV.utc_now() - SV.dt.timedelta(minutes=31))
+        st['at'] = old
+        sf.write_text(json.dumps(st))
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertEqual((code, res['refusal']), (0, None), res)
+        self.assertIn('minutes old', res['full_run_reason'])
+        self.assertTrue(any(n.name.startswith('pass1') for n in (out2 / 'logs').iterdir()))
+
+    def test_other_saver_version_runs_the_whole_pipeline(self):
+        e = Env()
+        out1, tok = self.preview(e)
+        sf = out1 / 'preview_state.json'
+        st = json.loads(sf.read_text())
+        st['inputs']['saver_version'] = 'another-version'
+        sf.write_text(json.dumps(st))
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertIn('save program changed', res['full_run_reason'])
+        self.assertEqual(code, 0, res)
+
+    def test_a_staged_file_changed_after_the_preview_is_not_trusted(self):
+        e = Env()
+        out1, tok = self.preview(e)
+        x = [p for p in out1.iterdir() if p.name.startswith(MASTER[:-5] + ' SAVED')][0]
+        x.write_bytes(x.read_bytes() + b'0')
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertIn('staged workbook changed', res['full_run_reason'])
+        self.assertEqual(code, 0, res)
+
+    def test_pipeline_copy_updated_by_the_passes_does_not_prevent_reuse(self):
+        # sheet_task rewrites its own copy of lookup_cache.json, outlets.json ... while it runs, so the preview's pipeline copy never matches the list again
+        e = Env()
+        out1, tok = self.preview(e)
+        (out1 / 'pipeline' / 'lookup_cache.json').write_text('{"changed":"by the passes"}')
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertEqual((code, res['refusal']), (0, None), res)
+        self.assertIn('reused_preview', res)
+
+    def test_changed_page_of_the_preview_is_not_trusted(self):
+        e = Env()
+        out1, tok = self.preview(e)
+        page = next((out1 / 'pages').rglob('*.html'))
+        page.write_text(page.read_text(encoding='utf-8') + '<!-- x -->', encoding='utf-8')
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertIn('pages', res['full_run_reason'])
+        self.assertEqual(code, 0, res)
+
+    def test_save_checks_still_run_when_reusing(self):
+        e = Env()
+        out1, tok = self.preview(e)
+        (e.d / ('~$' + MASTER)).write_bytes(b'x')                      # Excel has the workbook open
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertEqual((code, res['refusal']['code']), (2, 'EXCEL_OPEN'))
+        self.assertTrue(e.untouched())
+        self.assertFalse((e.state / 'saver.lock').exists())
+        (e.d / ('~$' + MASTER)).unlink()
+        (e.state / 'saver.lock').write_text(json.dumps({'pid': 1, 'run': 'X', 'at': SV.iso(SV.utc_now()), 'host': 'h', 'token': 'other'}))
+        code, res, out2 = self.save(e, out1, tok)                       # another save holds the lock
+        self.assertEqual((code, res['refusal']['code']), (2, 'LOCKED'))
+        self.assertTrue(e.untouched() or not list(e.backups.iterdir()))
+        (e.state / 'saver.lock').unlink()
+        (e.lib / '.sheet_task.lock').write_text('other-run ' + SV.iso(SV.utc_now()))       # the library lock of another save
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertEqual((code, res['refusal']['code']), (2, 'LOCKED'))
+        self.assertEqual(list(e.backups.iterdir()), [])
+        (e.lib / '.sheet_task.lock').unlink()
+        code, res, out2 = self.save(e, out1, tok)                       # all clear: reused
+        self.assertEqual((code, res['refusal']), (0, None), res)
+        self.assertIn('reused_preview', res)
+
+    def test_existing_library_page_is_skipped_and_listed_when_reusing(self):
+        e = Env()
+        (e.lib / '2026').mkdir(exist_ok=True)
+        (e.lib / '2026' / 'ws10002o-s04297.html').write_text('mine')
+        out1, tok = self.preview(e)
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertEqual((code, res['refusal']), (0, None), res)
+        self.assertIn('reused_preview', res)
+        self.assertEqual((e.lib / '2026' / 'ws10002o-s04297.html').read_text(), 'mine')
+        self.assertIn('2026/ws10002o-s04297.html', res['library']['pages_collided'])
+
+    def test_library_changed_since_the_preview_runs_the_whole_pipeline(self):
+        e = Env()
+        out1, tok = self.preview(e)
+        (e.lib / '2026').mkdir(exist_ok=True)
+        (e.lib / '2026' / 'ws10002o-s04297.html').write_text('mine')    # appeared after the preview named it as new
+        code, res, out2 = self.save(e, out1, tok)
+        self.assertIn('library files', res['full_run_reason'])
+        self.assertEqual((e.lib / '2026' / 'ws10002o-s04297.html').read_text(), 'mine')
