@@ -1,0 +1,62 @@
+tab,article_id,column,current,new,confidence,evidence
+Coverage,07129,Original or reprint,Reprint,Original,medium,"Chinese copy of Associated Press News Service, The English Original 00133 (2026-09-19): no credit and no shared byline; headline match 0.5"
+Coverage,07129,Story ID,s00044,"(new, for s00044/Chinese)",medium,earliest of its language group becomes the Original of a new story
+Coverage,07119,Story ID,s00044,"(new, for s00044/Chinese)",medium,"Chinese copy of Associated Press News Service, The English Original 00133 (2026-09-19): no credit and no shared byline; headline match 0.5"
+Coverage,00986,Original or reprint,Reprint,Original,medium,English copy of El Tiempo Spanish Original 10639 (2025-10-10): no credit and no shared byline; headline match None
+Coverage,00986,Story ID,s00252,"(new, for s00252/English)",medium,earliest of its language group becomes the Original of a new story
+Coverage,00991,Original or reprint,Reprint,Original,medium,Portuguese copy of El Tiempo Spanish Original 10639 (2025-10-10): no credit and no shared byline; headline match None
+Coverage,00991,Story ID,s00252,"(new, for s00252/Portuguese)",medium,earliest of its language group becomes the Original of a new story
+Coverage,01317,Original or reprint,Reprint,Original,low,"Spanish copy of Associated Press News Service, The English Original 01299 (2025-05-14): no credit and no shared byline; headline match 1.0"
+Coverage,01317,Story ID,s00353,"(new, for s00353/Spanish)",low,earliest of its language group becomes the Original of a new story
+Coverage,07807,Story ID,s00353,"(new, for s00353/Spanish)",low,"Spanish copy of Associated Press News Service, The English Original 01299 (2025-05-14): no credit and no shared byline; headline match None"
+Coverage,07806,Story ID,s00353,"(new, for s00353/Spanish)",low,"Spanish copy of Associated Press News Service, The English Original 01299 (2025-05-14): no credit and no shared byline; headline match 1.0"
+Coverage,01531,Original or reprint,Reprint,Original,medium,"Portuguese copy of Associated Press News Service, The English Original 01549 (2025-01-23): no credit and no shared byline; headline match 1.0"
+Coverage,01531,Story ID,s00430,"(new, for s00430/Portuguese)",medium,earliest of its language group becomes the Original of a new story
+Coverage,01532,Story ID,s00430,"(new, for s00430/Portuguese)",medium,"Portuguese copy of Associated Press News Service, The English Original 01549 (2025-01-23): no credit and no shared byline; headline match None"
+Coverage,08040,Original or reprint,Reprint,Original,low,"French copy of Associated Press News Service, The English Original 01714 (2024-12-02): wire against wire is never a reprint; headline match 1.0"
+Coverage,08040,Story ID,s00479,"(new, for s00479/French)",low,earliest of its language group becomes the Original of a new story
+Coverage,01829,Original or reprint,Reprint,Original,low,English copy of HealthDay Spanish Original 08145 (2024-10-01): no credit and no shared byline; headline match 1.0
+Coverage,01829,Story ID,s00512,"(new, for s00512/English)",low,earliest of its language group becomes the Original of a new story
+Coverage,01830,Story ID,s00512,"(new, for s00512/English)",low,English copy of HealthDay Spanish Original 08145 (2024-10-01): no credit and no shared byline; headline match 1.0
+Coverage,01831,Story ID,s00512,"(new, for s00512/English)",low,English copy of HealthDay Spanish Original 08145 (2024-10-01): no credit and no shared byline; headline match 1.0
+Coverage,01832,Story ID,s00512,"(new, for s00512/English)",low,English copy of HealthDay Spanish Original 08145 (2024-10-01): no credit and no shared byline; headline match 1.0
+Coverage,01833,Story ID,s00512,"(new, for s00512/English)",low,English copy of HealthDay Spanish Original 08145 (2024-10-01): no credit and no shared byline; headline match 1.0
+Coverage,01834,Story ID,s00512,"(new, for s00512/English)",low,English copy of HealthDay Spanish Original 08145 (2024-10-01): no credit and no shared byline; headline match 1.0
+Coverage,01835,Story ID,s00512,"(new, for s00512/English)",low,English copy of HealthDay Spanish Original 08145 (2024-10-01): no credit and no shared byline; headline match 1.0
+Coverage,01836,Story ID,s00512,"(new, for s00512/English)",low,English copy of HealthDay Spanish Original 08145 (2024-10-01): no credit and no shared byline; headline match 1.0
+Coverage,01837,Story ID,s00512,"(new, for s00512/English)",low,English copy of HealthDay Spanish Original 08145 (2024-10-01): no credit and no shared byline; headline match 1.0
+Coverage,01846,Original or reprint,Reprint,Original,medium,English copy of El País Spanish Original 01847 (2024-09-30): no credit and no shared byline; headline match 0.66
+Coverage,01846,Story ID,s00519,"(new, for s00519/English)",medium,earliest of its language group becomes the Original of a new story
+Coverage,01926,Original or reprint,Reprint,Original,medium,English copy of El Imparcial Spanish Original 01927 (2024-09-04): no credit and no shared byline; headline match 1.0
+Coverage,01926,Story ID,s00546,"(new, for s00546/English)",medium,earliest of its language group becomes the Original of a new story
+Coverage,01920,Original or reprint,Reprint,Original,low,Korean copy of USA TODAY English Original 01937 (2024-08-31): same byline/credit but 5 days apart (limit 2); headline match 0.21
+Coverage,01920,Story ID,s00552,"(new, for s00552/Korean)",low,earliest of its language group becomes the Original of a new story
+Coverage,02117,Original or reprint,Reprint,Original,low,Spanish copy of CALmatters English Original 10504 (2024-06-14): same byline/credit but 3 days apart (limit 2); headline match None
+Coverage,02117,Story ID,s00610,"(new, for s00610/Spanish)",low,earliest of its language group becomes the Original of a new story
+Coverage,02118,Story ID,s00610,"(new, for s00610/Spanish)",low,Spanish copy of CALmatters English Original 10504 (2024-06-14): same byline/credit but 3 days apart (limit 2); headline match 1.0
+Coverage,02885,Original or reprint,Reprint,Original,medium,English copy of Metro Puerto Rico Spanish Original 10640 (2023-10-14): no credit and no shared byline; headline match None
+Coverage,02885,Story ID,s00827,"(new, for s00827/English)",medium,earliest of its language group becomes the Original of a new story
+Coverage,02914,Original or reprint,Reprint,Original,medium,English copy of Expansion Spanish Original 02963 (2023-10-11): no credit and no shared byline; headline match 1.0
+Coverage,02914,Story ID,s00853,"(new, for s00853/English)",medium,earliest of its language group becomes the Original of a new story
+Coverage,02960,Original or reprint,Reprint,Original,medium,Portuguese copy of Expansion Spanish Original 02963 (2023-10-11): no credit and no shared byline; headline match 1.0
+Coverage,02960,Story ID,s00853,"(new, for s00853/Portuguese)",medium,earliest of its language group becomes the Original of a new story
+Coverage,03482,Original or reprint,Reprint,Original,low,English copy of CALmatters Spanish Original 03492 (2023-06-13): same byline/credit but 3 days apart (limit 2); headline match 1.0
+Coverage,03482,Story ID,s00985,"(new, for s00985/English)",low,earliest of its language group becomes the Original of a new story
+Coverage,03483,Story ID,s00985,"(new, for s00985/English)",low,English copy of CALmatters Spanish Original 03492 (2023-06-13): same byline/credit but 3 days apart (limit 2); headline match 1.0
+Coverage,03484,Story ID,s00985,"(new, for s00985/English)",low,English copy of CALmatters Spanish Original 03492 (2023-06-13): same byline/credit but 4 days apart (limit 2); headline match 1.0
+Coverage,03485,Story ID,s00985,"(new, for s00985/English)",low,English copy of CALmatters Spanish Original 03492 (2023-06-13): same byline/credit but 6 days apart (limit 2); headline match 1.0
+Coverage,03486,Story ID,s00985,"(new, for s00985/English)",low,"English copy of CALmatters Spanish Original 03492 (2023-06-13): no credit and no shared byline, 8 days apart; headline match 0.24"
+Coverage,04685,Original or reprint,Reprint,Original,low,"Spanish copy of Sacramento Bee, The English Original 04691 (2021-02-23): same byline/credit but 8 days apart (limit 2); headline match 1.0"
+Coverage,04685,Story ID,s01422,"(new, for s01422/Spanish)",low,earliest of its language group becomes the Original of a new story
+Coverage,00169,Language,English,"(set from text; recorded override ""Language from text"")",medium,Language cell of the reprint says English but its headline is Spanish
+Coverage,00170,Language,English,"(set from text; recorded override ""Language from text"")",medium,Language cell of the reprint says English but its headline is Spanish
+Coverage,07256,Translated Headline,,"(translate at Update station, then re-test the rule)",low,"same byline/credit and within 2 days, but no translated headline on file to compare"
+Coverage,01315,Translated Headline,,"(translate at Update station, then re-test the rule)",low,"same byline/credit and within 2 days, but no translated headline on file to compare"
+Coverage,01508,Translated Headline,,"(translate at Update station, then re-test the rule)",low,"same byline/credit and within 2 days, but no translated headline on file to compare"
+Coverage,01547,Translated Headline,,"(translate at Update station, then re-test the rule)",low,"same byline/credit and within 2 days, but no translated headline on file to compare"
+Coverage,08050,Translated Headline,,"(translate at Update station, then re-test the rule)",low,"same byline/credit and within 2 days, but no translated headline on file to compare"
+Coverage,02334,Translated Headline,,"(translate at Update station, then re-test the rule)",low,"same byline/credit and within 2 days, but no translated headline on file to compare"
+Coverage,03787,Translated Headline,,"(translate at Update station, then re-test the rule)",low,"same byline/credit and within 2 days, but no translated headline on file to compare"
+Coverage,04254,Translated Headline,,"(translate at Update station, then re-test the rule)",low,"same byline/credit and within 2 days, but no translated headline on file to compare"
+Coverage,08243,Translated Headline,,"(translate at Update station, then re-test the rule)",low,"same byline/credit and within 2 days, but no translated headline on file to compare"
+Coverage,10618,Language,English,"(set from text; recorded override ""Language from text"")",medium,Language cell of the Original says English but its headline is Spanish

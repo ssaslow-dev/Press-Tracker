@@ -1,0 +1,7 @@
+--- a/tabs/outlets.js
++++ b/tabs/outlets.js
+@@ -172,3 +172,3 @@
+       { key: 'last', label: 'Last story', dir: -1, cls: 'nw', val: function(it){ return it.last; }, cell: function(it, ctx){ return it.lastR ? ctx.esc(dl(ctx, it.lastR, it.last)) : ''; } },
+-      { key: 'iss', label: 'Top issues', sortable: false, val: issT, cell: function(it, ctx){ return it.issues.map(function(x){ return (ctx.issueLink ? ctx.issueLink(x[0]) : ctx.esc(x[0])) + ' <span class="sub">' + x[1] + '</span>'; }).join('<br>'); } },
++      { key: 'iss', label: 'Top issues', sortable: false, val: issT, cell: function(it, ctx){ return '<div class="tiss-list">' + it.issues.map(function(x){ return '<span class="tiss">' + (ctx.issueLink ? ctx.issueLink(x[0]) : ctx.esc(x[0])) + ' <span class="sub">' + x[1] + '</span></span>'; }).join('') + '</div>'; } },   /* TIDY-v1 */
+       { key: 'tone', label: 'Tone avg', num: true, dir: -1, cls: 'nw', sort: function(it){ return it.tone.n ? it.tone.avg : null; }, val: function(it){ return it.tone.text; }, cell: function(it, ctx){ return it.tone.n ? ctx.toneHtml(it.tone) : '<span class="sub">None rated</span>'; },

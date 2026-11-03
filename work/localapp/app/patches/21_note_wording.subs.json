@@ -1,0 +1,7 @@
+[
+ {"old": "label:'Has a team note'", "new": "label:'Has a note'", "count": 1},
+ {"old": "'stories have')} a team note`", "new": "'stories have')} a note`", "count": 1},
+ {"old": "'This story has a team note'", "new": "'This story has a note'", "count": 1},
+ {"old": "<span>Team note</span>", "new": "<span>Note</span>", "count": 1},
+ {"old": "for=\"tnote\">Team note</label>", "new": "for=\"tnote\">Note</label>", "count": 1}
+]

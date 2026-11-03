@@ -38,3 +38,16 @@ Tests: `python3 -I tests/e2e_pq_sheet_task.py ZIP WORKBOOK SCRATCH` (about 1.5 m
 ## PROQUESTPDF-v1 answer 2: ProQuest outlet names (one more patch proposal, NOT wired in)
 
 `patches/06_sheet_task_pq_outlet_aliases.patch` (applies after 01 and 04; independent of them): `code/sheet_task.py` reads `proquest_outlets.json` (the Update station's `data/proquest_outlets.json`, copied beside `sheet_task.py` and `outlet_rules.json`) and adds each ProQuest-name -> tracker-name pair as an alias in `OUTLET_RULES['aliases']` (an alias already in `outlet_rules.json` wins; a place-specific pair is skipped because generic names are already told apart by city). Effect: `norm_outlet('The Center Square') == norm_outlet('Center Square California, The')`, and `Center Square Texas, The` stays separate (`keep_separate`). **Needed only if a ProQuest-named outlet can reach the save**: the station already writes the row's `Outlet` in the tracker's spelling, so the same-outlet and reprint checks see one outlet without it. No data file next to `sheet_task.py` = behaviour unchanged. To wire in: copy the data file and the patch to `app/patches/` and add `('sheet_task.py', '06_sheet_task_pq_outlet_aliases.patch')` after the 04 entry; regenerate `PIPELINE.sha256`. Test: `python3 -I -m unittest discover -s tests -t . -p test_pq_outlet_alias.py` (applies 01, 04, 06 to a copy; needs the `patch` program).
+
+---
+
+# PRJUDGE-v2 and NBTV-v1: two more patches (proposals, NOT wired in)
+
+| File | Applies to | What |
+|---|---|---|
+| `patches/07_sheet_task_prjudge2.patch` | `code/sheet_task.py` (any point after 01; independent of 04 and 06) | `add_row`: a row whose `_pr.v` is `no` (the Update station judged it from its own text: another issuer's repost on a news outlet, or a wire / official-site item whose text is not a release) is NOT marked Press release = Yes by the outlet-name rule (`is_press_release`: PR_OUTLETS / PR_HOSTS); it is listed in `result.json` under `press_release_station_no`. A row without `_pr` (an old update, the web Update button) behaves exactly as before. Copies of HIS releases are untouched: `release_rows` / `_rel_mark` / the near-copy and title rules still mark them Yes, and `unmark_untestable_wire` is unchanged. |
+| `patches/08_date_rules_airdate.patch` | `code/date_rules.py` (after 02) | `_date_src: "airdate_pt"` means Date source "air date (Pacific)" (a NewsBank broadcast transcript whose Date the station converted to the Pacific air date, REVIEW4-v1 F1). Needed only for the label; without it such a row would read "unknown". |
+
+**How the app assembler should include them** (not done: another builder owns `assemble_app.py`): in the same list and the same way as 01-06, in this order after the existing entries: `('sheet_task.py', '07_sheet_task_prjudge2.patch')` and `('date_rules.py', '08_date_rules_airdate.patch')`; copy both patch files to `app/patches/`; regenerate `PIPELINE.sha256` (the assembler does). They use one line of context, so they apply with the assembler's exact-once rule after 01-06 (checked: 01,02,04,05,06,07,08 and 01,02,07,08 both apply cleanly).
+
+Tests: `python3 -I tests/e2e_sheet_task.py ZIP WORKBOOK SCRATCH` now applies 07 and 08 and has a second pass in which the station's verdict for the wire-named row is No (the save leaves Press release blank and reports it; the control pass marks it Yes).

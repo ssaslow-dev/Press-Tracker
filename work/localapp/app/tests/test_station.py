@@ -193,9 +193,11 @@ class Flow(unittest.TestCase):
         (R.root / 'data' / 'db' / 'views').mkdir(parents=True, exist_ok=True)
         (R.root / 'data' / 'db' / 'views' / 'v1.json').write_text('{"name":"my view"}')
         out = T.ui(K, [{'op': 'goto'}, {'op': 'open_panel'}, {'op': 'click', 'text': 'Make refresh file'},
-                       {'op': 'wait_text', 'text': ['Made the refresh', 'could not be made', 'Another save'], 'timeout': 900000, 'name': 'mk'}], '06a')
-        self.assertIn('Made the refresh', out['results']['mk'], out['results'])
-        r1 = sorted((K.root / 'data' / 'refresh_out').glob('refresh_incr_*.zip'))[-1]
+                       {'op': 'wait_text', 'text': ['Made the', 'could not be made', 'Another save'], 'timeout': 900000, 'name': 'mk'}], '06a')
+        # TIDY-v1: one button; the first refresh file ever made carries everything (a new copy needs it), the tracker says why
+        self.assertEqual(out['results']['mk'], 'Made the', out['results'])
+        self.assertIn('Made the full refresh file, because this is the first refresh file', out['results']['mk_panel'])
+        r1 = sorted((K.root / 'data' / 'refresh_out').glob('refresh_full_*.zip'))[-1]
         S['r1'] = BASE / r1.name
         shutil.copy2(r1, S['r1'])
         with zipfile.ZipFile(r1) as z:
@@ -277,6 +279,8 @@ class Flow(unittest.TestCase):
     def test_09_chain_older_gap_and_tampered_refresh(self):
         res = K.job('refresh_make', {})
         self.assertTrue(res['ok'], res)
+        self.assertEqual(res['kind'], 'incremental', 'the second refresh file is the usual short one')
+        self.assertIn('refresh_incr_', res['name'])
         r2 = K.root / 'data' / 'refresh_out' / res['name']
         S['r2'] = BASE / r2.name
         shutil.copy2(r2, S['r2'])
@@ -360,7 +364,7 @@ class Flow(unittest.TestCase):
         new = T.sha(wb)
         st, s = K.call('GET', '/_local/station/status')
         self.assertEqual(s['workbook']['baseline'], 'changed')
-        out = T.ui(K, [{'op': 'goto'}, {'op': 'open_panel'}, {'op': 'click', 'text': 'Accept the workbook as it is now'},
+        out = T.ui(K, [{'op': 'goto'}, {'op': 'open_panel'}, {'op': 'open_repairs'}, {'op': 'click', 'text': 'Accept the workbook as it is now'},
                        {'op': 'wait_text', 'text': ['Are you sure?'], 'timeout': 20000}, {'op': 'screenshot', 'path': str(T.SHOTS / '11_confirm.png')},
                        {'op': 'click', 'text': 'Yes, accept it'}, {'op': 'wait_text', 'text': ['Done. The tracker now treats'], 'timeout': 120000, 'name': 'd'}], '11')
         self.assertNotIn('crash', out['results'], out['results'])

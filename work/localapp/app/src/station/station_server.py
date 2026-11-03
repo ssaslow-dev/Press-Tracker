@@ -142,6 +142,23 @@ class StationHandler(S.Handler):
             return self._err(404, 'not found', head)
         return self._send(200, body, S.TYPES['.json'], {'Cache-Control': 'no-cache'}, head)
 
+    def _upload_manifest(self, q):
+        """SWITCHOVER-v1: the fingerprint list the Mac made (a text file, at most a few MB) picked in the panel instead of typed as a path"""
+        if R.role(self.server.lay) != 'keeper':
+            return self._err(403, 'This copy of the tracker is a reader copy and does not run the setup.')
+        name = re.sub(r'[^A-Za-z0-9._ -]', '_', os.path.basename((q.get('name') or ['list.sha256'])[0]))[:80]
+        n = int(self.headers.get('Content-Length') or 0)
+        if n <= 0 or n > 64 * 1024 * 1024:
+            return self._err(413, 'That file is not a fingerprint list (empty, or far too big).')
+        d = self.server.lay.data / 'tmp' / 'lists'
+        d.mkdir(parents=True, exist_ok=True)
+        dest = d / f'{C.stamp()}-{name}'
+        body = self.rfile.read(n)
+        if len(body) != n:
+            return self._err(400, 'The upload was cut off. Try again.')
+        C.atomic_write(dest, body)
+        return self._json({'ok': True, 'file': dest.name, 'bytes': n})
+
     def _upload(self):
         self.close_connection = True
         if not self._host_ok():
@@ -151,6 +168,8 @@ class StationHandler(S.Handler):
         q = parse_qs(urlsplit(self.path).query)
         kind = (parse_qs(urlsplit(self.path).query).get('kind') or ['update'])[0]
         want = 'reader' if kind == 'refresh' else 'keeper'
+        if kind == 'manifest':
+            return self._upload_manifest(q)
         if R.role(self.server.lay) != want:
             return self._err(403, 'This copy of the tracker %s.' % ('is the keeper copy and does not take refresh files' if want == 'reader' else 'is a reader copy and does not take in updates'))
         name = re.sub(r'[^A-Za-z0-9._ -]', '_', os.path.basename((q.get('name') or ['update.zip'])[0]))[:80]
@@ -242,8 +261,8 @@ class StationHandler(S.Handler):
             return self._err(405, 'method not allowed', head)
         d = self._body_json()
         r_ = R.role(lay)
-        if rest in ('inspect', 'preview', 'save', 'reject', 'init', 'refresh_make', 'edits_preview', 'edits_save') and r_ != 'keeper':
-            return self._json({'ok': False, 'line': 'This copy of the tracker is a reader copy. Only the keeper copy takes in updates, saves edits, accepts the workbook or makes refresh files. Edits made in a reader copy stay in that copy and are not saved anywhere else.'}, 403)
+        if rest in ('inspect', 'preview', 'save', 'reject', 'init', 'refresh_make', 'edits_preview', 'edits_save', 'setup_check', 'setup_run', 'drop_preview', 'drop_apply') and r_ != 'keeper':
+            return self._json({'ok': False, 'line': 'This copy of the tracker is a reader copy. Only the keeper copy takes in updates, saves edits, accepts the workbook, sets up from the Mac library, removes unverified reprints or makes refresh files. Edits made in a reader copy stay in that copy and are not saved anywhere else.'}, 403)
         if rest == 'refresh_take' and r_ == 'keeper':
             return self._json({'ok': False, 'line': 'This is the keeper copy. It makes refresh files; it does not take them in.'}, 403)
         verb, args = None, []
@@ -263,6 +282,31 @@ class StationHandler(S.Handler):
             if not re.match(r'^[A-Za-z0-9._ ()-]{1,120}$', f) or '..' in f or not (lay.updates / 'incoming' / f).is_file():
                 return self._err(400, 'That upload is not there. Choose the file again.')
             verb, args = 'inspect', ['--zip', str(lay.updates / 'incoming' / f)]
+        elif rest in ('setup_check', 'setup_run'):
+            folder = str(d.get('folder') or '').strip()
+            if not folder or len(folder) > 1000 or '\0' in folder or '\n' in folder:
+                return self._err(400, 'Type or paste the path of the copied "Tracker library" folder.')
+            args = ['--folder=' + folder]
+            lf = str(d.get('list_upload') or '')
+            if lf:
+                if not re.match(r'^[A-Za-z0-9._ -]{1,120}$', lf) or '..' in lf or not (lay.data / 'tmp' / 'lists' / lf).is_file():
+                    return self._err(400, 'That fingerprint list upload is not there. Choose the file again.')
+                args.append('--list=' + str(lay.data / 'tmp' / 'lists' / lf))
+            elif str(d.get('list') or '').strip():
+                lp = str(d.get('list')).strip()
+                if len(lp) > 1000 or '\0' in lp or '\n' in lp:
+                    return self._err(400, 'That path for the fingerprint list is not usable.')
+                args.append('--list=' + lp)
+            if rest == 'setup_run' and d.get('repairs') is True:
+                args.append('--repairs')
+            verb = rest
+        elif rest == 'drop_preview':
+            verb = 'drop_preview'
+        elif rest == 'drop_apply':
+            tok = str(d.get('token') or '')
+            if not re.match(r'^[0-9a-f]{16}$', tok):
+                return self._err(400, 'The list must be looked at first.')
+            verb, args = 'drop_apply', ['--token', tok]
         elif rest == 'edits_preview':
             verb = 'edits_preview'
         elif rest == 'edits_save':
@@ -333,7 +377,17 @@ class StationServer(S.TrackerServer):
                 'refresh_made': R._read_json(lay.state / 'refresh_state.json', None), 'workbook': C.workbook_state(lay), 'lock': C.lock_status(lay.state),
                 'job': self.jobs.summary(self.jobs.current), 'page_built': (lay.data / 'site' / 'index.html').is_file(),
                 'pipeline_ok': (lay.pipeline / 'PIPELINE.sha256').is_file(),
-                'last_for_update': fu[-1].name if fu else None, 'edits_pending': self._edits_pending(), 'time': time.time()}
+                'last_for_update': fu[-1].name if fu else None, 'edits_pending': self._edits_pending(), 'time': time.time(),
+                'setup_done': self._logs('setup-*.json') is not None, 'drop_done': self._logs('drop-unverified-*.json')}
+
+    def _logs(self, pat):
+        """DROPUNVERIFIED-v1 / SWITCHOVER-v1: the date of the newest finished log of this kind (setup: any), or None"""
+        lg = self.lay.state / 'logs'
+        for f in sorted(lg.glob(pat), reverse=True) if lg.is_dir() else []:
+            d = R._read_json(f, {})
+            if d.get('status', 'done') == 'done':
+                return str(d.get('at') or f.name)[:10]
+        return None
 
     def _edits_pending(self):
         """PCEDITS-v1: the tracker's own edits and removals waiting for a save (keeper copy only; a reader's edits are never saved)"""

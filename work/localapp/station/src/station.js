@@ -91,6 +91,9 @@ function prCall(v, t, a) {
     return res;
   });
 }
+/* what a row carries of the decision (PRJUDGE-v2): the verdict, the reason, who judged, the outlet type, whose release (his / other) and, for a copy of his, the release id */
+const prRecord = j => { const o = { v: j.v, why: j.why, by: j.by, type: j.type }; if (j.issuer) o.issuer = j.issuer; if (j.release) o.release = j.release; if (j.mode) o.mode = j.mode; return o; };
+window.__prRecord = prRecord;
 /* proposed rows of a web run: the decision for each find, from its text and Claude's answer; "Yes" fills Press release (the PC save fills blanks only) */
 function prAnnotateRows(rows, pageDoc) {
   (rows || []).forEach(r => {
@@ -98,8 +101,8 @@ function prAnnotateRows(rows, pageDoc) {
     let rec = S.pr.get(prKey(r['Publisher link']));
     if (!rec && r._page && pageDoc) { const pd = pageDoc(r._page); if (pd && pd.clean) rec = { text: String(pd.clean).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 6000), title: pd.title || '', claude: null }; }   // a reprint candidate is not classified by Claude: its saved page text is judged by the text signals
     if (!rec) return;
-    const j = PRJudge.judge({ text: rec.text, title: rec.title, outlet: r['Outlet'], url: r['Publisher link'], claude: rec.claude, rel: window.__prRel() });
-    r._pr = { v: j.v, why: j.why, by: j.by };
+    const j = PRJudge.judge({ text: rec.text, title: rec.title, outlet: r['Outlet'], url: r['Publisher link'], claude: rec.claude, date: r['Date'], rel: window.__prRel() });
+    r._pr = prRecord(j);
     if (j.v === 'yes') { r['Press release'] = 'Yes'; r['Team note'] = ('press release: ' + j.why + (r['Team note'] ? '; ' + r['Team note'] : '')).slice(0, 600); }
   });
 }
@@ -324,7 +327,7 @@ async function sha256Hex(bytes) { const h = new Uint8Array(await crypto.subtle.d
 /* which run docs go into the update: every run this session saved that finished or carries rows, bills, releases, print pages or lookups */
 function runPackable(d) {
   const has = k => Array.isArray(d[k]) && d[k].length;
-  const content = has('rows') || has('bills_new') || has('releases_new') || has('print_pages') || has('lookups');
+  const content = has('rows') || has('bills_new') || has('releases_new') || has('print_pages') || has('print_rows') || has('extra_copies') || has('lookups');
   if (d.status === 'running' || d.status === 'error') return content;
   return true;
 }
@@ -363,10 +366,20 @@ async function pack() {
       if (seen.has(name.toLowerCase())) { warns.push('Left out a second ' + coll + ' document named “' + id + '”.'); return false; }
       seen.add(name.toLowerCase()); blobs.push({ name, bytes: enc.encode(JSON.stringify(data)) }); return true;
     };
+    const pdfBlobs = [];   // NEWSBANKPDF-v1: each NewsBank story's own PDF travels as files/<id>.pdf; the pages doc says which (nb.file) and its sha256
+    for (const [, v] of p.runs) if (v.data && Array.isArray(v.data.extra_copies) && v.data.extra_copies.length) {   // ORIGCOPIES-v1: a run's extra_copies name their PDFs (files/<id>.pdf) themselves
+      const keep = [];
+      for (const x of v.data.extra_copies) {
+        const fid = String(x.file || '').replace(/^files\//, '').replace(/\.pdf$/, ''), pf = S.nb && S.nb.pdfs.get(fid);
+        if (!pf || pf.sha256 !== x.pdf_sha256) { warns.push('The PDF kept as an extra copy of ' + (x.aid || 'a row') + ' is not in this tab any more: it is left out.'); continue; }
+        if (!pdfBlobs.some(b => b.name === 'files/' + fid + '.pdf')) pdfBlobs.push({ name: 'files/' + fid + '.pdf', bytes: pf.bytes, kind: 'pdf' });
+        keep.push(x);
+      }
+      v.data = Object.assign({}, v.data, { extra_copies: keep });
+    }
     const runIds = [];
     for (const [id, v] of p.runs) if (add('runs', id, v.data)) runIds.push(id);
     if (!runIds.length) throw new Error('No run could be packed.');
-    const pdfBlobs = [];   // NEWSBANKPDF-v1: each NewsBank story's own PDF travels as files/<id>.pdf; the pages doc says which (nb.file) and its sha256
     for (const c of PACK_COLLS.filter(x => x !== 'runs')) for (const [id, v] of sess[c]) if (v.seq > S.lastPacked) {
       let data = v.data;
       const srcKey = data && data.nb && data.nb.file ? 'nb' : data && data.pq && data.pq.file ? 'pq' : '';   // PROQUESTPDF-v1: a ProQuest story's own PDF travels the same way (pages doc pq.file)
@@ -475,11 +488,15 @@ const FIX = [
   [/ or use Edit details in a story's panel\./g, '.'],
   [/Added 0 clips\. (The reprints are kept)/g, '$1'],
   [/\bsearchs\b/g, 'searches'],
+  [/^Team note$/g, 'Note'],   // NOTE-v1: the spreadsheet column keeps its header; people see "Note"
+  [/^Has a team note$/g, 'Has a note'],
+  [/ a team note$/g, ' a note'],
+  [/^This story has a team note$/g, 'This story has a note'],
   [/Finding stories needs the tracker open in Claude with the TinyFish connector\. The clips you see are still current as of the last rebuild\./g, 'TinyFish is not available on this page. In claude.ai, connect TinyFish (Settings, Connectors), allow it for this page, then reload it and press Update database again.'],
   [/Finding stories needs the tracker open in Claude with connectors available\./g, 'TinyFish is not available on this page. In claude.ai, connect TinyFish (Settings, Connectors), allow it for this page, then reload it and press Update database again.'],
   [/TinyFish wasn’t allowed for this tracker\. Allow it from the artifact’s Permissions menu/g, 'TinyFish wasn’t allowed for this page. Allow it from this page’s Permissions menu'],
 ];
-const FIX_RX = /to the tracker|saves what it finds|save the last run to the sheet|Gabriel press PDFs|in the tracker|in the spreadsheet|Spreadsheet rows|sheet step|Find & refresh|Clips now|reprints now include|story's panel|searchs|Nothing new to write|Finding stories needs|allowed for this tracker|Changes show in the tracker/;
+const FIX_RX = /to the tracker|saves what it finds|save the last run to the sheet|Gabriel press PDFs|in the tracker|in the spreadsheet|Spreadsheet rows|sheet step|Find & refresh|Clips now|reprints now include|story's panel|searchs|Team note|team note|Nothing new to write|Finding stories needs|allowed for this tracker|Changes show in the tracker/;
 function fixTexts(root) {
   const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
   const hits = []; for (let n = w.nextNode(); n; n = w.nextNode()) if (FIX_RX.test(n.nodeValue)) hits.push(n);

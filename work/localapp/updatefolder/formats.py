@@ -452,6 +452,13 @@ def check_pdfs(entries: dict, docs: dict, names_map=None) -> None:
     pages doc that names a PDF finds it. Raises UpdateRefused (BAD_PDF, MISSING_FILE, UNLISTED_FILE, HASH_MISMATCH)."""
     refs = {}
     for name, doc in docs.items():
+        if name.startswith('db/runs/'):       # OTHERFILES-v1 / ORIGCOPIES-v1: a run's extra_copies name PDFs (another original copy of a story already in the tracker) the same way
+            for x in doc.get('extra_copies') or []:
+                f = x.get('file') if isinstance(x, dict) else None
+                if not isinstance(f, str) or not PDF_ENTRY_RE.match(f):
+                    raise UpdateRefused('BAD_PDF', f'{name!r} has an extra copy with a PDF {f!r} that is not allowed (only files/<id>.pdf)', {'entry': name})
+                refs.setdefault(f, []).append((name, x.get('pdf_sha256')))
+            continue
         if not name.startswith('db/pages/'):
             continue
         nb = doc.get('nb') if isinstance(doc.get('nb'), dict) else doc.get('pq')    # PROQUESTPDF-v1: a ProQuest story's PDF is named by the pages doc's `pq` the same way

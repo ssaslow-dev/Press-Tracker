@@ -3,8 +3,9 @@
 One zip, data only. Carries the workbook, the library files added since the previous refresh (or all of them in a FULL refresh), and the
 data the page loads (data/site, data/copies/articles). NEVER notes, views, edits or any other db document.
 
-    manifest.json   {format: "ajg-refresh", format_version: 1, created_at, kind: "full"|"incremental", seq, base_seq,
-                     workbook_name, workbook_sha256, files: {<zip name>: {sha256, bytes}}}
+    manifest.json   {format: "ajg-refresh", format_version: 1|2, created_at, kind: "full"|"incremental", seq, base_seq,
+                     workbook_name, workbook_sha256, files: {<zip name>: {sha256, bytes}},
+                     deleted: {"library/<path>": <sha256>}   (format 2 only: library files the keeper deleted for good, DROPUNVERIFIED-v1)}
     workbook/<workbook name>        library/<path under data/library>        site/<path under data/site>        copies/articles/<shard>.json
 
 seq = the keeper's ledger sequence number (the number of lines in data/state/ledger.jsonl). A reader refuses a refresh whose seq is not
@@ -25,7 +26,7 @@ from pathlib import Path
 import common as C
 
 FORMAT = 'ajg-refresh'
-VERSION = 1
+VERSION = 2          # 2 = the manifest may carry "deleted" (DROPUNVERIFIED-v1); a refresh without deletions is still written as 1
 KINDS = ('workbook', 'library', 'site', 'copies')
 MEDIA = {'.jpg', '.jpeg', '.png', '.gif', '.webp', '.avif', '.mp3', '.wav', '.mp4', '.webm'}
 EXT = {'workbook': {'.xlsx'}, 'library': {'.html', '.htm', '.pdf', '.json', '.txt', '.csv'} | MEDIA,
@@ -104,7 +105,49 @@ def _tree(root: Path, skip=()):
             yield rel.as_posix(), p
 
 
-def make(lay, full=False) -> dict:
+def _needs_full(lay, st) -> str:
+    """TIDY-v1: why a plain "Make refresh file" has to carry everything (empty string: an incremental one is possible).
+    The first refresh file ever made, no record of the page data last sent, a save whose library pages are not recorded in a save log,
+    or a page a save log lists that is no longer in the library: the incremental file could not be complete, so a full one is made."""
+    if not int(st.get('last_seq') or 0):
+        return 'this is the first refresh file, and a new copy needs everything'
+    if not st.get('shards'):
+        return 'the tracker has no record of what the last refresh file carried'
+    prev_seq, prev_at = int(st.get('last_seq') or 0), st.get('last_at') or ''
+    saves = sum(1 for e in C.read_ledger(lay.state)[prev_seq:] if e.get('verb') == 'save')
+    logs = []
+    if (lay.state / 'logs').is_dir():
+        for lg in sorted((lay.state / 'logs').glob('save-*.log')):
+            d = _read_json(lg, {})
+            if str(d.get('at') or '') > prev_at:
+                logs.append(d)
+    if saves > len(logs):
+        return 'a save since the last refresh file has no record of the pages it added'
+    for d in logs:
+        for rel in (d.get('library') or {}).get('pages_added') or []:
+            if not (lay.library / Path(*rel.split('/'))).is_file():
+                return 'a page added by a save since the last refresh file is no longer in the library'
+    return ''
+
+
+def _deleted_since(lay, since_at: str) -> dict:
+    """DROPUNVERIFIED-v1: {"library/<path>": sha256} of every library file the keeper deleted for good (state/logs/drop-unverified-*.json, status done)
+    after `since_at` (everything when empty)"""
+    out = {}
+    lg = lay.state / 'logs'
+    for f in sorted(lg.glob('drop-unverified-*.json')) if lg.is_dir() else []:
+        d = _read_json(f, {})
+        if d.get('status') != 'done' or (since_at and str(d.get('at') or '') <= since_at):
+            continue
+        for e in d.get('files') or []:
+            if e.get('deleted') and re.fullmatch(r'[0-9a-f]{64}', str(e.get('sha256') or '')):
+                out['library/' + e['path']] = e['sha256']
+    return out
+
+
+def make(lay, full=False, auto=True) -> dict:
+    """auto (the plain "Make refresh file" button): an incremental file when one can be complete, a full one when it cannot (see _needs_full).
+    full=True always makes a full one (the Repairs button, for a new person)."""
     if role(lay) != 'keeper':
         raise RefreshRefused('NOT_KEEPER', 'Only the keeper copy of the tracker makes refresh files.')
     wb = lay.workbook
@@ -112,11 +155,14 @@ def make(lay, full=False) -> dict:
         raise RefreshRefused('NO_WORKBOOK', 'The workbook is not in the data folder.')
     ws = C.workbook_state(lay)
     if ws.get('baseline') != 'ok':
-        raise RefreshRefused('BASELINE', 'The workbook is not the one the tracker last saved or accepted. Use "Accept the workbook as it is now" first, '
+        raise RefreshRefused('BASELINE', 'The workbook is not the one the tracker last saved or accepted. Use "Accept the workbook as it is now" (Tracker files, under Repairs) first, '
                              'so the refresh matches the tracker\'s record.')
     if ws.get('excel_open'):
         raise RefreshRefused('EXCEL_OPEN', 'Excel has the workbook open. Close it first.')
     st = _read_json(_state_file(lay, 'refresh_state.json'), {})
+    auto_why = '' if (full or not auto) else _needs_full(lay, st)
+    if auto_why:
+        full = True
     prev_seq, prev_at = (0, '') if full else (int(st.get('last_seq') or 0), st.get('last_at') or '')
     files = {}     # zip name -> source path
     files['workbook/' + wb.name] = wb
@@ -146,7 +192,11 @@ def make(lay, full=False) -> dict:
                 new_map[rel] = h
                 if full or old_map.get(rel) != h:
                     files['copies/articles/' + rel] = p
-    for n in files:
+    deleted = _deleted_since(lay, '' if full else prev_at)
+    for n in list(deleted):
+        if n in files:                      # a file that is in the library again is added, not deleted
+            del deleted[n]
+    for n in list(files) + list(deleted):
         check_name(n)
     sha_wb = _sha(wb)
     seq = seq_of(lay)
@@ -154,8 +204,10 @@ def make(lay, full=False) -> dict:
     manifest_files = {n: {'sha256': _sha(p), 'bytes': p.stat().st_size} for n, p in files.items()}
     if manifest_files['workbook/' + wb.name]['sha256'] != sha_wb or _sha(wb) != sha_wb:
         raise RefreshRefused('CHANGED', 'The workbook changed while the refresh file was being made. Try again.')
-    manifest = {'format': FORMAT, 'format_version': VERSION, 'created_at': created, 'kind': 'full' if full else 'incremental', 'seq': seq,
+    manifest = {'format': FORMAT, 'format_version': 2 if deleted else 1, 'created_at': created, 'kind': 'full' if full else 'incremental', 'seq': seq,
                 'base_seq': prev_seq, 'workbook_name': wb.name, 'workbook_sha256': sha_wb, 'files': manifest_files}
+    if deleted:
+        manifest['deleted'] = deleted
     out = lay.data / 'refresh_out'
     out.mkdir(parents=True, exist_ok=True)
     name = f'refresh_{"full" if full else "incr"}_{seq:04d}_{created.replace(":", "").replace("-", "")}_{sha_wb[:8]}.zip'
@@ -170,7 +222,7 @@ def make(lay, full=False) -> dict:
     C.atomic_write(_state_file(lay, 'refresh_state.json'), json.dumps({'last_seq': seq, 'last_at': created, 'shards': new_map or st.get('shards') or {},
                                                                     'last_file': name}, indent=1).encode())
     return {'name': name, 'path': str(dest), 'bytes': dest.stat().st_size, 'kind': manifest['kind'], 'seq': seq, 'files': len(files),
-            'library_files': sum(1 for n in files if n.startswith('library/')), 'workbook_sha256': sha_wb}
+            'library_files': sum(1 for n in files if n.startswith('library/')), 'library_deleted': len(deleted), 'workbook_sha256': sha_wb, 'auto_full': auto_why}
 
 
 # ---------------------------------------------------------------- verify (reader)
@@ -241,6 +293,12 @@ def verify(zip_path) -> dict:
         files = man.get('files')
         if not isinstance(files, dict) or set(files) != set(by) - {'manifest.json'}:
             raise RefreshRefused('BAD_MANIFEST', 'the manifest does not list exactly the files in the zip')
+        dl = man.get('deleted', {})
+        if not isinstance(dl, dict) or len(dl) > CAP_ENTRIES:
+            raise RefreshRefused('BAD_MANIFEST', 'the list of deleted files is not valid')
+        for n, sha in dl.items():
+            if check_name(n)[0] != 'library' or not re.fullmatch(r'[0-9a-f]{64}', str(sha)):
+                raise RefreshRefused('BAD_MANIFEST', f'the list of deleted files names something a refresh may not delete: {str(n)[:60]!r}')
         wbs = [n for n in files if n.startswith('workbook/')]
         if len(wbs) != 1 or files[wbs[0]].get('sha256') != man['workbook_sha256']:
             raise RefreshRefused('BAD_MANIFEST', 'the refresh must carry exactly one workbook, matching the fingerprint')
@@ -293,7 +351,8 @@ def take(lay, zip_path, init_fn) -> dict:
         raise RefreshRefused('EXCEL_OPEN', 'Excel has the workbook open. Close it, then try again.')
     wb_name = [n for n in man['files'] if n.startswith('workbook/')][0]
     stamp = C.stamp()
-    res = {'seq': man['seq'], 'kind': man['kind'], 'library_added': 0, 'library_skipped': 0, 'site_files': 0, 'backup': None}
+    res = {'seq': man['seq'], 'kind': man['kind'], 'library_added': 0, 'library_skipped': 0, 'site_files': 0, 'backup': None, 'library_deleted': 0,
+           'library_delete_kept': []}
     with zipfile.ZipFile(zip_path) as z:
         by = {i.filename: i for i in z.infolist()}
         # 1. backup (rule 7), then the workbook: unique staged file, verified, swapped in atomically
@@ -349,10 +408,32 @@ def take(lay, zip_path, init_fn) -> dict:
                 C.keep_old(dst, keep_site if kind == 'site' else keep_copies)
                 _extract(z, by[n], dst, meta['sha256'])
                 res['site_files'] += 1
+    # 2b. DROPUNVERIFIED-v1: library files the keeper deleted for good go here too, only when this copy's file is the very file the keeper deleted (sha256)
+    gone = []
+    for n, sha in (man.get('deleted') or {}).items():
+        dst = lay.library / Path(*check_name(n)[1].split('/'))
+        if not dst.is_file():
+            continue
+        try:
+            same = C.sha256_file(dst) == sha
+        except OSError:
+            same = False
+        if not same:
+            res['library_delete_kept'].append(n[len('library/'):])
+            continue
+        try:
+            dst.unlink()
+            res['library_deleted'] += 1
+            gone.append(n[len('library/'):])
+        except OSError:
+            res['library_delete_kept'].append(n[len('library/'):])
+    if gone or res['library_delete_kept']:
+        (lay.state / 'logs').mkdir(parents=True, exist_ok=True)
+        (lay.state / 'logs' / f'refresh-deleted-{stamp}.json').write_text(json.dumps({'seq': man['seq'], 'deleted': gone, 'kept_because_different': res['library_delete_kept']}, indent=1), encoding='utf-8')
     # 3. the saver's ledger starts from the new workbook (SAVE_RULES answer 2); notes and views are not touched
     code = init_fn(f'refresh {man["seq"]} ({man["kind"]}) from the keeper, made {man["created_at"]}')
     if code != 0:
-        raise RefreshRefused('LEDGER', 'The workbook was replaced, but the tracker could not record it as its starting point. Use "Accept the workbook as it is now".')
+        raise RefreshRefused('LEDGER', 'The workbook was replaced, but the tracker could not record it as its starting point. Use "Accept the workbook as it is now" (Tracker files, under Repairs).')
     C.atomic_write(_state_file(lay, 'refresh_applied.json'), json.dumps({'seq': man['seq'], 'kind': man['kind'], 'created_at': man['created_at'],
                                                                      'applied_at': C.utc_now().isoformat(timespec='seconds'),
                                                                      'workbook_sha256': man['workbook_sha256']}, indent=1).encode())

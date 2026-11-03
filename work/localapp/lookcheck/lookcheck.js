@@ -1,5 +1,5 @@
 // SAMELOOK-v2 side-by-side capture: the live tracker's own published files (reference) against the PC page, same engine, same viewport.
-//   node lookcheck.js --ref http://127.0.0.1:8801/index.html --pc http://127.0.0.1:8802/ --out DIR [--vp 1440x900] [--only a,b] [--fonts auto|google|bundled]
+//   node lookcheck.js --ref http://127.0.0.1:8801/index.html [--refx http://127.0.0.1:8804/index.html] --pc http://127.0.0.1:8802/ --out DIR [--vp 1440x900] [--only a,b] [--fonts auto|google|bundled]
 //         [--fontdir work/localapp/fonts/files] [--runs 1]
 // For each scenario and each target (a fresh browser context each: empty storage, fixed clock, reduced motion, deviceScaleFactor 1) it writes
 //   DIR/<vp>/<target>/<scenario>.png        full-page screenshot (capped at MAXH px)
@@ -10,7 +10,7 @@ const fs = require('fs');
 const path = require('path');
 
 const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : d; };
-const REF = arg('ref'), PC = arg('pc'), OUT = arg('out'), VP = arg('vp', '1440x900'), ONLY = arg('only', ''), FONTS = arg('fonts', 'auto');
+const REF = arg('ref'), REFX = arg('refx', ''), PC = arg('pc'), OUT = arg('out'), VP = arg('vp', '1440x900'), ONLY = arg('only', ''), FONTS = arg('fonts', 'auto');
 const FONTDIR = arg('fontdir', path.resolve(__dirname, '..', 'fonts', 'google'));
 const RUNTAG = arg('tag', '');
 const [VW, VH] = VP.split('x').map(Number);
@@ -21,6 +21,8 @@ const FIXED = new Date('2026-11-02T19:30:00-08:00');   // a Monday evening in Lo
 // Elements the PC build hides on purpose (station_server.HIDE_CSS), and what it adds: the recorded exceptions
 const HIDE_SEL = '#runFind,#runRefresh,#raStrip,[data-runfind],#updGo,#updRefresh,#updSave,#updAdd,#updCopy,#updAgain,[data-trate],[data-afind],[data-trstory],[data-tstop],[data-astop]';
 const ADDED_SEL = '#ajgf,#ajgf-btn,#ajgf *';
+// the button the PC page's station layer puts in the masthead (panel.js): refhide gets an identical one
+const TF_BUTTON = '<button id="ajgf-btn" class="upd-btn" type="button" aria-expanded="false"><svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false"><path d="M2 4.5h4l1.5 1.5H14v6.5H2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span class="lbl">Tracker files</span><span class="tf-dot" hidden></span></button>';
 const STORY_OLD = process.env.LC_STORY_OLD || 's04743';        // 2015 story with 5 embedded photos (jgimg:)
 const STORY_DATA = process.env.LC_STORY_DATA || 's02546';       // 2025 story with data: photos
 
@@ -218,7 +220,7 @@ const DUMP = ({ HIDE_SEL, ADDED_SEL }) => {
       const isHidden = d === doc && (el.matches(HIDE_SEL));
       const isAdded = d === doc && el.matches(ADDED_SEL);
       if (isHidden && r.width > 0 && r.height > 0) masks.push({ x: r.x + sx + mx, y: r.y + sy + my, w: r.width, h: r.height, why: 'hidden:' + (el.id || el.className || tag) });
-      if (isAdded && r.width > 0 && r.height > 0 && getComputedStyle(el).position === 'fixed') masks.push({ x: r.x + mx, y: r.y + my, w: r.width, h: r.height, why: 'added:' + el.id, fixed: true });
+      if (isAdded && r.width > 0 && r.height > 0 && (getComputedStyle(el).position === 'fixed' || el.id === 'ajgf-btn')) masks.push({ x: r.x + mx, y: r.y + my, w: r.width, h: r.height, why: 'added:' + el.id, fixed: true });   // TIDY-v1: the Tracker files button is in the masthead (pinned: viewport coordinates)
       if (isHidden || isAdded || el.closest(HIDE_SEL) || el.closest('#ajgf,#ajgf-btn')) { if (isHidden) hidden.push(prefix + el.tagName); continue; }
       if (r.width === 0 && r.height === 0) continue;
       if (cs.visibility === 'hidden' || cs.display === 'none') continue;
@@ -263,7 +265,12 @@ async function capture(browser, target, base, sc_, dir, errors) {
   try {
     await boot(p, sc_.hash);
     // refhide: the reference with the recorded exception applied (the same hiding rule the PC's page server adds), to prove that nothing but the exception differs
-    if (target === 'refhide') { await p.addStyleTag({ content: HIDE_SEL + '{display:none!important}' }); await sleep(300); }
+    if (target === 'refhide') {
+      await p.addStyleTag({ content: HIDE_SEL + '{display:none!important}#ajgf-btn .tf-dot{width:9px;height:9px;border-radius:50%;background:#f0b44c;flex:none}#ajgf-btn .tf-dot[hidden]{display:none}' });
+      // TIDY-v1: the Tracker files button the PC page has in the masthead, the same markup as station/web/panel.js (TF_BUTTON), so the masthead lays out the same
+      await p.evaluate(h => { const mg = document.querySelector('#updBtn'); if (mg && !document.querySelector('#ajgf-btn')) mg.insertAdjacentHTML('beforebegin', h); }, TF_BUTTON);
+      await sleep(300);
+    }
     if (sc_.run) await sc_.run(p);
     await settle(p, 400);
     // Flush the raster: a 1 px width change and back makes Chromium lay out and paint everything again from the final DOM. Without it the pixels of a few rounded
@@ -330,7 +337,7 @@ async function capture(browser, target, base, sc_, dir, errors) {
     const [a, b, c] = await Promise.all([
       capture(browser, 'ref', REF, s, path.join(OUT, VP + RUNTAG, 'ref'), errors),
       capture(browser, 'pc', PC, s, path.join(OUT, VP + RUNTAG, 'pc'), errors),
-      capture(browser, 'refhide', REF, s, path.join(OUT, VP + RUNTAG, 'refhide'), errors)]);
+      capture(browser, 'refhide', REFX || REF, s, path.join(OUT, VP + RUNTAG, 'refhide'), errors)]);
     console.log(`${s.name}: ${((Date.now() - t0) / 1000).toFixed(1)}s ${a.error || ''} ${b.error || ''} ${c.error || ''}`);
   }
   console.log('reference fonts: from Google', FONTSTAT.google, ' from the cache', FONTSTAT.cache, ' from fonts/google', FONTSTAT.bundled);

@@ -42,9 +42,9 @@ CATEGORIES = {
 REFUSALS = {
     'LOCKED': 'Another save is running right now. Wait a few minutes and try again.',
     'SHA_MISMATCH': 'The workbook is not the one the tracker last saved: it was changed outside the tracker (for example in Excel). '
-                    'If that was on purpose, use "Accept the workbook as it is now", then bring the update in again.',
+                    'If that was on purpose, use "Accept the workbook as it is now" (Tracker files, under Repairs), then bring the update in again.',
     'EXCEL_OPEN': 'Excel has the workbook open. Close it, then try again.',
-    'NO_LEDGER': 'The tracker has not been told which workbook to trust yet. Use "Accept the workbook as it is now" once.',
+    'NO_LEDGER': 'The tracker has not been told which workbook to trust yet. Use "Accept the workbook as it is now" (Tracker files, under Repairs) once.',
     'UNCONFIRMED_PREVIOUS': 'The last save was never confirmed. It has to be sorted out before another save.',
     'INPUT_MISSING': 'A file the save needs is missing from the tracker folder.',
     'PIPELINE_MISMATCH': 'The tracker\'s own program files do not match their checksum list, so the save was refused. The folder may be damaged.',

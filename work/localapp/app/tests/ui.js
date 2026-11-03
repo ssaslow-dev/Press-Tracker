@@ -18,7 +18,9 @@ const fs = require('fs');
     for (const s of steps) {
       const name = s.name || s.op;
       if (s.op === 'goto') { await p.goto(base + '/', { waitUntil: 'load' }); await p.waitForFunction(() => window.__ajgFiles === true, null, { timeout: 60000 }); await p.waitForTimeout(s.wait || 1500); }
-      else if (s.op === 'open_panel') { const open = await p.evaluate(() => document.querySelector('#ajgf').classList.contains('open')); if (!open) await p.click('#ajgf-btn'); await p.waitForTimeout(800); }
+      else if (s.op === 'open_panel') { const open = await p.evaluate(() => document.querySelector('#ajgf').classList.contains('open')); if (!open) await p.evaluate(() => document.querySelector('#ajgf-btn').click()); await p.waitForTimeout(800); }
+      else if (s.op === 'open_repairs') { await p.evaluate(() => { const d = document.querySelector('#ajgf-repairs'); if (d) d.open = true; }); await p.waitForTimeout(300); }
+      else if (s.op === 'click_sel') { await p.click(s.sel); await p.waitForTimeout(300); }
       else if (s.op === 'click') { await p.locator('#ajgf button', { hasText: s.text }).first().click(); }
       else if (s.op === 'file') { await p.setInputFiles('#ajgf input[type=file]', s.path); }
       else if (s.op === 'drop') {

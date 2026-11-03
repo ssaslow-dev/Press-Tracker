@@ -101,6 +101,44 @@ def patched_copy(src: Path, dst: Path, patch_file: Path):
     os.replace(tmp, dst)
 
 
+def apply_subs(files, subs_file: Path):
+    """TIDY-v1 wording: a list of {old, new, count} text swaps. Each old text must occur exactly `count` times across `files` (nothing is guessed);
+    a change that touches no other text. The files are rewritten as new files (never written into: copies of the folder may hard-link them)."""
+    subs = json.loads(subs_file.read_text(encoding='utf-8'))
+    texts = {f: f.read_text(encoding='utf-8') for f in files}
+    for s in subs:
+        found = sum(t.count(s['old']) for t in texts.values())
+        if found != s.get('count', 1):
+            raise SystemExit(f'{subs_file.name}: "{s["old"][:70]}" occurs {found} times (expected {s.get("count", 1)}); the file changed since the list was written')
+        for f in texts:
+            texts[f] = texts[f].replace(s['old'], s['new'])
+    for f, t in texts.items():
+        if t != f.read_text(encoding='utf-8'):
+            tmp = f.with_name(f.name + '.new')
+            tmp.write_text(t, encoding='utf-8', newline='\n')
+            os.replace(tmp, f)
+
+
+def tidy_pipeline(pipe: Path):
+    """TIDY-v1 (patches 15 to 18): layout fixes, Top issues cells, wording; on the pipeline's own copies, so every later page rebuild has them"""
+    ap_ = HERE / 'patches'
+    patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '15_tracker_js_tidy_css.patch')
+    patched_copy(pipe / 'tabs' / 'reporters.js', pipe / 'tabs' / 'reporters.js', ap_ / '16_tabs_reporters_tidy.patch')
+    patched_copy(pipe / 'tabs' / 'outlets.js', pipe / 'tabs' / 'outlets.js', ap_ / '17_tabs_outlets_tidy.patch')
+    apply_subs([pipe / 'tracker.js', pipe / 'shell.html'] + sorted((pipe / 'tabs').glob('*.js')), ap_ / '18_wording_tidy.subs.json')
+
+
+def patch_index_tidy(idx: Path):
+    """TIDY-v1: the same patches on a page already built (each must match exactly once)"""
+    ap_ = HERE / 'patches'
+    for n in ('15_tracker_js_tidy_css', '16_tabs_reporters_tidy', '17_tabs_outlets_tidy'):
+        patched_copy(idx, idx, ap_ / (n + '.patch'))
+    apply_subs([idx], ap_ / '18_wording_tidy.subs.json')
+
+
+TIDY_MARK = 'TIDY-v1: layout fixes of the PC tracker'
+
+
 # ---------------------------------------------------------------- the page build (work/localapp/build) -> pipeline + site
 
 def page_build(a) -> Path:
@@ -240,9 +278,12 @@ def copy_app_code(root: Path, pb: Path, info: dict):
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '12_sheet_task_pqpdf.patch')
     patched_copy(pipe / 'date_rules.py', pipe / 'date_rules.py', ap_ / '13_date_rules_proquest.patch')
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '14_sheet_task_pq_outlet_aliases.patch')
+    patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '19_sheet_task_reserved_ids.patch')       # DROPUNVERIFIED-v1: ids of rows deleted for good stay reserved
+    patched_copy(pipe / 'build_data.py', pipe / 'build_data.py', ap_ / '20_build_data_reserved_ids.patch')
     shutil.copy2(LOCALAPP / 'station' / 'data' / 'proquest_outlets.json', pipe / 'proquest_outlets.json')    # PROQUESTPDF-v1 answer 2 (one source: the station's data)
     patched_copy(pipe / 'shell.html', pipe / 'shell.html', ap_ / '08_shell_localfonts.patch')
     patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '07_tracker_js_localfonts.patch')
+    tidy_pipeline(pipe)    # TIDY-v1 (patches 15 to 18)
     spec = importlib.util.spec_from_file_location('pipeline_sha', REPO / 'work' / 'saver' / 'tools' / 'pipeline_sha.py')
     m = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(m)
@@ -295,6 +336,7 @@ def fill_data(root: Path, pb: Path, a, info: dict):
     site = pb / 'site'
     patched_copy(site / 'index.html', data / 'site' / 'index.html', HERE / 'patches' / '06_tracker_js_photolink.patch')   # PHOTOLINK-v1: the same viewer patch as pipeline/tracker.js (a rebuild makes it from there)
     patch_index_fonts(data / 'site' / 'index.html')
+    patch_index_tidy(data / 'site' / 'index.html')
     copy_fonts(data)
     for f in (site / 'data').iterdir():
         shutil.copy2(f, data / 'site' / 'data' / f.name)
@@ -303,6 +345,11 @@ def fill_data(root: Path, pb: Path, a, info: dict):
     if a.live_site and (Path(a.live_site) / 'articles').is_dir():
         copy_tree(Path(a.live_site) / 'articles', data / 'copies' / 'articles')   # the page reads them through the server's /articles/ route
     if a.data_mode != 'snapshot':
+        # SWITCHOVER-v1: an empty tracker. The page built here carries the snapshot's stories, so it is not shipped: a one-screen page says plainly
+        # that there is no workbook yet. "Set up from the Mac library" builds the real page (station_cli rebuild_page) from the Mac workbook.
+        # The article data (copies/articles), the photo shards (site/img), the fonts and the pipeline stay: they are the shipped page data.
+        shutil.copy2(HERE / 'src' / 'launcher' / 'no_workbook.html', data / 'site' / 'index.html')
+        (data / 'site' / 'data' / 'sheet.json').unlink(missing_ok=True)
         return
     wb = Path(a.workbook)
     shutil.copy2(wb, data / 'workbook' / wb.name)
@@ -395,7 +442,10 @@ def main(argv=None):
         for d in ('server', 'station', 'updatefolder', 'saver', 'pipeline', 'docs'):
             shutil.rmtree(root / 'app' / d, ignore_errors=True)
         copy_app_code(root, pb, info)
-        idx = root / 'data' / 'site' / 'index.html'      # PHOTOLINK-v1: the page already in data\site gets the viewer patch too (once; a rebuilt page has it already)
+        idx = root / 'data' / 'site' / 'index.html'
+        if idx.is_file() and 'id="ajg-nowb"' in idx.read_text(encoding='utf-8'):
+            idx = root / 'data' / 'site' / 'no_page_to_patch'      # an empty tracker (no workbook yet): the placeholder page is not patched
+        # PHOTOLINK-v1: the page already in data\site gets the viewer patch too (once; a rebuilt page has it already)
         if idx.is_file() and 'PHOTOLINK-v1 (PC tracker)' not in idx.read_text(encoding='utf-8'):
             patched_copy(idx, idx, HERE / 'patches' / '06_tracker_js_photolink.patch')
         if idx.is_file():                                 # LOCALFONTS-v1 (same rule); a page patched by the first version (one fonts.css) is moved to page.css / viewer.css
@@ -404,11 +454,14 @@ def main(argv=None):
                 idx.write_text(txt.replace('href="/fonts/fonts.css"', 'href="/fonts/page.css"').replace('@import url("/fonts/fonts.css")', '@import url("/fonts/viewer.css")'), encoding='utf-8', newline='')
             elif '/fonts/page.css' not in txt:
                 patch_index_fonts(idx)
+        if idx.is_file() and TIDY_MARK not in idx.read_text(encoding='utf-8'):     # TIDY-v1 (same rule: once)
+            patch_index_tidy(idx)
         copy_fonts(root / 'data')
         if a.refresh_page:
             site = pb / 'site'
             patched_copy(site / 'index.html', root / 'data' / 'site' / 'index.html', HERE / 'patches' / '06_tracker_js_photolink.patch')
             patch_index_fonts(root / 'data' / 'site' / 'index.html')
+            patch_index_tidy(root / 'data' / 'site' / 'index.html')
             for f in (site / 'data').iterdir():
                 tmp = root / 'data' / 'site' / 'data' / (f.name + '.new')      # replaced, never written into (hard links)
                 shutil.copy2(f, tmp)

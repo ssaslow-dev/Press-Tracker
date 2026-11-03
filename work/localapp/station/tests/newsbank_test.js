@@ -126,7 +126,7 @@ const INIT = ({ today, hl }) => {
 
   /* add */
   const addLabel = await page.textContent('#nbAdd');
-  check('the button says how many stories it adds (34: 15 + 19 new, minus 1 unticked, plus 1 reprint)', /Add 34 stories/.test(addLabel), addLabel);
+  check('the button says how many stories it adds (36: 15 + 19 new, minus 1 unticked, plus 1 reprint, plus 1 print page and 1 known story whose PDF is kept as an extra copy)', /Add 36 stories/.test(addLabel), addLabel);
   await page.click('#nbAdd');
   await page.waitForFunction(() => /Added:|Stopped/.test(document.querySelector('#nbProg').textContent), null, { timeout: 180000 });
   const prog = await page.textContent('#nbProg'); console.log('   ', prog);
@@ -163,7 +163,7 @@ const INIT = ({ today, hl }) => {
   check('the unticked story is not in the run', !rows.some(r => /^Filler story 13/.test(r.Headline)));
   check('the print page is listed for clipping and is not a row', run.print_pages.length === 1 && /Valley Courier Test: Page 4/.test(run.print_pages[0].hl) && !rows.some(r => /Page 4/.test(r.Headline)), JSON.stringify(run.print_pages));
   const pdocs = S.pages.map(x => x[1]).filter(d => d.nb);
-  check('a pages doc per story and reprint, each naming its PDF with sha256 and size', pdocs.length === 33 && pdocs.every(d => /^files\/nb-[0-9a-f]{16}\.pdf$/.test(d.nb.file) && /^[0-9a-f]{64}$/.test(d.nb.pdf_sha256) && d.nb.pdf_bytes > 1000 && d.nb.docref), pdocs.length);
+  check('a pages doc per story, reprint and print page, each naming its PDF with sha256 and size', pdocs.length === 34 && pdocs.every(d => /^files\/nb-[0-9a-f]{16}\.pdf$/.test(d.nb.file) && /^[0-9a-f]{64}$/.test(d.nb.pdf_sha256) && d.nb.pdf_bytes > 1000 && d.nb.docref), pdocs.length);
   check('the pages doc holds the story text in the library’s NewsBank-text form, with no neighbouring story in it', pdocs.every(d => /<article class="jg-pdf-text">/.test(d.clean)) && !pdocs.some(d => /long night of testimony/.test(d.clean) && /Valley Courier Test \(CA\)|加布里埃尔议员/.test(d.clean)));
   const long2 = pdocs.find(d => /wildfire recovery money/.test(d.title));
   check('a multi-page story starting mid-page: its page range and a band recorded', long2.nb.batch.pages.join('-') === L2.start_page + '-' + L2.end_page && long2.nb.batch.bands.length >= 1 && long2.nb.batch.shared_first === true, JSON.stringify(long2.nb.batch));
@@ -188,7 +188,7 @@ const INIT = ({ today, hl }) => {
 
   /* step 3: pack */
   await page.waitForFunction(() => !document.querySelector('#stPack').disabled, null, { timeout: 20000 });
-  check('step 3 says how many NewsBank PDFs the update holds', /33 NewsBank story PDFs/.test(await page.textContent('#stPackStatus')), await page.textContent('#stPackStatus'));
+  check('step 3 says how many NewsBank PDFs the update holds', /34 NewsBank story PDFs/.test(await page.textContent('#stPackStatus')), await page.textContent('#stPackStatus'));
   await page.click('#stPack');
   await page.waitForFunction(() => window.__dl.length > 0, null, { timeout: 60000 });
   const dl = await page.evaluate(() => ({ name: window.__dl[0].filename, size: window.__dl[0].size, b64: btoa(String.fromCharCode.apply(null, window.__lastDl.subarray(0, 0))) }));

@@ -1,0 +1,32 @@
+{
+ "n": 1443,
+ "by_class_conf": {
+  "A/high": 10,
+  "A/low": 25,
+  "A/medium": 22,
+  "A-jump/medium": 138,
+  "B/high": 26,
+  "B/low": 161,
+  "B/medium": 90,
+  "C/low": 109,
+  "D/low": 862
+ },
+ "class_vs_likely": {
+  "A | same paper + date": 31,
+  "A | same paper + date + page": 10,
+  "A | same paper within -7..+3 days": 16,
+  "A-jump | same paper + date": 138,
+  "B | none": 169,
+  "B | same paper + date": 1,
+  "B | same paper within -7..+3 days": 11,
+  "B | sister paper within 3 days": 96,
+  "C | none": 86,
+  "C | same paper within -7..+3 days": 3,
+  "C | sister paper within 3 days": 20,
+  "D | none": 452,
+  "D | same paper + date": 269,
+  "D | same paper within -7..+3 days": 33,
+  "D | sister paper within 3 days": 108
+ },
+ "proposal_lines": 6549
+}

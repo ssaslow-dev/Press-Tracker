@@ -71,13 +71,31 @@ def main():
     port = free_port()
     live = subprocess.Popen([sys.executable, '-m', 'http.server', str(port), '--bind', '127.0.0.1'], cwd=a.live_site, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     ref = f'http://127.0.0.1:{port}/index.html'
+    # TIDY-v1: the reference with the TIDY-v1 changes applied (the very patch files the PC build applies: app/patches 15 to 18) next to the untouched reference.
+    # "refhide" (reference with the recorded exceptions) is taken from this copy, so everything outside TIDY-v1 is still compared with the live tracker's own page.
+    refx_dir = a.out / '_refx'
+    shutil.rmtree(refx_dir, ignore_errors=True)
+    refx_dir.mkdir(parents=True)
+    for f in a.live_site.iterdir():
+        if f.name != 'index.html':
+            os.symlink(f, refx_dir / f.name)
+    import importlib.util
+    spec = importlib.util.spec_from_file_location('assemble_app', REPO / 'work' / 'localapp' / 'app' / 'assemble_app.py')
+    A = importlib.util.module_from_spec(spec)
+    sys.modules['assemble_app'] = A
+    spec.loader.exec_module(A)
+    shutil.copy2(a.live_site / 'index.html', refx_dir / 'index.html')
+    A.patch_index_tidy(refx_dir / 'index.html')
+    portx = free_port()
+    livex = subprocess.Popen([sys.executable, '-m', 'http.server', str(portx), '--bind', '127.0.0.1'], cwd=refx_dir, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    refx = f'http://127.0.0.1:{portx}/index.html'
     env = dict(os.environ, PLAYWRIGHT_MODULE='/opt/node-tools/node_modules/playwright')
     bad = 0
     try:
-        assert wait_http(ref), 'reference server did not start'
+        assert wait_http(ref) and wait_http(refx), 'reference server did not start'
         for vp in a.viewports.split(','):
             if not a.no_capture:
-                cmd = [a.node, str(HERE / 'lookcheck.js'), '--ref', ref, '--pc', srv.base + '/', '--out', str(a.out), '--vp', vp]
+                cmd = [a.node, str(HERE / 'lookcheck.js'), '--ref', ref, '--refx', refx, '--pc', srv.base + '/', '--out', str(a.out), '--vp', vp]
                 if a.only:
                     cmd += ['--only', a.only]
                 print('>>', ' '.join(cmd), flush=True)
@@ -90,13 +108,14 @@ def main():
                 print('>>', name, vp, flush=True)
                 subprocess.run(cmd, check=False)
             if not a.no_parity:
-                cmd = [a.node, str(HERE / 'parity.js'), '--ref', ref, '--pc', srv.base + '/', '--out', str(a.out), '--vp', vp]
+                cmd = [a.node, str(HERE / 'parity.js'), '--ref', refx, '--pc', srv.base + '/', '--out', str(a.out), '--vp', vp]
                 if a.parity_only:
                     cmd += ['--only', a.parity_only]
                 print('>>', ' '.join(cmd), flush=True)
                 bad += subprocess.run(cmd, check=False, env=env).returncode != 0
     finally:
         live.terminate()
+        livex.terminate()
         srv.stop()
     return 1 if bad else 0
 

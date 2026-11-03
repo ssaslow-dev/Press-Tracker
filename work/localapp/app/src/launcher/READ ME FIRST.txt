@@ -8,14 +8,30 @@ If the tracker is already running, double-clicking again just opens it again.
 Keep this folder on this PC (for example on the Desktop), not on the shared drive.
 Each person has their own copy. One person, the keeper, saves new stories; everyone else brings in the keeper's refresh files.
 
-THE TRACKER FILES BUTTON (bottom right of the tracker)
+THE TRACKER FILES BUTTON (top right of the tracker, next to Manage)
 Keeper:
   Make "for Update" file   a small file listing what the tracker already has. Load it into the Update station before pressing Update.
   Bring in update          drop in the update zip from the Update station. The tracker shows what it would change. Nothing is saved until you press Save.
-  Accept the workbook as it is now   use this once after you edit the workbook in Excel yourself (close Excel first).
-  Make refresh file        after a save: a file for everyone else, so their copies match yours.
+  Save my edits            writes the stories you removed or edited in the tracker into the workbook (you see what will change first).
+  Make refresh file        after a save: a file for everyone else, so their copies match yours. The first one it makes carries everything.
+  Repairs (closed; open it when needed)
+    Accept the workbook as it is now   use this once after you edit the workbook in Excel yourself (close Excel first).
+    Make a FULL refresh file           for a person who joins later: everything, including the whole library.
+    Remove unverified reprints         (once, at switch-over) deletes the "Reprint (unverified)" rows, their saved files and their Audio & video rows. You see the full list first.
+    Set up again from the Mac library  only if the first setup went wrong (it replaces the workbook; a backup is made first).
+    Rebuild the tracker page           builds the page again from the workbook.
 Everyone else:
   Bring in refresh file    drop in the keeper's refresh file. Your own notes and saved views are kept.
+An amber dot on the button means something needs attention (Excel has the workbook open, a save is running, or the workbook was changed outside the tracker).
+
+FIRST TIME ONLY, on the keeper copy (switch-over day)
+  A new tracker has no workbook: the page says "No workbook yet". Make this the keeper copy first: open data\role.json and make it {"role": "keeper"}.
+  1. Copy the Mac's "Tracker library" folder onto this PC (all files downloaded, not in a OneDrive folder) with the fingerprint list the Mac made
+     ("Tracker library manifest.sha256").
+  2. Tracker files > Set up from the Mac library: type or paste the folder's path (in Explorer, Shift + right-click the folder > Copy as path), choose the list,
+     press "Check the files". It says plainly if anything is missing, different or only online. When it is clean, press "Copy and set up".
+     Your Mac folder is only read, never changed.
+  3. Next on the same panel: "Remove unverified reprints". Read the list, tick the box, press "Remove them".
 
 TO UPDATE THE TRACKER (keeper, weekly or monthly)
   1. Tracker files > Make "for Update" file, and keep the file it downloads.
@@ -27,5 +43,5 @@ TO UPDATE THE TRACKER (keeper, weekly or monthly)
 The tracker program itself makes no internet connections and reads and writes only inside this folder.
 One exception: newer saved articles show their photos from the news site's own page, so Edge loads those pictures when you open such an article.
 Do not open the workbook in Excel while saving.
-Nothing is ever deleted: old files are moved aside (backups, replaced page files, _to_delete).
+Nothing is ever deleted: old files are moved aside (backups, replaced page files, _to_delete). The one exception is "Remove unverified reprints", which you confirm after reading its list.
 More detail: app\docs\ (README.md for the folder layout, IT_NOTE_APP.md for IT).

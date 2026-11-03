@@ -1,0 +1,165 @@
+--- a/code/sheet_task.py
++++ b/code/sheet_task.py
+@@ -1538,2 +1538,148 @@
+ 
++    # ---------- PRINTPAGES-v1 / ORIGCOPIES-v1: print pages and extra original copies from the Update station's NewsBank box ----------
++    @staticmethod
++    def nb_kind(p):
++        return str(((p or {}).get('nb') or {}).get('kind') or '') if isinstance(p, dict) and isinstance(p.get('nb'), dict) else ''
++
++    def _nb_bytes(self, pid, nb, what):
++        """the page document's PDF, checked against its checksum; None (and a pages_error entry) when missing or wrong"""
++        import hashlib
++        path = self.nb_pdf_path(nb)
++        raw = open(path, 'rb').read() if path else None
++        if raw is None or hashlib.sha256(raw).hexdigest() != nb.get('pdf_sha256'):
++            self.res['pages_error'].append({'page': pid, 'why': f'the {what} PDF is missing or does not match its checksum: not saved'})
++            return None
++        return raw
++
++    def _write_original_pdf(self, pages_dir, year, fname, raw):
++        """add-only: _original_pdf/<year>/<fname>; an existing file is never replaced. -> 'written' | 'exists' | 'nodir'"""
++        import os
++        if not pages_dir:
++            return 'nodir'
++        d = os.path.join(pages_dir, '_original_pdf', year)
++        os.makedirs(d, exist_ok=True)
++        fp = os.path.join(d, fname)
++        if os.path.exists(fp):
++            return 'exists'
++        with open(fp, 'wb') as f:
++            f.write(raw)
++        return 'written'
++
++    def apply_print_pages(self, pages_dir):
++        """A NewsBank print page (pages doc nb.kind 'print_page', its PDF in files/): kept as the print original
++        _original_pdf/<year>/<Article ID>_p<page>.pdf (PRINTORIG-v1 option B). as 'reprint': the page is the print edition of a story the intern
++        confirmed; its Reprint row (made from the run's rows) names the Article ID. as 'unlinked': a row of the "Unlinked print pages" tab is
++        written (the run's print_rows entry for this page: its own Article ID from the one sequence, the link and citation, never an existing link twice).
++        An extra original copy (a run's extra_copies entry): the PDF of a story already in the tracker is kept as
++        _original_pdf/<year>/nb<Article ID><o|r>-<Story ID>.pdf and listed in "Other files" (OTHERFILES-v1), unless the row already holds a NewsBank PDF
++        (File name nb*.pdf: the same record); only blank cells are filled (Section, Author / byline, Word count, the citation, the link)."""
++        pages = self.db.get('pages') or {}
++        prows, copies = {}, []
++        for rid, run in (self.db.get('runs') or {}).items():
++            for x in (run or {}).get('print_rows') or []:
++                if isinstance(x, dict) and x.get('_page'):
++                    prows[x['_page']] = x
++            for x in (run or {}).get('extra_copies') or []:
++                if isinstance(x, dict):
++                    copies.append(x)
++        for pid, p in pages.items():
++            p = p or {}
++            if self.nb_kind(p) == 'print_page':
++                self._print_page(pid, p, prows.get(pid), pages_dir)
++        for x in copies:
++            self._extra_copy(x, pages_dir)
++
++    def _year_of(self, d, fallback=''):
++        d = norm_val(d)
++        return d[:4] if re.match(r'^\d{4}', d) else (str(fallback)[:4] if re.match(r'^\d{4}', str(fallback)) else self.today[:4])
++
++    def _print_page(self, pid, p, prow, pages_dir):
++        nb = p['nb']
++        raw = self._nb_bytes(pid, nb, 'print page')
++        if raw is None:
++            return
++        page = str((nb.get('header') or {}).get('page') or '').strip()
++        page_part = re.sub(r'[^0-9A-Za-z-]', '', page) or 'x'
++        info = {'page': pid, 'as': nb.get('as'), 'url': nb.get('url', '')}
++        if nb.get('as') == 'reprint':
++            target = self.norm_id(self.page_target.get(pid) or self.ids.get(pid, pid))
++            aid = target if target in self.s.rows else None
++            if not aid:
++                self.res['unknown_story'].append({'collection': 'pages', 'id': pid})
++                return
++            r = self.s.rows[aid]
++            year = self._year_of(self.s.get(r, 'Date'), self.s.get(r, 'Year'))
++            fname = f'{aid}_p{page_part}.pdf'
++            info.update({'aid': aid, 'file': f'_original_pdf/{year}/{fname}', 'row': 'Coverage'})
++            info['status'] = self._write_original_pdf(pages_dir, year, fname, raw)
++            self.res.setdefault('print_pages_saved', []).append(info)
++            return
++        # unlinked
++        if PRINT_TAB not in self.s.wb.sheetnames or not isinstance(prow, dict):
++            self.res.setdefault('print_pages_skipped', []).append(dict(info, why='no "Unlinked print pages" tab or no row for this page'))
++            return
++        ws = self.s.wb[PRINT_TAB]
++        ph = {c.value: i + 1 for i, c in enumerate(ws[1]) if c.value}
++        link = norm_val(prow.get('NewsBank print-page link'))
++        have = {norm_val(ws.cell(t, ph['NewsBank print-page link']).value) for t in range(2, ws.max_row + 1)} if 'NewsBank print-page link' in ph else set()
++        if link and link in have:
++            self.res.setdefault('print_pages_skipped', []).append(dict(info, why='this print page is already on the Unlinked print pages tab'))
++            return
++        aid = self.next_aid()
++        t = ws.max_row + 1
++        for c in range(1, len(ph) + 1):
++            ws.cell(t, c)._style = copy.copy(ws.cell(t - 1, c)._style)
++        ws.cell(t, ph['Article ID']).value = aid
++        for col, v in prow.items():
++            if col.startswith('_') or col == 'Article ID' or col not in ph or blank(v):
++                continue
++            ws.cell(t, ph[col]).value = v
++        self.s.print_aids.add(aid)
++        year = self._year_of(prow.get('Date'), prow.get('Year'))
++        fname = f'{aid}_p{page_part}.pdf'
++        info.update({'aid': aid, 'file': f'_original_pdf/{year}/{fname}', 'row': PRINT_TAB, 'status': self._write_original_pdf(pages_dir, year, fname, raw)})
++        self.res.setdefault('print_pages_saved', []).append(info)
++        self.res.setdefault('print_rows_added', []).append({'aid': aid, 'outlet': norm_val(prow.get('Outlet')), 'date': norm_val(prow.get('Date')), 'page': page})
++
++    def _extra_copy(self, entry, pages_dir):
++        """one entry of a run's extra_copies: {aid, fmt ('nb' | 'pq'), file 'files/<id>.pdf', pdf_sha256, cells} (the update folder's own contract)"""
++        import hashlib, os
++        aid = str(entry.get('aid') or entry.get('row') or '').strip()
++        r = self.s.rows.get(aid)
++        info = {'aid': aid, 'file_in': entry.get('file')}
++        if not r:
++            self.res.setdefault('extra_copies_skipped', []).append(dict(info, why='the row is not in the workbook'))
++            return
++        names = [norm_val(self.s.get(r, c)) for c in ('File name', 'File name 2', 'Other files') if c in self.s.col]
++        fmt = re.sub(r'[^a-z]', '', str(entry.get('fmt') or 'nb').lower()) or 'nb'
++        if any(re.search(r'(^|;\s*)' + fmt + r'[^;]*\.pdf', n, re.I) for n in names):
++            self.res.setdefault('extra_copies_skipped', []).append(dict(info, why='the row already holds a ' + ('NewsBank' if fmt == 'nb' else 'ProQuest') + ' PDF (the same record)'))
++            return
++        fid = os.path.basename(str(entry.get('file') or ''))
++        path = os.path.join(self.db_dir, 'files', fid) if getattr(self, 'db_dir', None) and re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,119}\.pdf', fid) else None
++        raw = open(path, 'rb').read() if path and os.path.isfile(path) else None
++        if raw is None or hashlib.sha256(raw).hexdigest() != entry.get('pdf_sha256'):
++            self.res['pages_error'].append({'page': fid, 'why': 'the extra copy PDF is missing or does not match its checksum: not saved'})
++            return
++        suf = {'Original': 'o', 'Reprint': 'r'}.get(self.s.get(r, 'Original or reprint'), '')
++        st = str(self.s.get(r, 'Story ID') or '').strip()
++        fname = f'{fmt}{aid}{suf}' + (f'-{st}' if st else '') + '.pdf'
++        year = self._year_of(self.s.get(r, 'Date'), self.s.get(r, 'Year'))
++        info.update({'file': f'_original_pdf/{year}/{fname}', 'status': self._write_original_pdf(pages_dir, year, fname, raw)})
++        if 'Other files' in self.s.col:
++            cur = norm_val(self.s.get(r, 'Other files'))
++            if fname not in [x.strip() for x in cur.split(';')]:
++                self.s.put(r, 'Other files', (cur + '; ' if cur else '') + fname)
++                info['listed'] = True
++        else:
++            info['listed'] = False
++            info['note'] = 'no "Other files" column yet (OTHERFILES-v1 is added on switch-over day): the file is kept, not listed'
++        filled = []
++        for col, v in (entry.get('cells') or {}).items():
++            if col in self.s.col and not blank(v) and blank(self.s.get(r, col)):
++                if self.fill(r, col, v, 'extra copy PDF', fid) == 'written':
++                    filled.append(col)
++        info['filled'] = filled
++        self.res.setdefault('extra_copies', []).append(info)
++
+     def apply_pages(self, pages_dir):
+@@ -1551,2 +1697,4 @@
+             p = p or {}
++            if self.nb_kind(p) == 'print_page':   # PRINTPAGES-v1: handled by apply_print_pages (a print original), not a saved copy
++                continue
+             target = self.norm_id(self.page_target.get(pid) or self.ids.get(pid, pid))   # AUTO-v1: finds that became reprints
+@@ -3810,2 +3958,3 @@
+         self.apply_pages(pages_dir)
++        self.apply_print_pages(pages_dir)   # PRINTPAGES-v1 / ORIGCOPIES-v1
+         self.apply_bills()   # AUTO-v1
+@@ -4437,3 +4586,3 @@
+ VT_KEYS = {'Audio & video details': ('Article ID',), 'Removed': ('Article ID',), PRINT_TAB: ('Article ID',), 'Press releases': ('Release ID', 'URL')}
+-VT_NEW_OK = {'Press releases', 'Audio & video details', 'Removed'}   # tabs a run may add rows to
++VT_NEW_OK = {'Press releases', 'Audio & video details', 'Removed', PRINT_TAB}   # tabs a run may add rows to (PRINTPAGES-v1: Unlinked print pages rows from the Update station's NewsBank print pages)
+ VT_SKIP = {'Coverage', 'Originals'}                               # checked by verify() itself

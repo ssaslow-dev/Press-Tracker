@@ -1,0 +1,150 @@
+--- a/code/sheet_task.py
++++ b/code/sheet_task.py
+@@ -3632,6 +3632,112 @@
+         if rows:
+             AV.write_tab(self.s.wb, rows)
+ 
++    # ---------- OTHERFILES-v1 / ORIGCOPIES-v1: extra original copies of a row already in the tracker ----------
++    OTHER_COL = 'Other files'
++    EXTRA_FILL_OK = ('ProQuest link', 'ProQuest via CA State Library', 'NewsBank article link', 'NewsBank print article link', 'NewsBank print-page link',
++                     'NewsBank print page article link via CA State Library', 'Print Article ID', 'Print date', 'Print headline', 'Print section',
++                     'Print word count', 'Edition', 'Section', 'Page')
++
++    @staticmethod
++    def file_names(cell):
++        """the names in a File name / File name 2 / Other files cell ("a.pdf; b.pdf")"""
++        return [x.strip() for x in norm_val(cell).split(';') if x.strip()]
++
++    def apply_extra_copies(self, pages_dir):
++        """A run document's extra_copies = [{aid, fmt (nb|pq), file (files/<id>.pdf), pdf_sha256, id_col (Article ID | Print Article ID), to (other | file2_else_other),
++        fill {column: value}}]: another original copy (a PDF) of a story already in the tracker. No new row; only blank cells are filled (the links and print cells named in
++        EXTRA_FILL_OK). The PDF is kept add-only as _original_pdf/<year>/<fmt><id><o|r>-<Story ID>.pdf (a name already taken by another file gets -v2, -v3 ...) and its name is
++        APPENDED to the row's "Other files" cell ("; "-separated; names already there are never changed or removed), or, for `to` file2_else_other, put in File type 2 /
++        File name 2 when those are blank. A workbook without the column: nothing is appended and the copy is listed in res['other_files_skipped'].
++        Lists: res['other_files'] ([{aid, names, before}], what the saver's diff may allow), res['other_files_skipped'], res['extra_copies_saved']."""
++        import os, hashlib
++        self.res.setdefault('other_files', []); self.res.setdefault('other_files_skipped', [])
++        have_col = self.OTHER_COL in self.s.col
++        seen = set()
++        for rid, run in sorted((self.db.get('runs') or {}).items()):
++            for x in (run or {}).get('extra_copies') or []:
++                if not isinstance(x, dict):
++                    continue
++                aid, fid = str(x.get('aid') or '').strip(), os.path.basename(str(x.get('file') or ''))
++                key = (rid, aid, fid)
++                if key in seen:
++                    continue
++                seen.add(key)
++                skip = lambda why, rid=rid, aid=aid, fid=fid: self.res['other_files_skipped'].append({'run': rid, 'aid': aid, 'file': fid, 'why': why})
++                r = self.s.rows.get(aid)
++                if r is None:
++                    skip('the row is not in the workbook')
++                    continue
++                fmt = str(x.get('fmt') or '')
++                is_print = x.get('kind') == 'print'      # PRINTORIG-v1 (option B): a page scan, named <Print Article ID>_p<pages>.pdf, found by that name (no column)
++                if not is_print and fmt not in ('nb', 'pq'):
++                    skip('unknown kind of copy')
++                    continue
++                if is_print and not re.fullmatch(r'\d{1,4}(-\d{1,4})?', str(x.get('pages') or '')):
++                    skip('a print original needs its page numbers (16 or 16-21)')
++                    continue
++                path = self.nb_pdf_path({'file': 'files/' + fid})
++                raw = open(path, 'rb').read() if path else None
++                if raw is None or hashlib.sha256(raw).hexdigest() != x.get('pdf_sha256'):
++                    skip('the PDF is missing or does not match its checksum')
++                    continue
++                to_file2 = not is_print and x.get('to') == 'file2_else_other' and 'File name 2' in self.s.col and blank(self.s.get(r, 'File name 2'))
++                if not (to_file2 or have_col or is_print):
++                    skip('the workbook has no "Other files" column yet')
++                    continue
++                idcol = 'Print Article ID' if (x.get('id_col') == 'Print Article ID' or is_print) and norm_val(self.s.get(r, 'Print Article ID')) else 'Article ID'
++                num = norm_val(self.s.get(r, idcol)) or aid
++                suf = {'Original': 'o', 'Reprint': 'r'}.get(self.s.get(r, 'Original or reprint'), '')
++                st = str(self.s.get(r, 'Story ID') or '').strip()
++                stem = f'{fmt}{num}{suf}' + (f'-{st}' if st else '')
++                if is_print:
++                    stem = f'{num}_p{x["pages"]}'
++                d = norm_val(self.s.get(r, 'Date'))
++                year = d[:4] if re.match(r'^\d{4}', d) else str(self.s.get(r, 'Year') or '')[:4] or self.today[:4]
++                held = set()
++                for c in ('File name', 'File name 2', self.OTHER_COL):
++                    if c in self.s.col:
++                        held |= set(self.file_names(self.s.get(r, c)))
++                lib = getattr(self, 'library_dir', None)
++                libp = lambda nm: os.path.join(lib, '_original_pdf', year, nm) if lib else ''
++                name, n, already = stem + '.pdf', 1, False
++                while name in held or (lib and (os.path.exists(libp(name)) or os.path.exists(os.path.join(lib, year, name)))):
++                    if is_print:
++                        n = 99
++                        break
++                    if lib and os.path.isfile(libp(name)) and name not in held and hashlib.sha256(open(libp(name), 'rb').read()).hexdigest() == x.get('pdf_sha256'):
++                        already = True            # this very file is already in the library: only name it in the row
++                        break
++                    n += 1
++                    name = f'{stem}-v{n}.pdf'
++                    if n > 20:
++                        break
++                if n > 20:
++                    skip('that print original name is already in the library' if is_print else 'no free name')
++                    continue
++                if name in held:
++                    skip('this copy is already named in the row')
++                    continue
++                if pages_dir and not already:
++                    os.makedirs(os.path.join(pages_dir, '_original_pdf', year), exist_ok=True)
++                    with open(os.path.join(pages_dir, '_original_pdf', year, name), 'wb') as f:
++                        f.write(raw)
++                if is_print:
++                    where = 'print original (by name)'
++                elif to_file2:
++                    self.fill(r, 'File type 2', {'nb': 'Newsbank pdf', 'pq': 'ProQuest pdf'}[fmt], 'extra_copies', rid)
++                    self.fill(r, 'File name 2', name, 'extra_copies', rid)
++                    where = 'File name 2'
++                else:
++                    before = norm_val(self.s.get(r, self.OTHER_COL))
++                    self.s.put(r, self.OTHER_COL, (before + '; ' if before else '') + name)
++                    self.res['other_files'].append({'run': rid, 'aid': aid, 'names': [name], 'before': before})
++                    where = self.OTHER_COL
++                for c, v in (x.get('fill') or {}).items():
++                    if c in self.EXTRA_FILL_OK and not blank(v):
++                        self.fill(r, c, v, 'extra_copies', rid)
++                self.res.setdefault('extra_copies_saved', []).append({'run': rid, 'aid': aid, 'file': f'_original_pdf/{year}/{name}', 'in': where})
++
+     def apply_yt_attach(self):
+         """YTSTATION-v1 (Sammy 2026-11-02): a run doc's `attach` = [{row_link, link, title, channel, station, network, medium, ...}]: a kept station YouTube video whose outlet already has a
+         story within 2 days (the same segment). Not a new story: that story becomes a broadcast story (one story, both). The tracked row's Format is set to "Broadcast segment" (an
+@@ -3715,6 +3821,8 @@
+                                                                             if h and not blank(av.cell(ar, i + 1).value))
+                             delete_rows_keep_links(av, ar)   # v22: links re-anchored
+                             break
++                if 'Other files' not in RH and norm_val(vals.get('Other files')):   # OTHERFILES-v1: the Removed tab has no such column: keep the names in the row's note
++                    other = (other + ' | ' if other else '') + 'Other files=' + norm_val(vals.get('Other files'))
+                 line = {'From tab': 'Coverage', 'Removed on': self.today, 'Category': '5 removed in the tracker',
+                         'Reason removed': f"Removed in the tracker (Remove story, {str(at)[:10]}); moved by the Update button's sheet task ({self.today}).",
+                         'Other tab row (as removed)': other or None}
+@@ -3727,7 +3835,8 @@
+                 year = norm_val(vals.get('Date'))[:4] or norm_val(vals.get('Year'))[:4]
+                 files = [f'{year}/{norm_val(vals.get(c))}' for c in ('File name', 'File name 2')
+                          if re.search(r'\.(html?|pdf)$', norm_val(vals.get(c)), re.I)]
+-                moved.append({'aid': aid, 'files': files, 'originals': [f'_original_html/{f}' for f in files if f.endswith('.html')]})
++                moved.append({'aid': aid, 'files': files, 'originals': [f'_original_html/{f}' for f in files if f.endswith('.html')]
++                              + [f'_original_pdf/{year}/{nm}' for nm in self.file_names(vals.get('Other files')) if nm.lower().endswith('.pdf')]})   # OTHERFILES-v1
+                 rows.append(r)
+             self.res['removed'].append({'story': key, 'sid': sid, 'rows': moved})
+             self.res['edits_clear'].append(key)
+@@ -3851,6 +3960,7 @@
+         self.apply_related_cols(getattr(self, 'release_related', None))   # RELBUTTON-v1: Copies (rows) / First copy date / Related
+         self.apply_av()   # AVTAB-v1
+         self.apply_yt_attach()   # YTSTATION-v1: a station video that is the same segment as a tracked story
++        self.apply_extra_copies(pages_dir)   # OTHERFILES-v1 / ORIGCOPIES-v1
+         self.recount()
+         self.queue_recount()   # QUEUEAPPLY-v1
+         self.mark_red()   # BUTTONOPT-v1 (DECISIONS 102)
+@@ -4617,6 +4727,7 @@
+     allowed = {(sid, '# of reprints') for sid in res['reprint_counts']}
+     swapped = {(aid, col) for e in res.get('origin_swaps', []) for aid, col in e.get('cells', [])}   # REPRINT-v2: the old Original's cells
+     swapped |= {(x['aid'], col) for x in res.get('retry_cleared', []) for col in ('File name', 'Saved Copy?')}   # AUDIT F5
++    swapped |= {(str(x['aid']), 'Other files') for x in res.get('other_files', [])}   # OTHERFILES-v1: names appended to a filled cell (the saver's diff checks it is an append)
+     swapped |= {(str(aid), col) for e in res.get('queue_applied', []) for aid, col in e.get('cells', [])}   # QUEUEAPPLY-v1: merged rows
+     swapped |= {(str(e['aid']), col) for e in res.get('yt_attached', []) for col in e.get('cells', [])}   # YTSTATION-v1: Format / Medium of a story that became a broadcast story
+     removed = {x['aid'] for e in res.get('removed', []) for x in e.get('rows', [])}   # BUTTONOPT-v1: moved to the Removed tab

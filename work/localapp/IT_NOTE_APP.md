@@ -16,6 +16,7 @@
 **What it does:**
 - Listens on 127.0.0.1 port 8765 (this computer only) and opens the tracker page in Edge.
 - Reads and writes only inside its own folder, plus files the user picks: an update file or a refresh file, both plain data (JSON and saved article pages; it refuses any file that contains programs).
+- Once, at set-up, it reads (never writes, moves or deletes) a folder the user names: a copy of the office's article library and workbook, checked file by file against a fingerprint list, and copies it into its own folder. Later, one confirmed step deletes some of its own copied article files (listed first, backed up workbook); it never deletes anything outside its own folder.
 - Writes the workbook only after backing it up and checking it, one person at a time.
 
 **Network:**

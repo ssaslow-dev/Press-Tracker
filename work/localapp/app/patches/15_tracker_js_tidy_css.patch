@@ -1,0 +1,41 @@
+--- a/tracker.js
++++ b/tracker.js
+@@ -6382,2 +6382,38 @@
+   try { document.head.insertAdjacentHTML('beforeend', '<style id="stuckcorner-css">table.db.hdr-stuck thead th{border-top-left-radius:0!important;border-top-right-radius:0!important}</style>'); } catch(e){}
++  /* TIDY-v1: layout fixes of the PC tracker (patch 15); one style block, last in the head */
++  try { document.head.insertAdjacentHTML('beforeend', '<style id="tidy-css">' + `
++/* TIDY-v1 (Sammy 2026-11-03, approved exceptions to SAMELOOK-v2; work/localapp/lookcheck/LAYOUT_AUDIT.md). Every selector starts with :root so these rules
++   win over the page's own single-class rules whatever order the page's styles were added in. */
++/* 1. the navy table header meets the card border (at rest and pinned; square while pinned: STUCKCORNER-v1) */
++@supports (overflow-clip-margin:1px){
++:root .card>.tablewrap{overflow:clip;overflow-clip-margin:1px}
++:root .card>.tablewrap>table.db>thead>tr>th::before{content:"";position:absolute;z-index:-1;inset:-1px 0 0 0;background:var(--navy);pointer-events:none}
++:root .card>.tablewrap>table.db>thead>tr>th:first-child::before{left:-1px;border-top-left-radius:10px}
++:root .card>.tablewrap>table.db>thead>tr>th:last-child::before{right:-1px;border-top-right-radius:10px}
++:root .card>.tablewrap>table.db.hdr-stuck>thead>tr>th::before{border-radius:0}
++}
++/* 2. a list tab never grows wider than the window; Outlets and Reporters drop their least needed columns instead */
++:root .tt>.tt-head,:root .tt>.grid-clips{min-width:0}
++@media (min-width:761px) and (max-width:1299px){   /* Outlets: Publisher, Originals and Top reporters leave first; the last column left gets the header's rounded corner */
++:root .tt[data-tt-id="outlets"] table.db :is(th,td):is(:nth-child(2),:nth-child(4),:nth-child(10)){display:none}
++:root .tt[data-tt-id="outlets"] .card>.tablewrap>table.db>thead>tr>th:nth-child(9){border-top-right-radius:9px}
++:root .tt[data-tt-id="outlets"] .card>.tablewrap>table.db>thead>tr>th:nth-child(9)::before{right:-1px;border-top-right-radius:10px}
++:root .tt[data-tt-id="outlets"] .card>.tablewrap>table.db.hdr-stuck>thead>tr>th:nth-child(9)::before{border-radius:0}}
++@media (min-width:761px) and (max-width:859px){:root .tt[data-tt-id="outlets"] table.db :is(th,td):is(:nth-child(5),:nth-child(6)){display:none}}
++@media (min-width:761px) and (max-width:999px){:root .tt[data-tt-id="reporters"] table.db :is(th,td):nth-child(4){display:none}}
++/* 3. Top issues cells: one issue per line, never split, the count on the same line */
++:root .tiss-list{display:grid;gap:2px;justify-items:start}
++:root .tiss{white-space:nowrap}
++/* 4. alignment: headings line up with their tables, Back/Forward as tall as the other masthead buttons, text centred up and down, Home tile labels in a row */
++:root .tt-head{padding:4px 0 0}
++:root .nav-hist .nav-hb{padding:7px 8px;height:calc(var(--fs-md)*1.45 + 16px)}
++:root header.mast nav.tabs button{padding-top:7px;padding-bottom:5px}
++:root .btn.filters-toggle{padding-top:9px;padding-bottom:7px}
++:root .pager select{padding-top:5px;padding-bottom:3px}
++:root .badge{padding-top:2px;padding-bottom:0}
++:root button.tile{display:flex;flex-direction:column;justify-content:flex-start}   /* a button centres its content up and down; the first line now starts at the same height in every tile, and the tile keeps its height */
++:root button.tile>.eyebrow{margin:5px 0 -.6px}
++/* 6. Manage: "Find & refresh" described the Update buttons, which are not in the PC tracker (Manage opens on the Update log) */
++:root #mgTabs [data-mg="upd"]{display:none}
++` + '</style>'); } catch(e){}
+   let queued = false;

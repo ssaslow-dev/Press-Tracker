@@ -4,6 +4,8 @@
 
 Verbs: make | inspect --zip F | preview --update ID | save --update ID --token T | reject --update ID | init --sha SHA | rebuild
        edits_preview | edits_save --update ID --token T   (PCEDITS-v1: only the tracker's own pending edits and removals, no update zip)
+       setup_check --folder F [--list L] | setup_run --folder F [--list L] [--repairs]   (SWITCHOVER-v1: "Set up from the Mac library")
+       drop_preview | drop_apply --token T   (DROPUNVERIFIED-v1: "Remove unverified reprints")
 
 Wrapper around the finished pieces (APP-WRAP): updatefolder/make_for_update.py and take_update.py start their children with
 `python -I` only; here their `subprocess` is replaced by a shim that adds `-B -X utf8` (UTF-8 on Windows, no .pyc written on a
@@ -29,6 +31,8 @@ import common as C          # noqa: E402  (also puts app/updatefolder, app/saver
 import plain                # noqa: E402
 import post_save            # noqa: E402
 import refresh as R         # noqa: E402
+import setup_mac as SM      # noqa: E402
+import drop_unverified as DR   # noqa: E402
 
 PY_FLAGS = ['-B', '-X', 'utf8', '-I']
 _TMP = {'dir': None}       # set by boot(): data/tmp inside the app folder
@@ -57,6 +61,7 @@ class _SubprocessShim:
             cmd = [cmd[0]] + PY_FLAGS + rest
         env = dict(kw.get('env') or os.environ)
         env['AJG_NO_NETWORK'] = '1'
+        env['AJG_RESERVED_IDS'] = os.environ.get('AJG_RESERVED_IDS', '')
         env['AJG_LINK_PHOTOS'] = '1'      # PHOTOLINK-v1: no --img-cache; the saver's photo step keeps remote <img> as links (patches 04, 05)
         env['PYTHONDONTWRITEBYTECODE'] = '1'
         kw['env'] = temp_env(env)
@@ -66,6 +71,7 @@ class _SubprocessShim:
 def boot(lay):
     os.environ['AJG_NO_NETWORK'] = '1'
     os.environ['AJG_LINK_PHOTOS'] = '1'
+    os.environ['AJG_RESERVED_IDS'] = str(DR.reserved_path(lay))     # DROPUNVERIFIED-v1: patches 19 and 20 read it (a missing file changes nothing)
     tmp = lay.data / 'tmp'
     tmp.mkdir(parents=True, exist_ok=True)
     tempfile.tempdir = str(tmp)
@@ -84,7 +90,7 @@ def out(obj, code=0):
 
 def py(args, cwd, timeout=1800):
     return subprocess.run([sys.executable] + PY_FLAGS + [str(a) for a in args], cwd=str(cwd), capture_output=True, text=True, encoding='utf-8',
-                          errors='replace', timeout=timeout, env=temp_env(dict(os.environ, AJG_NO_NETWORK='1', AJG_LINK_PHOTOS='1', PYTHONDONTWRITEBYTECODE='1')))
+                          errors='replace', timeout=timeout, env=temp_env(dict(os.environ, AJG_NO_NETWORK='1', AJG_LINK_PHOTOS='1', PYTHONDONTWRITEBYTECODE='1')))   # (os.environ already has AJG_RESERVED_IDS from boot)
 
 
 # ---------------------------------------------------------------- verbs
@@ -302,6 +308,8 @@ def do_refresh_make(lay, TU, a):
     except R.RefreshRefused as e:
         return out({'ok': False, 'line': e.msg}, 2)
     kind = 'full refresh (everything, for a new person)' if r['kind'] == 'full' else 'refresh (what changed since the last one)'
+    if r.get('auto_full'):      # TIDY-v1: the plain button made a full one because an incremental one could not be complete
+        kind = f'full refresh file, because {r["auto_full"]}'
     r['line'] = f'Made the {kind}: {r["name"]} ({r["bytes"] / 1e6:.1f} MB, {r["library_files"]} library files, workbook fingerprint {r["workbook_sha256"][:8]}).'
     return out(dict(r, ok=True))
 
@@ -322,6 +330,9 @@ def do_refresh_take(lay, TU, a):
     if r['backup']:
         lines.append(f'Backup of your old workbook: {r["backup"]}')
     lines.append(f'{r["library_added"]} library files added' + (f', {r["library_skipped"]} were already here' if r['library_skipped'] else '') + '.')
+    if r.get('library_deleted') or r.get('library_delete_kept'):
+        lines.append(f'{r["library_deleted"]} library files removed, as the keeper deleted them (unverified reprints)'
+                     + (f'; {len(r["library_delete_kept"])} kept because this copy\'s file differs from the one the keeper deleted' if r['library_delete_kept'] else '') + '.')
     lines.append(f'{r["site_files"]} page files replaced. Your notes and saved views were not touched.')
     return out(dict(r, ok=True, line=f'Refresh {r["seq"]} is in.', lines=lines))
 
@@ -337,9 +348,105 @@ def do_rebuild(lay, TU, a):
     return out({'ok': True, 'line': 'The tracker page was rebuilt from the workbook as it is now.', **res})
 
 
+def _show_list(l, n=3):
+    return ', '.join(l[:n]) + (f' and {len(l) - n} more' if len(l) > n else '')
+
+
+def do_setup_check(lay, TU, a):
+    try:
+        if lay.workbook.is_file():
+            return out({'ok': False, 'line': 'This tracker already has a workbook. The setup is only for an empty tracker (or Repairs, "Set up again").'}, 2)
+        rep = SM.check(lay, a.folder, a.list)
+    except SM.SetupRefused as e:
+        return out({'ok': False, 'line': e.msg, **({'check': e.detail} if e.detail else {})}, 2)
+    rep = SM.public(rep)
+    head = 'Everything checks out. Ready to copy.' if rep['ok'] else 'Not ready: the folder does not match the list. Nothing was copied.'
+    return out({'ok': rep['ok'], 'line': head, 'lines': rep['lines'], 'check': rep, 'stage': 'checked'})
+
+
+def do_setup_run(lay, TU, a):
+    try:
+        with C.AppLock(lay.state, 'setup'):
+            r = SM.run(lay, a.folder, a.list, repairs=a.repairs)
+            note = 'set up from the Mac library on ' + socket.gethostname() + ' (workbook ' + r['workbook_sha256'][:8] + ')'
+            code = TU.init_baseline(lay, note=note)['exit_code']
+            if code != 0:
+                return out({'ok': False, 'written': True, 'line': 'The files were copied, but the tracker could not record the workbook as its starting point. Open Repairs and use "Accept the workbook as it is now".', **r}, 2)
+            page = {}
+            try:
+                page = rebuild_page(lay)
+            except Exception as e:          # noqa: BLE001
+                return out({'ok': False, 'written': True, 'line': 'The files were copied and the workbook is accepted, but the page could not be built: ' + str(e)[:200]
+                            + ' Open Repairs and use "Rebuild the page".', **r}, 2)
+            summ = SM.summary(lay)
+            log = {'at': C.utc_now().isoformat(timespec='seconds'), 'verb': 'setup', 'folder': str(a.folder), 'list': a.list, **{k: r[k] for k in ('workbook_sha256', 'files_copied', 'files_skipped_same', 'listed', 'extra', 'extra_names', 'backup')}, 'summary': summ}
+            (lay.state / 'logs').mkdir(parents=True, exist_ok=True)
+            (lay.state / 'logs' / f'setup-{C.stamp()}.json').write_text(json.dumps(log, indent=1), encoding='utf-8')
+    except C.AppLockBusy as e:
+        return out({'ok': False, 'locked': True, 'line': C.busy_line(e.info, e.age)})
+    except SM.SetupRefused as e:
+        return out({'ok': False, 'written': False, 'line': e.msg, **({'check': e.detail} if e.detail else {})}, 2)
+    lines = [f'{summ["stories"]} stories in the tracker ({summ["coverage_rows"]} Coverage rows).',
+             f'{r["files_copied"]} library files copied' + (f' ({r["files_skipped_same"]} were already there)' if r['files_skipped_same'] else '') + f'; {summ["library_files"]} files in the library now.',
+             f'Workbook fingerprint {r["workbook_sha256"][:8]} (all {r["listed"]} files checked against the list, and again after copying).']
+    if r['extra']:
+        lines.append(f'{r["extra"]} files in the Mac folder were not on the list and were not copied (first: {_show_list(r["extra_names"])}).')
+    if summ.get('saved_copy_stories_without_page_copy'):
+        lines.append(f'{summ["saved_copy_stories_without_page_copy"]} stories have a saved copy in the library that the tracker\'s article data does not hold yet (they were saved after this tracker\'s article data was made).')
+    if r['backup']:
+        lines.append(f'The workbook that was here before is backed up as {r["backup"]}.')
+    return out({'ok': True, 'written': True, 'line': 'The tracker is set up.', 'lines': lines, 'summary': summ, **r})
+
+
+def drop_lines(p):
+    return p['lines']
+
+
+def do_drop_preview(lay, TU, a):
+    try:
+        p = DR.preview(lay)
+    except DR.DropRefused as e:
+        return out({'ok': False, 'line': e.msg}, 2)
+    ws = C.workbook_state(lay)
+    p['stage'] = 'previewed'
+    if p['can_drop'] and (ws.get('baseline') != 'ok' or ws.get('excel_open')):
+        p['can_drop'] = False
+        p['warnings'] = ['Excel has the workbook open. Close it first.' if ws.get('excel_open') else
+                         'The workbook is not the one the tracker last saved or accepted. Use "Accept the workbook as it is now" first.']
+    return out(p)
+
+
+def do_drop_apply(lay, TU, a):
+    def init_fn(note):
+        return TU.init_baseline(lay, note=note)['exit_code']
+    try:
+        with C.AppLock(lay.state, 'drop_unverified'):
+            r = DR.apply(lay, a.token or '', init_fn)
+            try:
+                r['page_rebuild'] = rebuild_page(lay)
+            except Exception as e:          # noqa: BLE001
+                r['page_rebuild'] = {'ok': False, 'error': repr(e)[:300]}
+    except C.AppLockBusy as e:
+        return out({'ok': False, 'locked': True, 'written': False, 'line': C.busy_line(e.info, e.age)})
+    except DR.DropRefused as e:
+        return out({'ok': False, 'written': e.code in ('COMMIT_FAILED',), 'line': e.msg}, 2)
+    lines = [f'{r["n_rows"]} Coverage rows and {r["n_av_rows"]} Audio & video rows removed for good.',
+             f'{len(r["files_deleted"])} saved files deleted from the library' + (f'; {len(r["files_failed"])} could not be deleted' if r['files_failed'] else '')
+             + (f'; {len(r["files_kept"])} kept (another row names them)' if r['files_kept'] else '') + '.',
+             f'Article IDs up to {r["article_floor"]:05d} and Story IDs up to s{r["story_floor"]:05d} stay reserved.',
+             f'Backup before the step: {r["backup"]}. The list of rows and files is in data\\state\\logs\\{r["log"]}.']
+    warn = []
+    if r.get('ledger_error'):
+        warn.append(r['ledger_error'] + '. Use "Accept the workbook as it is now" under Repairs.')
+    if not (r.get('page_rebuild') or {}).get('ok'):
+        warn.append('The page could not be rebuilt: use "Rebuild the page" under Repairs.')
+    return out({'ok': True, 'written': True, 'line': 'Done', 'headline': f'{r["n_rows"]} unverified reprints removed', 'lines': lines, 'warnings': warn, **r})
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument('verb', choices=['make', 'inspect', 'preview', 'save', 'reject', 'init', 'rebuild', 'refresh_make', 'refresh_take', 'edits_preview', 'edits_save'])
+    ap.add_argument('verb', choices=['make', 'inspect', 'preview', 'save', 'reject', 'init', 'rebuild', 'refresh_make', 'refresh_take', 'edits_preview', 'edits_save',
+                                         'setup_check', 'setup_run', 'drop_preview', 'drop_apply'])
     ap.add_argument('--root', required=True)
     ap.add_argument('--zip')
     ap.add_argument('--update')
@@ -347,6 +454,9 @@ def main(argv=None):
     ap.add_argument('--sha')
     ap.add_argument('--full', action='store_true')
     ap.add_argument('--accept-mismatch', action='store_true')
+    ap.add_argument('--folder')
+    ap.add_argument('--list')
+    ap.add_argument('--repairs', action='store_true')
     a = ap.parse_args(argv)
     a.edits_only = a.verb == 'edits_save'
     lay = C.layout(a.root)
@@ -355,13 +465,14 @@ def main(argv=None):
         post_save.recover(lay)       # a crash inside the last post-save sync must not leave the pipeline list refusing every job (REVIEW_2 finding 5)
     except Exception:       # noqa: BLE001
         pass
-    if R.role(lay) != 'keeper' and a.verb in ('inspect', 'preview', 'save', 'reject', 'init', 'edits_preview', 'edits_save'):
-        return out({'ok': False, 'written': False, 'line': _reader_only_line('take in updates, save edits or accept the workbook')}, 2)
+    if R.role(lay) != 'keeper' and a.verb in ('inspect', 'preview', 'save', 'reject', 'init', 'edits_preview', 'edits_save', 'setup_check', 'setup_run', 'drop_preview', 'drop_apply'):
+        return out({'ok': False, 'written': False, 'line': _reader_only_line('take in updates, save edits, accept the workbook, set up from the Mac library or remove unverified reprints')}, 2)
     try:
         return {'make': lambda: do_make(lay, MFU, a), 'inspect': lambda: do_inspect(lay, TU, a), 'preview': lambda: do_preview(lay, TU, a),
                 'save': lambda: do_save(lay, TU, a), 'edits_preview': lambda: do_edits_preview(lay, TU, a), 'edits_save': lambda: do_save(lay, TU, a), 'reject': lambda: do_reject(lay, TU, a), 'init': lambda: do_init(lay, TU, a),
                 'rebuild': lambda: do_rebuild(lay, TU, a), 'refresh_make': lambda: do_refresh_make(lay, TU, a),
-                'refresh_take': lambda: do_refresh_take(lay, TU, a)}[a.verb]()
+                'refresh_take': lambda: do_refresh_take(lay, TU, a), 'setup_check': lambda: do_setup_check(lay, TU, a),
+                'setup_run': lambda: do_setup_run(lay, TU, a), 'drop_preview': lambda: do_drop_preview(lay, TU, a), 'drop_apply': lambda: do_drop_apply(lay, TU, a)}[a.verb]()
     except Exception as e:                                # noqa: BLE001
         return out({'ok': False, 'line': 'Something unexpected went wrong: ' + repr(e)[:300]}, 1)
 

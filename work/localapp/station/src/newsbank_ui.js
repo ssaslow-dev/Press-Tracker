@@ -34,6 +34,16 @@ async function nbReadPages(bytes, say) {
   await doc.destroy();
   return pages;
 }
+/* PRINTPAGES-v1: a small picture of a print page (the first page of its cut that holds the image) so the intern can see what NewsBank returned */
+async function nbThumb(pdfBytes) {
+  try {
+    const doc = await pdfjsLib.getDocument({ data: pdfBytes.slice(), isEvalSupported: false, useSystemFonts: false, verbosity: 0, stopAtErrors: false, enableXfa: false, disableAutoFetch: true, disableStream: true }).promise;
+    const pg = await doc.getPage(Math.min(2, doc.numPages)), v0 = pg.getViewport({ scale: 1 }), scale = Math.min(1.2, 360 / Math.max(v0.width, 1)), v = pg.getViewport({ scale });
+    const cv = document.createElement('canvas'); cv.width = Math.ceil(v.width); cv.height = Math.ceil(v.height);
+    await pg.render({ canvasContext: cv.getContext('2d'), viewport: v }).promise; await doc.destroy();
+    return cv.toDataURL('image/jpeg', 0.6);
+  } catch (e) { return ''; }
+}
 /* a story's pages as a PDF of its own: exact page range; a page shared with a neighbouring story is cropped to this story's band (and the band is
    written into the file's info so the PC reads only that text); links, actions and annotations are dropped */
 async function nbStoryPdf(src, st, meta) {
@@ -71,6 +81,12 @@ function nbBatchWarn(r) {
   return w;
 }
 
+/* ORIGCOPIES-v1: a story already in the tracker keeps its PDF as an extra original copy of its row, unless the for-Update file says that row already holds a NewsBank PDF (its saved-copy names, when the file carries them) */
+function nbWantsCopy(screen, p) {
+  if (screen.status !== 'known' || !screen.row || p.thin || p.kind === 'print_page') return false;
+  if (screen.files != null && /(^|;\s*)nb[^;]*\.pdf/i.test(String(screen.files))) return false;
+  return true;
+}
 async function nbReadFile(file) {
   const rec = { name: file.name, bytes: file.size, status: 'reading', note: '', stories: 0 };
   NBS.files.push(rec); nbDrawFiles();
@@ -98,15 +114,17 @@ async function nbReadFile(file) {
       const key = sha.slice(0, 8) + '#' + st.index;
       const screen = window.__nb.screen(p);
       const it = { key, p, screen, batch: { name: file.name, sha256: sha, index: st.index, firstPage: st.firstPage, lastPage: st.lastPage, sharedFirst: st.sharedFirst, sharedLast: st.sharedLast, bands: st.bands.filter(b => !b.full).map(b => ({ page: b.page, top: b.top, bottom: b.bottom })) },
-        include: screen.status === 'new' || screen.status === 'reprint', pdf: null, fileId: '' };
-      if (screen.status === 'print_page') window.__nb.remember(p, key);
-      if ((screen.status === 'new' || screen.status === 'reprint')) {
+        include: screen.status === 'new' || screen.status === 'reprint' || nbWantsCopy(screen, p), pdf: null, fileId: '' };
+      it.tv = NBTV.detect(p);   // NBTV-v1: a broadcast transcript is listed under the tracker's outlet (the network) and the Pacific air date
+      if (screen.status === 'print_page') { it.include = true; it.confirm = ''; }
+      if ((screen.status === 'new' || screen.status === 'reprint' || screen.status === 'print_page' || nbWantsCopy(screen, p))) {
         window.__nb.remember(p, key);
         if (!p.thin) {
           try {
             const pdfBytes = await nbStoryPdf(src, st, { title: p.headline, docref: p.docref, source: file.name + ' #' + st.index });
             if (pdfBytes.length > NB_STORY_PDF_CAP) { screen.why += ' (its PDF is over ' + (NB_STORY_PDF_CAP >> 20) + ' MB: added without a saved copy)'; }
-            else { it.fileId = 'nb-' + (await sha256Hex(new TextEncoder().encode(p.docref_key || key))).slice(0, 16); it.pdf = { bytes: pdfBytes.length, sha256: await sha256Hex(pdfBytes) }; NBS.pdfs.set(it.fileId, { bytes: pdfBytes, sha256: it.pdf.sha256 }); NBS.bytesPending += pdfBytes.length; }
+            else { it.pdf = { bytes: pdfBytes.length, sha256: await sha256Hex(pdfBytes) }; it.fileId = 'nb-' + (await sha256Hex(new TextEncoder().encode(p.docref_key || key))).slice(0, 16); const had = NBS.pdfs.get(it.fileId); if (had && had.sha256 !== it.pdf.sha256) it.fileId = 'nb-' + (await sha256Hex(new TextEncoder().encode((p.docref_key || key) + '|' + it.pdf.sha256))).slice(0, 16);   /* two different PDFs never share a file id */ NBS.pdfs.set(it.fileId, { bytes: pdfBytes, sha256: it.pdf.sha256 }); NBS.bytesPending += pdfBytes.length; }
+            if (screen.status === 'print_page' && it.pdf) it.thumb = await nbThumb(pdfBytes);   // PRINTPAGES-v1
           } catch (e) { screen.why += ' (its PDF could not be made: ' + (e && e.message ? e.message : e) + ')'; it.pdfError = String(e && e.message || e); }
         }
       }
@@ -135,7 +153,7 @@ function nbAddFiles(files) {
 }
 
 /* ---------- the list on the page ---------- */
-const NB_LABEL = { new: 'New', reprint: 'Reprint', known: 'Already in the tracker', dup_batch: 'Twice in these PDFs', print_page: 'Print page', look: 'Needs a look', skipped: 'Left out', reprint_in_batch: 'Reprint of another in these PDFs' };
+const NB_LABEL = { new: 'New', reprint: 'Reprint', known: 'Already in the tracker', dup_batch: 'Twice in these PDFs', print_page: 'Print page (not an article)', look: 'Needs a look', skipped: 'Left out', reprint_in_batch: 'Reprint of another in these PDFs' };
 function nbDrawFiles() {
   $('#nbFiles').innerHTML = NBS.files.map(f => '<li class="nb-file nb-' + f.status + '"><b>' + esc(f.name) + '</b> ' + esc(f.status === 'reading' ? 'reading… ' + f.note : f.note)
     + (f.warn && f.warn.length ? '<ul>' + f.warn.map(w => '<li class="nb-w">' + esc(w) + '</li>').join('') + '</ul>' : '') + '</li>').join('');
@@ -143,17 +161,27 @@ function nbDrawFiles() {
 function nbCounts() {
   const c = {}; NBS.items.forEach(it => { const k = NBS.added.has(it.key) ? 'added' : it.screen.status; c[k] = (c[k] || 0) + 1; }); return c;
 }
+/* PRINTPAGES-v1: the picture and the question "which tracker story is on this page?" (a story id or a pick from the list; empty = an Unlinked print page) */
+function nbPrintBox(it, st) {
+  if (st !== 'print_page' || NBS.added.has(it.key)) return '';
+  const c = (window.__nb.candidates ? window.__nb.candidates(it.p.date, it.p.outlet_clean) : []), id = 'nbpl' + esc(it.key).replace(/[^A-Za-z0-9]/g, '');
+  const cur = it.confirm ? (c.find(x => x.id === it.confirm) || { label: it.confirm }).label : '';
+  return '<div class="nb-pp">' + (it.thumb ? '<img src="' + it.thumb + '" alt="The print page NewsBank returned" width="120">' : '<em>(no picture)</em>')
+    + '<br><label>Which tracker story is on this page? <input list="' + id + '" data-nbp="' + esc(it.key) + '" value="' + esc(cur) + '" placeholder="story id or pick (empty = not confirmed)" size="34"></label>'
+    + '<datalist id="' + id + '">' + c.map(x => '<option value="' + esc(x.label) + '"></option>').join('') + '</datalist>'
+    + '<br><small>' + (it.confirm ? 'Confirmed: goes in as a print reprint of ' + esc(it.confirm) + ' (its PDF kept as the print original).' : 'Not confirmed: goes in as an “Unlinked print page” row (its PDF kept as the print original). The list is only the stories nearest before the page’s date; look at the picture.') + '</small></div> ';
+}
 function nbDrawAll() {
   nbDrawFiles();
   const items = NBS.items, c = nbCounts();
   $('#nbTbl').hidden = !items.length;
-  const pick = items.filter(it => (it.screen.status === 'new' || it.screen.status === 'reprint') && !NBS.added.has(it.key) && it.include);
+  const pick = items.filter(it => (it.screen.status === 'new' || it.screen.status === 'reprint' || it.screen.status === 'print_page' || (it.screen.status === 'known' && !!it.pdf)) && !NBS.added.has(it.key) && it.include);
   const rows = items.slice().sort((a, b) => (NBS.added.has(a.key) ? 3 : { look: 0, new: 0, reprint: 0, print_page: 1, known: 2, dup_batch: 2 }[a.screen.status] ?? 2) - (NBS.added.has(b.key) ? 3 : { look: 0, new: 0, reprint: 0, print_page: 1, known: 2, dup_batch: 2 }[b.screen.status] ?? 2));
   $('#nbBody').innerHTML = rows.slice(0, 600).map(it => {
-    const st = NBS.added.has(it.key) ? (NBS.lastItems && NBS.lastItems[it.key] || { status: 'added' }).status : it.screen.status, p = it.p, can = (it.screen.status === 'new' || it.screen.status === 'reprint') && !NBS.added.has(it.key);
+    const st = NBS.added.has(it.key) ? (NBS.lastItems && NBS.lastItems[it.key] || { status: 'added' }).status : it.screen.status, p = it.p, can = (it.screen.status === 'new' || it.screen.status === 'reprint' || it.screen.status === 'print_page' || (it.screen.status === 'known' && !!it.pdf)) && !NBS.added.has(it.key);
     const note = (NBS.lastItems && NBS.lastItems[it.key] && NBS.lastItems[it.key].why) || it.screen.why, flags = (p.flags || []).length ? ' <span class="nb-flag" title="' + esc(p.flags.join('; ')) + '">check</span>' : '';
     const lk = NBS.lastItems && NBS.lastItems[it.key] && NBS.lastItems[it.key].link ? ' · <a href="' + esc(NBS.lastItems[it.key].link) + '" target="_blank" rel="noopener noreferrer">own page</a>' : '';
-    return '<tr class="nb-r nb-' + esc(st) + '"><td>' + (can ? '<input type="checkbox" data-nbk="' + esc(it.key) + '"' + (it.include ? ' checked' : '') + ' aria-label="Include">' : '') + '</td><td>' + esc(NB_LABEL[st] || st) + (it.screen.of ? ' <small>' + esc(it.screen.of) + '</small>' : '') + '</td><td>' + esc(p.date || '') + '</td><td>' + esc(p.outlet_clean || '') + '</td><td>' + esc(p.headline || '(no headline read)') + flags + lk + '</td><td class="nb-note">' + esc(note || '') + (it.pdf ? '' : (can ? ' <em>(no saved copy)</em>' : '')) + '</td></tr>';
+    return '<tr class="nb-r nb-' + esc(st) + '"><td>' + (can ? '<input type="checkbox" data-nbk="' + esc(it.key) + '"' + (it.include ? ' checked' : '') + ' aria-label="Include">' : '') + '</td><td>' + esc(NB_LABEL[st] || st) + (it.screen.of ? ' <small>' + esc(it.screen.of) + '</small>' : '') + '</td><td>' + esc((it.tv && it.tv.date_pt) || p.date || '') + '</td><td>' + esc((it.tv && it.tv.network) || p.outlet_clean || '') + (it.tv && it.tv.show ? '<br><small>' + esc(it.tv.show) + '</small>' : '') + '</td><td>' + esc(p.headline || '(no headline read)') + flags + lk + '</td><td class="nb-note">' + nbPrintBox(it, st) + esc(note || '') + (it.tv && it.tv.date_pt !== p.date ? ' <small>(NewsBank date ' + esc(p.date) + ', ' + esc(it.tv.air_text || '') + '; Pacific date shown)</small>' : '') + (it.pdf ? (it.screen.status === 'known' ? ' <em>(its PDF is kept as an extra original copy of ' + esc(it.screen.row) + ')</em>' : '') : (can ? ' <em>(no saved copy)</em>' : '')) + '</td></tr>';
   }).join('') + (rows.length > 600 ? '<tr><td colspan="6">… and ' + fmtN(rows.length - 600) + ' more (the update includes them all).</td></tr>' : '');
   const parts = [];
   if (c.new) parts.push(fmtN(c.new) + ' new'); if (c.reprint) parts.push(fmtN(c.reprint) + ' reprint' + (c.reprint === 1 ? '' : 's')); if (c.known) parts.push(fmtN(c.known) + ' already in the tracker');
@@ -165,9 +193,9 @@ function nbDrawAll() {
 }
 async function nbAdd() {
   if (NBS.busy || (S.pq && S.pq.busy)) return;
-  const take = NBS.items.filter(it => !NBS.added.has(it.key) && (it.screen.status === 'new' || it.screen.status === 'reprint' || it.screen.status === 'print_page'));
-  const chosen = take.filter(it => it.screen.status === 'print_page' || it.include);
-  if (!chosen.some(it => it.screen.status !== 'print_page')) return;
+  const take = NBS.items.filter(it => !NBS.added.has(it.key) && (it.screen.status === 'new' || it.screen.status === 'reprint' || it.screen.status === 'print_page' || (it.screen.status === 'known' && !!it.pdf)));
+  const chosen = take.filter(it => it.include);
+  if (!chosen.length) return;
   NBS.busy = true; nbDrawAll(); const prog = $('#nbProg'), warn = $('#nbWarn'); prog.hidden = false; warn.hidden = true; warn.innerHTML = '';
   const say = (m, f) => { prog.textContent = m; };
   try {
@@ -184,7 +212,6 @@ async function nbAdd() {
     const res = await window.__nb.run(chosen, { say, links: wantLinks && !!mcp, sample, mcp, mark: (c, id) => { S.noMirror.add(c + '.' + id); } });
     NBS.lastItems = Object.assign(NBS.lastItems || {}, Object.fromEntries(res.items.map(x => [x.key, x])));
     res.items.forEach(x => NBS.added.add(x.key));
-    chosen.filter(it => it.screen.status === 'print_page').forEach(it => NBS.added.add(it.key));
     NBS.lastRun = res;
     if (sample && S.sampleDeniedFlag) wl.unshift('Claude was not allowed for this page, so tone, topic, language and translation could not be filled in. The rows are marked and need checking. Allow Claude from the page’s Permissions menu and reload to rate them.');
     if (res.errors && res.errors.length) res.errors.forEach(e => wl.push(e));
@@ -206,6 +233,9 @@ function nbWire() {
   drop.addEventListener('drop', e => { nbAddFiles(e.dataTransfer && e.dataTransfer.files ? e.dataTransfer.files : []); });
   drop.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); inp.click(); } });
   $('#nbBody').addEventListener('change', e => { const k = e.target && e.target.getAttribute && e.target.getAttribute('data-nbk'); if (!k) return; const it = NBS.items.find(x => x.key === k); if (it) { it.include = e.target.checked; nbDrawAll(); } });
+  $('#nbBody').addEventListener('change', e => { const k = e.target && e.target.getAttribute && e.target.getAttribute('data-nbp'); if (!k) return; const it = NBS.items.find(x => x.key === k); if (!it) return;
+    const v = String(e.target.value || '').trim(), id = (/^([A-Za-z0-9][A-Za-z0-9-]*)\b/.exec(v) || [])[1] || '';
+    it.confirm = id && window.__nb.hasStory(id) ? id : ''; if (v && !it.confirm) toastMsg('“' + v.slice(0, 40) + '” is not a story in the for Update file: the page stays unconfirmed.'); nbDrawAll(); });
   $('#nbAdd').addEventListener('click', () => { nbAdd(); });
   ['dragover', 'drop'].forEach(ev => window.addEventListener(ev, e => { if (!e.target.closest || !e.target.closest('#nbDrop')) e.preventDefault(); }));
 }

@@ -185,11 +185,13 @@ class Allow:
     removed_rows_n: int
     yt_cells: set = field(default_factory=set)       # (aid, column): Format / Medium of a story that became a broadcast story (YTBROADCAST-v1)
     yt_item_aids: set = field(default_factory=set)   # aid whose Audio & video details Item type became "Broadcast segment" (YTBROADCAST-v1)
+    other_files: dict = field(default_factory=dict)  # aid -> [file names sheet_task appended to "Other files" this run] (OTHERFILES-v1)
 
     @classmethod
     def from_results(cls, *results) -> 'Allow':
         rc, swap, swap_old, retry, queue, removed, assigned = {}, set(), set(), set(), set(), set(), set()
         yt_cells, yt_item = set(), set()
+        other = {}
         n_removed = 0
         for res in results:
             res = res or {}
@@ -208,6 +210,9 @@ class Allow:
                     yt_cells.add((str(e.get('aid')), col))
                 if any(str(x).startswith('AV Item type') for x in e.get('changed') or []):
                     yt_item.add(str(e.get('aid')))
+            for e in res.get('other_files') or []:   # OTHERFILES-v1: sheet_task.apply_extra_copies lists the names it appended
+                lst = other.setdefault(str(e.get('aid')), [])
+                lst.extend(str(n) for n in e.get('names') or [] if str(n) not in lst)   # pass 1 and pass 2 report the same append: counted once
             for e in res.get('queue_applied') or []:
                 for aid, col in e.get('cells') or []:
                     queue.add((str(aid), col))
@@ -230,7 +235,7 @@ class Allow:
             for e in res.get('origin_swaps') or []:
                 if e.get('new_original'):
                     assigned.add(str(e['new_original']))
-        return cls(rc, swap, swap_old, retry, queue, removed, assigned, n_removed, yt_cells, yt_item)
+        return cls(rc, swap, swap_old, retry, queue, removed, assigned, n_removed, yt_cells, yt_item, other)
 
 
 # ---------------------------------------------------------------- report
@@ -536,6 +541,15 @@ def _allowed_change(sheet, aid, story, col, new, allow: Allow, derived_rel, old=
             return 'queue_applied'
         # YTBROADCAST-v1 (the one recorded override of fill-blanks-only for station YouTube clips): only these two exact changes, and only
         # for a cell sheet_task.apply_yt_attach reports it changed. Format -> "Broadcast segment"; Medium "Video" -> TV or Radio.
+        # OTHERFILES-v1 (the one recorded exception to "a filled cell never changes", SAVE_RULES): the "Other files" cell of a row may GROW. The names before stay
+        # first, unchanged and in order; what follows is exactly the names sheet_task reports it appended (res['other_files']). Replacing, reordering or removing a
+        # name, or adding one sheet_task did not report, is refused like any changed cell.
+        if col == 'Other files' and aid in allow.other_files:
+            old_n = [x.strip() for x in text(old).split(';') if x.strip()]
+            new_n = [x.strip() for x in text(new).split(';') if x.strip()]
+            if new_n[:len(old_n)] == old_n and new_n[len(old_n):] == allow.other_files[aid]:
+                return 'other_files_append'
+            return ''
         if (aid, col) in allow.yt_cells:
             if col == 'Format' and text(new) == 'Broadcast segment':
                 return 'yt_attach'

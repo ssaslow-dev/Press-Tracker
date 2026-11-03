@@ -1,0 +1,152 @@
+[
+ {
+  "old": "mg:'upd', _naming:false",
+  "new": "mg:'log', _naming:false",
+  "count": 1
+ },
+ {
+  "old": "title=\"Review finds, saved copies, data checks and definitions\"",
+  "new": "title=\"Saved copies, data checks and definitions\"",
+  "count": 1
+ },
+ {
+  "old": "'Review finds, saved copies, data checks and definitions'",
+  "new": "'Saved copies, data checks and definitions'",
+  "count": 1
+ },
+ {
+  "old": "waiting: new finds, unrated pages or authors to check",
+  "new": "waiting: unrated pages, authors to check or an out-of-date log",
+  "count": 1
+ },
+ {
+  "old": "Updates run from now on are listed here with everything they added.",
+  "new": "Updates you bring in with Tracker files are listed here with everything they added.",
+  "count": 1
+ },
+ {
+  "old": "'Saved in the tracker, not in the sheet yet. Ask Claude in chat to “save the last run to the sheet”.'",
+  "new": "'Saved in the tracker, not in the spreadsheet yet. It goes in with the next update, or with Save my edits in Tracker files.'",
+  "count": 1
+ },
+ {
+  "old": "Changes show in the tracker at once and go into the spreadsheet when you ask Claude in chat to “save the last run to the sheet”.",
+  "new": "Changes show in the tracker at once and go into the spreadsheet with the next update, or with Save my edits in Tracker files.",
+  "count": 1
+ },
+ {
+  "old": "Removed. Its rows move to the spreadsheet’s Removed tab when you ask Claude in chat to “save the last run to the sheet”.",
+  "new": "Removed. Its rows move to the spreadsheet’s Removed tab with the next update, or with Save my edits in Tracker files.",
+  "count": 1
+ },
+ {
+  "old": "Added ${what}. To put it in the sheet, ask Claude in chat to “save the last run to the sheet”.",
+  "new": "Added ${what}. It stays in this copy of the tracker; bring it into the spreadsheet with an update (Tracker files).",
+  "count": 1
+ },
+ {
+  "old": "const SHEET_MSG = 'Saved in the tracker. To put it in the sheet, ask Claude in chat to “save the last run to the sheet”.';",
+  "new": "const SHEET_MSG = 'Saved in the tracker. It goes into the spreadsheet with the next update, or with Save my edits in Tracker files.';",
+  "count": 1
+ },
+ {
+  "old": "found by Update database that Claude couldn’t confirm",
+  "new": "found by an update that could not be confirmed",
+  "count": 2
+ },
+ {
+  "old": "Press Update database to check for new coverage.",
+  "new": "Bring in an update (Tracker files) to check for new coverage.",
+  "count": 1
+ },
+ {
+  "old": "Press Refresh from files to have Claude rate them.",
+  "new": "The Update station rates stories when they are added; these were saved without a rating.",
+  "count": 1
+ },
+ {
+  "old": "Pages added later are rated the next time someone presses Refresh from files.",
+  "new": "Stories added later are rated when they are added.",
+  "count": 1
+ },
+ {
+  "old": "Press Refresh from files to have Claude read the bylines.",
+  "new": "The Update station reads bylines when stories are added; these were saved without a check.",
+  "count": 1
+ },
+ {
+  "old": " not rated yet. Press Refresh from files to rate them.`",
+  "new": " not rated yet.`",
+  "count": 1
+ },
+ {
+  "old": " not rated yet. Open this tracker in Claude to rate them.`",
+  "new": " not rated yet.`",
+  "count": 1
+ },
+ {
+  "old": " not checked for an author yet. Press Refresh from files to read them.`",
+  "new": " not checked for an author yet.`",
+  "count": 1
+ },
+ {
+  "old": " not checked for an author yet. Open this tracker in Claude to find them.`",
+  "new": " not checked for an author yet.`",
+  "count": 1
+ },
+ {
+  "old": "Found in the headline and saved copy, and in Claude's review of new stories.",
+  "new": "Found in the headline and saved copy, and when a story is added.",
+  "count": 1
+ },
+ {
+  "old": "Claude rates tone by reading the saved copy.",
+  "new": "Tone is rated from the saved copy when a story is added.",
+  "count": 1
+ },
+ {
+  "old": "Claude also reads the saved copy to rate tone and find the author.",
+  "new": "The saved copy is also read to rate tone and find the author when a story is added.",
+  "count": 1
+ },
+ {
+  "old": "Pages you add here show only on this computer, but their tone and author are saved for everyone.",
+  "new": "Pages you add here show only on this computer, and so do their tone and author.",
+  "count": 1
+ },
+ {
+  "old": "Pages of stories found by Update database are cleaned and saved to the Tracker library on the Mac (Desktop/Tracker library/&lt;year&gt;/) when you ask Claude in chat to “save the last run to the sheet”.",
+  "new": "Pages of stories brought in with an update are cleaned and saved to this tracker’s library folder (data\\\\library\\\\&lt;year&gt;\\\\) when you press Save in Tracker files.",
+  "count": 1
+ },
+ {
+  "old": "<span class=\"note\">Rated by Claude from the saved copy.</span>",
+  "new": "<span class=\"note\">Rated when the story was added.</span>",
+  "count": 1
+ },
+ {
+  "old": "Open this tracker in Claude to translate the story.",
+  "new": "This story has no English translation yet.",
+  "count": 1
+ },
+ {
+  "old": "'Notes are shared with everyone who opens the tracker.'",
+  "new": "'Notes stay in this copy of the tracker.'",
+  "count": 1
+ },
+ {
+  "old": "'Saved for the team.'",
+  "new": "'Saved in this copy of the tracker.'",
+  "count": 1
+ },
+ {
+  "old": "Tone set to ${tone} for everyone",
+  "new": "Tone set to ${tone} in this copy of the tracker",
+  "count": 1
+ },
+ {
+  "old": "Saved the view “${v.name}” for the team",
+  "new": "Saved the view “${v.name}” in this copy of the tracker",
+  "count": 1
+ }
+]

@@ -1,0 +1,38 @@
+--- a/pipeline/build_data.py
++++ b/pipeline/build_data.py
+@@ -180,6 +180,27 @@
+ # 'Press release' = 'Yes' are left out of the tracker, as entries and as reprints. They stay in the rows index.
+ PR = 'Press release'
+ def is_pr(r): return PR in C.columns and s(r[PR]).lower() == 'yes'
++# PRINTORIG-v1 (PC, option B): print originals (page scans) are found by NAME, no column: <library>/_original_pdf/<year>/<Article ID or Print Article ID>_p<page>.pdf
++# (a span as _p16-21). rec['po'] = [{'f': '<year>/<name>', 'a': Article ID the name carries, 'p': pages}] for the story whose Article ID / Print Article ID that is. Only
++# when env AJG_PRINT_LIB (the PC's library folder) is set and holds _original_pdf; a missing folder gives no list. NewsBank / ProQuest article-text PDFs have
++# other names (nb<id>o-s<story>.pdf, pq...) and never match; "Other files" is not read here.
++PO = {}
++try:
++    _pl = os.environ.get('AJG_PRINT_LIB')
++    if _pl and os.path.isdir(os.path.join(_pl, '_original_pdf')):
++        _a2s = {}
++        for _, _r in C.iterrows():
++            for _c in ('Article ID', 'Print Article ID'):
++                if _c in C.columns and s(_r[_c]) and s(_r['Story ID']): _a2s.setdefault(s(_r[_c]), s(_r['Story ID']))
++        for _y in sorted(os.listdir(os.path.join(_pl, '_original_pdf'))):
++            _yd = os.path.join(_pl, '_original_pdf', _y)
++            if not os.path.isdir(_yd): continue
++            for _f in sorted(os.listdir(_yd)):
++                _m = re.fullmatch(r'(\d{5})_p(\d{1,4}(?:-\d{1,4})?)\.pdf', _f)
++                if _m and _m.group(1) in _a2s: PO.setdefault(_a2s[_m.group(1)], []).append({'f': _y + '/' + _f, 'a': _m.group(1), 'p': _m.group(2)})
++        for _l in PO.values(): _l.sort(key=lambda x: (int(re.match(r'\d+', x['p']).group(0)), x['f']))
++except OSError:
++    PO = {}
+ data = []; report = collections.Counter(); pr_reps_by_sid = collections.Counter()
+ reps = collections.defaultdict(list)
+ for _, r in C[C['Original or reprint'] == 'Reprint'].iterrows():
+@@ -241,6 +262,7 @@
+     if 'Format' in C.columns: rec['fmt'] = s(r['Format'])   # FORMAT-v1: the Original row's value ('' = blank); the tabs / charts roll it up with Medium (r.media)
+     if s(r['Translated Headline']) or o.get('hl_en'): rec['hl_en'] = _hd(s(r['Translated Headline']) or o.get('hl_en', ''))   # ENTITIES-v1
+     if s(r['Story in English']) or o.get('text_en'): rec['text_en'] = s(r['Story in English']) or o.get('text_en', '')
++    if PO.get(r['Story ID']): rec['po'] = PO[r['Story ID']]   # PRINTORIG-v1 (PC): print originals found by name, for the page's View original (built later)
+     data.append(rec)
+     report['stories'] += 1; report['with_code'] += bool(code); report['with_reps'] += bool(rs)
+ # blanks the old tracker never had: topic -> 'Unassigned' (old tracker's own label);

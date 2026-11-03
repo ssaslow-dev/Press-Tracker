@@ -1,0 +1,7 @@
+--- a/code/date_rules.py
++++ b/code/date_rules.py
+@@ -31,2 +31,4 @@
+     """the Update button's internal _date_src -> Date source vocabulary"""
++    if str(date_src or '') == 'airdate_pt':   # NBTV-v1: a NewsBank broadcast transcript, Date = the Pacific air date (REVIEW4-v1 F1)
++        return 'air date (Pacific)'
+     if str(date_src or '') == 'newsbank':   # NEWSBANKPDF-v1: a record read from a NewsBank PDF (its date is NewsBank's; a print record is a print edition)

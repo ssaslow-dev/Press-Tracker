@@ -28,10 +28,10 @@ import re
 nm = man.get('names') or {}
 nbitems = [it for it in nm.get('items', []) if it.get('fmt') == 'nb']
 pdf_of = {it['pdf_for']: it['copy'] for it in nbitems if it.get('copy')}
-check('STATIONNAMES: every NewsBank story PDF is the saved copy library/<year>/nb<Article ID><o|r>-s<Story ID>.pdf (NAMING-v2); none travels as files/nb-<hex>.pdf', len(pdf_of) == 33 and all(re.fullmatch(r'library/\d{4}/nb\d{5}[or]-s\d{5}\.pdf', n) for n in pdfs) and not any(n.startswith('files/') for n in pdfs), sorted(pdfs)[:3])
+check('STATIONNAMES: every NewsBank story PDF is the saved copy library/<year>/nb<Article ID><o|r>-s<Story ID>.pdf (NAMING-v2); none travels as files/nb-<hex>.pdf', len(pdf_of) == 33 and all(re.fullmatch(r'library/\d{4}/nb\d{5}[or]-s\d{5}\.pdf', n) for n in pdfs if n.startswith('library/')) and sum(1 for n in pdfs if n.startswith('library/')) == 33 and all(re.fullmatch(r'files/nb-[0-9a-f]{16}\.pdf', n) for n in pdfs if n.startswith('files/')), sorted(pdfs)[:3])   # PRINTPAGES-v1 / ORIGCOPIES-v1: a print page's PDF and a known story's extra copy travel as files/<id>.pdf (named by a pages doc / the run doc)
 check('STATIONNAMES: Article IDs run on one after another from rows.next (Originals first)', [it['aid'] for it in nm['items']] == [str(nm['from_next']['aid'] + i).zfill(5) for i in range(len(nm['items']))], [it['aid'] for it in nm['items']][:5])
 check('STATIONNAMES: the year folder is the story date’s year', all(it['year'] == '2026' or it['year'].isdigit() for it in nbitems))
-check('33 story PDFs, one per pages doc that names one', len(pdfs) == 33 and len(nbdocs) == 33, (len(pdfs), len(nbdocs)))
+check('33 story PDFs + 1 print page PDF + 1 extra-copy PDF (the two known stories share one file here); pages docs naming a PDF = 34 (33 stories + the print page)', len(pdfs) == 35 and len(nbdocs) == 34, (len(pdfs), len(nbdocs)))
 check('the manifest marks them as pdf and carries their checksums', all(man['files'][n].get('kind') == 'pdf' for n in pdfs))
 runs = [json.loads(b) for n, b in entries.items() if n.startswith('db/runs/')]
 check('one run doc, mode newsbank', len(runs) == 1 and runs[0]['mode'] == 'newsbank', [r.get('mode') for r in runs])
@@ -60,5 +60,5 @@ print('stories on shared pages with bands:', banded, 'of', shared)
 app = Path(scratch) / 'app'; lay = PCLayout(app); lay.workbook.parent.mkdir(parents=True, exist_ok=True)
 ins = TU.inspect_update(zp, lay)
 st = Path(ins['stage']) / 'db' / 'files'
-check('take_update.inspect unpacks the PDFs to staging/<id>/db/files/ (where sheet_task reads them)', len(list(st.glob('*.pdf'))) == 33, len(list(st.glob('*.pdf'))))
+check('take_update.inspect unpacks the PDFs to staging/<id>/db/files/ (where sheet_task reads them)', len(list(st.glob('*.pdf'))) == 35, len(list(st.glob('*.pdf'))))
 print('all passed' if not bad else f'{bad} FAILED'); sys.exit(1 if bad else 0)

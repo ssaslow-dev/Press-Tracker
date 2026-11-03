@@ -1,0 +1,7 @@
+--- a/tabs/reporters.js
++++ b/tabs/reporters.js
+@@ -162,3 +162,3 @@
+       { key: 'topics', label: 'Top issues', val: function(o){ return o.topics.join('; '); }, sort: function(o){ return o.topics[0] || ''; },
+-        cell: function(o, ctx){ return o.topics.length ? o.topics.map(function(t){ return ctx.issueLink ? ctx.issueLink(t) : ctx.esc(t); }).join(', ') : dash(); } },
++        cell: function(o, ctx){ return o.topics.length ? '<div class="tiss-list">' + o.topics.map(function(t){ return '<span class="tiss">' + (ctx.issueLink ? ctx.issueLink(t) : ctx.esc(t)) + '</span>'; }).join('') + '</div>' : dash(); } },   /* TIDY-v1 */
+       { key: 'tone', label: 'Tone avg', num: true, dir: 1, cls: 'nw', val: function(o){ return o.tone.text; }, sort: function(o){ return o.tone.n ? o.tone.avg : null; },

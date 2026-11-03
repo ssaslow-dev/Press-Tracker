@@ -1,0 +1,15 @@
+--- a/code/sheet_task.py
++++ b/code/sheet_task.py
+@@ -993,3 +993,11 @@
+             vals['Format'] = format_of(vals, (obj.get('_av') or {}).get('Item type', '') if isinstance(obj.get('_av'), dict) else '')   # YTSTATION-v1: a station's YouTube find says Broadcast segment
+-        if 'Press release' in self.s.col and is_press_release(vals):   # CLEAN-v1
++        _pj = obj.get('_pr') if isinstance(obj.get('_pr'), dict) else None
++        if ('Press release' in self.s.col and _pj and norm_val(_pj.get('v')).lower() == 'no'
++                and norm_val(vals.get('Press release')).lower() != 'yes' and is_press_release(vals)):
++            # PRJUDGE-v2: the Update station judged this find from its own text and said No (another issuer's repost on a news outlet,
++            # or a wire / official-site item whose text is not a release): the outlet name alone does not make it a press release.
++            # Copies of HIS releases are not decided here: the release text rule (release_rows / _rel_mark) marks them as before.
++            self.res.setdefault('press_release_station_no', []).append({'run': run_id, 'placeholder': ph_aid, 'aid': aid, 'outlet': vals.get('Outlet', ''),
++                                                                         'link': vals.get('Publisher link', ''), 'why': norm_val(_pj.get('why'))[:300]})
++        elif 'Press release' in self.s.col and is_press_release(vals):   # CLEAN-v1
+             vals['Press release'] = 'Yes'

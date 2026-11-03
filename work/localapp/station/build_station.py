@@ -121,7 +121,8 @@ def main():
     nb_ui = open(os.path.join(HERE, 'src', 'newsbank_ui.js'), encoding='utf-8').read()
     nb_parse = open(os.path.join(HERE, 'src', 'nbparse.js'), encoding='utf-8').read()
     nb_scope = open(os.path.join(HERE, 'src', 'newsbank.js'), encoding='utf-8').read()
-    pr_js = open(os.path.join(HERE, 'src', 'prjudge.js'), encoding='utf-8').read()   # PRJUDGE-v1
+    pr_js = open(os.path.join(HERE, 'src', 'prjudge.js'), encoding='utf-8').read()   # PRJUDGE-v1 / v2
+    tv_js = open(os.path.join(HERE, 'src', 'nbtv.js'), encoding='utf-8').read()   # NBTV-v1: broadcast transcripts from NewsBank / ProQuest
     pq_parse = open(os.path.join(HERE, 'src', 'pqparse.js'), encoding='utf-8').read()   # PROQUESTPDF-v1
     # PROQUESTPDF-v1 answer 2: the ProQuest -> tracker outlet-name map (data/proquest_outlets.json, built by tools/build_pq_aliases.py), inlined as data
     pq_outlets_raw = open(os.path.join(HERE, 'data', 'proquest_outlets.json'), 'rb').read()
@@ -135,7 +136,7 @@ def main():
     nb_scope = nb_scope + '\n' + pq_scope          # one text run inside the tracker's scope: NewsBank first, then the ProQuest source object
     st_js = once(st_js, '/*NB_UI*/', nb_ui)
     st_js = once(st_js, '/*PQ_UI*/', pq_ui)
-    for t in (st_js, nb_parse, nb_scope, pq_parse, pr_js):
+    for t in (st_js, nb_parse, nb_scope, pq_parse, pr_js, tv_js):
         assert '</script' not in t
     # UPDATESTATION-v1 follow-up 9: the v64 button's extra passes (RECALLFIX-v1, PODSITE-v1, YTSTATION-v1) read fetchrules.recall. A new for-Update file carries it
     # (make_for_update runs the PC's build_data); this default is the same block built from the repository's reference files, used only for a file that lacks it.
@@ -154,6 +155,7 @@ def main():
            '<script id="pqparse-js">\n' + pq_parse + '</script>\n'
            '<script id="names-js">\n' + names_js + '</script>\n'
            '<script id="prjudge-js">\n' + pr_js + '</script>\n'
+           '<script id="nbtv-js">\n' + tv_js + '</script>\n'
            '<script type="text/plain" id="vendor-pdfjs-worker">' + lib['pdfjs_worker'].replace('</script', '<\\/script') + '</script>\n'
            '<script type="text/plain" id="vendor-pdfjs">' + lib['pdfjs'].replace('</script', '<\\/script') + '</script>\n'
            '<script type="text/plain" id="vendor-pdflib">' + lib['pdflib'].replace('</script', '<\\/script') + '</script>\n'
