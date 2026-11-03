@@ -6,7 +6,7 @@ One command that proves the PC tracker and the Update station still work togethe
 
 Exit code: 0 all checks passed, 1 a check failed, 2 the check could not run. It prints a PASS/FAIL line per step (with the failed checks under it) and writes the full report to `SCRATCH/chaincheck/last_report.md` (and a copy at `SCRATCH/last_report.md`).
 
-It takes about 6 to 9 minutes on this machine (assembling the PC test build 1 minute, the PC's preview and save about 3 minutes, the rest less).
+It takes about 5 minutes with `--pc-build` (reusing a build) and 6 with a fresh assembly (1 minute) on this machine; the PC's preview and save take about 3 minutes of that.
 
 ## What it does
 
@@ -59,6 +59,9 @@ The stub is installed before the page's scripts run and replaces `window.claude`
 - A real Windows machine (this uses the Linux test build; the Windows folder differs in the Python and launcher only).
 - Anything about the old live tracker (never touched).
 
-## Known behaviour worth knowing when reading a result
+## Notes on how the inputs are chosen
 
-- The PC may rename files the station named (it assigns Article and Story IDs again at save time, and the text test can turn a proposed reprint into a story of its own). The check follows the PC's own names listed in the panel only for reporting; the files are checked at the station's NAMING-v2 names, so a rename shows up as a failed check on purpose.
+- The reprint candidate repeats the real text of a story the tracker already has. The story is picked from the build's `data/copies` article shards (the copies the save reads), so the PC's text test can confirm the reprint. The test build's shards come from the scratchpad copy of the live page and can lag behind the workbook; a story with no entry there would give "no text to compare" at save time, so such stories are skipped.
+- The YouTube clip's page carries a description of over 60 words: the PC does not save a page with less than 60 words of body ("not saved to the library"), and the station still names a library file for it. That gap is listed by the PC in plain words; the check treats any unsaved named file as a failure, so a clip with a short real description will show it.
+- Station names are checked strictly: if the save gives a file another name than the station did (the PC says so in the preview and the saved panel), the check fails on purpose, and later checks follow the PC's own name so the rest of the chain is still tested.
+- A refresh file made right after the first save is a FULL one (about 840 MB, 20 to 30 seconds here). If the "Make refresh file" step hangs, look for a `.zip.part` in the keeper copy's `data/refresh_out` (SCRATCH/work/keeper). One run stalled once at 67 MB and could not be reproduced (the same job run by hand took 22 seconds); another builder's process activity on the machine at that time is the likely cause.

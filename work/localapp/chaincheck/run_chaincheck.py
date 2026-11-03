@@ -329,7 +329,7 @@ def step5(info, S, work):
     K, root = info['K'], info['keeper_root']
     res = info['station_res']
     out = pc.ui(K, [{'op': 'goto'}, {'op': 'open_panel'}, {'op': 'click', 'text': 'Make refresh file'},
-                    {'op': 'wait_text', 'text': ['Made the', 'could not be made', 'Another save'], 'timeout': 900000, 'name': 'mk'}], '05a', work)
+                    {'op': 'wait_text', 'text': ['Made the', 'could not be made', 'Another save'], 'timeout': 600000, 'name': 'mk'}], '05a', work)
     r = out['results']
     check('the keeper makes a refresh file', r.get('mk') == 'Made the', r.get('mk_panel', r.get('crash', ''))[:500])
     zs = sorted((root / 'data' / 'refresh_out').glob('refresh_*.zip'))
