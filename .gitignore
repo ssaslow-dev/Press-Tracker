@@ -5,3 +5,10 @@ __pycache__/
 scratch/
 !data/*.xlsx
 build/pub/
+work/build_last/
+work/pre_apply_all_*/
+build/tests/tabs/srv/index.html
+build/tests/tabs/srv/stub.html
+build/tests/tabs/srv/v18.html
+build/tests/tabs/srv/blocks/data.json
+work/tests_out/

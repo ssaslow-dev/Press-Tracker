@@ -131,6 +131,8 @@ def apply(root, log, pipeline=True):
         os.makedirs(pd_, exist_ok=True)
         for name, rel in PIPELINE.items():
             src = P(rel) if os.path.exists(P(rel)) else os.path.join(HERE, os.path.basename(rel))
+            if not os.path.exists(src) and rel.endswith('.md'):   # REPO-LOCAL: in this repository the old root's .md files live in docs/
+                src = P('docs/' + {'README.md': 'TRACKER_README.md'}.get(rel, rel))
             dst = os.path.join(pd_, name)
             os.makedirs(os.path.dirname(dst), exist_ok=True)
             if name == 'gabriel_bills_leginfo.json' and os.path.exists(dst):   # AUTO-v1: keep bills the sheet task appended
