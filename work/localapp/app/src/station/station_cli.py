@@ -3,6 +3,7 @@
     python -B -X utf8 -I app/station/station_cli.py VERB --root ROOT [options]
 
 Verbs: make | inspect --zip F | preview --update ID | save --update ID --token T | reject --update ID | init --sha SHA | rebuild
+       edits_preview | edits_save --update ID --token T   (PCEDITS-v1: only the tracker's own pending edits and removals, no update zip)
 
 Wrapper around the finished pieces (APP-WRAP): updatefolder/make_for_update.py and take_update.py start their children with
 `python -I` only; here their `subprocess` is replaced by a shim that adds `-B -X utf8` (UTF-8 on Windows, no .pyc written on a
@@ -106,13 +107,17 @@ def do_make(lay, MFU, a):
                 'notes': res.get('notes') or [], 'line': plain.make_done(res, p.name)})
 
 
-def preview_job(lay, TU, uid, accept):
+def preview_job(lay, TU, uid, accept, edits_only=False):
+    """PCEDITS-v1: the preview includes the tracker's own pending edits and removals (data/db/edits) by default"""
     try:
         with C.AppLock(lay.state, 'preview'):
-            pv = TU.preview(lay, uid, accept_mismatch=accept)
+            summ = TU.edits_summary(lay)
+            pv = TU.preview(lay, uid, accept_mismatch=accept, edits_only=edits_only)
     except C.AppLockBusy as e:
         return {'ok': False, 'locked': True, 'update_id': uid, 'line': C.busy_line(e.info, e.age)}
-    return plain.preview_result(pv, uid)
+    r = plain.preview_result(pv, uid, summ)
+    r['edits'] = summ
+    return r
 
 
 def already_saved(lay, runs):
@@ -181,17 +186,31 @@ def do_preview(lay, TU, a):
         return out({'ok': False, 'line': plain.fingerprint_line(e.args[1] if len(e.args) > 1 else {})}, 8)
 
 
+def do_edits_preview(lay, TU, a):
+    """PCEDITS-v1: "Save my edits", step 1: what the tracker's own pending edits and removals would change (no update zip)"""
+    n = TU.edits_summary(lay)['n']
+    if not n:
+        return out({'ok': True, 'can_save': False, 'headline': 'No edits waiting', 'lines': ['Nothing edited or removed in this tracker is waiting for a save.'],
+                    'needs_person': [], 'token': None, 'stage': 'previewed', 'edits': TU.edits_summary(lay)})
+    uid = TU.new_edits_id(lay)
+    return out(preview_job(lay, TU, uid, False, edits_only=True))
+
+
 def do_save(lay, TU, a):
-    try:
-        mf = json.loads((lay.updates / 'staging' / a.update / 'manifest.json').read_text(encoding='utf-8'))
-        hit = already_saved(lay, mf.get('runs'))
-        if hit:
-            return out({'ok': False, 'written': False, 'line': refuse_saved_line(hit)}, 2)
-    except (OSError, ValueError):
-        pass
+    edits_only = getattr(a, 'edits_only', False)
+    if not edits_only:
+        try:
+            mf = json.loads((lay.updates / 'staging' / a.update / 'manifest.json').read_text(encoding='utf-8'))
+            hit = already_saved(lay, mf.get('runs'))
+            if hit:
+                return out({'ok': False, 'written': False, 'line': refuse_saved_line(hit)}, 2)
+        except (OSError, ValueError):
+            pass
+    summ = {}
     try:
         with C.AppLock(lay.state, 'save'):
-            res = TU.save(lay, a.update, a.token, accept_mismatch=a.accept_mismatch, rebuild=True)
+            summ = TU.edits_summary(lay)
+            res = TU.save(lay, a.update, a.token, accept_mismatch=a.accept_mismatch, rebuild=True, edits_only=edits_only)
             if res.get('written'):
                 res['sync'] = post_save.sync(lay, dict(res, update_id=a.update))
                 if not res.get('site_rebuilt'):          # the saver's rebuild failed or was skipped: build the page the plain way
@@ -205,7 +224,7 @@ def do_save(lay, TU, a):
         return out({'ok': False, 'written': False, 'line': 'That update is no longer waiting. Bring it in again.'}, 4)
     except TU.FingerprintMismatch as e:
         return out({'ok': False, 'written': False, 'line': plain.fingerprint_line(e.args[1] if len(e.args) > 1 else {})}, 8)
-    return out(plain.save_result(res))
+    return out(plain.save_result(res, summ))
 
 
 def do_reject(lay, TU, a):
@@ -320,7 +339,7 @@ def do_rebuild(lay, TU, a):
 
 def main(argv=None):
     ap = argparse.ArgumentParser()
-    ap.add_argument('verb', choices=['make', 'inspect', 'preview', 'save', 'reject', 'init', 'rebuild', 'refresh_make', 'refresh_take'])
+    ap.add_argument('verb', choices=['make', 'inspect', 'preview', 'save', 'reject', 'init', 'rebuild', 'refresh_make', 'refresh_take', 'edits_preview', 'edits_save'])
     ap.add_argument('--root', required=True)
     ap.add_argument('--zip')
     ap.add_argument('--update')
@@ -329,17 +348,18 @@ def main(argv=None):
     ap.add_argument('--full', action='store_true')
     ap.add_argument('--accept-mismatch', action='store_true')
     a = ap.parse_args(argv)
+    a.edits_only = a.verb == 'edits_save'
     lay = C.layout(a.root)
     MFU, TU = boot(lay)
     try:
         post_save.recover(lay)       # a crash inside the last post-save sync must not leave the pipeline list refusing every job (REVIEW_2 finding 5)
     except Exception:       # noqa: BLE001
         pass
-    if R.role(lay) != 'keeper' and a.verb in ('inspect', 'preview', 'save', 'reject', 'init'):
-        return out({'ok': False, 'written': False, 'line': _reader_only_line('take in updates or accept the workbook')}, 2)
+    if R.role(lay) != 'keeper' and a.verb in ('inspect', 'preview', 'save', 'reject', 'init', 'edits_preview', 'edits_save'):
+        return out({'ok': False, 'written': False, 'line': _reader_only_line('take in updates, save edits or accept the workbook')}, 2)
     try:
         return {'make': lambda: do_make(lay, MFU, a), 'inspect': lambda: do_inspect(lay, TU, a), 'preview': lambda: do_preview(lay, TU, a),
-                'save': lambda: do_save(lay, TU, a), 'reject': lambda: do_reject(lay, TU, a), 'init': lambda: do_init(lay, TU, a),
+                'save': lambda: do_save(lay, TU, a), 'edits_preview': lambda: do_edits_preview(lay, TU, a), 'edits_save': lambda: do_save(lay, TU, a), 'reject': lambda: do_reject(lay, TU, a), 'init': lambda: do_init(lay, TU, a),
                 'rebuild': lambda: do_rebuild(lay, TU, a), 'refresh_make': lambda: do_refresh_make(lay, TU, a),
                 'refresh_take': lambda: do_refresh_take(lay, TU, a)}[a.verb]()
     except Exception as e:                                # noqa: BLE001

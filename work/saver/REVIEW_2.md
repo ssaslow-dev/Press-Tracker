@@ -234,6 +234,7 @@ replaced again) and that run re-seeds the ledger. No loss; the reader cannot sav
 7. The PC's own "Remove story" edits never reach a save: `station_cli.do_save` calls `TU.save` without `include_local_edits` (:184,
    take_update.py:163-175). The for-Update file does list them (`edits_removed`), so the station will not re-add those stories, but the
    rows stay on Coverage. Decide and record (NOQUEUE-v1 does not cover removals).
+   **Resolved 2026-11-03 (PCEDITS-v1):** saves and previews include the pending edits and removals by default; "Save my edits (N)" saves them alone; used-up docs move to `db/_applied/edits/`.
 8. `reuse_preview` checks the inputs, pipeline and preview files (saver.py:1134-1165) before taking the lock (:1172). Move those checks
    under the lock; cheap.
 9. `refresh.take`: if Excel opens the workbook between the check (:291) and `os.replace` (:294), the PermissionError surfaces as "The

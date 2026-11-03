@@ -55,7 +55,7 @@
   var btn = el('button', { id: 'ajgf-btn', type: 'button', text: 'Tracker files', 'aria-expanded': 'false' });
   var box = el('div', { id: 'ajgf', role: 'dialog', 'aria-label': 'Tracker files' });
   document.body.appendChild(btn); document.body.appendChild(box);
-  var state = { status: null, update: null, makeMsg: null, busy: false, init: false, rebuildMsg: null };
+  var state = { status: null, update: null, makeMsg: null, busy: false, init: false, rebuildMsg: null, edits: null };
 
   btn.addEventListener('click', function () {
     var open = !box.classList.contains('open'); box.classList.toggle('open', open); btn.setAttribute('aria-expanded', String(open));
@@ -110,12 +110,19 @@
     var up = el('div', { id: 'ajgf-update' }); box.appendChild(up);
     renderUpdate(up);
     box.appendChild(el('hr'));
-    // 3. accept workbook
-    box.appendChild(el('h3', { text: '3. Accept the workbook as it is now' }));
+    // 3. save my edits (PCEDITS-v1)
+    var ne = state.status && state.status.edits_pending ? state.status.edits_pending.n : 0;
+    box.appendChild(el('h3', { text: '3. Save my edits' + (ne ? ' (' + ne + ')' : ' (0)') }));
+    box.appendChild(el('p', { text: 'Stories you removed or edited in this tracker (Manage) are written into the workbook the next time you bring in an update. To save them without an update, use this. You see what will change first.' }));
+    var ed = el('div', { id: 'ajgf-edits' }); box.appendChild(ed);
+    renderEdits(ed, ne);
+    box.appendChild(el('hr'));
+    // 4. accept workbook
+    box.appendChild(el('h3', { text: '4. Accept the workbook as it is now' }));
     box.appendChild(el('p', { text: 'Use this after you edited the workbook in Excel yourself. It tells the tracker to trust the file exactly as it is.' }));
     renderInit(box);
     box.appendChild(el('hr'));
-    box.appendChild(el('h3', { text: '4. Make refresh file (for the other copies)' }));
+    box.appendChild(el('h3', { text: '5. Make refresh file (for the other copies)' }));
     box.appendChild(el('p', { text: 'After you save an update, make a refresh file and pass it to the others. It carries the workbook, the new article pages and the page data. Never your notes or views.' }));
     var rm = el('div', { id: 'ajgf-rmake' });
     [['Make refresh file', false], ['Make FULL refresh (for a new person)', true]].forEach(function (x) {
@@ -131,11 +138,12 @@
     box.appendChild(el('p', { text: 'The keeper sends you a refresh file (a zip). Drop it here to bring your workbook, article pages and page data up to date. Your notes and saved views stay as they are.' }));
     var ap = state.status && state.status.refresh_applied;
     box.appendChild(el('p', {}, [el('small', { text: ap ? 'This copy has refresh ' + ap.seq + ' (' + ap.kind + ', made ' + ap.created_at + ').' : 'This copy has not had a refresh yet.' })]));
+    box.appendChild(el('p', {}, [el('small', { id: 'ajgf-reader-edits', text: 'Stories you edit or remove here stay in this copy only. They are not saved to the workbook; only the keeper\'s edits are.' })]));
     var rt = el('div', { id: 'ajgf-rtake' }); box.appendChild(rt);
     renderRefreshTake(rt);
     box.appendChild(el('hr'));
     }
-    box.appendChild(el('h3', { text: keeper ? '5. Rebuild the tracker page' : '3. Rebuild the tracker page' }));
+    box.appendChild(el('h3', { text: keeper ? '6. Rebuild the tracker page' : '3. Rebuild the tracker page' }));
     box.appendChild(el('p', { text: 'Rebuilds the page you are looking at from the workbook. Needed after a new workbook is copied into the folder.' }));
     var rb = el('button', { class: 'ajgf-b alt', type: 'button', text: 'Rebuild the page', onclick: doRebuild });
     if (state.busy || locked()) rb.disabled = true;
@@ -245,6 +253,59 @@
     setUpdate({ working: 'Saving. The tracker backs up the workbook first, then writes. This can take a few minutes. Do not close the black window...' });
     runJob('save', { update_id: u.update_id, token: u.token, accept_mismatch: !!u.accepted }, function (s) { setUpdate({ working: 'Saving... ' + s + ' s. Do not close the black window.' }); }).then(function (res) {
       state.busy = false; res.stage = 'saved'; setUpdate(res); refresh();
+      if (res.written) setTimeout(function () { location.reload(); }, 3500);
+    });
+  }
+
+  // ---- save my edits (PCEDITS-v1): preview in words, then Save; same refusals as any save
+  function renderEdits(parent, n) {
+    var e = state.edits;
+    if (!e) {
+      var b = el('button', { class: 'ajgf-b', type: 'button', id: 'ajgf-edits-go', text: 'Save my edits (' + n + ')', onclick: doEditsPreview });
+      if (!n || state.busy || locked() || (state.status && state.status.workbook && state.status.workbook.baseline !== 'ok')) b.disabled = true;
+      parent.appendChild(b);
+      if (!n) parent.appendChild(el('p', {}, [el('small', { text: 'No edits or removals are waiting.' })]));
+      return;
+    }
+    if (e.working) { var t = busyNote(parent); t.textContent = e.working; return; }
+    if (e.stage === 'previewed') {
+      parent.appendChild(el('div', { class: e.can_save ? 'ajgf-note' : 'ajgf-bad' }, [el('b', { text: e.headline || 'Preview' })]));
+      var ul = el('ul'); (e.lines || []).forEach(function (l) { ul.appendChild(el('li', { text: l })); }); parent.appendChild(ul);
+      if ((e.needs_person || []).length) {
+        parent.appendChild(el('p', {}, [el('b', { text: 'Items that need a person (' + (e.needs_person_total || e.needs_person.length) + '):' })]));
+        var u2 = el('ul'); e.needs_person.forEach(function (l) { u2.appendChild(el('li', { text: l })); }); parent.appendChild(u2);
+      }
+      (e.warnings || []).forEach(function (w) { parent.appendChild(el('div', { class: 'ajgf-warn', text: w })); });
+      var sv = el('button', { class: 'ajgf-b', type: 'button', id: 'ajgf-edits-save', text: 'Save', onclick: doEditsSave });
+      if (!e.can_save || locked() || state.busy || (state.status && state.status.workbook && state.status.workbook.baseline !== 'ok')) sv.disabled = true;
+      parent.appendChild(sv);
+      parent.appendChild(el('button', { class: 'ajgf-b alt', type: 'button', text: 'Not now', onclick: function () { state.edits = null; render(); } }));
+      return;
+    }
+    if (e.stage === 'saved') {
+      parent.appendChild(el('div', { class: e.written ? 'ajgf-ok' : 'ajgf-bad' }, [el('b', { text: e.headline })]));
+      var u3 = el('ul'); (e.lines || []).forEach(function (l) { u3.appendChild(el('li', { text: l })); }); parent.appendChild(u3);
+      (e.warnings || []).forEach(function (w) { parent.appendChild(el('div', { class: 'ajgf-warn', text: w })); });
+      if (e.written) parent.appendChild(el('p', { text: 'Reloading the tracker...' }));
+      else parent.appendChild(el('button', { class: 'ajgf-b alt', type: 'button', text: 'Close this', onclick: function () { state.edits = null; render(); } }));
+      return;
+    }
+    if (e.error) { parent.appendChild(el('div', { class: 'ajgf-bad', text: e.error })); parent.appendChild(el('button', { class: 'ajgf-b alt', type: 'button', text: 'Close this', onclick: function () { state.edits = null; render(); } })); }
+  }
+  function setEdits(e) { state.edits = e; render(); }
+  function doEditsPreview() {
+    state.busy = true; setEdits({ working: 'Working out what your edits would change...' });
+    runJob('edits_preview', {}, function (s) { setEdits({ working: 'Working out what your edits would change... ' + s + ' s' }); }).then(function (res) {
+      state.busy = false;
+      if (!res.ok) return setEdits({ error: res.line || 'The preview failed.' });
+      res.stage = 'previewed'; setEdits(res);
+    });
+  }
+  function doEditsSave() {
+    var e = state.edits; state.busy = true;
+    setEdits({ working: 'Saving. The tracker backs up the workbook first, then writes. This can take a few minutes. Do not close the black window...' });
+    runJob('edits_save', { update_id: e.update_id, token: e.token }, function (s) { setEdits({ working: 'Saving... ' + s + ' s. Do not close the black window.' }); }).then(function (res) {
+      state.busy = false; res.stage = 'saved'; setEdits(res); refresh();
       if (res.written) setTimeout(function () { location.reload(); }, 3500);
     });
   }

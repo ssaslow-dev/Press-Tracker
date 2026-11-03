@@ -4,6 +4,7 @@
     python3 -I take_update.py inspect --app-root APP --zip UPDATE.zip
     python3 -I take_update.py preview --app-root APP --update ID [--accept-mismatch] [--today D]
     python3 -I take_update.py save    --app-root APP --update ID --token T [--accept-mismatch] [--rebuild] [--no-reuse]
+    python3 -I take_update.py preview --app-root APP --edits-only          (PCEDITS-v1: only the tracker's own pending edits; save with --edits-only --update <id it printed>)
     python3 -I take_update.py init    --app-root APP        (accept the workbook as it is now as the baseline; saver init)
 
 Data only (GOVIT-v1): the zip is checked against an allow-list (manifest.json and db/<collection>/<id>.json), size and file-count caps
@@ -160,19 +161,63 @@ def _check_fingerprint(stage: Path, layout: PCLayout, accept_mismatch: bool) -> 
     return fp
 
 
-def _db_for_saver(layout: PCLayout, stage: Path, work: Path, include_local_edits: bool) -> Path:
-    """The staged db folder is the saver's --db as it is. With include_local_edits, a composed copy adds the tracker's own pending edits
-    (db/edits/*.json) that the update does not already carry."""
-    if not include_local_edits:
-        return stage / 'db'
-    comp = work / 'db_composed'
-    shutil.copytree(stage / 'db', comp)
+def edit_pending(doc) -> bool:
+    """PCEDITS-v1: a hand edit or removal waiting for a save. Same test as sheet_task.has_work: removed, or not yet reported at/after its time."""
+    if not isinstance(doc, dict):
+        return False
+    return bool(doc.get('removed')) or not (doc.get('reported') and str(doc['reported']) >= str(doc.get('at') or ''))
+
+
+def pending_edits(layout: PCLayout) -> dict:
+    """{story id: doc} of the edits docs in this tracker's own store (data/db/edits) that wait for a save"""
     src = layout.db / 'edits'
-    (comp / 'edits').mkdir(exist_ok=True)
+    out = {}
     for f in sorted(src.glob('*.json')) if src.is_dir() else []:
+        try:
+            doc = json.loads(f.read_text(encoding='utf-8'))
+        except (OSError, ValueError):
+            continue
+        if edit_pending(doc):
+            out[f.stem] = doc
+    return out
+
+
+def edits_summary(layout: PCLayout) -> dict:
+    """what the pending edits are, for the panel: {n, removed: [ids], edited: {id: [field names]}}"""
+    pend = pending_edits(layout)
+    rem = sorted(i for i, d in pend.items() if d.get('removed'))
+    ed = {i: sorted(k for k in d if k not in ('at', 'reported', 'removed')) for i, d in sorted(pend.items()) if not d.get('removed')}
+    return {'n': len(pend), 'removed': rem, 'edited': ed}
+
+
+def _file_sha(p: Path) -> str:
+    return F.sha256_file(p)
+
+
+def _carried(stage: Path) -> set:
+    d = stage / 'db' / 'edits'
+    return {f.stem for f in d.glob('*.json')} if d.is_dir() else set()
+
+
+def _db_for_saver(layout: PCLayout, stage, work: Path, include_local_edits: bool):
+    """The staged db folder is the saver's --db as it is. With include_local_edits (PCEDITS-v1), a composed copy adds the tracker's own pending
+    edits (db/edits/*.json) that the update does not already carry. Every call makes its own fresh folder (a second call used to copy into the
+    first one's folder and fail). stage=None: an edits-only save, the composed folder holds nothing but the edits.
+    Returns (db folder, {edit id: sha256 of the doc as sent}); the second part lets the write-back after the save leave alone any edit
+    that changed meanwhile."""
+    if stage is not None and not (include_local_edits and any(sid not in _carried(stage) for sid in pending_edits(layout))):
+        return stage / 'db', {}      # nothing of the tracker's own to add: the saver sees exactly the update
+    comp = unique_dir(work, 'db_composed')
+    if stage is not None:
+        shutil.copytree(stage / 'db', comp)
+    (comp / 'edits').mkdir(parents=True, exist_ok=True)
+    sent = {}
+    for sid in pending_edits(layout):
+        f = layout.db / 'edits' / f'{sid}.json'
         if not (comp / 'edits' / f.name).exists():
             shutil.copy2(f, comp / 'edits' / f.name)
-    return comp
+            sent[sid] = _file_sha(f)
+    return comp, sent
 
 
 def staged_zip_sha(stage: Path) -> str:
@@ -194,19 +239,28 @@ def latest_preview_dir(work: Path):
 
 
 def run_saver(layout: PCLayout, verb: str, update_id: str, *, accept_mismatch=False, token=None, today=None, saver=None, rebuild=False,
-              include_local_edits=False, run=None, reuse_preview=True) -> dict:
-    stage = _stage(layout, update_id)
-    fp = _check_fingerprint(stage, layout, accept_mismatch)
+              include_local_edits=True, run=None, reuse_preview=True, edits_only=False) -> dict:
+    """edits_only (PCEDITS-v1): no update zip; update_id is a work-folder id from new_edits_id(); the saver gets only the tracker's pending edits."""
+    if edits_only:
+        stage, fp = None, None
+        include_local_edits = True
+    else:
+        stage = _stage(layout, update_id)
+        fp = _check_fingerprint(stage, layout, accept_mismatch)
     sv = find_saver(layout, saver)
     work = layout.updates / 'work' / update_id
+    if edits_only and not work.is_dir():
+        raise FileNotFoundError(f'no edits session {update_id}')
     work.mkdir(parents=True, exist_ok=True)
     out = unique_dir(work, verb + '-1')
-    dbp = _db_for_saver(layout, stage, work, include_local_edits)
+    dbp, sent = _db_for_saver(layout, stage, work, include_local_edits)
     cmd = [sys.executable, '-I', str(sv), verb, '--workbook', str(layout.workbook), '--db', str(dbp), '--pipeline', str(layout.pipeline),
            '--copies', str(layout.copies), '--library', str(layout.library), '--backups', str(layout.backups), '--out', str(out),
            '--state', str(layout.state), '--json', str(out.with_name(out.name + '.result.json'))]
     # NOQUEUE-v1: the review queue is gone from the PC tracker; the save is never given --queue
-    zsha = staged_zip_sha(stage)
+    zsha = staged_zip_sha(stage) if stage is not None else ''
+    if edits_only:
+        zsha = 'edits-' + tree_sha_of(sent)
     if zsha:
         cmd += ['--source-id', zsha]       # the saver records it in a preview and compares it in a save (REUSE: same update zip)
     if today:
@@ -233,21 +287,40 @@ def run_saver(layout: PCLayout, verb: str, update_id: str, *, accept_mismatch=Fa
     res['out_dir'] = str((res.get('reused_preview') or {}).get('dir') or out)     # a reused save works in the preview's own folder
     res['fingerprint'] = fp
     res['update_id'] = update_id
+    res['edits_sent'] = sent
+    res['edits_only'] = bool(edits_only)
     return res
+
+
+def tree_sha_of(sent: dict) -> str:
+    import hashlib
+    return hashlib.sha256(json.dumps(sent, sort_keys=True).encode('utf-8')).hexdigest()[:16]
+
+
+def new_edits_id(layout: PCLayout) -> str:
+    """makes the work folder of an edits-only save and returns its id (preview and save of one session share it, so the saver can reuse the preview)"""
+    d = unique_dir(layout.updates / 'work', 'edits-' + F.utc_now_iso().replace(':', '').replace('-', ''))
+    d.mkdir(parents=True)
+    return d.name
 
 
 def preview(layout: PCLayout, update_id: str, **kw) -> dict:
     res = run_saver(layout, 'preview', update_id, **kw)
-    res['names'] = check_names_after(layout.updates / 'staging' / update_id, res, apply=False)
+    if not kw.get('edits_only'):
+        res['names'] = check_names_after(layout.updates / 'staging' / update_id, res, apply=False)
     return res
 
 
 def save(layout: PCLayout, update_id: str, token: str, **kw) -> dict:
     """Run the saver's save; on exit 0, 5 or 6 (the workbook was written) merge the run documents into the local db and move the update to
-    updates/done/. Any other exit leaves the update in staging."""
+    updates/done/. Any other exit leaves the update in staging and the local edits pending (PCEDITS-v1).
+    edits_only=True: no update; the saver gets the pending edits only, and after the write the consumed edits docs are moved aside."""
     res = run_saver(layout, 'save', update_id, token=token, **kw)
     if res['exit_code'] in (0, 5, 6) and res.get('written'):
-        res['local_db'] = merge_into_local_db(layout, update_id, Path(res['out_dir']))
+        if res.get('edits_only'):
+            res['local_db'] = apply_edits_writeback(layout, Path(res['out_dir']), res.get('edits_sent') or {})
+            return res
+        res['local_db'] = merge_into_local_db(layout, update_id, Path(res['out_dir']), res.get('edits_sent') or {})
         done = finish(layout, update_id)
         res['done_dir'] = str(done)
         res['names'] = check_names_after(done, res, apply=True)
@@ -407,10 +480,40 @@ def check_names_after(where: Path, res: dict, *, apply: bool) -> dict:
 # ---------------------------------------------------------------- after the save
 
 
-def merge_into_local_db(layout: PCLayout, update_id: str, saver_out: Path) -> dict:
+def apply_edits_writeback(layout: PCLayout, saver_out: Path, sent: dict) -> dict:
+    """PCEDITS-v1, after a save that wrote the workbook. The saver's writeback.json names the edits docs it used up (edits_delete_or_archive: done, or
+    the story was removed) and the ones it could not apply (edits_reported: a filled cell disagreed, or the story is not in the workbook).
+    Used-up docs are MOVED to db/_applied/edits/ (never deleted); reported ones get `reported: <at>` so they are not offered again (the page keeps
+    showing them on this PC). Only a doc that is still exactly what was sent is touched: an edit made again meanwhile stays pending."""
+    wf = Path(saver_out) / 'writeback.json'
+    wbk = json.loads(wf.read_text(encoding='utf-8')) if wf.is_file() else {}
+    applied, reported, left = [], [], []
+    for eid in wbk.get('edits_delete_or_archive') or []:
+        src = layout.db / 'edits' / f'{eid}.json'
+        if not src.is_file():
+            continue
+        if eid in sent and _file_sha(src) != sent[eid]:
+            left.append(eid)
+            continue
+        applied.append(str(move_unique(src, layout.db / '_applied' / 'edits', f'{eid}.{F.utc_now_iso().replace(":", "").replace("-", "")}.json')))
+    for eid, at in (wbk.get('edits_reported') or {}).items():
+        src = layout.db / 'edits' / f'{eid}.json'
+        if not src.is_file():
+            continue
+        if eid in sent and _file_sha(src) != sent[eid]:
+            left.append(eid)
+            continue
+        doc = json.loads(src.read_text(encoding='utf-8'))
+        doc['reported'] = at or doc.get('at') or F.utc_now_iso()
+        src.write_bytes(F.dumps_pretty(doc))
+        reported.append(eid)
+    return {'edits_applied': applied, 'edits_reported': reported, 'edits_changed_meanwhile': left}
+
+
+def merge_into_local_db(layout: PCLayout, update_id: str, saver_out: Path, sent: dict | None = None) -> dict:
     """Make the update's run documents part of the tracker's own store, with what the save decided (ids, sheet.written), so the next
     "for Update" file carries the new searched_to. An existing different doc is moved to db/_replaced/ first. Edits the save consumed are
-    moved to db/_archived/edits/."""
+    moved to db/_applied/edits/ (apply_edits_writeback)."""
     stage = layout.updates / 'staging' / update_id
     wbk = {}
     wf = Path(saver_out) / 'writeback.json'
@@ -432,12 +535,8 @@ def merge_into_local_db(layout: PCLayout, update_id: str, saver_out: Path) -> di
             replaced.append(str(move_unique(dest, layout.db / '_replaced' / 'runs', f'{f.stem}.{stamp}.json')))
         dest.write_bytes(F.dumps_pretty(doc))
         merged.append(f.stem)
-    archived = []
-    for eid in wbk.get('edits_delete_or_archive') or []:
-        src = layout.db / 'edits' / f'{eid}.json'
-        if src.is_file():
-            archived.append(str(move_unique(src, layout.db / '_archived' / 'edits')))
-    return {'runs_merged': merged, 'runs_replaced': replaced, 'edits_archived': archived}
+    e = apply_edits_writeback(layout, saver_out, sent or {})
+    return {'runs_merged': merged, 'runs_replaced': replaced, 'edits_archived': e['edits_applied'], **e}
 
 
 def finish(layout: PCLayout, update_id: str, zip_path=None) -> Path:
@@ -468,7 +567,8 @@ def main(argv=None) -> int:
     ap.add_argument('--saver')
     ap.add_argument('--accept-mismatch', action='store_true', help='go on although the update was made from a different workbook')
     ap.add_argument('--rebuild', action='store_true')
-    ap.add_argument('--include-local-edits', action='store_true')
+    ap.add_argument('--no-local-edits', action='store_true', help='leave the tracker\'s own pending edits and removals (db/edits) out of the save (PCEDITS-v1: they are included by default)')
+    ap.add_argument('--edits-only', action='store_true', help='preview/save only the tracker\'s own pending edits, no update zip (PCEDITS-v1); save needs the --update id the preview printed')
     ap.add_argument('--no-reuse', action='store_true', help='save: run the whole pipeline again instead of reusing the preview\'s finished passes')
     a = ap.parse_args(argv)
     lay = PCLayout(a.app_root)
@@ -484,9 +584,11 @@ def main(argv=None) -> int:
             r['manifest'] = {k: r['manifest'][k] for k in ('format_version', 'created_at', 'source', 'runs')}
             print(json.dumps(r))
             return 0 if r['proceed'] else EXIT_MISMATCH
+        if a.edits_only and a.verb == 'preview' and not a.update:
+            a.update = new_edits_id(lay)
         if not a.update:
             ap.error(f'{a.verb} needs --update')
-        kw = dict(accept_mismatch=a.accept_mismatch, today=a.today, saver=a.saver, include_local_edits=a.include_local_edits)
+        kw = dict(accept_mismatch=a.accept_mismatch, today=a.today, saver=a.saver, include_local_edits=not a.no_local_edits, edits_only=a.edits_only)
         r = preview(lay, a.update, **kw) if a.verb == 'preview' else save(lay, a.update, a.token, rebuild=a.rebuild, reuse_preview=not a.no_reuse, **kw)
         print(json.dumps(r, default=str))
         return r['exit_code']

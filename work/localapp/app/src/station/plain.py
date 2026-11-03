@@ -139,13 +139,15 @@ def _diff_lines(res) -> list:
     for key, k in (d.get('cells_changed') or {}).items():
         if k:
             lines.append({'reprint_count': f'{n(k, "reprint count")} updated',
-                          'rel_derived': f'{n(k, "press-release cell")} recalculated'}.get(key, f'{k} cells changed ({key})'))
+                          'rel_derived': f'{n(k, "press-release cell")} recalculated',
+                          'removed_move': f'{n(k, "cell")} of removed stories\' rows moved to the Removed tab'}.get(key, f'{k} cells changed ({key})'))
     lib = res.get('library') or {}
     if lib.get('pages_added'):
         lines.append(f'{n(len(lib["pages_added"]), "saved page")} added to the library')
     if lib.get('removed_moved'):
         lines.append(f'{n(len(lib["removed_moved"]), "file")} of removed stories moved aside (not deleted)')
     q = res.get('queued') or {}
+    q = dict(q, edits=0)      # PCEDITS-v1: edits are listed by edits_lines
     bits = [f'{n(q[k], lab)}' for k, lab in (('runs', 'run'), ('bills', 'bill'), ('releases', 'press release'), ('edits', 'hand edit'), ('reprints', 'reprint'))
             if q.get(k)]
     if bits:
@@ -153,6 +155,35 @@ def _diff_lines(res) -> list:
     if d.get('disallowed'):
         lines.append(f'{d["disallowed"]} changes were refused by the rules and are not included')
     return lines
+
+
+def _story_list(ids, k=4):
+    ids = list(ids)
+    return ', '.join(ids[:k]) + (f' and {len(ids) - k} more' if len(ids) > k else '')
+
+
+def edits_lines(summary, res=None) -> list:
+    """PCEDITS-v1: the tracker's own pending hand edits and removals that this save includes (summary = take_update.edits_summary), and what the
+    save's rules did with them (res = a preview or save result)"""
+    out = []
+    summary = summary or {}
+    rem, ed = summary.get('removed') or [], summary.get('edited') or {}
+    if rem or ed:
+        bits = []
+        if rem:
+            bits.append(f'{n(len(rem), "story", "stories")} removed ({_story_list(rem)})')
+        if ed:
+            fields = sorted({f for v in ed.values() for f in v})
+            bits.append(f'{n(len(ed), "story", "stories")} edited ({_story_list(ed)}; fields: {", ".join(fields) or "none"})')
+        out.append('Your edits made in this tracker, saved together with it: ' + '; '.join(bits))
+    if res:
+        conf = [c for c in ((res.get('review') or {}).get('conflicts') or []) if isinstance(c, dict) and c.get('from') == 'edits']
+        if conf:
+            out.append(f'{n(len(conf), "edit")} will not be applied, because the workbook already has a different value in that cell and the workbook keeps its own '
+                       f'(story {_story_list(sorted({str(c.get("story") or c.get("aid")) for c in conf})) }). They stay in this tracker, marked as reported.')
+        for r in (res.get('review') or {}).get('removal_failed') or []:
+            out.append(f'Removal not done: story {r.get("story")}: {r.get("why")}')
+    return out
 
 
 def names_lines(res) -> list:
@@ -169,17 +200,17 @@ def names_lines(res) -> list:
     return out
 
 
-def preview_result(pv, uid) -> dict:
+def preview_result(pv, uid, edits=None) -> dict:
     code = pv.get('exit_code')
     ref = pv.get('refusal')
     if ref or code in (2, 4):
         return {'ok': False, 'update_id': uid, 'refused': (ref or {}).get('code'), 'locked': (ref or {}).get('code') == 'LOCKED', 'line': refusal_text(pv)}
     if code == 3:
-        return {'ok': True, 'update_id': uid, 'can_save': False, 'headline': 'Nothing new in this update', 'lines': [
+        return {'ok': True, 'update_id': uid, 'can_save': False, 'headline': 'Nothing new in this update', 'lines': edits_lines(edits) + [
             'Everything in it is already in the workbook, or it carries nothing to write.'], 'needs_person': [], 'token': None, 'stage': 'previewed'}
     if code != 0 or not pv.get('diff'):
         return {'ok': False, 'update_id': uid, 'line': 'The preview did not finish: ' + str(pv.get('line') or pv.get('stderr') or 'no answer')[:300]}
-    lines = _diff_lines(pv) + names_lines(pv)
+    lines = edits_lines(edits, pv) + _diff_lines(pv) + names_lines(pv)
     np_, total = needs_person(pv)
     warns = list(pv.get('warnings') or [])
     ph = (pv.get('photos') or {}).get('note')
@@ -190,7 +221,7 @@ def preview_result(pv, uid) -> dict:
             'warnings': warns, 'fingerprint': pv.get('fingerprint')}
 
 
-def save_result(res) -> dict:
+def save_result(res, edits=None) -> dict:
     code = res.get('exit_code')
     ref = res.get('refusal')
     if not res.get('written'):
@@ -199,7 +230,12 @@ def save_result(res) -> dict:
         if code == 3:
             out['lines'] = ['Nothing new to write.']
         return out
-    lines = _diff_lines(res) + names_lines(res)
+    lines = edits_lines(edits, res) + _diff_lines(res) + names_lines(res)
+    ldb = res.get('local_db') or {}
+    if ldb.get('edits_applied'):
+        lines.append(f'{n(len(ldb["edits_applied"]), "edit")} saved and set aside in the tracker (db\\_applied\\edits, not deleted)')
+    if ldb.get('edits_changed_meanwhile'):
+        lines.append(f'{n(len(ldb["edits_changed_meanwhile"]), "story", "stories")} edited again while the save ran: that edit stays waiting for the next save')
     wb = res.get('workbook') or {}
     if wb.get('backup'):
         lines.insert(0, f'Backup of the old workbook: {wb["backup"]}')

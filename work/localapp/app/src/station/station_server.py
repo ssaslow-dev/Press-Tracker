@@ -242,8 +242,8 @@ class StationHandler(S.Handler):
             return self._err(405, 'method not allowed', head)
         d = self._body_json()
         r_ = R.role(lay)
-        if rest in ('inspect', 'preview', 'save', 'reject', 'init', 'refresh_make') and r_ != 'keeper':
-            return self._json({'ok': False, 'line': 'This copy of the tracker is a reader copy. Only the keeper copy takes in updates, accepts the workbook or makes refresh files.'}, 403)
+        if rest in ('inspect', 'preview', 'save', 'reject', 'init', 'refresh_make', 'edits_preview', 'edits_save') and r_ != 'keeper':
+            return self._json({'ok': False, 'line': 'This copy of the tracker is a reader copy. Only the keeper copy takes in updates, saves edits, accepts the workbook or makes refresh files. Edits made in a reader copy stay in that copy and are not saved anywhere else.'}, 403)
         if rest == 'refresh_take' and r_ == 'keeper':
             return self._json({'ok': False, 'line': 'This is the keeper copy. It makes refresh files; it does not take them in.'}, 403)
         verb, args = None, []
@@ -263,6 +263,16 @@ class StationHandler(S.Handler):
             if not re.match(r'^[A-Za-z0-9._ ()-]{1,120}$', f) or '..' in f or not (lay.updates / 'incoming' / f).is_file():
                 return self._err(400, 'That upload is not there. Choose the file again.')
             verb, args = 'inspect', ['--zip', str(lay.updates / 'incoming' / f)]
+        elif rest == 'edits_preview':
+            verb = 'edits_preview'
+        elif rest == 'edits_save':
+            uid = str(d.get('update_id') or '')
+            tok = str(d.get('token') or '')
+            if not re.match(r'^edits-[0-9TZ]+(-[0-9]+)?$', uid) or not (lay.updates / 'work' / uid).is_dir():
+                return self._err(400, 'That preview is no longer waiting. Press "Save my edits" again.')
+            if not TOKEN_OK.match(tok):
+                return self._err(400, 'The preview must be made first.')
+            verb, args = 'edits_save', ['--update', uid, '--token', tok]
         elif rest in ('preview', 'save', 'reject'):
             uid = str(d.get('update_id') or '')
             if not ID_OK.match(uid) or '..' in uid or not (lay.updates / 'staging' / uid).is_dir():
@@ -323,4 +333,11 @@ class StationServer(S.TrackerServer):
                 'refresh_made': R._read_json(lay.state / 'refresh_state.json', None), 'workbook': C.workbook_state(lay), 'lock': C.lock_status(lay.state),
                 'job': self.jobs.summary(self.jobs.current), 'page_built': (lay.data / 'site' / 'index.html').is_file(),
                 'pipeline_ok': (lay.pipeline / 'PIPELINE.sha256').is_file(),
-                'last_for_update': fu[-1].name if fu else None, 'time': time.time()}
+                'last_for_update': fu[-1].name if fu else None, 'edits_pending': self._edits_pending(), 'time': time.time()}
+
+    def _edits_pending(self):
+        """PCEDITS-v1: the tracker's own edits and removals waiting for a save (keeper copy only; a reader's edits are never saved)"""
+        if R.role(self.lay) != 'keeper':
+            return None
+        import take_update as TU
+        return TU.edits_summary(self.lay)

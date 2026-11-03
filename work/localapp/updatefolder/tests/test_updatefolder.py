@@ -451,7 +451,7 @@ class ThroughSaver(unittest.TestCase):
         self.assertTrue(sv['written'] and sv['confirmed'])
         self.assertIn('reused_preview', sv)                                        # the save took the preview's finished passes
         self.assertEqual(sv['out_dir'], pv['out_dir'])
-        self.assertEqual(sorted(p.name for p in (self.lay.updates / 'work' / uid).iterdir() if p.is_dir()), [Path(pv['out_dir']).name])   # no second pipeline folder
+        self.assertEqual(sorted(p.name for p in (self.lay.updates / 'work' / uid).iterdir() if p.is_dir() and not p.name.startswith('db_composed')), [Path(pv['out_dir']).name])   # no second pipeline folder (PCEDITS-v1: the preview and the save each compose their own db folder)
         self.assertNotEqual(sha(self.lay.workbook), self.sha)
         self.assertEqual(sha(next(self.lay.backups.glob('*.xlsx'))), self.sha)     # backup of the old workbook
         # the run doc is now in the tracker's store, marked written, with the real ids
@@ -516,11 +516,64 @@ class ThroughSaver(unittest.TestCase):
         stage = self.lay.updates / 'staging' / r['update_id']
         work = self.d / 'w'
         work.mkdir()
-        self.assertEqual(TU._db_for_saver(self.lay, stage, work, False), stage / 'db')
-        comp = TU._db_for_saver(self.lay, stage, work, True)
+        self.assertEqual(TU._db_for_saver(self.lay, stage, work, False), (stage / 'db', {}))
+        comp, sent = TU._db_for_saver(self.lay, stage, work, True)
         self.assertTrue((comp / 'edits' / 's00001.json').is_file())
+        self.assertEqual(set(sent), {'s00001'})
         self.assertTrue((comp / 'runs' / 'run-example1.json').is_file())
         self.assertFalse((stage / 'db' / 'edits' / 's00001.json').exists())
+        # PCEDITS-v1: every call makes its own folder (a second call used to copy into the first one's and fail)
+        comp2, _ = TU._db_for_saver(self.lay, stage, work, True)
+        comp3, _ = TU._db_for_saver(self.lay, None, work, True)       # an edits-only save: nothing but the edits
+        self.assertEqual(len({comp, comp2, comp3}), 3)
+        self.assertEqual(sorted(p.name for p in comp3.iterdir()), ['edits'])
+        # an edit the update carries itself wins; an edit already reported is not pending
+        jwrite(stage / 'db' / 'edits' / 's00001.json', {'topic': 'Carried'})
+        comp4, sent4 = TU._db_for_saver(self.lay, stage, work, True)
+        self.assertEqual((json.loads((comp4 / 'edits' / 's00001.json').read_text())['topic'], sent4), ('Carried', {}))
+        jwrite(self.lay.db / 'edits' / 's00001.json', {'topic': 'Housing', 'at': '2026-10-02T00:00:00Z', 'reported': '2026-10-02T00:00:00Z'})
+        self.assertEqual(TU.edits_summary(self.lay), {'n': 0, 'removed': [], 'edited': {}})
+        jwrite(self.lay.db / 'edits' / 's00002.json', {'removed': True, 'at': '2026-10-02T00:00:00Z'})
+        jwrite(self.lay.db / 'edits' / 's00003.json', {'outlet': 'X', 'bills': ['AB 1'], 'at': '2026-10-02T00:00:00Z'})
+        self.assertEqual(TU.edits_summary(self.lay), {'n': 2, 'removed': ['s00002'], 'edited': {'s00003': ['bills', 'outlet']}})
+
+    def test_edits_writeback_moves_never_deletes_and_leaves_changed_docs(self):
+        out = self.d / 'saverout'
+        out.mkdir()
+        jwrite(out / 'writeback.json', {'edits_delete_or_archive': ['s00001', 's00004', 's00009'], 'edits_reported': {'s00005': '2026-10-02T00:00:00Z', 's00006': '2026-10-02T00:00:00Z'}})
+        for sid in ('s00004', 's00005', 's00006'):
+            jwrite(self.lay.db / 'edits' / f'{sid}.json', {'topic': 'T', 'at': '2026-10-02T00:00:00Z'})
+        sent = {sid: TU._file_sha(self.lay.db / 'edits' / f'{sid}.json') for sid in ('s00001', 's00004', 's00005', 's00006')}
+        jwrite(self.lay.db / 'edits' / 's00004.json', {'topic': 'changed again', 'at': '2026-10-03T00:00:00Z'})       # edited again while the save ran
+        res = TU.apply_edits_writeback(self.lay, out, sent)
+        self.assertEqual(len(res['edits_applied']), 1)                                  # s00001 moved
+        self.assertTrue(res['edits_applied'][0].replace('\\', '/').count('_applied/edits/s00001.'))
+        self.assertEqual(res['edits_changed_meanwhile'], ['s00004'])
+        self.assertTrue((self.lay.db / 'edits' / 's00004.json').is_file())               # still pending
+        self.assertEqual(res['edits_reported'], ['s00005', 's00006'])
+        self.assertEqual(json.loads((self.lay.db / 'edits' / 's00005.json').read_text())['reported'], '2026-10-02T00:00:00Z')
+        self.assertFalse((self.lay.db / 'edits' / 's00001.json').exists())
+        self.assertEqual(len(list((self.lay.db / '_applied' / 'edits').glob('*.json'))), 1)
+
+    def test_edits_only_preview_and_save_remove_a_story(self):
+        """PCEDITS-v1 through the real save program: no update zip; the story moves to Removed, the doc is set aside; a refused save moves nothing"""
+        jwrite(self.lay.db / 'edits' / 's00001.json', {'removed': True, 'at': '2026-10-05T10:00:00Z'})
+        uid = TU.new_edits_id(self.lay)
+        pv = TU.preview(self.lay, uid, saver=SAVER, today='2026-10-30', edits_only=True)
+        self.assertEqual((pv['exit_code'], pv.get('refusal')), (0, None), pv)
+        self.assertTrue(pv['edits_only'])
+        self.assertEqual(pv['diff']['rows_added'].get('Removed'), 1)
+        self.assertEqual(sha(self.lay.workbook), self.sha)
+        bad = TU.save(self.lay, uid, '0' * 16, saver=SAVER, today='2026-10-30', edits_only=True)       # wrong token: refused
+        self.assertFalse(bad['written'], bad)
+        self.assertTrue((self.lay.db / 'edits' / 's00001.json').is_file(), 'a refused save leaves the edit pending')
+        sv = TU.save(self.lay, uid, pv['diff']['token'], saver=SAVER, today='2026-10-30', edits_only=True)
+        self.assertEqual((sv['exit_code'], sv.get('refusal')), (0, None), sv)
+        self.assertTrue(sv['written'])
+        self.assertEqual(sv['local_db']['edits_applied'] and len(sv['local_db']['edits_applied']), 1)
+        self.assertFalse((self.lay.db / 'edits' / 's00001.json').exists())
+        self.assertEqual(len(list((self.lay.db / '_applied' / 'edits').glob('s00001.*.json'))), 1)
+        self.assertEqual(sha(next(self.lay.backups.glob('*.xlsx'))), self.sha)
 
 
 if __name__ == '__main__':
