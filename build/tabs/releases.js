@@ -375,10 +375,11 @@
       var xTable = function(k){ return '<div class="tablewrap"><table class="db tbe-tab tbe-xtab"><thead><tr><th class="c-d">Date</th><th class="c-h">Story</th>'
         + '<th class="c-t">Issue / Bill</th><th class="c-rc">Reach</th><th class="c-r" title="Other outlets that ran the same story">Reprints</th></tr></thead><tbody class="tbe-xbody" data-tbx="' + k + '"></tbody></table></div>'; };
       if (it.later.length){ var lo = it.later.slice().sort(function(a, b){ return (a.lag || 0) - (b.lag || 0); }), lid = lo.map(function(x){ return x.r.id; }).join(',');
-        below += '<div class="card pad tbe-extra rl-sec"><div class="tb-us"><h3 class="tb-us-h">Later coverage · ' + ctx.fmt(lo.length) + info(ctx, ruleLines(['laterquote', 'later']), 'Later coverage') + '</h3>' + xTable('later') + '</div></div>'; }
+        /* RELXLOOK-v1 (Sammy 2026-11-03, comment: "make it consistent with the rest of the tracker"): heading above, table in its own .card > .tablewrap like the Related list */
+        below += '<div class="rl-relh rl-xh"><h3 class="tb-us-h">Later coverage · ' + ctx.fmt(lo.length) + info(ctx, ruleLines(['laterquote', 'later']), 'Later coverage') + '</h3></div><div class="card rl-xcard">' + xTable('later') + '</div>'; }
       below += threadHtml(it, ctx);
       if (it.possible.length){ var po = it.possible.map(function(x){ return x.r.id; }).join(',');
-        below += '<details class="card pad tbe-extra rl-sec rl-det"><summary class="tb-us-h">Possibly related · ' + ctx.fmt(it.possible.length) + info(ctx, howOf('possible') ? cap1(howOf('possible')) + '.' : '', 'Possibly related') + '</summary>' + xTable('possible') + '</details>'; }
+        below += '<details class="rl-det rl-xdet"><summary class="tb-us-h">Possibly related · ' + ctx.fmt(it.possible.length) + info(ctx, howOf('possible') ? cap1(howOf('possible')) + '.' : '', 'Possibly related') + '</summary><div class="card rl-xcard">' + xTable('possible') + '</div></details>'; }
       var how = { label: 'How it’s related', opts: ec.map(function(x){ return [x[0], tagOf(x[0])]; }), of: function(r){ var x = it.ev.get(r.id); return x ? x.type : ''; } };
       return { kicker: [it.type || 'Press release', dl(ctx, it.date), it.src], title: it.title, dek: dek, noun: 'release', backLabel: 'All press releases',
         placeholder: 'Search ' + ctx.pl(rows.length, 'related story', 'related stories'), chart: false, list: rows.length ? undefined : false,
