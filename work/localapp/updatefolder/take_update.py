@@ -255,6 +255,14 @@ def _why_renamed(exp: str, act: str) -> str:
     return '; '.join(why) or 'the save gave it another name'
 
 
+def move_unique_path(p: Path) -> Path:
+    q, n = p, 1
+    while q.exists():
+        n += 1
+        q = p.with_name(f'{p.stem} ({n}){p.suffix}')
+    return q
+
+
 def reconcile_names(names: dict, base: Path, result: dict, *, apply: bool) -> dict:
     """STATIONNAMES (LIBFILES-v1 follow-up 2). The station named every file in the update; the save assigns the real Article, Story and Release IDs and writes
     the workbook's File name columns and the library files by them. Where the two differ the SAVE'S NAME WINS: the copy of the file kept with the update
@@ -318,6 +326,14 @@ def reconcile_names(names: dict, base: Path, result: dict, *, apply: bool) -> di
         tmp = base / '.renaming'
         tmp.mkdir(parents=True, exist_ok=True)
         staged = []
+        targets = {act for _, act in moves}
+        for nf in out['not_saved']:             # a file the save did not write may still sit on a name the save gave to another file: set it aside, not under a made-up name
+            if nf.get('file') in targets:
+                held = base / Path(*nf['file'].split('/'))
+                if held.is_file():
+                    aside = base / 'not_saved' / Path(*nf['file'].split('/')[1:])
+                    aside.parent.mkdir(parents=True, exist_ok=True)
+                    held.replace(move_unique_path(aside))
         for n, (exp, act) in enumerate(moves):
             src = base / Path(*exp.split('/'))
             if src.is_file():

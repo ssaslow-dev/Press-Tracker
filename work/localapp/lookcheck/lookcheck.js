@@ -166,19 +166,39 @@ async function openReleaseWith(p, needles) {                   // walks the rele
     await p.locator('.tt-open').nth(i).click(); await sleep(700);
     const txt = await p.evaluate(() => document.body.innerText);
     if (needles.every(x => txt.includes(x))) return i;
-    await p.evaluate(() => history.back()); await sleep(500);
+    await p.evaluate(() => { location.hash = '#press-releases'; }); await sleep(500);
   }
   throw new Error('no release page with ' + needles.join(' + '));
 }
-sc('release_page_later', '#press-releases', async p => { await openReleaseWith(p, ['Later coverage', 'Possibly related']); await sleep(1200); });
+const REL_LATER = process.env.LC_REL_LATER || 'pr00208';       // a release with Related stories, Later coverage and Possibly related (RELXLOOK-v1), opened by its address on both targets
+sc('release_page_later', '#press-releases', async p => {
+  await p.evaluate(h => { location.hash = h; }, '#press-releases/' + REL_LATER); await sleep(1800);
+  const t = await p.evaluate(() => document.body.innerText); for (const x of ['Related stories', 'Later coverage', 'Possibly related']) if (!t.toLowerCase().includes(x.toLowerCase())) throw new Error('release page lacks ' + x);
+});
 sc('release_page_pick', '#press-releases', async p => { await openReleaseWith(p, ['Picked up']); await sleep(1200); });
 sc('story_yt_clip', '#clips', async p => { await openStory(p, STORY_YT); const t = await p.evaluate(() => document.querySelector('#sheet').innerText); if (!/YouTube \(station clip\)/.test(t)) throw new Error('no "YouTube (station clip)" link in the story sheet'); });
+const openFilters = async p => { const b = p.getByRole('button', { name: 'Filters' }).first(); if (await b.count()) { await b.click(); await sleep(600); } };
 const trOpen = async (p, lab) => { const s = p.locator('#view-tb details > summary').filter({ hasText: lab }).first(); if (await s.count()) { await s.scrollIntoViewIfNeeded(); await s.click(); await sleep(400); } };
-sc('releases_facets', '#press-releases', async p => { await trOpen(p, /^\s*Outlet, related stories/); await trOpen(p, /^\s*Pickup/); await trOpen(p, /^\s*Reporter, related stories/); await sleep(500); });
+sc('releases_facets', '#press-releases', async p => { await openFilters(p); await trOpen(p, /^\s*Outlet, related stories/); await trOpen(p, /^\s*Pickup/); await trOpen(p, /^\s*Reporter, related stories/); await sleep(500); });
 sc('releases_quiet', '#press-releases', async p => {
-  await trOpen(p, /^\s*Pickup/);
+  await openFilters(p); await trOpen(p, /^\s*Pickup/);
   const lab = p.locator('#view-tb label', { hasText: 'Nothing after 30 days' }).first(); if (!(await lab.count())) throw new Error('no Pickup choice'); await lab.click(); await sleep(1200);
 });
+sc('releases_quiet7', '#press-releases', async p => {
+  await openFilters(p); await trOpen(p, /^\s*Pickup/);
+  const lab = p.locator('#view-tb label', { hasText: 'Nothing after 7 days' }).first(); if (!(await lab.count())) throw new Error('no 7-day Pickup choice'); await lab.click(); await sleep(1200);
+});
+const STORY_AV = process.env.LC_STORY_AV || 's02864';          // a broadcast row with an air time and the station's web story saved (25_avtime.js, YTBROADCAST-v1 badge)
+sc('story_av_time', '#clips', async p => { await openStory(p, STORY_AV); const t = await p.evaluate(() => document.querySelector('#sheet').innerText); if (!/Aired/.test(t)) throw new Error('no "Aired" time line in the story sheet'); });
+sc('clips_badge_station_web', '#clips', async p => {      // the Clips row of that story carries "Saved copy (station’s web story)"
+  await clickTab(p, 'db'); const hl = await p.evaluate(id => JSON.parse(document.getElementById('data').textContent).find(r => r.id === id).hl, STORY_AV);
+  await p.fill('#q', hl); await sleep(1200);
+  const t = await p.evaluate(() => document.querySelector('#tbody').innerText); if (!/Saved copy \(station/.test(t)) throw new Error('no "Saved copy (station’s web story)" badge');
+});
+// v65 additions (LANGADD 2026-11-03): non-English stories and the KBS News YouTube clip
+sc('story_lang_he', '#clips', async p => { await openStory(p, process.env.LC_STORY_HE || 's04942'); });
+sc('story_lang_zh', '#clips', async p => { await openStory(p, process.env.LC_STORY_ZH || 's04956'); });
+sc('story_lang_ko_clip', '#clips', async p => { await openStory(p, process.env.LC_STORY_KO || 's04962'); const t = await p.evaluate(() => document.querySelector('#sheet').innerText); if (!/YouTube \(station clip\)/.test(t)) throw new Error('no "YouTube (station clip)" link on the KBS News story'); });
 sc('manage', '#clips', async p => { await p.click('#updBtn'); await sleep(1500); });
 
 // ---------------------------------------------------------------- the dump

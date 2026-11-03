@@ -63,7 +63,32 @@ def pdf_bytes_for(sources, doc):
     raise KeyError(doc.get('url'))
 
 
-def build(out_zip: Path, *, for_update: dict, src: dict, today: str, workbook_sha: str, attach_row_link: str, tag='A', web_only_extra=False) -> dict:
+def paragraphs_of(html_path: Path) -> list:
+    """every piece of visible text of a saved copy (so the reprint carries the very text of the story it reprints and the save's text test finds it a reprint)"""
+    from html.parser import HTMLParser
+
+    class P(HTMLParser):
+        def __init__(self):
+            super().__init__(); self.out, self.skip = [], 0
+
+        def handle_starttag(self, tag, a):
+            if tag in ('script', 'style', 'title'):
+                self.skip += 1
+
+        def handle_endtag(self, tag):
+            if tag in ('script', 'style', 'title'):
+                self.skip -= 1
+
+        def handle_data(self, d):
+            t = ' '.join(d.split())
+            if t and not self.skip:
+                self.out.append(t)
+    p = P()
+    p.feed(html_path.read_text(encoding='utf-8', errors='replace'))
+    return p.out
+
+
+def build(out_zip: Path, *, for_update: dict, src: dict, today: str, workbook_sha: str, attach_row_link: str, tag='A', web_only_extra=False, reprint_of_text=None) -> dict:
     """returns {'zip': path, 'rows': {key: row}, 'names': block}. tag A = the full set; tag B = a smaller second update from the SAME for-Update file (its numbers will be taken)"""
     nb = read_zip(src['nb']); pq = read_zip(src['pq']); yt = read_zip(src['yt'])
     nbrun = next(iter(nb[2]['runs'].values())); pqrun = next(iter(pq[2]['runs'].values())); ytrun = next(iter(yt[2]['runs'].values()))
@@ -107,7 +132,13 @@ def build(out_zip: Path, *, for_update: dict, src: dict, today: str, workbook_sh
         take(nbrun, 1, 'nb_b', Date='2025-12-30', Year='2025'); page(nb[2], nbrun['rows'][1]['Tracker story code'])
         take(pqrun, 0, 'pq_a'); page(pq[2], pqrun['rows'][0]['Tracker story code'])
         take(pqrun, 1, 'pq_b', Date='2024-05-05', Year='2024'); page(pq[2], pqrun['rows'][1]['Tracker story code'])
-        take(pqrun, 6, 'pq_reprint'); page(pq[2], 'rp-4665d06e9c62'); reprints['rp-4665d06e9c62'] = pq[2]['reprints']['rp-4665d06e9c62']
+        take(pqrun, 6, 'pq_reprint'); page(pq[2], 'rp-4665d06e9c62')
+        if reprint_of_text:       # the text of the story it reprints (s00003, saved copy ws00014o-s00003.html), in the ProQuest copy's own markup
+            import html as _h
+            c = pages['rp-4665d06e9c62']['clean']
+            head = c[:c.index('<p class="byline">')]
+            pages['rp-4665d06e9c62']['clean'] = head + '<p class="byline">By Desk Wire</p>' + ''.join('<p>%s</p>' % _h.escape(t) for t in paragraphs_of(Path(reprint_of_text))) + '</article></body></html>'
+        reprints['rp-4665d06e9c62'] = pq[2]['reprints']['rp-4665d06e9c62']
         web_row('web', 1, '2026-10-28', 'LibFiles Gazette Test', 'Gabriel bill on library hours advances in Sacramento', 'https://www.libfiles-gazette.test/news/gabriel-library-hours')
         web_row('undated', 2, '', 'LibFiles Undated Test', 'Gabriel meets Encino neighbors about the new park', 'https://www.libfiles-undated.test/news/gabriel-park')
         for i, k in enumerate(('yt_nocopy', 'yt_podcast', 'yt_clip')):

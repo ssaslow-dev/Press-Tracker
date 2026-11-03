@@ -36,6 +36,10 @@ def setUpModule():
     for p in list(SRC.values()) + [FU]:
         if not p.is_file():
             raise unittest.SkipTest('station outputs missing: ' + str(p))
+    fu = json.loads(FU.read_text(encoding='utf-8'))
+    wb = next((T.BUILD / 'data' / 'workbook').glob('*.xlsx'))
+    if not T.sha(wb).startswith(fu['fingerprint']['workbook_sha256'][:8]):
+        raise unittest.SkipTest('the test build is not the one the for-Update file %s was made from (build from the v64 workbook copy 62786489)' % FU)
     shutil.rmtree(BASE, ignore_errors=True)
     BASE.mkdir(parents=True)
     global K, R
@@ -60,7 +64,10 @@ def lib_snapshot(root: Path) -> dict:
         for fn in fns:
             p = Path(dp) / fn
             st = p.stat()
-            snap[p.relative_to(root / 'data' / 'library').as_posix()] = (st.st_ino, st.st_size, st.st_mtime_ns)
+            rel = p.relative_to(root / 'data' / 'library').as_posix()
+            if rel.startswith('_to_delete/.sheet_task.lock.'):      # the saver's own lock, moved (never deleted) at the end of every save: by design, not a library file
+                continue
+            snap[rel] = (st.st_ino, st.st_size, st.st_mtime_ns)
     return snap
 
 
@@ -79,6 +86,12 @@ def sha(p):
     return T.sha(p)
 
 
+def shards(srv) -> dict:
+    """the article shards of the folder itself (data/copies/articles): {file: {story id: html}}"""
+    d = srv.root / 'data' / 'copies' / 'articles'
+    return {p.name: json.loads(p.read_text(encoding='utf-8')) for p in d.glob('*.json') if p.name != 'manifest.json'}
+
+
 class LibFiles(unittest.TestCase):
     maxDiff = None
 
@@ -90,9 +103,11 @@ class LibFiles(unittest.TestCase):
         tv = next(r for r in cov0 if r['Medium'] == 'TV' and r['Format'] == 'Article' and r['Publisher link'] and r['Original or reprint'] == 'Original')
         S['attach_row'] = tv
         today = '2026-11-03'
-        S['A'] = A = LZ.build(BASE / 'updA.zip', for_update=fu, src=SRC, today=today, workbook_sha=wsha, attach_row_link=tv['Publisher link'], tag='A')
+        S['A'] = A = LZ.build(BASE / 'updA.zip', for_update=fu, src=SRC, today=today, workbook_sha=wsha, attach_row_link=tv['Publisher link'], tag='A',
+                       reprint_of_text=K.root / 'data' / 'library' / '2026' / 'ws00014o-s00003.html')
         S['B'] = B = LZ.build(BASE / 'updB.zip', for_update=fu, src=SRC, today=today, workbook_sha=wsha, attach_row_link=tv['Publisher link'], tag='B')
         S['before'] = lib_snapshot(K.root)
+        S['shards_before'] = shards(K)
         S['cov0'] = cov0
         st, j = K.upload(A['zip'])
         self.assertEqual(st, 200, j)
@@ -121,11 +136,25 @@ class LibFiles(unittest.TestCase):
             if r['from'] not in {x['to'] for x in nr['renamed']}:      # a number that moved on may be taken by the next file in the chain
                 self.assertFalse((done / Path(*r['from'].split('/'))).exists(), r)
         self.assertEqual(nr['unnamed'], [], 'every file the save wrote had been named by the station')
+        # the post-save copies merge starts from the folder's OWN current shards (data/copies/articles), never a cached set: nothing the folder held is lost or changed,
+        # except entries of stories this update touched (the reprint's story and the YouTube attach); the new stories' copies are added
+        old, new = S['shards_before'], shards(K)
+        self.assertTrue(set(old) <= set(new))
+        lost = [(f, k) for f in old for k in old[f] if k not in new[f]]
+        self.assertEqual(lost, [], lost[:5])
+        changed = [(f, k) for f in old for k in old[f] if k in new[f] and new[f][k] != old[f][k]]
+        self.assertLessEqual({k for _, k in changed}, {'s00003', S['attach_row']['Story ID']}, changed[:10])
+        added = [(f, k) for f in new for k in new[f] if f not in old or k not in old[f]]
+        self.assertGreaterEqual(len(added), 6, added)       # nb, pq and web copies of the new stories
+        S['shard_added'] = added
         lib = K.root / 'data' / 'library'
         for f in nr and [p for p in (done / 'library').rglob('*') if p.is_file()]:
             rel = f.relative_to(done / 'library').as_posix()
             if (lib / rel).is_file():
-                self.assertEqual(sha(lib / rel), sha(f), ('the update folder copy and the library file differ', rel))
+                if rel.endswith('.pdf'):
+                    self.assertEqual(sha(lib / rel), sha(f), ('the update folder copy and the library file differ', rel))
+                else:      # the save adds its source line (outlet, date, link, saved date) on top of a web copy: the story text is the same
+                    self.assertIn(re.search(r'<h1>(.*?)</h1>', f.read_text(encoding='utf-8')).group(1), (lib / rel).read_text(encoding='utf-8'), rel)
             else:
                 self.assertIn('library/' + rel, {x['file'] for x in nr['not_saved']} | {x for x in nr['raw_not_kept']}, ('a file in the kept update folder is not in the library and not listed as unsaved', rel))
 
@@ -200,8 +229,13 @@ class LibFiles(unittest.TestCase):
         self.assertTrue((lib / '_original_html' / 'Press releases' / '2026' / f'{prid}.html').is_file())
         seen_files |= {f'Press releases/2026/{prid}.html', f'_original_html/Press releases/2026/{prid}.html'}
         # everything the update's names block promised is there under exactly that name
+        nr = S['namesA']
+        moved = {x['from']: x['to'] for x in nr['renamed']}
+        unsaved = {x['file'] for x in nr['not_saved']} | set(nr['raw_not_kept'])
         for path in A['library']:
-            self.assertTrue((lib / path[len('library/'):]).is_file(), ('named file missing from the library', path))
+            if path in unsaved and path not in moved:
+                continue
+            self.assertTrue((lib / moved.get(path, path)[len('library/'):]).is_file(), ('named file missing from the library (as named, or as renamed in the panel)', path, moved.get(path)))
         S['new_files'] = seen_files
         # YouTube attach: the tracked story became a broadcast story, its saved copy untouched
         tv = S['attach_row']
@@ -219,7 +253,8 @@ class LibFiles(unittest.TestCase):
         self.assertEqual(changed, [], changed[:5])
         added = sorted(set(after) - set(before))
         self.assertEqual(set(added), S['new_files'] | {a for a in added if a.startswith('_original_html/') and a[len('_original_html/'):] in {p[len('_original_html/'):] for p in S['new_files']}}, (added, sorted(S['new_files'])))
-        self.assertFalse((K.root / 'data' / 'library' / '_to_delete').exists())
+        td = K.root / 'data' / 'library' / '_to_delete'
+        self.assertEqual([p.name for p in td.rglob('*') if p.is_file() and not p.name.startswith('.sheet_task.lock.')], [], 'nothing was moved out of the library')
 
     def test_04_second_update_numbers_taken_renames_listed(self):
         B = S['B']

@@ -56,6 +56,7 @@ def main():
     ap.add_argument('--only', default='')
     ap.add_argument('--build', type=Path, default=SCRATCH / 'app_build' / 'linux' / 'AJG Tracker')
     ap.add_argument('--live-site', type=Path, default=SCRATCH / 'live_site')
+    ap.add_argument('--parity-only', default='', help='parity interactions to run (default: the same list as --only, which only fits when it names parity interactions; empty = all)')
     ap.add_argument('--no-parity', action='store_true')
     ap.add_argument('--no-capture', action='store_true')
     ap.add_argument('--node', default='node')
@@ -90,8 +91,8 @@ def main():
                 subprocess.run(cmd, check=False)
             if not a.no_parity:
                 cmd = [a.node, str(HERE / 'parity.js'), '--ref', ref, '--pc', srv.base + '/', '--out', str(a.out), '--vp', vp]
-                if a.only:
-                    cmd += ['--only', a.only]
+                if a.parity_only:
+                    cmd += ['--only', a.parity_only]
                 print('>>', ' '.join(cmd), flush=True)
                 bad += subprocess.run(cmd, check=False, env=env).returncode != 0
     finally:

@@ -2501,7 +2501,7 @@ function covBlock(id){ const el = typeof document !== 'undefined' && document.ge
 // as in build_data.py: scheme, www., fragment, query and trailing slash dropped
 // links that stop naming one article once the query is dropped (NewsBank's document-view, Google searches, library proxies) never match
 const COV_SHARED = /^google\.[a-z.]+\/search|^[^/]+$/;
-const covNormU = u => { let s = String(u || '').trim().toLowerCase(); s = canonMirror(s.replace(/^[a-z][a-z0-9+.-]*:\/\//, '').replace(/^www\./, '').split('#')[0]); const host = s.split('/')[0]; if (!/newsbank|oclc|google\.|proquest|(^|\.)youtube\.com$/.test(host)) s = s.split('?')[0]; return s.replace(/\/+$/, ''); };   /* YTLINK-v1: a YouTube watch link is identified by ?v=ID */
+const covNormU = u => { let s = String(u || '').trim().toLowerCase(); s = canonMirror(s.replace(/^[a-z][a-z0-9+.-]*:\/\//, '').replace(/^www\./, '').split('#')[0]); const host = s.split('/')[0]; if (!/newsbank|oclc|google\.|proquest|(^|\.)youtube\.com$|(^|\.)iranshahrnewsagency\.com$|(^|\.)chosundaily\.com$/.test(host)) s = s.split('?')[0]; return s.replace(/\/+$/, ''); };   /* YTLINK-v1: a YouTube watch link is identified by ?v=ID */
 // "Sacramento Bee, The", "The Sacramento Bee" and "The Sacramento Bee (CalMatters)" are one outlet
 const covOutlet = s => String(s || '').toLowerCase().replace(/\s*\([^)]*\)\s*$/, '').replace(/,\s*the$/, '').replace(/^the\s+/, '').replace(/[^a-z0-9]+/g, '');
 /* REQ-14 (UPDFIX-v1): a headline's first segment when split at " - ", " | ", " — ", " – " (normalized; only when it is REPRINT_MIN characters or more) */
@@ -3187,8 +3187,10 @@ function rcPriorityPlan(q){
   const pr = RC_DATA.priority || {}, size = Math.max(1, Math.min(10, +pr.or_size || 4));
   (pr.groups || []).forEach(g => { const sites = (g.sites || []).filter(x => x && x.site);
     for (let i = 0; i < sites.length; i += size){ const part = sites.slice(i, i + size);
-      q(`"Jesse Gabriel" (${part.map(x => 'site:' + x.site).join(' OR ')})`, `Priority outlets, ${g.label || 'local'} ${i + 1}–${i + part.length} of ${sites.length}: ${part.map(x => x.outlet).join(', ').slice(0, 80)}`, 'fresh',
-        { hosts: part.map(x => RC_HOST_KEY(String(x.site).split('/')[0])), keepDate: true }); } });
+      /* LANGCAP-v1: a group may carry its own `query` template ({sites} = the OR of site: terms) for name spellings in script, and `nodate` (DATEFILTER-v1) */
+      const sq = part.map(x => 'site:' + x.site).join(' OR '), qq = g.query ? String(g.query).replace('{sites}', sq) : `"Jesse Gabriel" (${sq})`;
+      q(qq, `Priority outlets, ${g.label || 'local'} ${i + 1}–${i + part.length} of ${sites.length}: ${part.map(x => x.outlet).join(', ').slice(0, 80)}`, 'fresh',
+        Object.assign({ hosts: part.map(x => RC_HOST_KEY(String(x.site).split('/')[0])), keepDate: true }, g.nodate ? { noDate: true } : {})); } });
 }
 /* ethnic-media outlets (Ethnic Media Services directory, California) that are not on record: OR-of-8 site searches by language group with the date filter, Southern California first, capped at max_calls */
 function rcEthnicPlan(q){
@@ -3733,6 +3735,18 @@ function sinceError(v){
   return '';
 }
 /* the earliest page date a pass accepts: its own minDate (late pickups, release dates), never before a manual since date */
+/* the TinyFish search input for a plan item (DATEFILTER-v1: split out of runUpdate so it can be tested) */
+function tfInput(it){
+    const inp = Object.assign({ after_date: it.minDate && it.minDate < U.since ? it.minDate : U.since /* LATEWINDOW-v1 */, location: 'US', purpose: 'Find press coverage that names California Assemblymember Jesse Gabriel for his office’s press clips log' }, it);
+    // TinyFish's date filter drops results it has no date for, and with site: it keeps few (2 of 10 LA Times 2026 results in an
+    // Oct 21 test), so outlet searches go without it; their results are held to the "since" date by their own dates below
+    if ((it.alltime || /\bsite:/.test(it.query)) && !it.keepDate && !U.sinceManual) delete inp.after_date;   /* RECALL-v1: fresh passes keep the date filter; SINCE-v1: a manual date limits every pass */
+    if (U.sinceManual && inp.after_date && inp.after_date < U.since) inp.after_date = U.since;   /* SINCE-v1: release pickups and late-pickup windows never reach before a manual date */
+    if (it.noDate) delete inp.after_date;   /* DATEFILTER-v1: pages TinyFish has no date for (Apple Podcasts episodes) are dropped by any date filter (0 results, 2026-11-03 test); search without it and hold results to the since date below by their own date, else keep them for the normal checks */
+    delete inp.noDate; delete inp.label; delete inp.kind; delete inp.host; delete inp.alltime; delete inp.rel; delete inp.minDate; if (!inp.page) delete inp.page;
+    delete inp.keepDate; delete inp.hosts; delete inp.yt;   /* YTSTATION-v1 */
+  return inp;
+}
 const sinceFloor = d => U.sinceManual && (!d || d < U.since) ? U.since : (d || U.since);
 const sinceKeep = (published, floor) => !published || published >= floor;
 const sinceDefault = () => { const s = lastSearched(); return s ? new Date(Date.parse(s) - 7*864e5).toISOString().slice(0,10) : LAST; };
@@ -3740,7 +3754,7 @@ const sinceDefault = () => { const s = lastSearched(); return s ? new Date(Date.
    same filters, when that other search reads every page of its results (an outlet search) */
 function tfDedupe(P){
   const toks = q => { const t = []; String(q).replace(/"([^"]*)"|(\S+)/g, (m, a, b) => { t.push((a !== undefined ? '"' + a + '"' : b).toLowerCase()); return ''; }); return t; };
-  const sig = it => JSON.stringify([it.domain_type || '', it.exclude_domains || '', it.alltime ? 1 : 0, it.page || 0, it.keepDate ? 1 : 0]);   /* RECALL-v1 */
+  const sig = it => JSON.stringify([it.domain_type || '', it.exclude_domains || '', it.alltime ? 1 : 0, it.page || 0, it.keepDate ? 1 : 0, it.noDate ? 1 : 0]);   /* RECALL-v1 */
   const seen = new Map(), plan = [], dropped = [];
   P.forEach(it => { const k = toks(it.query).slice().sort().join(' ') + '|' + sig(it); if (seen.has(k)){ dropped.push({ label: it.label, query: it.query, why: 'same search as “' + seen.get(k).label + '”' }); return; } seen.set(k, it); plan.push(it); });
   const deep = plan.filter(it => it.deep);
@@ -3804,13 +3818,7 @@ async function runUpdate(){
     let next = 0, done = 0; U.done = 0; hbAt = Date.now();
     const one = async it => {
       let p;
-      const inp = Object.assign({ after_date: it.minDate && it.minDate < U.since ? it.minDate : U.since /* LATEWINDOW-v1 */, location: 'US', purpose: 'Find press coverage that names California Assemblymember Jesse Gabriel for his office’s press clips log' }, it);
-      // TinyFish's date filter drops results it has no date for, and with site: it keeps few (2 of 10 LA Times 2026 results in an
-      // Oct 21 test), so outlet searches go without it; their results are held to the "since" date by their own dates below
-      if ((it.alltime || /\bsite:/.test(it.query)) && !it.keepDate && !U.sinceManual) delete inp.after_date;   /* RECALL-v1: fresh passes keep the date filter; SINCE-v1: a manual date limits every pass */
-      if (U.sinceManual && inp.after_date && inp.after_date < U.since) inp.after_date = U.since;   /* SINCE-v1: release pickups and late-pickup windows never reach before a manual date */
-      delete inp.label; delete inp.kind; delete inp.host; delete inp.alltime; delete inp.rel; delete inp.minDate; if (!inp.page) delete inp.page;
-      delete inp.keepDate; delete inp.hosts; delete inp.yt;   /* YTSTATION-v1 */
+      const inp = tfInput(it);
       try { p = tfPayload(await tfCall(mcp, 'search', inp)); }
       catch(e){ if (STOP_CODES.has(e && e.code)) throw e; U.failed++; return; }
       const got = ((p && p.results) || []).filter(r => r && /^https?:\/\//i.test(r.url)).map(r => ({ url: r.url, title: String(r.title||''), published: tfDate(r.date), author: '', text: String(r.snippet||''), site: r.publisher || r.site_name || '' }));

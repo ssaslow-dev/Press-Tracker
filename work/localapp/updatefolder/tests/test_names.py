@@ -234,6 +234,16 @@ class Reconcile(unittest.TestCase):
         self.assertEqual(r['not_saved'], [{'file': 'library/2025/nb10671o-s04943.pdf', 'why': 'its link is already in the workbook'}])
         self.assertEqual(r['renamed'], [])
 
+    def test_a_name_taken_by_a_file_that_was_not_saved_is_set_aside_not_suffixed(self):
+        """the story the save skipped keeps the station's name 10670; another file is renamed onto 10670: the skipped one moves to not_saved/, nothing gets a made-up name"""
+        res = self.saved_as_named(); res['pages'].pop(0); res['pages_skipped'] = [{'page': 'jg-aaaaaa', 'why': 'no article body'}]
+        res['pages'][2]['file'] = '2026/ws10670o-s04942.html'          # the reprint's copy now takes the skipped story's old name
+        r = TU.reconcile_names(self.nm, self.stage, res, apply=True)
+        self.assertTrue(any(x['file'] == 'library/2026/ws10670o-s04942.html' for x in r['not_saved']))
+        self.assertEqual((self.stage / 'library' / '2026' / 'ws10670o-s04942.html').read_bytes(), b'<p>r</p>')
+        self.assertEqual((self.stage / 'not_saved' / '2026' / 'ws10670o-s04942.html').read_bytes(), b'<p>a2</p>')
+        self.assertEqual([p.name for p in (self.stage / 'library' / '2026').iterdir() if p.name.endswith('-2')], [])
+
     def test_preview_changes_nothing(self):
         res = res_for([('jg-aaaaaa', '2026/ws10680o-s04950.html', '', '')])
         r = TU.reconcile_names(self.nm, self.stage, res, apply=False)
