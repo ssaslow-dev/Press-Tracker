@@ -1,0 +1,194 @@
+Article ID,type,column,current (filled),header says,outlet,evidence,effect
+00134,page differs,Page,4,A 4,"Seattle Times, The","nb00134r-s04300.pdf: ""Page: A 4""",filled cell kept
+00198,"date (1-3 days, normal; fills still proposed)",Date,2026-09-09,2026-09-10,CNN,"nb00198o-s00052.pdf: ""September 10, 2026""",none
+00291,author differs (info only),Author 1,Jim Glynn,Jim Glynn Suicide prevention,Madera Tribune,"nb00291o-s00079.pdf: ""Author: Jim Glynn Suicide prevention""",filled cell kept
+00591,author differs (info only),Author 1,Marisa Kendall,Marisa Kendall Cal Matters,"Enterprise-Recorder, The","nb00591r-s00154.pdf: ""Author: Marisa Kendall Cal Matters""",filled cell kept
+00592,author differs (info only),Author 1,Marisa Kendall,Marisa Kendall Cal Matters,"Sentinel, The","nb00592r-s00154.pdf: ""Author: Marisa Kendall Cal Matters""",filled cell kept
+00722,page differs,Page,4,A002,San Francisco Chronicle,"nb00723o-s00202.pdf: ""Page: A002""",filled cell kept
+00742,"date (1-3 days, normal; fills still proposed)",Date,2025-12-12,2025-12-13,CNN,"nb00742o-s00207.pdf: ""December 13, 2025""",none
+00777,author differs (info only),Author 1,Ryan Sabalow,Ryan Sabalow Cal Matters,"Enterprise-Recorder, The","nb00777r-s00219.pdf: ""Author: Ryan Sabalow Cal Matters""",filled cell kept
+00778,author differs (info only),Author 1,Ryan Sabalow,Ryan Sabalow Cal Matters,"Sentinel, The","nb00778r-s00219.pdf: ""Author: Ryan Sabalow Cal Matters""",filled cell kept
+00779,author differs (info only),Author 1,Ryan Sabalow,By Ryan Sabalow Cal Matters,"Daily Democrat, The","nb00779r-s04324.pdf: ""Author: By Ryan Sabalow Cal Matters""",filled cell kept
+00811,page differs,Page,19,B7,Akron Beacon Journal,"nb00811o-s00228.pdf: ""Page: B7""",filled cell kept
+00823,page differs,Page,14,B2,Sarasota Herald-Tribune,"nb00823r-s00228.pdf: ""Page: B2""",filled cell kept
+00852,city differs from other rows of this outlet (city not proposed),Outlet city,London/Frankfort,Beaver County,"Times, The","nb00852r-s00228.pdf: ""Times, The (Beaver County, PA)""",no city proposed
+00923,page differs,Page,A,A 4,"Bakersfield Californian, The","nb00923r-s00237.pdf: ""Page: A 4""",filled cell kept
+00953,page differs,Page,5,A1,"San Diego Union-Tribune, The","nb00954o-s00241.pdf: ""Page: A1""",filled cell kept
+01036,author differs (info only),Author 1,Arturo Bojorquez,ARTURO BOJORQUEZ Editor,Imperial Valley Press,"nb01036o-s00274.pdf: ""Author: ARTURO BOJORQUEZ Editor""",filled cell kept
+01246,author differs (info only),Author 1,Alexei Koseff,Alexei Koseff Cal Matters,Lompoc Record,"nb01246r-s00336.pdf: ""Author: Alexei Koseff Cal Matters""",filled cell kept
+01247,author differs (info only),Author 1,Alexei Koseff,Alexei Koseff Cal Matters,Santa Maria Times,"nb01247r-s00336.pdf: ""Author: Alexei Koseff Cal Matters""",filled cell kept
+01248,author differs (info only),Author 1,Alexei Koseff,Alexei Koseff Cal Matters,Santa Ynez Valley News,"nb01248r-s00336.pdf: ""Author: Alexei Koseff Cal Matters""",filled cell kept
+01250,author differs (info only),Author 1,Alexei Koseff,Alexei Koseff Cal Matters,"Enterprise-Recorder, The","nb01250r-s00336.pdf: ""Author: Alexei Koseff Cal Matters""",filled cell kept
+01251,author differs (info only),Author 1,Alexei Koseff,Alexei Koseff Cal Matters,"Sentinel, The","nb01251r-s00336.pdf: ""Author: Alexei Koseff Cal Matters""",filled cell kept
+01266,page differs,Page,5,05,"Jerusalem Post, The","nb01266o-s00339.pdf: ""Page: 05""",filled cell kept
+01315,author differs (info only),Author 1,Trân Nguyễn,Or Trn Nguyn,Independent en Español,"nb01315r-s00354.pdf: ""Author: Or Trn Nguyn""",filled cell kept
+01323,page differs,Page,2,A1,"Record, The","nb01323r-s04360.pdf: ""Page: A1""",filled cell kept
+01487,page differs,Page,9,B1,East Bay Times,"nb01488o-s00413.pdf: ""Page: B1""",filled cell kept
+01490,page differs,Page,9,B1,"Mercury News, The","nb01491r-s00413.pdf: ""Page: B1""",filled cell kept
+01579,date (blocks all fills on this row),Date,2025-01-17,2025-01-22,Associated Press: US Politics & Government Online,"nb01579o-s00435.pdf: ""January 22, 2025""",no fills proposed for this row
+01629,page differs,Page,5,A1,"Mercury News, The","nb01630r-s00447.pdf: ""Page: A1""",filled cell kept
+01631,page differs,Page,5,A1,East Bay Times,"nb01631r-s00447.pdf: ""Page: A1""",filled cell kept
+01701,author differs (info only),Author 1,Jordyn Milewski,Jordyn Milewskirn,Mondaq,"nb01701o-s00474.pdf: ""Author: Jordyn Milewskirn""",filled cell kept
+01794,"date (1-3 days, normal; fills still proposed)",Date,2024-10-16,2024-10-19,Kaiser Health News,"nb01794o-s00496.pdf: ""October 19, 2024""",none
+01876,page differs,Page,53,H1,"Blade, The","nb01876o-s00531.pdf: ""Page: H1""",filled cell kept
+01897,page differs,Page,13,B3,Sarasota Herald-Tribune,"nb01897r-s00540.pdf: ""Page: B3""",filled cell kept
+01952,author differs (info only),Author 1,Kelly McCarthy,Kelly McCarthy via GMA,CBS - 7 WHIO,"nb01952o-s00556.pdf: ""Author: Kelly McCarthy via GMA""",filled cell kept
+02021,page differs,Page,5,A1,"Mercury News, The","nb02022r-s00579.pdf: ""Page: A1""",filled cell kept
+02023,page differs,Page,5,A1,East Bay Times,"nb02024o-s00579.pdf: ""Page: A1""",filled cell kept
+02029,page differs,Page,6,1A,"Sacramento Bee, The","nb02029r-s02953.pdf: ""Page: 1A""",filled cell kept
+02076,page differs,Page,5,A1,"San Diego Union-Tribune, The","nb02077o-s00589.pdf: ""Page: A1""",filled cell kept
+02126,author differs (info only),Author 1,Vanessa Sanchez,By Vanessa Sanchez California Healthline,Lake County Record Bee,"nb02126r-s00609.pdf: ""Author: By Vanessa Sanchez California Healthline""",filled cell kept
+02175,page differs,Page,11,A001,San Francisco Chronicle,"nb02175r-s00618.pdf: ""Page: A001""",filled cell kept
+02176,page differs,Page,2,2A,"Sacramento Bee, The","nb02177o-s00619.pdf: ""Page: 2A""",filled cell kept
+02185,page differs,Page,9,B1,"Mercury News, The","nb02186r-s00622.pdf: ""Page: B1""",filled cell kept
+02188,page differs,Page,9,B1,East Bay Times,"nb02188r-s00622.pdf: ""Page: B1""",filled cell kept
+02194,page differs,Page,22,2C,"Sacramento Bee, The","nb02195o-s00624.pdf: ""Page: 2C""",filled cell kept
+02202,page differs,Page,16,B1,"Mercury News, The","nb02203r-s00626.pdf: ""Page: B1""",filled cell kept
+02204,page differs,Page,18,B1,East Bay Times,"nb02204r-s00626.pdf: ""Page: B1""",filled cell kept
+02281,author differs (info only),Author 1,Alexei Koseff,ALEXEI KOSEFF Cal Matters,"Enterprise-Recorder, The","nb02281r-s00652.pdf: ""Author: ALEXEI KOSEFF Cal Matters""",filled cell kept
+02283,author differs (info only),Author 1,Alexei Koseff,ALEXEI KOSEFF Cal Matters,"Sentinel, The","nb02283r-s00652.pdf: ""Author: ALEXEI KOSEFF Cal Matters""",filled cell kept
+02290,page differs,Page,6,1A,"Sacramento Bee, The","nb02290r-s00653.pdf: ""Page: 1A""",filled cell kept
+02294,page differs,Page,6,A1,"San Diego Union-Tribune, The","nb02294o-s04426.pdf: ""Page: A1""",filled cell kept
+02320,page differs,Page,23,1C,"Sacramento Bee, The","nb02321o-s00664.pdf: ""Page: 1C""",filled cell kept
+02351,page differs,Page,11,A001,San Francisco Chronicle,"nb02351r-s00677.pdf: ""Page: A001""",filled cell kept
+02367,page differs,Page,7,1A,"Sacramento Bee, The","nb02367r-s00680.pdf: ""Page: 1A""",filled cell kept
+02374,page differs,Page,5,05,"Jerusalem Post, The","nb02374o-s00681.pdf: ""Page: 05""",filled cell kept
+02393,author differs (info only),Author 1,Daniel Clevenger,Mr Daniel Clevenger and Morris Zarifrn,Mondaq,"nb02393o-s00691.pdf: ""Author: Mr Daniel Clevenger and Morris Zarifrn""",filled cell kept
+02394,section differs,Section,Current Hot,Current Hot Topics,"National Law Review, The","nb02394o-s00692.pdf: ""Section: Current Hot Topics""",filled cell kept
+02396,page differs,Page,5,A1,"San Diego Union-Tribune, The","nb02396o-s00693.pdf: ""Page: A1""",filled cell kept
+02410,page differs,Page,17,017,New York Post,"nb02410o-s04440.pdf: ""Page: 017""",filled cell kept
+02428,page differs,Page,5,5A,"Sacramento Bee, The","nb02429o-s00717.pdf: ""Page: 5A""",filled cell kept
+02500,author differs (info only),Author 1,Jorge Luis Macías,Iliana Salguero,"Opinion, La","nb02500o-s00728.pdf: ""Author: Iliana Salguero""",filled cell kept
+02530,page differs,Page,2,2A,"Sacramento Bee, The","nb02531o-s00736.pdf: ""Page: 2A""",filled cell kept
+02532,page differs,Page,4,1A,"Modesto Bee, The","nb02532r-s00736.pdf: ""Page: 1A""",filled cell kept
+02551,page differs,Page,4,4A,"Sacramento Bee, The","nb02552o-s00740.pdf: ""Page: 4A""",filled cell kept
+02558,author differs (info only),Author 1,Marianne Love,Marianne Love Correspondent,Los Angeles Daily News,"nb02558o-s00742.pdf: ""Author: Marianne Love Correspondent""",filled cell kept
+02560,author differs (info only),Author 1,Johnjerica Hodge,"Ms Johnjerica Hodge, India Williams and Allison Clarkrn",Mondaq,"nb02560o-s00744.pdf: ""Author: Ms Johnjerica Hodge, India Williams and Allison Clarkrn""",filled cell kept
+02562,author differs (info only),Author 1,Michael Littenberg,"Mr Michael Littenberg, Samantha Elliott and Marc Rotterrn",Mondaq,"nb02562o-s00746.pdf: ""Author: Mr Michael Littenberg, Samantha Elliott and Marc Rotterrn""",filled cell kept
+02563,author differs (info only),Author 1,Jordyn Milewski,Jordyn Milewskirn,Mondaq,"nb02563o-s00747.pdf: ""Author: Jordyn Milewskirn""",filled cell kept
+02617,page differs,Page,22,4C,"Sacramento Bee, The","nb02617o-s00756.pdf: ""Page: 4C""",filled cell kept
+02652,page differs,Page,5,1A,"Sacramento Bee, The","nb02652r-s00762.pdf: ""Page: 1A""",filled cell kept
+02653,page differs,Page,5,5A,"Tribune, The","nb02653r-s00762.pdf: ""Page: 5A""",filled cell kept
+02686,page differs,Page,15,B3,"San Diego Union-Tribune, The","nb02686o-s04457.pdf: ""Page: B3""",filled cell kept
+02692,author differs (info only),Author 1,Jeffrey Greenbaum,Mr Jeffrey Greenbaumrn,Mondaq,"nb02692o-s00771.pdf: ""Author: Mr Jeffrey Greenbaumrn""",filled cell kept
+02695,author differs (info only),Author 1,Michael Littenberg,Mr Michael Littenberg and Marc Rotterrn,Mondaq,"nb02695o-s00773.pdf: ""Author: Mr Michael Littenberg and Marc Rotterrn""",filled cell kept
+02699,page differs,Page,25,1C,"Sacramento Bee, The","nb02700o-s00776.pdf: ""Page: 1C""",filled cell kept
+02702,page differs,Page,7,1A,"Tribune, The","nb02702r-s00776.pdf: ""Page: 1A""",filled cell kept
+02736,"date (1-3 days, normal; fills still proposed)",Date,2023-11-25,2023-11-26,Times of San Diego,"nb02736r-s00787.pdf: ""November 26, 2023""",none
+02745,page differs,Page,8,A001,San Francisco Chronicle,"nb02746o-s00789.pdf: ""Page: A001""",filled cell kept
+02771,author differs (info only),Author 1,Chelsea Maclean,"Ms Chelsea Maclean, Daniel Golub, Kevin J. Ashe, William E. Sterling and Deborah Brundyrn",Mondaq,"nb02771o-s00803.pdf: ""Author: Ms Chelsea Maclean, Daniel Golub, Kevin J. Ashe, William E. Sterling and Deborah Brundyrn""",filled cell kept
+02774,page differs,Page,16,A17,"Daytona Beach News-Journal, The","nb02774o-s00804.pdf: ""Page: A17""",filled cell kept
+02779,page differs,Page,34,16B,"Roanoke Times, The","nb02779r-s00805.pdf: ""Page: 16B""",filled cell kept
+02788,"date (1-3 days, normal; fills still proposed)",Date,2023-10-24,2023-10-26,Kaiser Health News,"nb02788o-s00806.pdf: ""October 26, 2023""",none
+02814,author differs (info only),Author 1,Natalie E. Rainer,Ms Natalie E. Rainer and Caitlin C. Blanche,Mondaq,"nb02814r-s00810.pdf: ""Author: Ms Natalie E. Rainer and Caitlin C. Blanche""",filled cell kept
+02828,"date (1-3 days, normal; fills still proposed)",Date,2023-10-20,2023-10-21,Times of San Diego,"nb02828o-s00813.pdf: ""October 21, 2023""",none
+02836,date (blocks all fills on this row),Date,2023-10-20,2023-10-24,Kaiser Health News,"nb02836o-s00815.pdf: ""October 24, 2023""",no fills proposed for this row
+02857,page differs,Page,28,F4,"Fayetteville Observer, The","nb02857o-s00822.pdf: ""Page: F4""",filled cell kept
+02860,page differs,Page,3,"1, 3",Arkansas Democrat-Gazette,"nb02860o-s00824.pdf: ""Page: 1, 3""",filled cell kept
+02861,page differs,Page,3,"1, 4",Northwest Arkansas Democrat-Gazette,"nb02861r-s00824.pdf: ""Page: 1, 4""",filled cell kept
+02865,page differs,Page,5,5A,"Fresno Bee, The","nb02865r-s00825.pdf: ""Page: 5A""",filled cell kept
+03009,page differs,Page,5,A1,East Bay Times,"nb03010o-s00865.pdf: ""Page: A1""",filled cell kept
+03011,page differs,Page,5,A1,"Mercury News, The","nb03012r-s00865.pdf: ""Page: A1""",filled cell kept
+03085,page differs,Page,7,A001,San Francisco Chronicle,"nb03086o-s00874.pdf: ""Page: A001""",filled cell kept
+03089,page differs,Page,3,03,Herald-Standard,"nb03090o-s00877.pdf: ""Page: 03""",filled cell kept
+03173,page differs,Page,5,1A,"Sacramento Bee, The","nb03174o-s00892.pdf: ""Page: 1A""",filled cell kept
+03176,page differs,Page,4,1A,"Fresno Bee, The","nb03176r-s00892.pdf: ""Page: 1A""",filled cell kept
+03177,page differs,Page,4,1A,"Merced Sun-Star, The","nb03177r-s00892.pdf: ""Page: 1A""",filled cell kept
+03179,page differs,Page,4,1A,"Tribune, The","nb03179r-s00892.pdf: ""Page: 1A""",filled cell kept
+03199,page differs,Page,9,1A,"Sacramento Bee, The","nb03200o-s00901.pdf: ""Page: 1A""",filled cell kept
+03212,page differs,Page,8,A1,"San Diego Union-Tribune, The","nb03212o-s00907.pdf: ""Page: A1""",filled cell kept
+03269,page differs,Page,18,C2,"San Diego Union-Tribune, The","nb03269o-s00929.pdf: ""Page: C2""",filled cell kept
+03349,author differs (info only),Author 1,Julie Park,"Ms Julie Park, Will Baker and Julie Harrison",Mondaq,"nb03349o-s00942.pdf: ""Author: Ms Julie Park, Will Baker and Julie Harrison""",filled cell kept
+03427,"date (1-3 days, normal; fills still proposed)",Date,2023-07-18,2023-07-19,Times of San Diego,"nb03427r-s00964.pdf: ""July 19, 2023""",none
+03455,page differs,Page,6,4A,"Sacramento Bee, The","nb03456o-s00976.pdf: ""Page: 4A""",filled cell kept
+03474,author differs (info only),Author 1,Antonio Ray Harvey,Cora Jackson-Fossett,Los Angeles Sentinel,"nb03474o-s00983.pdf: ""Author: Cora Jackson-Fossett""",filled cell kept
+03519,page differs,Page,5,5A,"Sacramento Bee, The","nb03520o-s00992.pdf: ""Page: 5A""",filled cell kept
+03521,page differs,Page,18,B6,Chattanooga Times Free Press,"nb03521o-s00993.pdf: ""Page: B6""",filled cell kept
+03548,author differs (info only),Author 1,Chelsea Maclean,Ms Chelsea Maclean and Genna Yarkin,Mondaq,"nb03548o-s01002.pdf: ""Author: Ms Chelsea Maclean and Genna Yarkin""",filled cell kept
+03655,page differs,Page,30,C9,"Mercury News, The","nb03656r-s01025.pdf: ""Page: C9""",filled cell kept
+03676,page differs,Page,27,5D,Texarkana Gazette,"nb03676o-s04513.pdf: ""Page: 5D""",filled cell kept
+03682,author differs (info only),Author 1,Tanya Jogee,TANYA JOGEE Progressive Perspectives,Hawaii Tribune-Herald,"nb03682o-s04514.pdf: ""Author: TANYA JOGEE Progressive Perspectives""",filled cell kept
+03683,author differs (info only),Author 1,Tanya Jogee,Tanya Jogee Progressive Perspectives,Daily Gate City,"nb03683r-s01029.pdf: ""Author: Tanya Jogee Progressive Perspectives""",filled cell kept
+03704,section differs,Section,Health 1199,Health,MailOnline,"nb03704o-s01041.pdf: ""Section: Health""",filled cell kept
+03707,page differs,Page,6,6A,"Sacramento Bee, The","nb03708o-s01043.pdf: ""Page: 6A""",filled cell kept
+03719,page differs,Page,4,4A,"Fresno Bee, The","nb03719r-s01043.pdf: ""Page: 4A""",filled cell kept
+03720,page differs,Page,1,1A,"Merced Sun-Star, The","nb03720r-s01043.pdf: ""Page: 1A""",filled cell kept
+03741,author differs (info only),Author 1,Haven Daley,Haven Daley Adam Beam,"Philadelphia Tribune, The","nb03741r-s01052.pdf: ""Author: Haven Daley Adam Beam""",filled cell kept
+03757,page differs,Page,7,007,"Express-Times, The","nb03757r-s01052.pdf: ""Page: 007""",filled cell kept
+03798,page differs,Page,6,6A,Waco Tribune-Herald,"nb03798r-s01058.pdf: ""Page: 6A""",filled cell kept
+03812,page differs,Page,6,6A,"Bellingham Herald, The","nb03812o-s01062.pdf: ""Page: 6A""",filled cell kept
+03813,page differs,Page,2,2A,Lexington Herald-Leader,"nb03813o-s04531.pdf: ""Page: 2A""",filled cell kept
+03814,page differs,Page,21,22A,"Charlotte Observer, The","nb03814r-s01062.pdf: ""Page: 22A""",filled cell kept
+03815,page differs,Page,8,8A,"Herald, The","nb03815r-s04531.pdf: ""Page: 8A""",filled cell kept
+03816,page differs,Page,8,8A,"News Tribune, The","nb03816r-s01062.pdf: ""Page: 8A""",filled cell kept
+03819,page differs,Page,27,3C,"Sacramento Bee, The","nb03820o-s01063.pdf: ""Page: 3C""",filled cell kept
+03870,"date (1-3 days, normal; fills still proposed)",Date,2023-03-23,2023-03-24,"Washington Times, The","nb03870o-s01073.pdf: ""March 24, 2023""",none
+03924,page differs,Page,40,D002,San Francisco Chronicle,"nb03925o-s01092.pdf: ""Page: D002""",filled cell kept
+03933,page differs,Page,3,003,New York Post,"nb03933o-s01097.pdf: ""Page: 003""",filled cell kept
+03943,page differs,Page,11,A001,San Francisco Chronicle,"nb03944o-s01104.pdf: ""Page: A001""",filled cell kept
+03964,page differs,Page,31,3C,"Sacramento Bee, The","nb03965o-s01114.pdf: ""Page: 3C""",filled cell kept
+04015,page differs,Page,9,1A,"Sacramento Bee, The","nb04015r-s01137.pdf: ""Page: 1A""",filled cell kept
+04016,page differs,Page,8,8A,"Sacramento Bee, The","nb04016r-s01137.pdf: ""Page: 8A""",filled cell kept
+04033,"date (1-3 days, normal; fills still proposed)",Date,2022-10-24,2022-10-25,Times of San Diego,"nb04033o-s01141.pdf: ""October 25, 2022""",none
+04086,"date (1-3 days, normal; fills still proposed)",Date,2022-09-19,2022-09-20,Times of San Diego,"nb04086o-s01173.pdf: ""September 20, 2022""",none
+04092,page differs,Page,8,1A,"Tribune, The","nb04093r-s01175.pdf: ""Page: 1A""",filled cell kept
+04173,page differs,Page,30,1C,"Sacramento Bee, The","nb04174o-s01203.pdf: ""Page: 1C""",filled cell kept
+04240,page differs,Page,9,A001,San Francisco Chronicle,"nb04241o-s01234.pdf: ""Page: A001""",filled cell kept
+04260,page differs,Page,32,1C,"Sacramento Bee, The","nb04261o-s01246.pdf: ""Page: 1C""",filled cell kept
+04294,page differs,Page,3,3A,"Sacramento Bee, The","nb04295o-s01258.pdf: ""Page: 3A""",filled cell kept
+04296,page differs,Page,4,1A,"Fresno Bee, The","nb04296r-s01258.pdf: ""Page: 1A""",filled cell kept
+04297,page differs,Page,5,1A,"Tribune, The","nb04297r-s01258.pdf: ""Page: 1A""",filled cell kept
+04304,author differs (info only),Author 1,Gabe Stutman,JTA/Gabe Stutman,YNETnews,"nb04304r-s01262.pdf: ""Author: JTA/Gabe Stutman""",filled cell kept
+04313,author differs (info only),Author 1,Gabriel Lerner,Gabriel Lerner (*),"Opinion, La","nb04313o-s01265.pdf: ""Author: Gabriel Lerner (*)""",filled cell kept
+04339,page differs,Page,8,1A,"Fresno Bee, The","nb04340o-s01285.pdf: ""Page: 1A""",filled cell kept
+04341,page differs,Page,27,2C,"Sacramento Bee, The","nb04341r-s01285.pdf: ""Page: 2C""",filled cell kept
+04348,page differs,Page,9,A001,San Francisco Chronicle,"nb04348r-s01289.pdf: ""Page: A001""",filled cell kept
+04375,author differs (info only),Author 1,Chelsea Maclean,"Ms Chelsea Maclean, Daniel R. Golub, Andrew J. Starrels, Marne S. Sussman, Paloma Perez-McEvoy and Deborah Brundy",Mondaq,"nb04375o-s01302.pdf: ""Author: Ms Chelsea Maclean, Daniel R. Golub, Andrew J. Starrels, Marne S. Sussman, Paloma Perez-McEvoy and Deborah Brundy""",filled cell kept
+04388,author differs (info only),Author 1,James Gordon,James Gordon For Dailymail.comWires,MailOnline,"nb04388o-s01312.pdf: ""Author: James Gordon For Dailymail.comWires""",filled cell kept
+04406,page differs,Page,6,A1,East Bay Times,"nb04407o-s01321.pdf: ""Page: A1""",filled cell kept
+04408,page differs,Page,6,A1,"Mercury News, The","nb04409r-s01321.pdf: ""Page: A1""",filled cell kept
+04411,page differs,Page,3,3A,"Sacramento Bee, The","nb04412o-s01322.pdf: ""Page: 3A""",filled cell kept
+04417,page differs,Page,14,14A,"Sacramento Bee, The","nb04417r-s01324.pdf: ""Page: 14A""",filled cell kept
+04479,"date (1-3 days, normal; fills still proposed)",Date,2021-09-28,2021-09-29,"Mercury News, The","nb04479r-s01340.pdf: ""September 29, 2021""",none
+04480,"date (1-3 days, normal; fills still proposed)",Date,2021-09-28,2021-09-29,"Mercury News, The","nb04480r-s01340.pdf: ""September 29, 2021""",none
+04502,page differs,Page,1,1A,"Sacramento Bee, The","nb04503r-s01344.pdf: ""Page: 1A""",filled cell kept
+04546,page differs,Page,19,9B,"Sacramento Bee, The","nb04547o-s01368.pdf: ""Page: 9B""",filled cell kept
+04566,page differs,Page,3,3A,"Fresno Bee, The","nb04567o-s01377.pdf: ""Page: 3A""",filled cell kept
+04618,page differs,Page,29,E1,San Francisco Chronicle,"nb04618r-s04591.pdf: ""Page: E1""",filled cell kept
+04636,page differs,Page,2,"1, 2",Arkansas Democrat-Gazette,"nb04636r-s01408.pdf: ""Page: 1, 2""",filled cell kept
+04638,page differs,Page,5,"1, 5",Northwest Arkansas Democrat-Gazette,"nb04638r-s01408.pdf: ""Page: 1, 5""",filled cell kept
+04646,page differs,Page,6,6A,"Sacramento Bee, The","nb04647o-s01411.pdf: ""Page: 6A""",filled cell kept
+04691,page differs,Page,6,6A,"Sacramento Bee, The","nb04692o-s01422.pdf: ""Page: 6A""",filled cell kept
+04697,page differs,Page,3,1A,"Merced Sun-Star, The","nb04697o-s04594.pdf: ""Page: 1A""",filled cell kept
+04698,page differs,Page,4,4A,"Fresno Bee, The","nb04698o-s04595.pdf: ""Page: 4A""",filled cell kept
+04740,page differs,Page,9,9A,"Sacramento Bee, The","nb04741o-s01446.pdf: ""Page: 9A""",filled cell kept
+04742,page differs,Page,4,1A,"Tribune, The","nb04742r-s01446.pdf: ""Page: 1A""",filled cell kept
+04774,"date (1-3 days, normal; fills still proposed)",Date,2020-08-21,2020-08-22,"Orange County Register, The","nb04774o-s01462.pdf: ""August 22, 2020""",none
+04786,page differs,Page,3,2A,"Fresno Bee, The","nb04786r-s01467.pdf: ""Page: 2A""",filled cell kept
+04814,page differs,Page,5,5A,"Sacramento Bee, The","nb04815o-s01482.pdf: ""Page: 5A""",filled cell kept
+04824,author differs (info only),Author 1,Kat Schuster,Kat Schuster Correspondent,San Gabriel Valley Tribune,"nb04824r-s01485.pdf: ""Author: Kat Schuster Correspondent""",filled cell kept
+04825,author differs (info only),Author 1,Kat Schuster,By Kat Schuster Correspondent,Daily Breeze,"nb04825o-s01485.pdf: ""Author: By Kat Schuster Correspondent""",filled cell kept
+04826,author differs (info only),Author 1,Kat Schuster,Kat Schuster Correspondent,Long Beach Press-Telegram,"nb04826r-s01485.pdf: ""Author: Kat Schuster Correspondent""",filled cell kept
+04827,author differs (info only),Author 1,Kat Schuster,Kat Schuster Correspondent,Los Angeles Daily News,"nb04827r-s01485.pdf: ""Author: Kat Schuster Correspondent""",filled cell kept
+04828,author differs (info only),Author 1,Kat Schuster,Kat Schuster Correspondent,Pasadena Star-News,"nb04828r-s01485.pdf: ""Author: Kat Schuster Correspondent""",filled cell kept
+04829,author differs (info only),Author 1,Kat Schuster,Kat Schuster Correspondent,Whittier Daily News,"nb04829r-s01485.pdf: ""Author: Kat Schuster Correspondent""",filled cell kept
+04838,page differs,Page,2,1A,"Sacramento Bee, The","nb04839o-s01493.pdf: ""Page: 1A""",filled cell kept
+04858,page differs,Page,7,7A,"Sacramento Bee, The","nb04859o-s01506.pdf: ""Page: 7A""",filled cell kept
+04932,page differs,Page,21,1C,"Fresno Bee, The","nb04932r-s01539.pdf: ""Page: 1C""",filled cell kept
+04936,page differs,Page,20,4D,"Tribune, The","nb04936r-s01539.pdf: ""Page: 4D""",filled cell kept
+04964,"date (1-3 days, normal; fills still proposed)",Date,2019-08-14,2019-08-15,"Orange County Register, The","nb04964r-s01545.pdf: ""August 15, 2019""",none
+04978,"date (1-3 days, normal; fills still proposed)",Date,2019-08-10,2019-08-11,Times of San Diego,"nb04978r-s04610.pdf: ""August 11, 2019""",none
+04990,page differs,Page,9,3A,"Sacramento Bee, The","nb04984o-s01552.pdf: ""Page: 3A""",filled cell kept
+05050,author differs (info only),Author 1,Julie Watson,"United States Julie Watson, Don Thompson",Hawkes Bay Today,"nb05050o-s04613.pdf: ""Author: United States Julie Watson, Don Thompson""",filled cell kept
+05081,page differs,Page,6,5A,"Sacramento Bee, The","nb05082o-s01579.pdf: ""Page: 5A""",filled cell kept
+05085,page differs,Page,8,7A,"Fresno Bee, The","nb05085r-s01579.pdf: ""Page: 7A""",filled cell kept
+05092,page differs,Page,8,7A,"Sacramento Bee, The","nb05093o-s01581.pdf: ""Page: 7A""",filled cell kept
+05094,page differs,Page,11,1B,East Bay Times,"nb05095o-s01582.pdf: ""Page: 1B""",filled cell kept
+05110,page differs,Page,9,8A,"Sacramento Bee, The","nb05110r-s01584.pdf: ""Page: 8A""",filled cell kept
+05149,page differs,Page,6,5A,"Sacramento Bee, The","nb05149r-s01605.pdf: ""Page: 5A""",filled cell kept
+05156,"date (1-3 days, normal; fills still proposed)",Date,2019-02-09,2019-02-10,Times of San Diego,"nb05156r-s01606.pdf: ""February 10, 2019""",none
+05164,"date (1-3 days, normal; fills still proposed)",Date,2018-12-27,2018-12-28,Times of San Diego,"nb05164o-s01613.pdf: ""December 28, 2018""",none
+05266,"date (1-3 days, normal; fills still proposed)",Date,2018-04-12,2018-04-13,Associated Press State Wire: California,"nb05266o-s01664.pdf: ""April 13, 2018""",none
+05270,author differs (info only),Author 1,Marianne Love,Marianne Love Correspondent,Los Angeles Daily News,"nb05270o-s01667.pdf: ""Author: Marianne Love Correspondent""",filled cell kept
+05285,"date (1-3 days, normal; fills still proposed)",Date,2018-04-03,2018-04-05,Associated Press State Wire: California,"nb05285o-s04626.pdf: ""April 5, 2018""",none
+05434,page differs,Page,9,1,"Orange County Register, The","nb05434r-s00019.pdf: ""Page: 1""",filled cell kept

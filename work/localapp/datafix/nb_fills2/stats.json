@@ -1,0 +1,71 @@
+{
+ "rowstat": {
+  "rows with NewsBank PDF": 3763,
+  "rows checked": 3761,
+  "blank Edition left alone: another non-NewsBank copy on the row": 539,
+  "rows blocked by date gap > 3 days": 2,
+  "Print headline blank, could not be read from the print copy": 1
+ },
+ "by_column": {
+  "Author title": 418,
+  "Page": 92,
+  "Author / byline": 290,
+  "Author 1": 290,
+  "Print headline": 15,
+  "Author 2": 3,
+  "Author 3": 3,
+  "Author 4": 3,
+  "Section": 11,
+  "Outlet city": 1,
+  "Author 5": 2,
+  "Author 6": 2
+ },
+ "by_column_conf": {
+  "Author title|medium": 416,
+  "Page|high": 88,
+  "Author / byline|low": 174,
+  "Author 1|low": 174,
+  "Print headline|high": 15,
+  "Author / byline|medium": 116,
+  "Author 1|medium": 116,
+  "Author title|low": 2,
+  "Author 2|low": 3,
+  "Author 3|low": 3,
+  "Author 4|low": 3,
+  "Page|medium": 4,
+  "Section|high": 11,
+  "Outlet city|low": 1,
+  "Author 5|low": 2,
+  "Author 6|low": 2
+ },
+ "rows_touched": 805,
+ "original_rows_touched": 313,
+ "conflicts": {
+  "page differs": 123,
+  "date (1-3 days, normal; fills still proposed)": 19,
+  "author differs (info only)": 46,
+  "city differs from other rows of this outlet (city not proposed)": 1,
+  "date (blocks all fills on this row)": 2,
+  "section differs": 2
+ },
+ "calibration": {
+  "author1_vs_filled_high": {
+   "true": 1314,
+   "false": 46
+  },
+  "edition": {
+   "true": 1458
+  },
+  "author1_vs_filled_low": {
+   "true": 484,
+   "false": 238
+  },
+  "author1_vs_filled_medium": {
+   "true": 604,
+   "false": 76
+  },
+  "author1_vs_filled_none": {
+   "false": 19
+  }
+ }
+}

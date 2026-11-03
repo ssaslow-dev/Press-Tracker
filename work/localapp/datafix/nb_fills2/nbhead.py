@@ -55,6 +55,8 @@ def read_header(pages):
             elif cur is None: src.append(x)
         if src and not out['source']: out['source'] = ' '.join(src)
         out['source'] = re.sub(r'\s+', ' ', out['source']).strip()
+        mm = re.match(r'^(.*?)\s+(\d[\d,]*) Words$', out['section'])
+        if mm: out['section'] = mm.group(1); out['words'] = out['words'] or mm.group(2).replace(',', '')
         return out
     # labelled form, no date line before OpenURL: scan the 20 lines above
     blk = [x.strip() for x in L[max(0, o - 20):o]]
@@ -67,3 +69,17 @@ def read_header(pages):
             elif k in ('word count', 'words'): out['words'] = re.sub(r'\D', '', v)
             else: out[{'source': 'source', 'section': 'section', 'author': 'author', 'byline': 'author', 'page': 'page', 'edition': 'edition_label'}.get(k, 'x')] = v
     return out if found else None
+
+
+PP_TOP = re.compile(r'^(.*) - (' + MONTHS + r') (\d{1,2}), (\d{4}) - page (\S+)\s*$')
+def read_printpage(pages):
+    """Print-page image copy (OCR text): first line "<Outlet label> - Month D, YYYY - page N", then date / | / outlet / | / "City, State" / | / "Page N".
+    -> dict(date, source, city, page, line) or None"""
+    L = [l.strip() for l in '\n'.join(pages).split('\n')[:12]]
+    if not L: return None
+    m = PP_TOP.match(L[0])
+    if not m: return None
+    city = ''
+    for x in L[1:10]:
+        if x and x != '|' and re.match(r'^[A-Z][A-Za-z.\' -]+, [A-Z][A-Za-z ]+$', x) and x != m.group(1): city = x; break
+    return dict(date='%04d-%02d-%02d' % (int(m.group(4)), EN_IDX[m.group(2)], int(m.group(3))), source=m.group(1), city=city, page=m.group(5), line=L[0])
