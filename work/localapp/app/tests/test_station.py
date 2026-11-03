@@ -81,7 +81,7 @@ class Flow(unittest.TestCase):
                 self.assertNotEqual(disp, 'none', 'downloads must stay visible')
             else:
                 self.assertEqual(disp, 'none', sel)
-        self.assertIn('Saved for the team', r['meta'])
+        self.assertIn('Saved in this copy of the tracker', r['meta'])   # TIDY-v1 wording (patch 18)
         self.assertEqual(r['cap0'], r['cap1'], 'counts must not flip after the first load (DATABASIS-v1)')
         f = K.root / 'data' / 'db' / 'notes' / f'{r["sid"]}.json'
         self.assertEqual(json.loads(f.read_text())['text'], 'Test note from the PC tracker')
