@@ -253,6 +253,29 @@ def verify(zip_path) -> dict:
 
 # ---------------------------------------------------------------- take (reader)
 
+def trim_refresh_backups(lay, wb: Path, keep: int = 3) -> list:
+    """lesser note 5: keep the newest `keep` reader backups ('<name> BACKUP before refresh N <stamp>.xlsx'); older ones are MOVED to
+    Backups/_to_delete/ (never deleted). Other files in the folder are not touched."""
+    rx = re.compile(re.escape(wb.stem) + r' BACKUP before refresh (\d+) (.+?)(?: \((\d+)\))?\.xlsx$')
+    found = []
+    for f in lay.backups.iterdir() if lay.backups.is_dir() else []:
+        m = rx.match(f.name)
+        if f.is_file() and m:
+            found.append((int(m.group(1)), m.group(2), int(m.group(3) or 1), f))
+    found.sort(key=lambda t: t[:3])
+    moved = []
+    dest = lay.backups / '_to_delete'
+    for *_, f in found[:-keep]:
+        dest.mkdir(parents=True, exist_ok=True)
+        t, n = dest / f.name, 2
+        while t.exists():
+            t = dest / f'{f.stem} ({n}){f.suffix}'
+            n += 1
+        shutil.move(str(f), str(t))
+        moved.append(t.name)
+    return moved
+
+
 def take(lay, zip_path, init_fn) -> dict:
     """verify, then apply. init_fn(note) re-seeds the saver ledger with the new workbook (returns the exit code)."""
     if role(lay) == 'keeper':
@@ -286,12 +309,26 @@ def take(lay, zip_path, init_fn) -> dict:
             if C.sha256_file(bk) != C.sha256_file(wb):
                 raise RefreshRefused('BACKUP_FAILED', 'The backup of the current workbook could not be made, so nothing was changed.')
             res['backup'] = bk.name
-        staged = wb.with_name(f'{wb.stem} REFRESH {stamp}.xlsx.part')
+            try:
+                res['backups_moved'] = trim_refresh_backups(lay, wb)
+            except OSError:
+                res['backups_moved'] = []
+        tmpd = lay.data / 'tmp'          # the staged copy lives in the app's own temp folder, not beside the workbook
+        tmpd.mkdir(parents=True, exist_ok=True)
+        staged = tmpd / f'{wb.stem} REFRESH {stamp}.xlsx.part'
         _extract(z, by[wb_name], staged, man['files'][wb_name]['sha256'])
         if C.excel_open(wb):
             staged.unlink()
             raise RefreshRefused('EXCEL_OPEN', 'Excel opened the workbook meanwhile. Nothing was changed.')
-        os.replace(staged, wb)
+        try:
+            os.replace(staged, wb)
+        except PermissionError:
+            try:
+                staged.unlink()
+            except OSError:
+                pass
+            raise RefreshRefused('EXCEL_OPEN', 'The workbook is in use (Excel or a virus scanner has it). Close Excel, wait a moment, then try again. '
+                                 'Nothing was changed.')
         if C.sha256_file(wb) != man['workbook_sha256']:
             raise RefreshRefused('COMMIT_FAILED', 'The new workbook did not check out after it was written. Tell Claude; do not save.')
         # 2. library (add-only), site and shards (replaced; the old file is kept aside)

@@ -11,6 +11,7 @@ Every file that is replaced is first copied to a "replaced" folder (nothing is d
 from __future__ import annotations
 
 import json
+import os
 from pathlib import Path
 
 import common as C
@@ -18,7 +19,10 @@ import common as C
 STATE_FILES = ('lookup_cache.json', 'outlets.json', 'gabriel_bills_leginfo.json', 'release_texts.json', 'release_related.json')
 
 
-def write_pipeline_sha(pipe: Path) -> None:
+PENDING = 'pipeline_sync.pending'     # in lay.state: present while the state files are being replaced and PIPELINE.sha256 is not yet rewritten
+
+
+def _sha_text(pipe: Path) -> str:
     import hashlib
     lines = []
     for p in sorted(pipe.rglob('*')):
@@ -26,7 +30,46 @@ def write_pipeline_sha(pipe: Path) -> None:
         if not p.is_file() or rel.parts[0] in ('docs', '__pycache__') or '__pycache__' in rel.parts or p.name == 'PIPELINE.sha256' or p.suffix == '.pyc':
             continue
         lines.append(f"{hashlib.sha256(p.read_bytes()).hexdigest()}  {rel.as_posix()}")
-    C.atomic_write(pipe / 'PIPELINE.sha256', ('\n'.join(lines) + '\n').encode('utf-8'))
+    return '\n'.join(lines) + '\n'
+
+
+def write_pipeline_sha(pipe: Path) -> None:
+    C.atomic_write(pipe / 'PIPELINE.sha256', _sha_text(pipe).encode('utf-8'))
+
+
+def recover(lay) -> dict | None:
+    """REVIEW_2 finding 5: a crash between replacing the pipeline state files and rewriting PIPELINE.sha256 would leave every later preview,
+    save and rebuild refusing (pipeline files differ from the list). sync() leaves a marker while it is in that window. If the marker is found
+    and the files really do not match the list, the files replaced so far are put back from state/pipeline_replaced/<stamp>/ (the new copies are
+    kept aside in <stamp>-recovered/), the list is written again and the marker is moved to logs/. Nothing is deleted. Returns a note, or None."""
+    marker = lay.state / PENDING
+    if not marker.is_file():
+        return None
+    try:
+        info = json.loads(marker.read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        info = {}
+    note = {'recovered': [], 'errors': []}
+    try:
+        sha_file = lay.pipeline / 'PIPELINE.sha256'
+        consistent = sha_file.is_file() and sha_file.read_text(encoding='utf-8') == _sha_text(lay.pipeline)
+        if not consistent:
+            old = lay.state / 'pipeline_replaced' / str(info.get('stamp') or '')
+            aside = lay.state / 'pipeline_replaced' / (str(info.get('stamp') or 'unknown') + '-recovered')
+            for name in STATE_FILES:
+                src = old / name
+                if info.get('stamp') and src.is_file():
+                    C.keep_old(lay.pipeline / name, aside)
+                    C.atomic_copy(src, lay.pipeline / name)
+                    note['recovered'].append(name)
+            write_pipeline_sha(lay.pipeline)
+            note['rewrote_list'] = True
+        (lay.state / 'logs').mkdir(parents=True, exist_ok=True)
+        t = lay.state / 'logs' / f'{PENDING}.{C.stamp()}'
+        os.replace(marker, t)
+    except OSError as e:
+        note['errors'].append(repr(e)[:200])
+    return note
 
 
 def sync(lay, res: dict) -> dict:
@@ -61,6 +104,7 @@ def sync(lay, res: dict) -> dict:
         put(out / 'copies' / 'articles' / name, lay.copies / 'articles' / name, replaced_copies, 'articles/' + name)
     # 3. pipeline state files
     changed_pipe = False
+    marker, marker_written = lay.state / PENDING, False
     pf = pub.get('pipeline_files') or {}
     for name in STATE_FILES:
         info = pf.get(name) or {}
@@ -70,6 +114,13 @@ def sync(lay, res: dict) -> dict:
         elif info.get('changed') and info.get('path'):
             src = Path(info['path'])
         if src is not None and src.is_file():
+            if not marker_written:
+                try:
+                    lay.state.mkdir(parents=True, exist_ok=True)
+                    C.atomic_write(marker, json.dumps({'stamp': stamp, 'at': C.utc_now().isoformat(timespec='seconds')}).encode('utf-8'))
+                    marker_written = True
+                except OSError as e:
+                    errors.append(f'pipeline marker: {e!r}'[:200])
             if put(src, lay.pipeline / name, replaced_pipe, 'pipeline/' + name):
                 changed_pipe = True
                 if name == 'release_texts.json':
@@ -78,6 +129,9 @@ def sync(lay, res: dict) -> dict:
         try:
             write_pipeline_sha(lay.pipeline)
             done.append('pipeline/PIPELINE.sha256')
+            if marker_written:
+                (lay.state / 'logs').mkdir(parents=True, exist_ok=True)
+                os.replace(marker, lay.state / 'logs' / f'{PENDING}.{stamp}')       # the window is closed
         except OSError as e:
             errors.append(f'PIPELINE.sha256: {e!r}'[:200])
     rep = {'at': C.utc_now().isoformat(timespec='seconds'), 'update_id': res.get('update_id'), 'copied': done, 'errors': errors}

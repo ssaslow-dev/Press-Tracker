@@ -76,6 +76,12 @@ class Jobs:
         cmd = [sys.executable, '-B', '-X', 'utf8', '-I', str(HERE / 'station_cli.py'), verb, '--root', str(self.root)] + args
         env = dict(os.environ, AJG_NO_NETWORK='1', AJG_LINK_PHOTOS='1', PYTHONDONTWRITEBYTECODE='1')
         try:
+            tmp = Path(self.root) / 'data' / 'tmp'       # GOVIT-v1: temporary files only inside the app folder
+            tmp.mkdir(parents=True, exist_ok=True)
+            env.update(TMP=str(tmp), TEMP=str(tmp), TMPDIR=str(tmp))
+        except OSError:
+            pass
+        try:
             p = subprocess.run(cmd, cwd=str(self.root), capture_output=True, text=True, encoding='utf-8', errors='replace', env=env, timeout=7200)
             try:
                 res = json.loads(p.stdout.strip().splitlines()[-1])
@@ -83,7 +89,7 @@ class Jobs:
                 res = {'ok': False, 'line': 'The job gave no answer. ' + (p.stderr or '')[-300:]}
             res['exit_code'] = p.returncode
         except subprocess.TimeoutExpired:
-            res = {'ok': False, 'line': 'The job took too long and was stopped.'}
+            res = {'ok': False, 'line': 'The job took too long and was stopped. The save program may still be finishing: check the workbook status in a few minutes before trying again.'}
         except OSError as e:
             res = {'ok': False, 'line': f'The job could not start: {e}'[:300]}
         j['result'] = res

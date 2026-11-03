@@ -46,3 +46,7 @@ Everything a save would do, writing nothing: rows added and cells filled per tab
 4. Save everything else: a release still needing a fetch stays queued on its own; the rest of the run is saved, and that release's pickup marks are filled on a later save (fill blanks).
 5. Keep only the 3 most recent backups the saver made; it removes older ones it made itself. Backups made before the saver existed (Sammy: "do what you think is best"): after the saver's first confirmed live save, all but the newest 3 of them are moved to `Backups/_to_delete/`, not deleted, so Sammy can empty that folder when he's comfortable.
 6. Thirty minutes as the stale-lock age (Sammy: "do what you think is best"; a normal save takes a few minutes).
+
+## Deviations
+
+- Answer 5, second half (moving the backups made before the saver existed to `Backups/_to_delete/` after the first confirmed live save) is not implemented: those backups are Mac-era files and are not copied to the PC, so the PC program has nothing to move. `trim_backups` touches only backups the ledger names. Pending Sammy's confirmation (REVIEW_2, lesser note 6).

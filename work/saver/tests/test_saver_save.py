@@ -77,6 +77,13 @@ def cli(*args, env=None):
 # ---------------------------------------------------------------- commit stage, called directly
 
 
+def commit_with_library(job, lock):
+    """commit() no longer runs the library step (REVIEW_2 finding 2: cmd_save runs it after the ledger entry); these tests want both"""
+    done = SV.commit(job, lock)
+    done['library'] = SV.commit_library(job)
+    return done
+
+
 class Commit(unittest.TestCase):
     n = 0
 
@@ -110,7 +117,7 @@ class Commit(unittest.TestCase):
         return j
 
     def test_happy_path(self):
-        done = SV.commit(self.job(), self.lock)
+        done = commit_with_library(self.job(), self.lock)
         bk = self.backups / done['backup']
         self.assertEqual(sha(bk), self.before)
         self.assertRegex(done['backup'], r'^AJG Coverage - NewsBank BACKUP before run run-t \d{4}-\d\d-\d\d \d{4}\.xlsx$')
@@ -187,6 +194,26 @@ class Commit(unittest.TestCase):
             SV.os.replace = real
         self.assertEqual(cm.exception.code, 'COMMIT_FAILED')
         self.assertEqual(sha(self.w), self.before)
+        # lesser note 1: no staged copy is left beside the master; it was moved into --out as "rejected ..."
+        self.assertEqual(sorted(p.name for p in self.d.iterdir() if p.is_file()), ['AJG Coverage - NewsBank.xlsx'])
+        self.assertTrue(any(p.name.startswith('rejected ') for p in self.out_xlsx.parent.iterdir()))
+
+    def test_replace_is_retried_before_refusing(self):
+        real, calls = os.replace, []
+
+        def flaky(s, d):
+            calls.append(1)
+            if len(calls) < 3:
+                raise PermissionError('scanner has it')
+            return real(s, d)
+        SV.os.replace, old_wait = flaky, SV.REPLACE_WAIT
+        SV.REPLACE_WAIT = 0
+        try:
+            SV.commit(self.job(), self.lock)
+        finally:
+            SV.os.replace, SV.REPLACE_WAIT = real, old_wait
+        self.assertEqual(len(calls), 3)
+        self.assertEqual(sha(self.w), self.after)
 
     def test_master_changed_before_backup_writes_nothing(self):
         with open(self.w, 'ab') as f:
@@ -256,7 +283,7 @@ class Commit(unittest.TestCase):
     def test_page_name_collision_is_skipped_and_listed(self):
         (self.lib / '2026').mkdir()
         (self.lib / '2026' / 'new.html').write_text('<p>already here</p>')
-        done = SV.commit(self.job(), self.lock)['library']
+        done = commit_with_library(self.job(), self.lock)['library']
         self.assertEqual(done['pages_collided'], ['2026/new.html'])
         self.assertEqual(done['pages_added'], ['_original_html/2026/new.html'])
         self.assertEqual((self.lib / '2026' / 'new.html').read_text(), '<p>already here</p>')
@@ -266,7 +293,7 @@ class Commit(unittest.TestCase):
             (self.lib / Path(rel)).parent.mkdir(parents=True, exist_ok=True)
             (self.lib / Path(rel)).write_text('x ' + rel)
         rm = [{'aid': '10001', 'files': ['2026/a.html', '2026/gone.html'], 'originals': ['_original_html/2026/a.html']}]
-        lib = SV.commit(self.job(removed_files=rm), self.lock)['library']
+        lib = commit_with_library(self.job(removed_files=rm), self.lock)['library']
         self.assertFalse((self.lib / '2026' / 'a.html').exists())
         self.assertEqual((self.lib / '_to_delete' / '2026' / 'a.html').read_text(), 'x 2026/a.html')
         self.assertEqual((self.lib / '_to_delete' / '_original_html' / '2026' / 'a.html').read_text(), 'x _original_html/2026/a.html')
@@ -282,7 +309,7 @@ class Commit(unittest.TestCase):
         (self.lib / '2026' / 'a.html').write_text('new copy')
         (self.lib / '_to_delete' / '2026').mkdir(parents=True)
         (self.lib / '_to_delete' / '2026' / 'a.html').write_text('older removal')
-        lib = SV.commit(self.job(removed_files=[{'aid': '1', 'files': ['2026/a.html'], 'originals': []}]), self.lock)['library']
+        lib = commit_with_library(self.job(removed_files=[{'aid': '1', 'files': ['2026/a.html'], 'originals': []}]), self.lock)['library']
         self.assertEqual((self.lib / '_to_delete' / '2026' / 'a.html').read_text(), 'older removal')
         self.assertEqual((self.lib / '_to_delete' / '2026' / 'a (2).html').read_text(), 'new copy')
         self.assertEqual(lib['removed_moved'][0]['to'], '_to_delete/2026/a (2).html')
@@ -290,7 +317,7 @@ class Commit(unittest.TestCase):
     def test_library_failure_after_swap_is_partial_not_rolled_back(self):
         (self.pages / '2026' / 'new.html').unlink()          # listed but gone: the copy fails
         j = self.job(pages=['2026/new.html', '_original_html/2026/new.html'])
-        done = SV.commit(j, self.lock)
+        done = commit_with_library(j, self.lock)
         self.assertTrue(done['library']['partial'])
         self.assertEqual([x['file'] for x in done['library']['pages_failed']], ['2026/new.html'])
         self.assertEqual(done['library']['pages_added'], ['_original_html/2026/new.html'])

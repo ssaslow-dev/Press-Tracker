@@ -30,6 +30,15 @@ import post_save            # noqa: E402
 import refresh as R         # noqa: E402
 
 PY_FLAGS = ['-B', '-X', 'utf8', '-I']
+_TMP = {'dir': None}       # set by boot(): data/tmp inside the app folder
+
+
+def temp_env(env):
+    """GOVIT-v1: children (the save program, sheet_task, openpyxl ...) write their temporary files only inside the app folder, not %TEMP%"""
+    if _TMP['dir']:
+        for k in ('TMP', 'TEMP', 'TMPDIR'):
+            env[k] = _TMP['dir']
+    return env
 
 
 class _SubprocessShim:
@@ -49,7 +58,7 @@ class _SubprocessShim:
         env['AJG_NO_NETWORK'] = '1'
         env['AJG_LINK_PHOTOS'] = '1'      # PHOTOLINK-v1: no --img-cache; the saver's photo step keeps remote <img> as links (patches 04, 05)
         env['PYTHONDONTWRITEBYTECODE'] = '1'
-        kw['env'] = env
+        kw['env'] = temp_env(env)
         return subprocess.run(cmd, *a, **kw)
 
 
@@ -59,6 +68,7 @@ def boot(lay):
     tmp = lay.data / 'tmp'
     tmp.mkdir(parents=True, exist_ok=True)
     tempfile.tempdir = str(tmp)
+    _TMP['dir'] = str(tmp)
     import make_for_update as MFU
     import take_update as TU
     MFU.subprocess = _SubprocessShim()
@@ -73,7 +83,7 @@ def out(obj, code=0):
 
 def py(args, cwd, timeout=1800):
     return subprocess.run([sys.executable] + PY_FLAGS + [str(a) for a in args], cwd=str(cwd), capture_output=True, text=True, encoding='utf-8',
-                          errors='replace', timeout=timeout, env=dict(os.environ, AJG_NO_NETWORK='1', AJG_LINK_PHOTOS='1', PYTHONDONTWRITEBYTECODE='1'))
+                          errors='replace', timeout=timeout, env=temp_env(dict(os.environ, AJG_NO_NETWORK='1', AJG_LINK_PHOTOS='1', PYTHONDONTWRITEBYTECODE='1')))
 
 
 # ---------------------------------------------------------------- verbs
@@ -321,6 +331,10 @@ def main(argv=None):
     a = ap.parse_args(argv)
     lay = C.layout(a.root)
     MFU, TU = boot(lay)
+    try:
+        post_save.recover(lay)       # a crash inside the last post-save sync must not leave the pipeline list refusing every job (REVIEW_2 finding 5)
+    except Exception:       # noqa: BLE001
+        pass
     if R.role(lay) != 'keeper' and a.verb in ('inspect', 'preview', 'save', 'reject', 'init'):
         return out({'ok': False, 'written': False, 'line': _reader_only_line('take in updates or accept the workbook')}, 2)
     try:

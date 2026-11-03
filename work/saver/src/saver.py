@@ -944,11 +944,15 @@ def trim_backups(w: Path, backups: Path, state: Path, keep: int = KEEP_BACKUPS) 
     return moved
 
 
+REPLACE_TRIES, REPLACE_WAIT = 4, 1.5      # os.replace on a file something else holds: 4 tries over about 5 seconds
+
+
 def commit(job: dict, lock: ProcessLock) -> dict:
     """Steps 11 and 12 (spec section 3). `job` keys: w, out_xlsx, out_name, before_sha, after_sha, run, today, lib, backups, pages_dir, pages,
     removed_files. Raises Refuse before the master is touched (a backup already made stays, SPEC 11) or for COMMIT_FAILED after the swap.
-    Returns {'backup', 'library': {...}} once the master is verified; library trouble is reported in library.partial, never raised (the master
-    is not rolled back: that would be a second overwrite)."""
+    Returns {'backup', 'backup_path', 'size_after'} once the master is verified. The library step is NOT part of this function: cmd_save runs
+    it after the ledger entry is written (REVIEW_2 finding 2), and library trouble is reported in library.partial, never raised (the master is
+    not rolled back: that would be a second overwrite)."""
     w, lib = job['w'], job['lib']
     before_sha, after_sha, run = job['before_sha'], job['after_sha'], job['run']
     if job['out_name'] == w.name or not job['out_name']:
@@ -994,16 +998,38 @@ def commit(job: dict, lock: ProcessLock) -> dict:
         move_unique(tmp, job['out_xlsx'].parent / ('rejected ' + tmp.name))
         raise Refuse('COMMIT_FAILED', f'the staged copy\'s checksum ({sha_short(tsha)}) is not the output\'s ({sha_short(after_sha)}). '
                      'The master was not touched.', {'backup': bpath.name})
-    try:
-        os.replace(tmp, w)
-    except OSError as e:
-        raise Refuse('COMMIT_FAILED', f'the master could not be replaced ({e!r}). It was not changed.'[:300], {'backup': bpath.name, 'staged': str(tmp)})
+    err = None
+    for attempt in range(REPLACE_TRIES):       # a virus scanner or Excel may hold the file for a moment: retry a few seconds, then refuse
+        try:
+            os.replace(tmp, w)
+            err = None
+            break
+        except OSError as e:
+            err = e
+            if attempt + 1 < REPLACE_TRIES:
+                time.sleep(REPLACE_WAIT)
+    if err is not None:
+        staged = str(tmp)
+        try:       # lesser note 1: do not leave the staged copy beside the master
+            staged = str(move_unique(tmp, job['out_xlsx'].parent / ('rejected ' + tmp.name)))
+        except OSError:
+            pass
+        raise Refuse('COMMIT_FAILED', f'the master could not be replaced ({err!r}). It was not changed.'[:300], {'backup': bpath.name, 'staged': staged})
     final = S.sha256_file(w)
     if final != after_sha:
         raise Refuse('COMMIT_FAILED', f'after the swap the master\'s checksum is {sha_short(final)}, not {sha_short(after_sha)}. Do not save again: '
                      f'restore from the backup "{bpath.name}" (checksum {sha_short(before_sha)}).',
                      {'backup': str(bpath), 'found_sha': final, 'expected_sha': after_sha, 'master_state': 'unverified'})
-    return {'backup': bpath.name, 'backup_path': str(bpath), 'size_after': w.stat().st_size, 'library': commit_library(job)}
+    return {'backup': bpath.name, 'backup_path': str(bpath), 'size_after': w.stat().st_size}
+
+
+def _inside(root: Path, p: Path) -> bool:
+    """True when p, with every '..' and link resolved, lies strictly inside root (REVIEW_2 finding 3)"""
+    try:
+        r, q = root.resolve(), p.resolve()
+    except (OSError, RuntimeError):
+        return False
+    return r in q.parents
 
 
 def commit_library(job: dict) -> dict:
@@ -1012,6 +1038,9 @@ def commit_library(job: dict) -> dict:
     out = {'pages_added': [], 'pages_collided': [], 'pages_failed': [], 'removed_moved': [], 'removed_missing': [], 'removed_failed': [], 'partial': False}
     for rel in job['pages']:
         dst = lib / Path(*rel.split('/'))
+        if not _inside(lib, dst):
+            out['pages_failed'].append({'file': rel, 'error': 'refused: the path is not inside the library'})
+            continue
         try:
             if dst.exists():
                 out['pages_collided'].append(rel)       # SAVE_RULES answer 3: skipped and listed
@@ -1025,6 +1054,9 @@ def commit_library(job: dict) -> dict:
     for item in job['removed_files']:
         for rel in list(item.get('files') or []) + list(item.get('originals') or []):
             src = lib / Path(*rel.split('/'))
+            if not (_inside(lib, src) and _inside(lib, lib / '_to_delete' / Path(*rel.split('/')))):
+                out['removed_failed'].append({'aid': item.get('aid'), 'file': rel, 'error': 'refused: the path is not inside the library'})
+                continue
             try:
                 if not src.is_file():
                     out['removed_missing'].append({'aid': item.get('aid'), 'file': rel})
@@ -1131,39 +1163,7 @@ def reuse_preview(a, today: str):
         raise NoReuse('the token does not match the preview')
     if S.sha256_file(d / 'diff.tsv') != pv.get('diff_sha'):
         raise NoReuse('the preview\'s diff file changed')
-    # the inputs the passes depended on
-    now = reuse_inputs(a, today, st.get('cands'), [p for p in c0['pages'] if (lib / Path(*p.split('/'))).exists()])
-    why = {'workbook': 'a different workbook file', 'library': 'a different library', 'today': 'a different date', 'run_arg': 'a different run',
-           'refresh': 'a different refresh setting', 'source_id': 'the update zip changed', 'pipeline_list_sha': 'the pipeline changed',
-           'saver_version': 'the save program changed', 'db_sha': 'the update\'s data changed', 'queue_sha': 'the queue changed',
-           'idmap_sha': 'the id map changed', 'img_cache': 'the photo cache changed', 'copies': 'the tracker copies changed',
-           'candidates': 'a release page in the library changed', 'collided': 'library files appeared or went since the preview',
-           'env': 'the environment differs'}
-    for k, v in inp.items():
-        if now.get(k) != v:
-            raise NoReuse(why.get(k, f'{k} changed'))
-    try:
-        pv_ = S.verify_pipeline(pipe)
-    except FileNotFoundError:
-        raise NoReuse('PIPELINE.sha256 is missing')
-    if pv_['missing'] or pv_['mismatch']:
-        raise NoReuse('pipeline files differ from their checksum list')
-    out_xlsx = d / c0['out_name']
-    try:
-        if S.sha256_file(d / 'in.xlsx') != c0['before_sha']:
-            raise NoReuse('the preview\'s copy of the workbook changed')
-        if S.sha256_file(out_xlsx) != c0['after_sha']:
-            raise NoReuse('the preview\'s staged workbook changed')
-    except OSError:
-        raise NoReuse('a file of the preview is missing')
-    for need in ('writeback.json', 'result.json', 'result2.json'):
-        if not (d / need).is_file():
-            raise NoReuse(f'the preview has no {need}')
-    if any(not (d / 'pages' / Path(*p.split('/'))).is_file() for p in c0['pages']):
-        raise NoReuse('a library page of the preview is missing')
-    if tree_sha(d / 'pages') != (st.get('files') or {}).get('pages') or S.sha256_file(d / 'writeback.json') != (st.get('files') or {}).get('writeback'):
-        raise NoReuse('the preview\'s pages or write-back file changed')
-    # under the lock, the same checks a full save makes first
+    # under the lock: the same checks a full save makes first, then every check of the preview's files and inputs
     run = c0['run']
     lock = ProcessLock(Path(a.state) if a.state else w.parent / '.saver', run)
     liblock = LibLock(lib, run)
@@ -1176,12 +1176,57 @@ def reuse_preview(a, today: str):
         ident = check_identity(w, lock.state)
         if ident['before_sha'] != c0['before_sha']:
             raise NoReuse('the workbook changed since the preview')
+        # the inputs the passes depended on
+        now = reuse_inputs(a, today, st.get('cands'), [p for p in c0['pages'] if (lib / Path(*p.split('/'))).exists()])
+        why = {'workbook': 'a different workbook file', 'library': 'a different library', 'today': 'a different date', 'run_arg': 'a different run',
+               'refresh': 'a different refresh setting', 'source_id': 'the update zip changed', 'pipeline_list_sha': 'the pipeline changed',
+               'saver_version': 'the save program changed', 'db_sha': 'the update\'s data changed', 'queue_sha': 'the queue changed',
+               'idmap_sha': 'the id map changed', 'img_cache': 'the photo cache changed', 'copies': 'the tracker copies changed',
+               'candidates': 'a release page in the library changed', 'collided': 'library files appeared or went since the preview',
+               'env': 'the environment differs'}
+        for k, v in inp.items():
+            if now.get(k) != v:
+                raise NoReuse(why.get(k, f'{k} changed'))
+        try:
+            pv_ = S.verify_pipeline(pipe)
+        except FileNotFoundError:
+            raise NoReuse('PIPELINE.sha256 is missing')
+        if pv_['missing'] or pv_['mismatch']:
+            raise NoReuse('pipeline files differ from their checksum list')
+        out_xlsx = d / c0['out_name']
+        try:
+            if S.sha256_file(d / 'in.xlsx') != c0['before_sha']:
+                raise NoReuse('the preview\'s copy of the workbook changed')
+            if S.sha256_file(out_xlsx) != c0['after_sha']:
+                raise NoReuse('the preview\'s staged workbook changed')
+        except OSError:
+            raise NoReuse('a file of the preview is missing')
+        for need in ('writeback.json', 'result.json', 'result2.json'):
+            if not (d / need).is_file():
+                raise NoReuse(f'the preview has no {need}')
+        if any(not (d / 'pages' / Path(*p.split('/'))).is_file() for p in c0['pages']):
+            raise NoReuse('a library page of the preview is missing')
+        if tree_sha(d / 'pages') != (st.get('files') or {}).get('pages') or S.sha256_file(d / 'writeback.json') != (st.get('files') or {}).get('writeback'):
+            raise NoReuse('the preview\'s pages or write-back file changed')
+        # the independent diff again, on the staged workbook as it is now against the verified input (the future backup): the token must
+        # come out of THIS diff, so a staged file changed after the preview cannot reach the master unseen (REVIEW_2 finding 1)
+        try:
+            consts = S.read_sheet_task_constants(pipe / 'sheet_task.py')
+            rep = D.compare(d / 'in.xlsx', out_xlsx, read_json(d / 'result.json'), read_json(d / 'result2.json'),
+                            derived_rel=consts['VT_DERIVED_REL'], new_ok=consts['VT_NEW_OK'])
+        except (OSError, ValueError, KeyError, SyntaxError) as e:
+            raise NoReuse(f'the independent diff could not be run again ({e!r})'[:200])
+        ref = rep.refusal()
+        if ref:
+            raise NoReuse('the staged workbook no longer passes the independent diff: ' + str(ref[1])[:200])
+        if D.preview_token(c0['run'] or '', c0['before_sha'], rep.tsv_text()) != a.token:
+            raise NoReuse('the independent diff of the staged workbook does not give the preview\'s token')
         lock.refresh()
         res = dict(res)
         res.update(verb='save', warnings=list(res.get('warnings') or []) + warnings,
                    reused_preview={'dir': str(d), 'preview_at': st['at'], 'age_minutes': round(age, 1),
-                                   'reused': ['sheet_task pass 1', 'build_data', 'relmatch', 'sheet_task pass 2', 'independent diff'],
-                                   'rechecked': ['locks', 'Excel', 'workbook checksum and ledger', 'token', 'pipeline checksums', 'inputs']})
+                                   'reused': ['sheet_task pass 1', 'build_data', 'relmatch', 'sheet_task pass 2'],
+                                   'rechecked': ['locks', 'Excel', 'workbook checksum and ledger', 'independent diff and token', 'pipeline checksums', 'inputs']})
         ctx = {k: c0[k] for k in ('run', 'today', 'out_name', 'before_sha', 'after_sha', 'pages', 'removed_files', 'token', 'rows_before',
                                   'rows_after', 'rows_added', 'cells_filled')}
         ctx.update(liblock=liblock, w=w, lib=lib, backups=Path(a.backups), state=lock.state, out=d, pipe=pipe, out_xlsx=out_xlsx)
@@ -1249,9 +1294,18 @@ def cmd_save(a) -> int:
                'cells_filled': ctx['cells_filled'], 'confirmed': bool(a.master_is_local), 'confirmed_at': at if a.master_is_local else None}
         post_error = None
         try:
-            append_ledger(state, rec)  # step 13 (right after the master is verified, so a crash in the library step cannot leave it unrecorded)
+            append_ledger(state, rec)  # step 13: right after the master is verified, BEFORE the library step, so a crash there leaves it recorded
         except OSError as e:
             post_error = f'ledger entry not written: {e!r}'[:200]
+        # library step (pages add-only, removals moved to _to_delete): after the ledger entry; whatever goes wrong here is reported as partial
+        try:
+            lib_res = commit_library(job)
+        except Exception as e:
+            lib_res = {'pages_added': [], 'pages_collided': [], 'pages_failed': [], 'removed_moved': [], 'removed_missing': [], 'removed_failed': [],
+                       'partial': True, 'error': repr(e)[:200],
+                       'not_landed': {'pages': list(job['pages']),
+                                      'removals': [rel for it in job['removed_files'] for rel in list(it.get('files') or []) + list(it.get('originals') or [])]}}
+        done['library'] = lib_res
         res['written'] = True        # the saver's result only; the run documents' `written: true` is in writeback.json, applied by the adapter
         res['confirmed'] = bool(a.master_is_local)
         res['at'] = at
@@ -1265,7 +1319,7 @@ def cmd_save(a) -> int:
         res['publish']['pipeline_files'] = pipeline_files_changed(out, ctx['pipe'])
         res['publish']['lookup_cache_out'] = str(out / 'lookup_cache.out.json') if (out / 'lookup_cache.out.json').is_file() else None
         if done['library']['partial']:
-            res['line'] += ' LIBRARY PARTIAL: see library.pages_failed / removed_failed.'
+            res['line'] += ' LIBRARY PARTIAL: see library.pages_failed / removed_failed' + (f" / not_landed ({done['library'].get('error')})" if done['library'].get('error') else '') + '. The workbook is written.'
         # step 14: rebuild
         code = EXIT_OK
         res['site_rebuilt'] = False
