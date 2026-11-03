@@ -55,3 +55,18 @@ Agent time: several days of building. The calendar is set by your PC test rounds
 - The PC tracker starts fresh: old team notes, saved views and edit history stay in the old tracker.
 - The review queue (merge decisions) moves into the PC tracker.
 - An online read-only copy for colleagues: decide later.
+
+## Switch-over day checklist (SWITCHOVER-v1; keep this list current)
+
+Done to the real workbook from the Mac, never to an older copy:
+1. Old tracker: stop Update and saves (it stays read-only by habit).
+2. Old workspace's Claude makes `Tracker library manifest.sha256` (workbook + year folders, _original_html, _original_pdf, Press releases).
+3. Sammy copies those plus the manifest to a private cloud folder, downloads it fully onto the PC Desktop.
+4. Unzip the final PC tracker (empty data); Tracker files > Set up from the Mac library: every file checked against the manifest, then copied in; ledger seeded.
+5. One-time changes to the new sheet, each with preview, backup and confirm:
+   a. DROPUNVERIFIED-v1: delete all "Reprint (unverified)" rows (counted fresh) and their files; IDs stay reserved.
+   b. PRCOLOR-v1: recolour every Press release = Yes row purple (#7030A0); only font colour changes.
+6. Move the Update station to the office claude.ai account (work/localapp/station/MOVE_TO_OFFICE.md); connect TinyFish there.
+7. First real update: Make "for Update" file, Update run in the station, Bring in update, preview, Save (Sammy present). This is the end-to-end test.
+8. Make refresh file (full) for each colleague.
+Automatic from then on (built into the save and page): PRJUDGE-v1, PRCOLOR-v1 for new rows, LIBFILES-v1 names and folders, NewsBank/ProQuest saving, PCEDITS-v1, REVIEW_2 fixes, fast save, TIDY-v1, VIEWORIG-v1.
