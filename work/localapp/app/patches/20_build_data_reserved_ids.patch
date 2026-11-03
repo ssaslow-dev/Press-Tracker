@@ -1,0 +1,17 @@
+--- a/pipeline/build_data.py
++++ b/pipeline/build_data.py
+@@ -323,6 +323,14 @@
+     if m: smax[m.group(1)] = max(smax[m.group(1)], int(m.group(2)))
+ NEXT = {'aid': nums['aid'] + 1, 's': max(smax['s'], 4296) + 1} if nums['aid'] else \
+        {'ws': nums['ws'] + 1, 'pq': nums['pq'] + 1, 'jg': smax['jg-'] + 1}
++try:   # DROPUNVERIFIED-v1 (PC): ids of rows deleted for good stay reserved (data/state/reserved_ids.json, env AJG_RESERVED_IDS)
++    _rf = os.environ.get('AJG_RESERVED_IDS')
++    if _rf and os.path.isfile(_rf) and 'aid' in NEXT:
++        _rd = json.load(open(_rf, encoding='utf-8'))
++        NEXT['aid'] = max(NEXT['aid'], int(_rd.get('article_floor') or 0) + 1)
++        NEXT['s'] = max(NEXT['s'], int(_rd.get('story_floor') or 0) + 1)
++except (OSError, ValueError):
++    pass
+ 
+ idmap = {}
+ for pref in ('Original', 'Reprint', ''):

@@ -1,0 +1,38 @@
+--- a/pipeline/sheet_task.py
++++ b/pipeline/sheet_task.py
+@@ -681,6 +681,19 @@
+         self.last_row = lr
+         self.read_print_tab()
+         self.read_removed_tab()
++        self.read_reserved()
++
++    def read_reserved(self):
++        """DROPUNVERIFIED-v1 (PC): numbers of rows deleted for good (not moved to the Removed tab) stay reserved. The PC tracker keeps them in
++        data/state/reserved_ids.json (env AJG_RESERVED_IDS) as floors; the next Article ID / Story ID starts above them, like the Removed tab's."""
++        self.reserved_aids = set()
++        p = _os.environ.get('AJG_RESERVED_IDS')
++        if not p or not _os.path.isfile(p):
++            return
++        d = json.load(open(p, encoding='utf-8'))
++        self.max_num = max(self.max_num, int(d.get('article_floor') or 0))
++        self.max_s = max(self.max_s, int(d.get('story_floor') or 0))
++        self.reserved_aids = {str(x) for x in d.get('article_ids') or []}
+ 
+     def read_removed_tab(self):
+         """AUDIT F1/F2: rows on the "Removed" tab keep their numbers (Article ID / Print Article ID / Story ID are never reused:
+@@ -4446,6 +4459,15 @@
+             problems.append(f'Article IDs reused from the Removed tab: {clash[:5]}')
+     except Exception:
+         pass
++    try:   # DROPUNVERIFIED-v1 (PC): numbers of rows deleted for good are never reused
++        _rp = _os.environ.get('AJG_RESERVED_IDS')
++        if _rp and _os.path.isfile(_rp):
++            _res = {str(x) for x in json.load(open(_rp, encoding='utf-8')).get('article_ids') or []}
++            _clash = sorted(_res & set(ids))
++            if _clash:
++                problems.append(f'Article IDs reused from deleted rows: {_clash[:5]}')
++    except Exception:
++        pass
+     tp, tabs_checked = verify_tabs(before_path, after_path, res)   # VERIFYTABS-v1
+     problems += tp
+     return {'ok': not problems, 'problems': problems[:VT_MAX], 'rows_before': len(b), 'rows_after': len(a),
