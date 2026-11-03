@@ -44,3 +44,9 @@
 .nb-flag { font-size: var(--fs-xs); color: var(--bad, #b42318); border: 1px solid currentColor; border-radius: 4px; padding: 0 4px; }
 .nb-opt { display: block; margin-top: 12px; font-size: var(--fs-md); color: var(--ink-2); }
 @media (max-width: 640px) { .nb-tbl th:nth-child(4), .nb-tbl td:nth-child(4), .nb-tbl th:nth-child(6), .nb-tbl td:nth-child(6) { display: none; } }
+
+/* the for-Update gate: the NewsBank and ProQuest boxes stay shut until a valid file is loaded; the age line under step 1 */
+.st-gate { display: none; }
+.st-lock .st-gate { display: block; }
+.st-lock .st-drop { pointer-events: none; cursor: not-allowed; }
+.st-age-old { font-weight: 600; }

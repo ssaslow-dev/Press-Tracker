@@ -5,6 +5,7 @@
     <label class="st-drop" id="stDrop" for="stFile" tabindex="0">Drop the file here, or click to choose it</label>
     <input type="file" id="stFile" accept=".json,application/json" hidden>
     <div class="upd-msg err st-msg" id="stErr" role="alert" hidden></div>
+    <div class="upd-msg st-msg" id="stAge" role="status" hidden></div>
     <div id="stLoaded" hidden>
       <dl class="st-facts" id="stFacts"></dl>
       <div class="st-acts"><button class="btn" type="button" id="stAnother">Load a different file</button><span class="st-note" id="stAnotherNote" hidden>This clears this page, including any run not yet downloaded. Click again to confirm.</span></div>
@@ -19,8 +20,9 @@
   <div class="card pad st-lock" id="st-nb">
     <div class="st-h"><span class="st-n">Also</span><h2 class="sec">Add NewsBank PDFs</h2></div>
     <div class="cap">For the “NewsBank Multiple Articles” PDFs the interns download (20 stories each, citation format APA). Each story is cut out into a PDF of its own, checked against the tracker, rated and translated like any new find, and its publisher’s own page is looked up. The PDFs are read in this browser and kept only in this tab until you download the update folder in step 3.</div>
+    <div class="upd-msg err st-msg st-gate" id="nbGate">Load the for Update file first (step 1). Stories are checked against it and the files are named from it.</div>
     <label class="st-drop" id="nbDrop" for="nbFile" tabindex="0">Drop NewsBank PDFs here, or click to choose them (one or many)</label>
-    <input type="file" id="nbFile" accept=".pdf,application/pdf" multiple hidden>
+    <input type="file" id="nbFile" accept=".pdf,application/pdf" multiple hidden disabled>
     <div class="upd-msg err st-msg" id="nbMsg" role="alert" hidden></div>
     <ul class="st-list nb-files" id="nbFiles"></ul>
     <div class="upd-msg st-msg" id="nbSummary" hidden></div>
@@ -33,8 +35,9 @@
   <div class="card pad st-lock" id="st-pq">
     <div class="st-h"><span class="st-n">Also</span><h2 class="sec">Add ProQuest PDFs</h2></div>
     <div class="cap">For single ProQuest article PDFs (one story per PDF, as many PDFs as you like at once). Each PDF’s details block (title, publication, date, ProQuest document ID) is read, the story is checked against the tracker by its ProQuest document ID and by headline, outlet and date, rated and translated like any new find, and its publisher’s own page is looked up. The text becomes the saved copy and the PDF is kept with it. A PDF whose details cannot be read is listed as “needs a look” and is not added. The PDFs are read in this browser and kept only in this tab until you download the update folder in step 3.</div>
+    <div class="upd-msg err st-msg st-gate" id="pqGate">Load the for Update file first (step 1). Stories are checked against it and the files are named from it.</div>
     <label class="st-drop" id="pqDrop" for="pqFile" tabindex="0">Drop ProQuest PDFs here, or click to choose them (one or many)</label>
-    <input type="file" id="pqFile" accept=".pdf,application/pdf" multiple hidden>
+    <input type="file" id="pqFile" accept=".pdf,application/pdf" multiple hidden disabled>
     <div class="upd-msg err st-msg" id="pqMsg" role="alert" hidden></div>
     <ul class="st-list nb-files" id="pqFiles"></ul>
     <div class="upd-msg st-msg" id="pqSummary" hidden></div>

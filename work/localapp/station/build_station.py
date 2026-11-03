@@ -66,7 +66,12 @@ def vendor_pdf_libs():
         return '"use strict";(function(){' + body + '\n;globalThis.' + glob + '={' + ','.join(f'{k}:{v}' for k, v in pairs) + '};})();'
     js = classic(raw['pdf.min.mjs'], 'pdfjsLib')
     worker = classic(raw['pdf.worker.min.mjs'], 'pdfjsWorker')
-    return {'pdfjs': js, 'pdfjs_worker': worker, 'pdflib': raw['pdf-lib.min.js'],
+    # the Artifact tool refuses a raw U+FFFD in a page; pdf.js and its worker hold it a few times, each inside a "..." string literal, where the escape means the same character
+    pdflib = raw['pdf-lib.min.js']
+    for t in (js, worker, pdflib):
+        assert all(t[m.start() - 1] == '"' and t[m.end()] == '"' for m in re.finditer('\ufffd', t)), 'U+FFFD outside a plain string literal'
+    js, worker, pdflib = (t.replace('\ufffd', '\\ufffd') for t in (js, worker, pdflib))
+    return {'pdfjs': js, 'pdfjs_worker': worker, 'pdflib': pdflib,
             'info': {k: {'version': v['version'], 'license': v['license'], 'integrity': v['integrity'], 'files': {f: m['sha256'] for f, m in v['files'].items()}} for k, v in pins['packages'].items()}}
 
 
@@ -122,6 +127,8 @@ def main():
     pq_outlets = json.loads(pq_outlets_raw.decode('utf-8'))
     assert pq_outlets.get('version') == 1 and pq_outlets['clean_rules'] and pq_outlets['key_steps'] and pq_outlets['pairs'], 'proquest_outlets.json is incomplete (rerun tools/build_pq_aliases.py)'
     pq_parse = pq_parse + '\nPQParse.setTable(' + json.dumps(pq_outlets, separators=(',', ':')).replace('</', '<\\/') + ');\n'
+    names_js = open(os.path.join(HERE, 'src', 'names.js'), encoding='utf-8').read()   # STATIONNAMES
+    assert '</script' not in names_js
     pq_scope = open(os.path.join(HERE, 'src', 'proquest.js'), encoding='utf-8').read()
     pq_ui = open(os.path.join(HERE, 'src', 'proquest_ui.js'), encoding='utf-8').read()
     nb_scope = nb_scope + '\n' + pq_scope          # one text run inside the tracker's scope: NewsBank first, then the ProQuest source object
@@ -144,6 +151,7 @@ def main():
            '<script type="application/json" id="recall-default">' + recall_json + '</script>\n'
            '<script id="nbparse-js">\n' + nb_parse + '</script>\n'
            '<script id="pqparse-js">\n' + pq_parse + '</script>\n'
+           '<script id="names-js">\n' + names_js + '</script>\n'
            '<script type="text/plain" id="vendor-pdfjs-worker">' + lib['pdfjs_worker'].replace('</script', '<\\/script') + '</script>\n'
            '<script type="text/plain" id="vendor-pdfjs">' + lib['pdfjs'].replace('</script', '<\\/script') + '</script>\n'
            '<script type="text/plain" id="vendor-pdflib">' + lib['pdflib'].replace('</script', '<\\/script') + '</script>\n'
@@ -162,7 +170,7 @@ def main():
     open(p, 'w', encoding='utf-8').write(doc)
     info = {'index_html_bytes': len(doc.encode()), 'index_html_sha256': sha(doc.encode()), 'tracker_js_sha256': sha(js), 'tracker_js_parts_bytes': len(js),
             'shell_sha256': sha(shell.encode()), 'vendor': os.path.basename(vendor),
-            'pdf_libs': lib['info'], 'vendor_urls_in_strings': vend_urls, 'nb_scope_sha256': sha(nb_scope.encode()), 'nbparse_sha256': sha(nb_parse.encode()), 'pqparse_sha256': sha(pq_parse.encode()), 'proquest_outlets_sha256': sha(pq_outlets_raw), 'proquest_outlets_pairs': len(pq_outlets['pairs']), 'recall_default_sha256': sha(recall_json.encode()), 'recall_default_priority_sites': sum(len(g['sites']) for g in recall_default['priority']['groups']), 'recall_default_youtube_channels': len(recall_default['youtube']['channels']), 'pq_ui_sha256': sha(pq_ui.encode()), 'pq_scope_sha256': sha(pq_scope.encode()), 'nb_ui_sha256': sha(nb_ui.encode()),
+            'pdf_libs': lib['info'], 'vendor_urls_in_strings': vend_urls, 'nb_scope_sha256': sha(nb_scope.encode()), 'nbparse_sha256': sha(nb_parse.encode()), 'pqparse_sha256': sha(pq_parse.encode()), 'names_sha256': sha(names_js.encode()), 'proquest_outlets_sha256': sha(pq_outlets_raw), 'proquest_outlets_pairs': len(pq_outlets['pairs']), 'recall_default_sha256': sha(recall_json.encode()), 'recall_default_priority_sites': sum(len(g['sites']) for g in recall_default['priority']['groups']), 'recall_default_youtube_channels': len(recall_default['youtube']['channels']), 'pq_ui_sha256': sha(pq_ui.encode()), 'pq_scope_sha256': sha(pq_scope.encode()), 'nb_ui_sha256': sha(nb_ui.encode()),
             'fonts_woff2_inlined': nfonts, 'fonts_css_sha256': sha(fonts_css.encode()), 'station_css_sha256': sha(st_css.encode()), 'station_html_sha256': sha(st_html.encode()), 'station_js_sha256': sha(st_js.encode())}
     json.dump(info, open(os.path.join(a.out, 'build_info.json'), 'w'), indent=1)
     print(json.dumps(info, indent=1))

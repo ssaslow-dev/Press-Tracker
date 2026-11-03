@@ -125,7 +125,7 @@ function nbAddFiles(files) {
   const list = [...files].filter(f => f);
   if (!list.length) return;
   nbUiErr('');
-  if (!S.loaded) { nbUiErr('Load the “for Update” file in step 1 first: stories are checked against it.'); return; }
+  if (!S.loaded) { nbUiErr('Load the for Update file first (step 1): stories are checked against it and the files are named from it.'); return; }
   nbQueue = nbQueue.then(async () => {
     NBS.reading = true; nbDrawAll();
     for (const f of list) { await nbReadFile(f); nbDrawAll(); }

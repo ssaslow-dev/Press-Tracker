@@ -40,6 +40,7 @@ if sys.argv[1] == '--evil':
     print('all passed' if not bad else f'{bad} FAILED'); sys.exit(1 if bad else 0)
 
 zp, scratch = Path(sys.argv[1]), Path(sys.argv[2])
+FU = Path(sys.argv[3]) if len(sys.argv) > 3 else None
 with zipfile.ZipFile(zp) as z:
     infos = F.scan_zip(z, zp.stat().st_size); entries = {i.filename: F.read_entry(z, i) for i in infos}
 man = json.loads(entries.pop('manifest.json')); F.check_manifest(man, entries)
@@ -49,11 +50,19 @@ pages = {n: json.loads(b) for n, b in entries.items() if n.startswith('db/pages/
 pq = {n: d for n, d in pages.items() if d.get('pq')}
 check('7 PDFs, one per ProQuest pages doc (6 stories + 1 reprint)', len(pdfs) == 7 and len(pq) == 7, (len(pdfs), len(pq)))
 check('the manifest marks them as pdf and carries their checksums', all(man['files'][n].get('kind') == 'pdf' for n in pdfs))
-check('file names are pq-<16 hex>', all(n.startswith('files/pq-') for n in pdfs))
+import re
+nm = man.get('names') or {}
+pdf_of = {it['pdf_for']: it['pdf'] for it in nm.get('items', []) if it.get('pdf')}
+check('STATIONNAMES: every PDF travels as library/_original_pdf/<year>/pq<Article ID><o|r>-s<Story ID>.pdf (NAMING-v2), none as files/pq-<hex>.pdf', len(pdf_of) == 7 and all(re.fullmatch(r'library/_original_pdf/\d{4}/pq\d{5}[or]-s\d{5}\.pdf', n) for n in pdfs) and not any(n.startswith('files/') for n in pdfs), sorted(pdfs))
+check('STATIONNAMES: each text copy is library/<year>/pq<Article ID><o|r>-s<Story ID>.html with the same stem as its PDF', all(it['copy'] == it['pdf'].replace('_original_pdf/', '').replace('.pdf', '.html') for it in nm.get('items', []) if it.get('pdf')))
+check('STATIONNAMES: Article IDs follow one after the other (originals first, then the reprint) and Story IDs of new originals run on', [it['aid'] for it in nm.get('items', [])] == [str(nm['from_next']['aid'] + i).zfill(5) for i in range(len(nm.get('items', [])))] and [it['kind'] for it in nm['items']].count('r') == 1 and [it['kind'] for it in nm['items']][-1] == 'r')
+if FU:
+    nx = json.loads(FU.read_text(encoding='utf-8'))['rows']['next']
+    check('STATIONNAMES: the numbers start at the for-Update file’s rows.next', nm['from_next'] == nx and nm['items'][0]['aid'] == str(nx['aid']).zfill(5), (nm['from_next'], nx))
 runs = [json.loads(b) for n, b in entries.items() if n.startswith('db/runs/')]
 check('one run doc, mode hand, with a proquest date and a pq summary, no newsbank mark, no search window', len(runs) == 1 and runs[0]['mode'] == 'hand' and runs[0].get('proquest') and runs[0].get('pq') and not runs[0].get('newsbank') and runs[0]['searched_to'] == '', [r.get('mode') for r in runs])
 for n, d in pq.items():
-    b = pdfs[d['pq']['file']]; r = PdfReader(io.BytesIO(b)); ctx = d['title'][:40]
+    b = entries[pdf_of[d['pq']['file']]] if d['pq']['file'] in pdf_of else pdfs[d['pq']['file']]; r = PdfReader(io.BytesIO(b)); ctx = d['title'][:40]
     check(ctx + ': page count equals the source PDF’s', len(r.pages) == d['pq']['pages'], (len(r.pages), d['pq']['pages']))
     flat = text_of(b)
     check(ctx + ': the PC’s text reader finds its headline and body in the PDF', d['title'].split()[0] in flat and 'Jesse Gabriel' in flat or 'Gabriel' in flat, flat[:80])

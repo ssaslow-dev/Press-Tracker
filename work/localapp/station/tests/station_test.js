@@ -7,6 +7,7 @@ const http = require('http'), fs = require('fs'), path = require('path');
 const arg = k => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : null; };
 const PAGE = arg('page'), FILE = arg('file'), OUT = arg('out'), DBMODE = arg('db-mode') || 'empty';   // empty | stale (junk left by an earlier use) | none (no db capability)
 fs.mkdirSync(OUT, { recursive: true });
+const eq2 = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 const results = []; let failed = 0;
 const check = (name, ok, extra) => { results.push({ name, ok: !!ok, extra: extra === undefined ? '' : String(extra) }); if (!ok) failed++; console.log((ok ? 'PASS ' : 'FAIL ') + name + (extra !== undefined && !ok ? '  -> ' + extra : '')); };
 
@@ -104,6 +105,13 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   await page.evaluate(() => document.querySelector('#runFind').click());
   check('clicking it does nothing: tracker code not started, no confirm dialog', (await page.locator('#rcScrim').count()) === 0 && !(await page.evaluate(() => window.__station.state.loaded)));
   check('step 3 button is disabled', await page.$eval('#stPack', b => b.disabled));
+  /* gate: the NewsBank and ProQuest boxes are shut until a valid for-Update file is loaded (all three actions need it) */
+  for (const k of ['nb', 'pq']) {
+    check('gate ' + k + ': box is locked, input disabled, plain message shown', await page.locator('#st-' + k + '.st-lock').count() === 1 && await page.$eval('#' + k + 'File', i => i.disabled) && await page.locator('#' + k + 'Gate').isVisible() && /^Load the for Update file first/.test(await page.textContent('#' + k + 'Gate')), await page.textContent('#' + k + 'Gate'));
+    await page.evaluate(k => { const dt = new DataTransfer(); dt.items.add(new File([new Uint8Array([37, 80, 68, 70, 45])], 'x.pdf', { type: 'application/pdf' })); document.getElementById(k + 'Drop').dispatchEvent(new DragEvent('drop', { dataTransfer: dt, bubbles: true, cancelable: true })); }, k);
+    check('gate ' + k + ': a PDF dropped anyway is refused ("Load the for Update file first") and nothing is read', /Load the for Update file first/.test(await page.textContent('#' + k + 'Msg')) && await page.evaluate(k => window.__station.state[k] ? window.__station.state[k].files.length === 0 : true, k), await page.textContent('#' + k + 'Msg'));
+  }
+  check('gate: Update button, step 3 and both PDF boxes all wait for the file', await page.$eval('#runFind', b => b.disabled) && await page.$eval('#stPack', b => b.disabled));
   check('other tabs are hidden', !(await page.locator('nav.tabs').isVisible()) && !(await page.locator('#view-ov').isVisible()));
   await page.screenshot({ path: path.join(OUT, 'shot_1_before.png') });
 
@@ -137,6 +145,7 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   await page.setInputFiles('#stFile', path.join(OUT, 'bad3.json'));
   await page.waitForFunction(() => /fingerprint/.test(document.querySelector('#stErr').textContent));
   check('a file without a workbook fingerprint is refused', !(await page.evaluate(() => window.__station.state.loaded)));
+  check('gate stays shut after refused files', await page.$eval('#nbFile', i => i.disabled) && await page.$eval('#pqFile', i => i.disabled) && await page.locator('#nbGate').isVisible() && await page.locator('#pqGate').isVisible());
 
   /* 3. load the real file (picker) */
   await page.setInputFiles('#stFile', FILE);
@@ -145,6 +154,10 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   check('file facts shown: workbook short form', facts.includes(fu.fingerprint.workbook_sha256.slice(0, 8)), facts);
   check('file facts shown: story count', facts.includes(fu.stories.length.toLocaleString('en-US')), facts);
   check('Update button enabled after load', !(await page.$eval('#runFind', b => b.disabled)));
+  check('gate opens after load: both PDF boxes enabled, no gate message', !(await page.$eval('#nbFile', i => i.disabled)) && !(await page.$eval('#pqFile', i => i.disabled)) && !(await page.locator('#nbGate').isVisible()) && !(await page.locator('#pqGate').isVisible()));
+  { const ageTxt = await page.textContent('#stAge'), ageDays = Math.floor((Date.now() - Date.parse(fu.created_at)) / 864e5), isOld = ageDays > 7;
+    check('file date and age in days shown', await page.locator('#stAge').isVisible() && (ageDays === 0 ? /today/.test(ageTxt) : new RegExp(ageDays + ' days? old').test(ageTxt)), ageTxt);
+    check('age warning only when older than 7 days', isOld === /make a fresh one from the PC tracker so stories saved since are not found again/.test(ageTxt), ageTxt); }
   await page.waitForFunction(() => document.querySelector('#updGo'), null, { timeout: 30000 });
   check('step 2 shows the Update panel with Since control and the tracker’s Update button', await page.locator('#updSince').isVisible() && await page.locator('#updGo').isVisible());
   check('Refresh from files / Spreadsheet / Manage buttons are hidden', !(await page.locator('#runRefresh').isVisible()) && !(await page.locator('#updRefresh').isVisible()) && !(await page.locator('#updBtn').isVisible()));
@@ -222,6 +235,17 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   const dl = await page.evaluate(() => ({ name: window.__dl[0].filename, bytes: Array.from(window.__lastDl) }));
   const zipPath = path.join(OUT, dl.name); fs.writeFileSync(zipPath, Buffer.from(dl.bytes));
   check('zip downloaded with a name carrying the workbook short sha', new RegExp("^ajg_update_\\d{8}-\\d{4}_" + fu.fingerprint.workbook_sha256.slice(0, 8) + "\\.zip$").test(dl.name), dl.name);
+  { /* STATIONNAMES: every file in the folder carries its library name, numbers from the file's rows.next, and the PC's own checker accepts the block */
+    const cp = require('child_process'), nx = fu.rows.next;
+    const man = JSON.parse(cp.execFileSync('python3', ['-I', '-c', "import zipfile,sys;print(zipfile.ZipFile(sys.argv[1]).read('manifest.json').decode())", zipPath]).toString());
+    const lst = cp.execFileSync('python3', ['-I', '-c', "import zipfile,sys;print('\\n'.join(zipfile.ZipFile(sys.argv[1]).namelist()))", zipPath]).toString().split('\n').filter(Boolean);
+    const nm = man.names || {}, pad = (n, w) => String(n).padStart(w, '0');
+    check('names block: starts at the for-Update file’s rows.next', nm.version === 1 && nm.from_next && nm.from_next.aid === nx.aid && nm.from_next.s === nx.s && nm.from_next.pr === nx.pr, JSON.stringify(nm.from_next));
+    check('names: Article IDs run on from rows.next in the order the run proposes rows (Originals, then the Reprint)', (nm.items || []).map(i => i.aid).join() === [0, 1, 2].map(i => pad(nx.aid + i, 5)).join(), JSON.stringify((nm.items || []).map(i => i.aid)));
+    const o1 = (nm.items || [])[0] || {}, rp = (nm.items || [])[2] || {};
+    check('names: a web find is ws<aid>o-s<sid>.html in library/<year>/, a reprint candidate is ws<aid>r-s<existing sid>.html', /^library\/\d{4}\/ws\d{5}o-s\d{5}\.html$/.test(o1.copy) && o1.kind === 'o' && /^library\/\d{4}\/ws\d{5}r-s04931\.html$/.test(rp.copy) && rp.kind === 'r', JSON.stringify([o1.copy, rp.copy]));
+    check('names: the files are in the zip under exactly those names, nothing else under library/', eq2(lst.filter(x => x.startsWith('library/')).sort(), (nm.items || []).flatMap(i => [i.copy, i.raw, i.pdf]).concat((nm.releases || []).flatMap(r => [r.copy, r.raw])).filter(Boolean).sort()), lst.join(' '));
+  }
   await page.waitForTimeout(500);
   const recorded = await page.evaluate(id => !!(window.__realdb.packed || {})[id], S.runs[0][0]);
   check(DBMODE === 'none' ? 'no db capability: packing still works, nothing recorded' : 'station db records the run as packed (write only)', recorded === (DBMODE !== 'none'), JSON.stringify(await page.evaluate(() => window.__realdb)).slice(0, 300));
@@ -269,6 +293,16 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
 
   fs.writeFileSync(path.join(OUT, 'results_' + DBMODE + '.json'), JSON.stringify({ today: TODAY, zip: dl.name, results }, null, 1));
   check('still no request left the machine, whole run', outside.length === 0, outside.join(' '));
+  /* age warning: a file 8 days old warns in plain words, 7 days does not, a file with no date warns; the gate opens either way */
+  for (const [days, warn] of [[8, true], [7, false], [null, true]]) {
+    const old = JSON.parse(JSON.stringify(Object.assign({}, fu, { memory: fu.memory }))); if (days === null) delete old.created_at; else old.created_at = new Date(Date.now() - days * 864e5 - 3600e3).toISOString();
+    const f = path.join(OUT, 'aged_' + days + '.json'); fs.writeFileSync(f, JSON.stringify(old));
+    const pa = await ctx.newPage(); await pa.goto(base + '/index.html'); await pa.waitForSelector('#stDrop'); await pa.setInputFiles('#stFile', f); await pa.waitForSelector('#stLoaded:not([hidden])', { timeout: 60000 });
+    const t = await pa.textContent('#stAge'), has = /make a fresh one from the PC tracker so stories saved since are not found again/.test(t);
+    check('age line for a file ' + (days === null ? 'with no date' : days + ' days old') + (warn ? ' warns' : ' does not warn'), has === warn && (days === null || new RegExp(days + ' days old').test(t)) && (await pa.locator('#stAge.err').count() === (warn ? 1 : 0)), t);
+    check('the gate opens for that file too', !(await pa.$eval('#nbFile', i => i.disabled)));
+    await pa.close();
+  }
   await browser.close(); server.close();
   console.log(`\n${results.length - failed} of ${results.length} checks passed`);
   process.exit(failed ? 1 : 0);

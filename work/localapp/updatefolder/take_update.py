@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import shutil
 import subprocess
 import sys
@@ -110,9 +111,16 @@ def inspect_update(zip_path, layout: PCLayout) -> dict:
     try:
         (stage / 'manifest.json').write_bytes(man_b)
         for name, b in entries.items():
-            p = stage / 'db' / name if F.is_pdf_entry(name) else stage / name     # NEWSBANKPDF-v1: files/<id>.pdf -> staging/<id>/db/files/ (the saver's --db copy carries it to sheet_task)
+            p = stage / 'db' / name if F.PDF_ENTRY_RE.match(name) else stage / name     # NEWSBANKPDF-v1: files/<id>.pdf -> staging/<id>/db/files/ (the saver's --db copy carries it to sheet_task)
             p.parent.mkdir(parents=True, exist_ok=True)
             p.write_bytes(b)
+        # STATIONNAMES: a PDF that travels as library/... is also put where the save looks for it (db/files/<the id its pages document names>.pdf)
+        for item in (manifest.get('names') or {}).get('items') or []:
+            lp, pf = item.get('pdf') or (item.get('copy') if item.get('fmt') == 'nb' else ''), item.get('pdf_for') or ''
+            if lp and pf:
+                dst = stage / 'db' / pf
+                dst.parent.mkdir(parents=True, exist_ok=True)
+                dst.write_bytes(entries[lp])
         (stage / 'zip_sha256.txt').write_text(zsha + '  ' + zp.name + '\n', encoding='utf-8')
     except OSError:
         move_unique(stage, layout.updates / 'rejected')
@@ -206,7 +214,9 @@ def run_saver(layout: PCLayout, verb: str, update_id: str, *, accept_mismatch=Fa
 
 
 def preview(layout: PCLayout, update_id: str, **kw) -> dict:
-    return run_saver(layout, 'preview', update_id, **kw)
+    res = run_saver(layout, 'preview', update_id, **kw)
+    res['names'] = check_names_after(layout.updates / 'staging' / update_id, res, apply=False)
+    return res
 
 
 def save(layout: PCLayout, update_id: str, token: str, **kw) -> dict:
@@ -215,8 +225,144 @@ def save(layout: PCLayout, update_id: str, token: str, **kw) -> dict:
     res = run_saver(layout, 'save', update_id, token=token, **kw)
     if res['exit_code'] in (0, 5, 6) and res.get('written'):
         res['local_db'] = merge_into_local_db(layout, update_id, Path(res['out_dir']))
-        res['done_dir'] = str(finish(layout, update_id))
+        done = finish(layout, update_id)
+        res['done_dir'] = str(done)
+        res['names'] = check_names_after(done, res, apply=True)
     return res
+
+
+# ---------------------------------------------------------------- file names (STATIONNAMES)
+
+
+def _why_renamed(exp: str, act: str) -> str:
+    """Plain words for a name that changed (both are library/ paths)."""
+    pe, pa = F.lib_entry(exp), F.lib_entry(act)
+    if not (pe and pa):
+        return 'the save gave it another name'
+    me, ma = (re.fullmatch(r'(ws|nb|pq)(\d+)([or]?)(?:-(s\d+))?(?:-v\d+)?', pe.group('stem')), re.fullmatch(r'(ws|nb|pq)(\d+)([or]?)(?:-(s\d+))?(?:-v\d+)?', pa.group('stem')))
+    if not (me and ma):
+        return 'the save gave it another name' if pe.group('stem') != pa.group('stem') else 'the save filed it under another year'
+    why = []
+    if me.group(2) != ma.group(2):
+        why.append(f'Article ID {me.group(2)} -> {ma.group(2)} (that number was taken first, or a find before it was not added)')
+    if me.group(4) != ma.group(4):
+        why.append(f'Story ID {me.group(4) or "none"} -> {ma.group(4) or "none"}')
+    if me.group(3) != ma.group(3):
+        why.append('o -> r: the text test found it is a reprint of an earlier story' if (me.group(3), ma.group(3)) == ('o', 'r') else f'{me.group(3) or "-"} -> {ma.group(3) or "-"}')
+    if me.group(1) != ma.group(1):
+        why.append(f'{me.group(1)} -> {ma.group(1)}')
+    if pe.group('year') != pa.group('year'):
+        why.append(f'year folder {pe.group("year")} -> {pa.group("year")} (the save dates it differently)')
+    return '; '.join(why) or 'the save gave it another name'
+
+
+def reconcile_names(names: dict, base: Path, result: dict, *, apply: bool) -> dict:
+    """STATIONNAMES (LIBFILES-v1 follow-up 2). The station named every file in the update; the save assigns the real Article, Story and Release IDs and writes
+    the workbook's File name columns and the library files by them. Where the two differ the SAVE'S NAME WINS: the copy of the file kept with the update
+    (base/library/...) is renamed to it, and every rename is listed. Nothing in the workbook or the PC library is touched here: the save already wrote those
+    by its own names, so the workbook, the library and the kept update folder agree. Files the station named that the save did not write are listed as
+    `not_saved`; files the save wrote that the station had not named are counted in `unnamed`.
+    Returns {confirmed, renamed:[{aid, from, to, why}], not_saved:[{file, why}], unnamed:[...], lines:[...]}. With apply=False nothing is moved."""
+    out = {'confirmed': 0, 'renamed': [], 'not_saved': [], 'raw_not_kept': [], 'unnamed': [], 'applied': bool(apply), 'lines': []}
+    pages = {x.get('page'): x for x in (result.get('pages') or []) if isinstance(x, dict)}
+    whynot = {}
+    for key in ('pages_skipped', 'pages_error'):
+        for x in result.get(key) or []:
+            if isinstance(x, dict) and x.get('page'):
+                whynot.setdefault(x['page'], x.get('why') or key)
+    rels = {x.get('url'): x for x in (result.get('release_copies') or []) if isinstance(x, dict)}
+    moves, named_docs = [], set()
+
+    def judge(exp, act, who, raw=False):
+        if not exp:
+            return
+        if (act is None or act == '') and raw:
+            out['raw_not_kept'].append(exp)      # the save kept no separate raw page (cleaning changed nothing): harmless, the file stays with the update
+        elif act is None or act == '':
+            out['not_saved'].append({'file': exp, 'why': who})
+        elif 'library/' + act == exp:
+            out['confirmed'] += 1
+        else:
+            moves.append((exp, 'library/' + act))
+
+    for it in (names or {}).get('items') or []:
+        if not (it.get('copy') or it.get('raw') or it.get('pdf')):
+            continue
+        named_docs.add(it.get('doc'))
+        got = pages.get(it.get('doc'))
+        if got is None:
+            why = whynot.get(it.get('doc')) or 'the save did not add this story (already in the workbook, skipped, or a reprint it could not place)'
+            for k in ('copy', 'raw', 'pdf'):
+                if it.get(k):
+                    out['not_saved'].append({'file': it[k], 'why': why})
+            continue
+        judge(it.get('copy'), got.get('file'), 'the save did not write this file')
+        judge(it.get('raw'), got.get('original'), '', raw=True)
+        judge(it.get('pdf'), got.get('original_pdf'), 'the save kept no PDF for this story')
+    for r in (names or {}).get('releases') or []:
+        got = rels.get(r.get('url'))
+        if got is None:
+            for k in ('copy', 'raw'):
+                if r.get(k):
+                    out['not_saved'].append({'file': r[k], 'why': 'the save did not add this release (already on the Press releases tab, or it could not be read)'})
+            continue
+        judge(r.get('copy'), got.get('file'), 'the save wrote no copy of this release')
+        judge(r.get('raw'), got.get('original'), '', raw=True)
+    out['unnamed'] = sorted({x.get('file') for k, x in pages.items() if k not in named_docs and x.get('file')})
+    for exp, act in moves:
+        rec = {'from': exp, 'to': act, 'why': _why_renamed(exp, act)}
+        m = re.search(r'/(?:ws|nb|pq|pr)(\d+)', exp)
+        rec['aid'] = m.group(1) if m else ''
+        out['renamed'].append(rec)
+    if apply and moves:
+        # two steps, so two files that swap names do not overwrite each other
+        tmp = base / '.renaming'
+        tmp.mkdir(parents=True, exist_ok=True)
+        staged = []
+        for n, (exp, act) in enumerate(moves):
+            src = base / Path(*exp.split('/'))
+            if src.is_file():
+                t = tmp / str(n)
+                src.replace(t)
+                staged.append((t, act))
+        for t, act in staged:
+            dst = base / Path(*act.split('/'))
+            dst.parent.mkdir(parents=True, exist_ok=True)
+            if dst.exists():
+                dst = unique_dir(dst.parent, dst.name)    # cannot normally happen; never overwrite
+            t.replace(dst)
+        try:
+            tmp.rmdir()
+        except OSError:
+            pass
+    if out['renamed']:
+        seen_st, parts = set(), []
+        for r in out['renamed']:                # one entry per story: a story's copy, raw page and PDF change together
+            a, b = r['from'].rsplit('/', 1)[-1].rsplit('.', 1)[0], r['to'].rsplit('/', 1)[-1].rsplit('.', 1)[0]
+            if (a, b) not in seen_st:
+                seen_st.add((a, b)); parts.append(f"{a} -> {b} ({r['why']})")
+        out['lines'].append(f"{len(out['renamed'])} file(s) renamed to the names the save gave ({len(parts)} stories/releases): " + '; '.join(parts[:12]) + (' ...' if len(parts) > 12 else ''))
+    out['lines'].append(f"{out['confirmed']} file name(s) were as the station named them." + (f" {len(out['not_saved'])} named file(s) were not saved." if out['not_saved'] else ''))
+    return out
+
+
+def check_names_after(where: Path, res: dict, *, apply: bool) -> dict:
+    """Read the manifest kept with the update (`where` = its staging or done folder) and the save program's result, compare the names."""
+    try:
+        man = json.loads((where / 'manifest.json').read_text(encoding='utf-8'))
+        names = man.get('names')
+        if not names:
+            return {'present': False, 'lines': ['This update carries no station file names (an older station).']}
+        rj = Path(res.get('out_dir') or '') / 'result.json'
+        if not rj.is_file():
+            return {'present': True, 'error': 'the save program left no result.json to compare the names with', 'lines': []}
+        out = reconcile_names(names, where, json.loads(rj.read_text(encoding='utf-8')), apply=apply)
+        out['present'] = True
+        if apply:
+            (where / 'names_result.json').write_bytes(F.dumps_pretty(out))
+        return out
+    except (OSError, ValueError) as e:
+        return {'present': True, 'error': repr(e)[:200], 'lines': []}
 
 
 # ---------------------------------------------------------------- after the save

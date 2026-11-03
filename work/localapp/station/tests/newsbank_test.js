@@ -76,7 +76,7 @@ const INIT = ({ today, hl }) => {
   check('the NewsBank card is on the page, locked until a file is loaded', await page.locator('#st-nb.st-lock').count() === 1);
   await page.setInputFiles('#nbFile', path.join(PDFS, 'batch_A.pdf'));
   await page.waitForSelector('#nbMsg:not([hidden])');
-  check('PDFs dropped before the for-Update file are refused with a plain message', /Load the “for Update” file/.test(await page.textContent('#nbMsg')), await page.textContent('#nbMsg'));
+  check('PDFs dropped before the for-Update file are refused with a plain message', /Load the for Update file first/.test(await page.textContent('#nbMsg')), await page.textContent('#nbMsg'));
 
   await page.setInputFiles('#stFile', FILE); await page.waitForSelector('#stLoaded:not([hidden])', { timeout: 90000 });
   await page.waitForFunction(() => window.__nb && window.__nb.version === 1, null, { timeout: 30000 });

@@ -200,7 +200,8 @@ function parsePdf(pages, opts) {
   if (out.ids.length > 1) { out.status = 'needs_look'; out.problems.push('This PDF holds more than one article (ProQuest document IDs ' + out.ids.slice(0, 4).join(', ') + '). Download each article as its own PDF.'); }
   // 3. the details
   out.pubtitle = fields.pubtitle || ''; out.outlet = outletOf(fields.pubtitle || ''); out.outlet_clean = NB.cleanOutlet ? NB.cleanOutlet(out.outlet) : out.outlet;
-  out.author = bylineOf(fields.author || '');   // (no Author field: the line under the heading, below) out.section = squash(fields.section || ''); out.publisher = squash(fields.publisher || ''); out.place = squash(fields.place || '');
+  out.author = bylineOf(fields.author || '');   // (no Author field: the line under the heading, below)
+  out.section = squash(fields.section || ''); out.publisher = squash(fields.publisher || ''); out.place = squash(fields.place || '');
   out.source_type = squash(fields.sourcetype || ''); out.doc_type = squash(fields.doctype || ''); out.language = squash(fields.lang || ''); out.issn = squash(fields.issn || '');
   out.copyright = squash(fields.copyright || ''); out.database = squash(fields.database || '');
   { const pg = squash(fields.pages || fields.firstpage || ''); out.page = pg && !/^[-–—]+$/.test(pg) ? pg.split(/\s*[,;]\s*/)[0].slice(0, 20) : ''; }
@@ -237,8 +238,10 @@ function parsePdf(pages, opts) {
   heading.forEach(l => { l.use = 'head'; });
   // the real layout: heading, a line with the authors (given twice: "A; B . A; B."), then "ProQuest document link", then "Full text"
   { const hi = heading.length ? seq.indexOf(heading[heading.length - 1]) : -1;
-    if (hi >= 0 && ftIdx > hi && ftIdx - hi <= 4 && seq.slice(hi + 1, ftIdx).some(l => /^proquest document link$/i.test(l.text))) {
-      if (!fields.author) { const ln = seq[hi + 1]; if (ln && !/^proquest document link$/i.test(ln.text) && ln.text.length < 300) { const first = ln.text.split(/\s+\.\s+/)[0].replace(/\.$/, ''); out.author = bylineOf(first); if (out.author) ln.use = 'head'; } }
+    const under = hi >= 0 && seq[hi + 1] ? seq[hi + 1].text.replace(/\.$/, '').split(/\s+\.\s+/) : [];
+    const doubled = under.length === 2 && under[0].trim() === under[1].trim().replace(/\.$/, '');   // "A; B . A; B." (a citation line "Author. Paper. Date." is not this)
+    if (doubled && ftIdx > hi && ftIdx - hi <= 4 && seq.slice(hi + 1, ftIdx).some(l => /^proquest document link$/i.test(l.text))) {
+      if (!fields.author) { const ln = seq[hi + 1]; if (ln.text.length < 300) { out.author = bylineOf(under[0].trim()); if (out.author) ln.use = 'head'; } }
       const ix = out.flags.findIndex(f => /^headline read from the page heading/.test(f)); if (ix >= 0) out.flags.splice(ix, 1);   // heading, authors and document link in a row: the layout ProQuest prints, not a guess
     } }
   if (ftIdx >= 0) for (let i = 0; i <= ftIdx; i++) if (seq[i].use === 'body') seq[i].use = 'head';

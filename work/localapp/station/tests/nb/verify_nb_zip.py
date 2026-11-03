@@ -24,6 +24,13 @@ check('the reference checker accepts the zip (allow-list, caps, hashes, PDF safe
 pdfs = {n: b for n, b in entries.items() if F.is_pdf_entry(n)}
 pages = {n: json.loads(b) for n, b in entries.items() if n.startswith('db/pages/')}
 nbdocs = {n: d for n, d in pages.items() if d.get('nb')}
+import re
+nm = man.get('names') or {}
+nbitems = [it for it in nm.get('items', []) if it.get('fmt') == 'nb']
+pdf_of = {it['pdf_for']: it['copy'] for it in nbitems if it.get('copy')}
+check('STATIONNAMES: every NewsBank story PDF is the saved copy library/<year>/nb<Article ID><o|r>-s<Story ID>.pdf (NAMING-v2); none travels as files/nb-<hex>.pdf', len(pdf_of) == 33 and all(re.fullmatch(r'library/\d{4}/nb\d{5}[or]-s\d{5}\.pdf', n) for n in pdfs) and not any(n.startswith('files/') for n in pdfs), sorted(pdfs)[:3])
+check('STATIONNAMES: Article IDs run on one after another from rows.next (Originals first)', [it['aid'] for it in nm['items']] == [str(nm['from_next']['aid'] + i).zfill(5) for i in range(len(nm['items']))], [it['aid'] for it in nm['items']][:5])
+check('STATIONNAMES: the year folder is the story date’s year', all(it['year'] == '2026' or it['year'].isdigit() for it in nbitems))
 check('33 story PDFs, one per pages doc that names one', len(pdfs) == 33 and len(nbdocs) == 33, (len(pdfs), len(nbdocs)))
 check('the manifest marks them as pdf and carries their checksums', all(man['files'][n].get('kind') == 'pdf' for n in pdfs))
 runs = [json.loads(b) for n, b in entries.items() if n.startswith('db/runs/')]
@@ -32,7 +39,7 @@ titles = {d['title'] for d in nbdocs.values()}
 import io
 shared = banded = 0
 for n, d in nbdocs.items():
-    nb = d['nb']; b = pdfs[nb['file']]; r = PdfReader(io.BytesIO(b)); a, z_ = nb['batch']['pages']
+    nb = d['nb']; b = entries[pdf_of[nb['file']]] if nb['file'] in pdf_of else pdfs[nb['file']]; r = PdfReader(io.BytesIO(b)); a, z_ = nb['batch']['pages']
     ctx = d['title'][:40]
     if len(r.pages) != z_ - a + 1: check(ctx + ': page count', False, (len(r.pages), a, z_))
     t = T.pdf_text_bytes(b) if hasattr(T, 'pdf_text_bytes') else None

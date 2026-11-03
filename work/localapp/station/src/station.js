@@ -210,9 +210,21 @@ function showLoaded() {
   $('#stDrop').hidden = true; $('#stLoaded').hidden = false;
   $('#st-step1').classList.add('st-done');
   ['#st-step2', '#st-step3', '#st-nb', '#st-pq'].forEach(s => { const el = $(s); if (el) el.classList.remove('st-lock'); });
+  ['#nbFile', '#pqFile'].forEach(s => { const el = $(s); if (el) el.disabled = false; });
+  showAge();
   $('#stStep2Cap').textContent = 'Press Update database. Same searches and same checks as the tracker’s button; tone, authors and translations are filled in for each new story.';
   const f = $('#runFind'); if (f) f.disabled = false;
   updatePackUi();
+}
+/* how old the for-Update file is: stories saved on the PC since then are not in it, so a Find could add them a second time */
+function fileAgeDays(j, now) { const t = Date.parse(j && j.created_at); if (!isFinite(t)) return null; return Math.max(0, Math.floor(((now || Date.now()) - t) / 86400000)); }
+function showAge() {
+  const j = S.file, el = $('#stAge'), d = fileAgeDays(j, window.__stationNow ? window.__stationNow() : Date.now());
+  const made = j.created_at ? new Date(j.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '';
+  let msg, old = false;
+  if (d === null) { msg = 'This file does not say when it was made, so its age is unknown: make a fresh one from the PC tracker so stories saved since are not found again.'; old = true; }
+  else { msg = 'File made ' + made + ' (' + (d === 0 ? 'today' : d === 1 ? '1 day old' : d + ' days old') + ').'; if (d > 7) { msg += ' This file is more than 7 days old: make a fresh one from the PC tracker so stories saved since are not found again.'; old = true; } }
+  el.textContent = msg; el.classList.toggle('err', old); el.classList.toggle('st-age-old', old); el.hidden = false;
 }
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 
@@ -315,11 +327,14 @@ async function pack() {
       }
       add(c, id, data);
     }
+    // STATIONNAMES (LIBFILES-v1 follow-up 2): every file in the folder gets its library name (NAMING-v2), numbers from the file's rows.next, the best o/r guess
+    const names = nameFiles(p, enc, pdfBlobs, warns);
     blobs.push(...pdfBlobs);
+    for (const nf of names.blobs) { if (seen.has(nf.name.toLowerCase())) { warns.push('Left out a second file named “' + nf.name + '”.'); continue; } seen.add(nf.name.toLowerCase()); blobs.push(nf); }
     const files = {};
     for (const b of blobs) files[b.name] = Object.assign({ sha256: await sha256Hex(b.bytes), bytes: b.bytes.length }, b.kind ? { kind: b.kind } : {});
     const manifest = { format: 'ajg-update-folder', format_version: 1, created_at: nowIso(), source: { workbook_sha256: S.file.fingerprint.workbook_sha256 },
-      runs: runIds.slice().sort(), files, station_version: STATION_VERSION, for_update_created_at: S.file.created_at || '', for_update_name: S.fileName || '' };
+      runs: runIds.slice().sort(), files, names: names.block, station_version: STATION_VERSION, for_update_created_at: S.file.created_at || '', for_update_name: S.fileName || '' };
     const entries = [{ name: 'manifest.json', bytes: enc.encode(JSON.stringify(manifest, null, 1) + '\n') }].concat(blobs);
     const zip = zipStore(entries), zsha = await sha256Hex(zip);
     const stamp = manifest.created_at.replace(/[-:]/g, '').replace('T', '-').slice(0, 13);
@@ -337,6 +352,26 @@ async function pack() {
     const w = $('#stPackWarn'); w.innerHTML = '<li>' + esc('The update folder could not be made: ' + (e && e.message ? e.message : e)) + '</li>'; w.hidden = false;
     return null;
   } finally { S.busyPack = false; updatePackUi(); }
+}
+/* the names block and the files under their library names. A PDF that travels under a library name is taken out of pdfBlobs (it is in the folder once). */
+function nameFiles(p, enc, pdfBlobs, warns) {
+  const pagesObj = {}; for (const [id, v] of sess.pages) pagesObj[id] = v.data;
+  const byCode = new Map(); (S.file.stories || []).forEach(x => { if (x && x.code) byCode.set(String(x.code).toLowerCase(), x.id); });
+  const today = new Date().toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' });
+  const pl = AJGNames.plan({ next: (S.file.rows && S.file.rows.next) || {}, today, pages: pagesObj, existingStories: new Set((S.file.stories || []).map(x => x.id)), storyOfCode: c => byCode.get(c) || '',
+    runs: p.runs.map(([id, v]) => ({ id, at: v.data.at || '', rows: v.data.rows || [], releases_new: v.data.releases_new || [] })) });
+  const blobs = [], bad = new Set();
+  for (const f of pl.files) {
+    if (f.kind === 'html') { blobs.push({ name: f.path, bytes: enc.encode(f.text), kind: 'html' }); continue; }
+    const i = pdfBlobs.findIndex(b => b.name === f.pdfFor);
+    if (i < 0) { bad.add(f.path); continue; }
+    blobs.push({ name: f.path, bytes: pdfBlobs[i].bytes, kind: 'pdf' });
+  }
+  for (const f of pl.files) if (f.kind === 'pdf' && !bad.has(f.path)) { const i = pdfBlobs.findIndex(b => b.name === f.pdfFor); if (i >= 0) pdfBlobs.splice(i, 1); }
+  const block = AJGNames.manifestBlock(pl, today);
+  for (const it of block.items) for (const k of ['copy', 'raw', 'pdf']) if (it[k] && bad.has(it[k])) { it[k] = ''; if (k === 'pdf' || k === 'copy') it.pdf_for = ''; }
+  block.items.forEach(it => { if (!it.copy && !it.raw && !it.pdf) it.pdf_for = ''; });
+  return { block, blobs, plan: pl };
 }
 async function saveFile(filename, bytes) {
   const blob = new Blob([bytes], { type: 'application/zip' });

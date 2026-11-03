@@ -75,7 +75,7 @@ const INIT = ({ hl }) => {
   check('the ProQuest card is on the page, locked until a file is loaded', await page.locator('#st-pq.st-lock').count() === 1);
   await page.setInputFiles('#pqFile', path.join(PDFS, 'new3page.pdf'));
   await page.waitForSelector('#pqMsg:not([hidden])');
-  check('PDFs dropped before the for-Update file are refused with a plain message', /Load the “for Update” file/.test(await page.textContent('#pqMsg')), await page.textContent('#pqMsg'));
+  check('PDFs dropped before the for-Update file are refused with a plain message', /Load the for Update file first/.test(await page.textContent('#pqMsg')), await page.textContent('#pqMsg'));
   await page.setInputFiles('#stFile', FILE); await page.waitForSelector('#stLoaded:not([hidden])', { timeout: 90000 });
   await page.waitForFunction(() => window.__pq && window.__pq.version === 1 && window.__nb && window.__nb.version === 1, null, { timeout: 30000 });
   check('after loading the file the card is unlocked and the ProQuest code is in the tracker scope, with the tracker’s ProQuest ids', await page.locator('#st-pq.st-lock').count() === 0 && await page.evaluate(() => window.__pq.ids() > 300), await page.evaluate(() => window.__pq.ids()));

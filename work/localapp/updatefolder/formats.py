@@ -23,6 +23,13 @@ ID_PART = r'[A-Za-z0-9][A-Za-z0-9._-]{0,119}'
 ENTRY_RE = re.compile(r'^db/(' + '|'.join(COLLECTIONS) + r')/(' + ID_PART + r')\.json$')
 # NEWSBANKPDF-v1 / PROQUESTPDF-v1: a NewsBank story's own PDF (or a ProQuest article's) travels as files/<id>.pdf (binary), named by the pages doc that carries it (pages/<doc>.json nb.file / pq.file)
 PDF_ENTRY_RE = re.compile(r'^files/(' + ID_PART + r')\.pdf$')
+# STATIONNAMES (LIBFILES-v1 follow-up 2): the files the station names by the library's schema (NAMING-v2) travel under library/ in the library's own layout:
+#   library/<year>/<ws|nb|pq><Article ID><o|r>[-s<Story ID>].<html|pdf>     saved copies (a NewsBank saved copy is the story PDF; ws and pq are HTML)
+#   library/_original_html/<year>/<same name>.html                          raw pages;  library/_original_pdf/<year>/pq<...>.pdf  ProQuest originals
+#   library/Press releases/<year>/pr<Release ID>.html  and  library/_original_html/Press releases/<year>/pr<Release ID>.html
+# The manifest's `names` block says which row/pages document/release each file belongs to (section 2d of FORMAT.md). Data only: HTML is never opened here.
+LIB_STEM = r'(?:(?:ws|nb|pq)\d{5,}[or]?(?:-s\d{5,})?(?:-v\d{1,3})?|pr\d{5,})'
+LIB_ENTRY_RE = re.compile(r'^library/(?P<dir>(?:_original_html/|_original_pdf/)?(?:Press releases/)?)(?P<year>\d{4}|undated)/(?P<stem>' + LIB_STEM + r')\.(?P<ext>html|pdf)$')
 WINDOWS_RESERVED = {'CON', 'PRN', 'AUX', 'NUL', *(f'COM{i}' for i in range(1, 10)), *(f'LPT{i}' for i in range(1, 10))}
 
 # zip-bomb and size caps (GOVIT-v1)
@@ -68,8 +75,34 @@ def dumps_pretty(obj) -> bytes:
     return (json.dumps(obj, ensure_ascii=False, indent=1) + '\n').encode('utf-8')
 
 
+def lib_entry(name: str):
+    """The match for a library/ entry that obeys the layout rules, else None: releases (pr...) only in Press releases folders and only html; ws/nb/pq
+    names never in a Press releases folder; a PDF only as a NewsBank saved copy (library/<year>/nb...) or a ProQuest original (library/_original_pdf/<year>/pq...);
+    html never under _original_pdf."""
+    m = LIB_ENTRY_RE.match(name or '')
+    if not m:
+        return None
+    d, stem, ext = m.group('dir'), m.group('stem'), m.group('ext')
+    rel = stem.startswith('pr')
+    if rel != d.endswith('Press releases/') or (rel and ext != 'html'):
+        return None
+    if d.startswith('_original_pdf/'):
+        return m if (ext == 'pdf' and stem.startswith('pq') and d == '_original_pdf/') else None
+    if ext == 'pdf':
+        return m if (d == '' and stem.startswith('nb')) else None
+    return m
+
+
+def is_lib_entry(name: str) -> bool:
+    return lib_entry(name) is not None
+
+
 def is_pdf_entry(name: str) -> bool:
-    return bool(PDF_ENTRY_RE.match(name or ''))
+    m = PDF_ENTRY_RE.match(name or '')
+    if m:
+        return True
+    m = lib_entry(name)
+    return bool(m and m.group('ext') == 'pdf')
 
 
 def entry_cap(name: str) -> int:
@@ -165,15 +198,17 @@ def entry_ok(name: str) -> tuple[bool, str]:
     parts = PurePosixPath(name).parts
     if any(p in ('..', '.', '') for p in parts):
         return False, "'..' in the path"
+    if name.startswith('library/'):
+        return (True, '') if lib_entry(name) else (False, 'not a library file name of the schema (library/<year>/<ws|nb|pq><Article ID><o|r>-s<Story ID>.html|pdf, _original_html/, _original_pdf/, Press releases/)')
     m = ENTRY_RE.match(name) or PDF_ENTRY_RE.match(name)
     if not m:
-        return False, 'not an allowed file (only manifest.json, db/<collection>/<id>.json and files/<id>.pdf)'
+        return False, 'not an allowed file (only manifest.json, db/<collection>/<id>.json, files/<id>.pdf and library/... files named by the schema)'
     if m.groups()[-1].split('.')[0].upper() in WINDOWS_RESERVED:
         return False, 'reserved Windows file name'
     return True, ''
 
 
-def pack_update_zip(out_zip, db_dir, source_workbook_sha256: str, *, created_at=None, extra_manifest=None) -> Path:
+def pack_update_zip(out_zip, db_dir, source_workbook_sha256: str, *, created_at=None, extra_manifest=None, library=None) -> Path:
     """Reference writer of the update folder (the Update station does the same in the browser). `db_dir` holds <collection>/<id>.json.
     Returns the zip path. Never overwrites."""
     out_zip = Path(out_zip)
@@ -201,6 +236,12 @@ def pack_update_zip(out_zip, db_dir, source_workbook_sha256: str, *, created_at=
         b = f.read_bytes()
         blobs[name] = b
         files[name] = {'sha256': sha256_bytes(b), 'bytes': len(b), 'kind': 'pdf'}
+    for name, b in (library or {}).items():           # STATIONNAMES: {'library/2026/ws10670o-s04942.html': bytes}
+        ok, why = entry_ok(name)
+        if not ok or not name.startswith('library/'):
+            raise ValueError(f'{name}: {why or "not a library name"}')
+        blobs[name] = b
+        files[name] = {'sha256': sha256_bytes(b), 'bytes': len(b), 'kind': 'pdf' if name.endswith('.pdf') else 'html'}
     runs = sorted(Path(n).stem for n in blobs if n.startswith('db/runs/'))
     manifest = {'format': FORMAT_UPDATE, 'format_version': FORMAT_VERSION, 'created_at': created_at or utc_now_iso(),
                 'source': {'workbook_sha256': source_workbook_sha256}, 'runs': runs, 'files': files}
@@ -305,6 +346,14 @@ def check_manifest(m, entries: dict) -> None:
     for name, b in entries.items():
         if is_pdf_entry(name):
             continue
+        if is_lib_entry(name):                                  # STATIONNAMES: saved HTML. Data only; it must be text (UTF-8) and is never opened here.
+            try:
+                b.decode('utf-8')
+            except UnicodeDecodeError:
+                raise UpdateRefused('BAD_HTML', f'{name!r} is not UTF-8 text', {'entry': name})
+            if b'\x00' in b:
+                raise UpdateRefused('BAD_HTML', f'{name!r} holds a NUL character', {'entry': name})
+            continue
         try:
             doc = json.loads(b.decode('utf-8'))
         except (UnicodeDecodeError, ValueError):
@@ -314,10 +363,91 @@ def check_manifest(m, entries: dict) -> None:
         docs[name] = doc
     if not any(n.startswith('db/runs/') for n in entries):
         raise UpdateRefused('BAD_MANIFEST', 'the update holds no run document')
-    check_pdfs(entries, docs)
+    names = check_names(m.get('names'), entries, docs)
+    check_pdfs(entries, docs, names)
 
 
-def check_pdfs(entries: dict, docs: dict) -> None:
+def _bad_names(msg, **d):
+    return UpdateRefused('BAD_NAMES', 'the manifest\'s names block is not right: ' + msg, d)
+
+
+def check_names(names, entries: dict, docs: dict) -> dict:
+    """STATIONNAMES: the manifest's `names` block (FORMAT.md 2d) says what every library/ file is. Every library file must be claimed exactly once, each
+    path must be exactly the name the schema gives for the fields next to it, and a PDF must be the one its pages document names (same checksum).
+    Returns {logical PDF path (files/<id>.pdf, as a pages doc names it): the library/ entry that holds it}. No `names` block: no library/ files allowed."""
+    libs = sorted(n for n in entries if is_lib_entry(n))
+    if names is None:
+        if libs:
+            raise UpdateRefused('UNLISTED_FILE', f'the zip holds library files but the manifest has no names block: {libs[:5]}', {'files': libs})
+        return {}
+    if not isinstance(names, dict) or names.get('version') != 1 or not isinstance(names.get('items'), list) or not isinstance(names.get('releases', []), list):
+        raise _bad_names('expected {version: 1, items: [...], releases: [...]}')
+    claimed, pdf_map, aids = {}, {}, set()
+
+    def claim(path, who, want):
+        if not isinstance(path, str):
+            raise _bad_names(f'{who}: a path is not text')
+        if path != want:
+            raise _bad_names(f'{who}: {path!r} is not the name the schema gives ({want!r})', entry=path)
+        if path not in entries:
+            raise UpdateRefused('MISSING_FILE', f'{who}: the names block lists {path!r}, which the zip does not hold', {'files': [path]})
+        if path in claimed:
+            raise _bad_names(f'{path!r} is claimed twice ({claimed[path]} and {who})', entry=path)
+        claimed[path] = who
+
+    for n, it in enumerate(names['items']):
+        who = f'item {n}'
+        if not isinstance(it, dict):
+            raise _bad_names(f'{who} is not an object')
+        aid, sid, kind, fmt, year = (it.get(k) for k in ('aid', 'sid', 'kind', 'fmt', 'year'))
+        if not (isinstance(aid, str) and re.fullmatch(r'\d{5,}', aid) and isinstance(sid, str) and re.fullmatch(r'(s\d{5,})?', sid) and kind in ('o', 'r')
+                and fmt in ('ws', 'nb', 'pq') and isinstance(year, str) and re.fullmatch(r'\d{4}|undated', year)):
+            raise _bad_names(f'{who}: aid, sid, kind, fmt or year is malformed')
+        if aid in aids:
+            raise _bad_names(f'{who}: Article ID {aid} appears twice')
+        aids.add(aid)
+        doc = it.get('doc') or ''
+        pdoc = docs.get(f'db/pages/{doc}.json') if doc else None
+        if doc and pdoc is None:
+            raise _bad_names(f'{who}: pages document {doc!r} is not in the update')
+        stem = f'{fmt}{aid}{kind}' + (f'-{sid}' if sid else '')
+        paths = {'copy': f'library/{year}/{stem}.' + ('pdf' if fmt == 'nb' else 'html'), 'raw': f'library/_original_html/{year}/{stem}.html',
+                 'pdf': f'library/_original_pdf/{year}/{stem}.pdf'}
+        for k in ('copy', 'raw', 'pdf'):
+            if it.get(k):
+                if not doc:
+                    raise _bad_names(f'{who}: a file is named but no pages document')
+                if k == 'raw' and fmt != 'ws' or k == 'pdf' and fmt != 'pq':
+                    raise _bad_names(f'{who}: a {fmt} story has no {k} file')
+                claim(it[k], f'{who} ({k})', paths[k])
+        pf = it.get('pdf_for') or ''
+        pdf_path = it.get('pdf') or (it.get('copy') if fmt == 'nb' else '')
+        if pdf_path:
+            src = (pdoc or {}).get('nb' if fmt == 'nb' else 'pq')
+            f = src.get('file') if isinstance(src, dict) else ''
+            if not (pf and pf == f and PDF_ENTRY_RE.match(pf)):
+                raise _bad_names(f'{who}: pdf_for {pf!r} is not the PDF its pages document names ({f!r})')
+            if src.get('pdf_sha256') != sha256_bytes(entries[pdf_path]):
+                raise UpdateRefused('HASH_MISMATCH', f'{who}: the pages document gives another checksum than {pdf_path!r} has', {'files': [pdf_path]})
+            if pf in pdf_map:
+                raise _bad_names(f'{who}: {pf!r} is named by two files')
+            pdf_map[pf] = pdf_path
+        elif pf:
+            raise _bad_names(f'{who}: pdf_for without a PDF file')
+    for n, r in enumerate(names.get('releases') or []):
+        who = f'release {n}'
+        if not (isinstance(r, dict) and isinstance(r.get('prid'), str) and re.fullmatch(r'pr\d{5,}', r['prid']) and isinstance(r.get('year'), str) and re.fullmatch(r'\d{4}|undated', r['year'])):
+            raise _bad_names(f'{who} is malformed')
+        for k, d in (('copy', 'Press releases'), ('raw', '_original_html/Press releases')):
+            if r.get(k):
+                claim(r[k], f'{who} ({k})', f'library/{d}/{r["year"]}/{r["prid"]}.html')
+    left = sorted(set(libs) - set(claimed))
+    if left:
+        raise UpdateRefused('UNLISTED_FILE', f'library files the names block does not claim: {left[:5]}', {'files': left})
+    return pdf_map
+
+
+def check_pdfs(entries: dict, docs: dict, names_map=None) -> None:
     """NEWSBANKPDF-v1, PROQUESTPDF-v1: every files/<id>.pdf is a safe PDF, is named by exactly the pages doc(s) that carry it (nb.file or pq.file, with its sha256), and every
     pages doc that names a PDF finds it. Raises UpdateRefused (BAD_PDF, MISSING_FILE, UNLISTED_FILE, HASH_MISMATCH)."""
     refs = {}
@@ -328,19 +458,22 @@ def check_pdfs(entries: dict, docs: dict) -> None:
         f = nb.get('file') if isinstance(nb, dict) else ''
         if not f:
             continue
-        if not isinstance(f, str) or not is_pdf_entry(f):
+        if not isinstance(f, str) or not PDF_ENTRY_RE.match(f):
             raise UpdateRefused('BAD_PDF', f'{name!r} names a PDF {f!r} that is not allowed (only files/<id>.pdf)', {'entry': name})
         refs.setdefault(f, []).append((name, nb.get('pdf_sha256')))
+    names_map = names_map or {}
     for f, who in refs.items():
-        if f not in entries:
+        loc = names_map.get(f, f)               # STATIONNAMES: the PDF may travel under its library name
+        if loc not in entries:
             raise UpdateRefused('MISSING_FILE', f'{who[0][0]!r} names {f!r}, which the zip does not hold', {'files': [f]})
         for n, sha in who:
-            if sha != sha256_bytes(entries[f]):
+            if sha != sha256_bytes(entries[loc]):
                 raise UpdateRefused('HASH_MISMATCH', f'{n!r} gives another checksum for {f!r} than the file has', {'files': [f]})
+    held = {names_map.get(f, f) for f in refs}
     for name, b in entries.items():
         if not is_pdf_entry(name):
             continue
-        if name not in refs:
+        if name not in held:
             raise UpdateRefused('UNLISTED_FILE', f'{name!r} is not named by any pages document (a PDF nothing refers to is not taken in)', {'files': [name]})
         bad = pdf_problems(b)
         if bad:

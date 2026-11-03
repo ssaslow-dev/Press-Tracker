@@ -9,7 +9,8 @@ python3 -I "$ST/tools/build_pq_aliases.py" --workbook "$R/data/AJG Coverage - Ne
 node "$ST/tests/pq/alias_test.mjs" 2>&1 | grep -E "^(FAIL|all|[0-9]+ FAILED)"
 node "$ST/tests/pq/parse_test.mjs" "$S/pdfs" 2>&1 | grep -E "^(FAIL|all|[0-9]+ FAILED)"
 node "$ST/tests/proquest_test.js" --page "$ST/dist/index.html" --file "$FU" --pdfs "$S/pdfs" --out "$S/out" | grep -E "^(FAIL|all|[0-9]+ FAILED)"
-python3 -I "$ST/tests/pq/verify_pq_zip.py" "$S/out/pq_update.zip" "$S/scratch" | grep -E "^(FAIL|all|[0-9]+ FAILED)"
+python3 -I "$ST/tests/pq/verify_pq_zip.py" "$S/out/pq_update.zip" "$S/scratch" "$FU" | grep -E "^(FAIL|all|[0-9]+ FAILED)"
+node "$ST/tests/proquest_real_test.js" --page "$ST/dist/index.html" --file "$FU" --out "$S/real" | grep -E "^(FAIL|SKIPPED|all|[0-9]+ FAILED)"   # skipped unless AJG_REAL_PQ names the real PDF (licensed text: never in the repository)
 node "$ST/tests/proquest_evil_test.js" --page "$ST/dist/index.html" --file "$FU" --pdfs "$S/pdfs" --out "$S/evil" | grep -E "^(FAIL|all|[0-9]+ FAILED)"
 python3 -I "$ST/tests/pq/verify_pq_zip.py" --evil "$S/pdfs" "$S/evil" "$S/scratch2" | grep -E "^(FAIL|all|[0-9]+ FAILED)"
 (cd "$R/work/localapp/updatefolder" && python3 -I -m unittest discover -s tests -t . -p "test_pqpdf.py" 2>&1 | tail -3)

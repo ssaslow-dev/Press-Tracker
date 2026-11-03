@@ -56,7 +56,7 @@ function pqAddFiles(files) {
   const list = [...files].filter(f => f);
   if (!list.length) return;
   pqUiErr('');
-  if (!S.loaded) { pqUiErr('Load the “for Update” file in step 1 first: stories are checked against it.'); return; }
+  if (!S.loaded) { pqUiErr('Load the for Update file first (step 1): stories are checked against it and the files are named from it.'); return; }
   pqQueue = pqQueue.then(async () => {
     PQS.reading = true; pqDrawAll();
     for (const f of list) { await pqReadFile(f); pqDrawAll(); }

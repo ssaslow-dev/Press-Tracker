@@ -82,6 +82,15 @@ pdfs = sorted((pg / '_original_pdf').rglob('pq*.pdf'))
 check('the PDFs are kept as _original_pdf/<year>/pq<ID><o|r>-s<ID>.pdf, one per saved copy, same stem as the copy', len(pdfs) == npdf == 7 and {f.stem for f in pdfs} == {Path(str(r[ix["File name"]])).stem for r in new}, [str(f.relative_to(pg)) for f in pdfs])
 check('each kept PDF is byte-identical to the one in the update folder', all(F.sha256_file(f) in {F.sha256_file(x) for x in (db / 'files').glob('*.pdf')} for f in pdfs))
 check('only these library paths are written: <year>/pq*.html and _original_pdf/<year>/pq*.pdf (no ws*/nb* file, nothing under _original_html)', all(re.fullmatch(r'(\d{4}/pq\d{5}[or]-s\d{5}\.html|_original_pdf/\d{4}/pq\d{5}[or]-s\d{5}\.pdf)', f.relative_to(pg).as_posix()) for f in pg.rglob('*') if f.is_file()), [f.relative_to(pg).as_posix() for f in pg.rglob('*') if f.is_file()][:12])
+# STATIONNAMES: the station's names against what the save assigned
+man = json.loads((stage / 'manifest.json').read_text(encoding='utf-8'))
+nr = TU.reconcile_names(man.get('names'), stage, res, apply=False)
+print('   names:', nr['confirmed'], 'confirmed;', len(nr['renamed']), 'renamed;', len(nr['not_saved']), 'not saved;', nr['lines'])
+check('STATIONNAMES: the station named the files; every name is either confirmed by the save or listed as renamed / not saved (nothing silently different)',
+      nr['confirmed'] + len(nr['renamed']) + len(nr['not_saved']) == sum(1 for it in man['names']['items'] for k in ('copy', 'raw', 'pdf') if it.get(k)), nr)
+written = {x['file'] for x in res['pages']} | {x.get('original_pdf') for x in res['pages'] if x.get('original_pdf')}
+final = {r['to'].replace('library/', '', 1) for r in nr['renamed']} | {it[k].replace('library/', '', 1) for it in man['names']['items'] for k in ('copy', 'pdf') if it.get(k)} - {r['from'].replace('library/', '', 1) for r in nr['renamed']}
+check('STATIONNAMES: after the renames, the update folder’s files carry exactly the names the save wrote to the library', {w for w in written if w} == final - {n['file'].replace('library/', '', 1) for n in nr['not_saved']}, (sorted(w for w in written if w), sorted(final)))
 # a second pass over the result: the same update again adds nothing
 p2 = run(out / 'out1.xlsx', '2', out / 'out2.xlsx')
 if p2.returncode == 0:

@@ -106,7 +106,7 @@
      sheet = Sheet(a.xlsx)
      task = Task(sheet, db, a.today)
      task.copies_dir, task.bills_path = a.copies, a.bills   # AUTO-v1
-+    task.db_dir = a.db_dir   # NEWSBANKPDF-v1: story PDFs are read from <db_dir>/files/
++    task.db_dir = a.db_dir or (_os.path.join(_os.path.dirname(_os.path.abspath(a.db)), 'db_in') if a.db else None)   # NEWSBANKPDF-v1: story PDFs are read from <db_dir>/files/; the saver gives --db db.json and keeps the unpacked update beside it as db_in/ (no --db-dir)
      task.release_texts, task.library_dir = a.release_texts, a.library   # RELCHECK-v2
      task.img_cache = a.img_cache   # PHOTOS-v2 F6
      task.release_related = a.release_related   # RELBUTTON-v1
