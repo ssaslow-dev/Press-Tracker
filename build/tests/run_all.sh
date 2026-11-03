@@ -7,10 +7,21 @@ L=$(cd "$(dirname "$0")/../.." && pwd); T=$L/build/tests; cd "$L" || exit 1; fai
 # r NAME CMD...: run a suite, one line (rc, seconds, last result lines). s NAME WHY: skip with a notice (not a failure).
 # COLDSTART-v1: three suites need inputs that are NOT in the handoff kit (final_pass/ is left out of source/); they are skipped with
 # a notice instead of failing. Whole run: about 5 min 15 s on 2026-10-30 (sheet_task 101 s, auto 120 s, coldstart_f1 36 s, the rest under 10 s each; per-suite seconds are printed).
-skipped=0
-r(){ n=$1; shift; t0=$(date +%s); out=$("$@" 2>&1); rc=$?; [ $rc -ne 0 ] && fail=1
-     echo "== $n rc=$rc ($(( $(date +%s) - t0 ))s) :: $(echo "$out" | grep -E 'passed|PASSED|failed|FAIL|OK|Ran |checks|ALL|ok$|^PASS$' | tail -3 | tr '\n' ' ')"; }
-s(){ skipped=$((skipped+1)); echo "== $1 SKIPPED :: $2"; }
+skipped=0; tab=''
+# REPO-LOCAL: some suites read work/coverage_current.xlsx (the old workspace's working copy of the master). Here it is a copy of the data/ snapshot
+# (work/coverage_current.xlsx is git-ignored, like every .xlsx outside data/; it is only read).
+if [ ! -f "$L/work/coverage_current.xlsx" ] && [ -f "$L/data/AJG Coverage - NewsBank.xlsx" ]; then
+  cp "$L/data/AJG Coverage - NewsBank.xlsx" "$L/work/coverage_current.xlsx"; echo "== note: work/coverage_current.xlsx made as a copy of the data/ snapshot"; fi
+r(){ n=$1; shift
+     # REPO-LOCAL: a suite whose script is not in this repository is SKIPPED (named), never run, never failed
+     for a in "$@"; do case "$a" in "$T"/*.py|"$T"/*.js) [ -f "$a" ] || { s "$n" "test script not in this repository: ${a#$L/}"; return; };; esac; done
+     t0=$(date +%s); out=$("$@" 2>&1); rc=$?; [ $rc -ne 0 ] && fail=1
+     tab="$tab$(printf '%-18s %-8s %s' "$n" "$([ $rc -eq 0 ] && echo PASS || echo FAIL)" "rc=$rc $(( $(date +%s) - t0 ))s")
+"
+     echo "== $n rc=$rc ($(( $(date +%s) - t0 ))s) :: $(echo "$out" | grep -E 'passed|PASSED|failed|FAIL|OK|Ran |checks|ALL|ok$|^PASS$' | tail -3 | tr '\n' ' ')"
+     [ $rc -ne 0 ] && echo "$out" | tail -8 | sed 's/^/     | /'; }
+s(){ skipped=$((skipped+1)); echo "== $1 SKIPPED :: $2"; tab="$tab$(printf '%-18s %-8s %s' "$1" SKIPPED "$2")
+"; }
 r sheet_task     python3 -I $T/sheet_task/test_sheet_task.py
 r verify_tabs    python3 -I $T/sheet_task/test_verify_tabs.py
 r has_work_pages python3 -I $T/sheet_task/test_has_work_pages.py
@@ -56,20 +67,25 @@ r dates_js       node $T/dates/test_dates_js.js
 r nb             python3 -I $T/nb/test_extract_nb.py
 r copies         python3 -I $T/copies/test_copy_check.py $L/code
 # shared_data needs the snapshot work/shared/ (meta.json, tables.pkl, texts.db); the kit does not carry it. Create it from the master copy.
-if [ ! -f $L/work/shared/meta.json ] && [ -f $L/work/coverage_current.xlsx ]; then
+if [ ! -f $L/work/shared/meta.json ] && [ -f $L/work/coverage_current.xlsx ] && [ -f $T/shared_data/test_shared_data.py ]; then
   echo "== shared_data: no snapshot, building it (python3 -I code/shared_data.py --rebuild)"; python3 -I $L/code/shared_data.py --rebuild >/dev/null 2>&1; fi
-if [ -f $L/work/shared/meta.json ]; then r shared_data bash -c "python3 -I $T/shared_data/test_shared_data.py 2>&1 | grep -c ^PASS"
+if [ ! -f $T/shared_data/test_shared_data.py ]; then s shared_data "test script not in this repository: build/tests/shared_data/test_shared_data.py"
+elif [ -f $L/work/shared/meta.json ]; then r shared_data bash -c "python3 -I $T/shared_data/test_shared_data.py 2>&1 | grep -c ^PASS"
 else s shared_data "no work/shared snapshot and it could not be rebuilt (python3 -I code/shared_data.py --rebuild)"; fi
-r relmatch       bash -c "cd $T/relmatch && python3 -m unittest test_relmatch test_relmatch_v4 test_relmatch_v23"
-if [ -f $L/work/tmp_v23-int/pre/code/authorsplit.py ]; then r reporters python3 -I $T/reporters/test_reporters_v23.py $L
+if [ -f $T/relmatch/test_relmatch.py ]; then r relmatch bash -c "cd $T/relmatch && python3 -m unittest test_relmatch test_relmatch_v4 test_relmatch_v23"
+else s relmatch "test scripts not in this repository: build/tests/relmatch/ (its 'Real' class also needs the fixture work/tmp_v22-int)"; fi
+if [ ! -f $T/reporters/test_reporters_v23.py ]; then s reporters "test script not in this repository: build/tests/reporters/test_reporters_v23.py (it also needs work/tmp_v23-int/pre/code/authorsplit.py)"
+elif [ -f $L/work/tmp_v23-int/pre/code/authorsplit.py ]; then r reporters python3 -I $T/reporters/test_reporters_v23.py $L
 else s reporters "needs work/tmp_v23-int/pre/code/authorsplit.py (the pre-v23 authorsplit, not in the kit)"; fi
 r blend          python3 -I $T/rules/test_blend.py
-r paywall        bash -c "cd $T/rules && PYTHONPATH=. python3 test_paywall.py"
+if [ -f $T/rules/test_paywall.py ]; then r paywall bash -c "cd $T/rules && PYTHONPATH=. python3 test_paywall.py"
+else s paywall "test script not in this repository: build/tests/rules/test_paywall.py"; fi
 r chainorig      python3 -I $T/reporters/test_chainorig.py $L
 r agg_origin     python3 -I $T/agg_origin/test_agg_origin.py
 r agg_origin_js  node $T/agg_origin/test_agg_origin_js.js
 r shownet        python3 -I $T/shownet/test_shownet.py
 r shownet_js     node $T/shownet/test_shownet_js.js
 r media_gate     python3 -I $T/media_gate/test_media_gate.py $L ${MEDIA_SCAN_DIRS_ARGS:-}
-echo "== done: fail=$fail skipped=$skipped"
+echo; printf '%-18s %-8s %s\n' SUITE RESULT DETAIL; printf '%s' "$tab"
+echo "== done: pass=$(printf '%s' "$tab" | grep -c ' PASS ') fail=$(printf '%s' "$tab" | grep -c ' FAIL ') skipped=$skipped"
 exit $fail
