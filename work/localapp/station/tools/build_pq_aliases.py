@@ -65,6 +65,16 @@ def keys(name, T):
     return post(b), post(k)
 
 
+INFO = ('inputs', 'seen_in_proquest_rows', 'evidence', 'stats', 'fold_key_collisions', 'about')
+
+
+def functional(d):
+    """the part of the file the page and the PC use; per-pair tracker_rows (a workbook count) and the informational blocks left out"""
+    o = {k: v for k, v in d.items() if k not in INFO}
+    o['pairs'] = [{k: v for k, v in p.items() if k != 'tracker_rows'} for p in d.get('pairs', [])]
+    return o
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--workbook', required=True)
@@ -154,9 +164,20 @@ def main():
     out['fold_key_collisions'] = collide
     s = json.dumps(out, indent=1, ensure_ascii=False, sort_keys=False) + '\n'
     if a.check:
-        if not os.path.exists(a.out) or open(a.out, encoding='utf-8').read() != s:
-            sys.exit('proquest_outlets.json is not what the script builds: rerun build_pq_aliases.py')
-        print('ok: matches the build')
+        # the check compares what the page uses: the rules, keys, feeds, aliases, generic names and pairs. The fingerprints
+        # and counts taken from the workbook and library (inputs, seen_in_proquest_rows, evidence, stats, fold_key_collisions,
+        # each pair's tracker_rows) are informational: they change whenever the workbook does and do not fail the check.
+        if not os.path.exists(a.out):
+            sys.exit('proquest_outlets.json is missing: run build_pq_aliases.py')
+        have = json.load(open(a.out, encoding='utf-8'))
+        want = json.loads(s)
+        if functional(have) != functional(want):
+            diff = [k for k in sorted(set(have) | set(want)) if k not in INFO and have.get(k) != want.get(k)]
+            if functional(have).get('pairs') != functional(want).get('pairs') and 'pairs' not in diff:
+                diff.append('pairs')
+            sys.exit('proquest_outlets.json differs from the build in: %s. Rerun build_pq_aliases.py' % ', '.join(diff))
+        same = open(a.out, encoding='utf-8').read() == s
+        print('ok: matches the build' if same else 'ok: aliases match the build (informational fields differ: workbook fingerprints and counts; rerun to refresh)')
         return
     os.makedirs(os.path.dirname(a.out), exist_ok=True)
     open(a.out, 'w', encoding='utf-8').write(s)
