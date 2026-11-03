@@ -21,31 +21,42 @@ async function pqReadFile(file) {
     let pages;
     try { pages = await nbReadPages(bytes, say); }
     catch (e) { throw new Error(/password/i.test(String(e && (e.name + ' ' + e.message))) ? 'the PDF is password-protected' : 'the PDF could not be opened (' + (e && e.message ? e.message : e) + ')'); }
-    const p = PQParse.parsePdf(pages);
     rec.pages = pages.length;
-    const key = sha.slice(0, 8) + '#1';
-    const it = { key, p, batch: { name: file.name, sha256: sha, index: 1, firstPage: 1, lastPage: pages.length }, include: false, pdf: null, fileId: '' };
-    if (p.status !== 'ok') {
-      it.screen = { status: p.status === 'not_proquest' ? 'refused' : 'needs_look', why: p.problems.join(' ') };
-    } else {
-      it.screen = window.__pq.screen(p);
-      it.include = it.screen.status === 'new' || it.screen.status === 'reprint';
-      if (it.include) {
-        window.__pq.remember(p, key);
-        try {
-          const src = await PDFLib.PDFDocument.load(bytes, { updateMetadata: false });
-          const pdfBytes = await nbStoryPdf(src, { firstPage: 1, lastPage: pages.length, bands: [] }, { title: p.headline, docref: p.docid, source: file.name, label: 'ProQuest' });
-          if (pdfBytes.length > NB_STORY_PDF_CAP) { it.screen.why += ' (its PDF is over ' + (NB_STORY_PDF_CAP >> 20) + ' MB: the text copy is saved, the PDF itself is not)'; }
-          else {
-            it.fileId = 'pq-' + (await sha256Hex(new TextEncoder().encode(p.docref_key || (p.headline + '|' + p.date + '|' + p.outlet_clean)))).slice(0, 16);
-            it.pdf = { bytes: pdfBytes.length, sha256: await sha256Hex(pdfBytes) }; PQS.pdfs.set(it.fileId, { bytes: pdfBytes, sha256: it.pdf.sha256 });
-          }
-        } catch (e) { it.screen.why += ' (its PDF could not be copied: ' + (e && e.message ? e.message : e) + '; the text copy is saved without it)'; it.pdfError = String(e && e.message || e); }
+    const sp = PQParse.splitPdf(pages);
+    const parts = sp ? sp.parts : [{ index: 1, firstPage: 1, lastPage: pages.length, pages, bands: [] }], total = parts.length;
+    let src = null;
+    for (const part of parts) {
+      const p = PQParse.parsePdf(part.pages), np = part.lastPage - part.firstPage + 1;
+      const key = sha.slice(0, 8) + '#' + part.index;
+      const it = { key, p, batch: { name: file.name, sha256: sha, index: part.index, firstPage: part.firstPage, lastPage: part.lastPage }, include: false, pdf: null, fileId: '' };
+      const of = total > 1 ? 'Article ' + part.index + ' of ' + total + ' in this PDF (pages ' + part.firstPage + ' to ' + part.lastPage + '): ' : '';
+      if (p.status !== 'ok') {
+        it.screen = { status: p.status === 'not_proquest' ? 'refused' : 'needs_look', why: of + p.problems.join(' ') };
+      } else {
+        it.screen = window.__pq.screen(p);
+        if (of) it.screen.why = of + (it.screen.why || '');
+        it.include = it.screen.status === 'new' || it.screen.status === 'reprint';
+        if (it.include) {
+          window.__pq.remember(p, key);
+          try {
+            src = src || await PDFLib.PDFDocument.load(bytes, { updateMetadata: false });
+            const bands = part.bands.length ? part.bands : [];
+            const pdfBytes = await nbStoryPdf(src, { firstPage: part.firstPage, lastPage: part.lastPage, bands }, { title: p.headline, docref: p.docid, source: file.name, label: 'ProQuest' });
+            if (pdfBytes.length > NB_STORY_PDF_CAP) { it.screen.why += ' (its PDF is over ' + (NB_STORY_PDF_CAP >> 20) + ' MB: the text copy is saved, the PDF itself is not)'; }
+            else {
+              it.fileId = 'pq-' + (await sha256Hex(new TextEncoder().encode(p.docref_key || (p.headline + '|' + p.date + '|' + p.outlet_clean)))).slice(0, 16);
+              it.pdf = { bytes: pdfBytes.length, sha256: await sha256Hex(pdfBytes) }; PQS.pdfs.set(it.fileId, { bytes: pdfBytes, sha256: it.pdf.sha256 });
+            }
+          } catch (e) { it.screen.why += ' (its PDF could not be copied: ' + (e && e.message ? e.message : e) + '; the text copy is saved without it)'; it.pdfError = String(e && e.message || e); }
+        }
       }
+      PQS.items.push(it);
+      if (total > 20 && part.index % 10 === 0) { say('article ' + part.index + ' of ' + total); await new Promise(r => setTimeout(r, 0)); }
     }
-    PQS.items.push(it);
-    rec.status = 'ok'; rec.stories = 1;
-    rec.note = p.status === 'ok' ? pages.length + ' page' + (pages.length === 1 ? '' : 's') + ': ' + (p.headline || '').slice(0, 80) : pages.length + ' page' + (pages.length === 1 ? '' : 's') + ': ' + (it.screen.status === 'refused' ? 'not a ProQuest article PDF' : 'needs a look');
+    rec.status = 'ok'; rec.stories = total;
+    const mine = PQS.items.slice(-total), nok = mine.filter(x => x.p.status === 'ok').length;
+    rec.note = total === 1 ? pages.length + ' page' + (pages.length === 1 ? '' : 's') + ': ' + (mine[0].p.status === 'ok' ? (mine[0].p.headline || '').slice(0, 80) : mine[0].screen.status === 'refused' ? 'not a ProQuest article PDF' : 'needs a look')
+      : total + ' articles in ' + pages.length + ' pages: ' + nok + ' read' + (total - nok ? ', ' + (total - nok) + ' need a look' : '') + '.' + (total > 20 ? ' This PDF holds ' + total + ' articles; next time save batches of up to 20 so the page stays responsive.' : '');
   } catch (e) {
     rec.status = 'error'; rec.note = 'could not be read: ' + (e && e.message ? e.message : e);
     if (rec.sha && PQS.shas.get(rec.sha) === file.name) PQS.shas.delete(rec.sha);

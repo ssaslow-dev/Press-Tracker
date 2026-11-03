@@ -34,9 +34,9 @@
   </div>
   <div class="card pad st-lock" id="st-pq">
     <div class="st-h"><span class="st-n">Also</span><h2 class="sec">Add ProQuest PDFs</h2></div>
-    <div class="cap">For single ProQuest article PDFs (one story per PDF, as many PDFs as you like at once). Each PDF’s details block (title, publication, date, ProQuest document ID) is read, the story is checked against the tracker by its ProQuest document ID and by headline, outlet and date, rated and translated like any new find, and its publisher’s own page is looked up. The text becomes the saved copy and the PDF is kept with it. A PDF whose details cannot be read is listed as “needs a look” and is not added. The PDFs are read in this browser and kept only in this tab until you download the update folder in step 3.</div>
+    <div class="cap">For ProQuest article PDFs: one article per PDF, or a ProQuest export of several articles in one PDF (save up to 20 articles per PDF; a bigger export still works, only slower). As many PDFs as you like at once. A PDF with several articles is cut into one article each; an article whose details cannot be read is listed as “needs a look” and the others go on. Each PDF’s details block (title, publication, date, ProQuest document ID) is read, the story is checked against the tracker by its ProQuest document ID and by headline, outlet and date, rated and translated like any new find, and its publisher’s own page is looked up. The text becomes the saved copy and the PDF is kept with it. A PDF whose details cannot be read is listed as “needs a look” and is not added. The PDFs are read in this browser and kept only in this tab until you download the update folder in step 3.</div>
     <div class="upd-msg err st-msg st-gate" id="pqGate">Load the for Update file first (step 1). Stories are checked against it and the files are named from it.</div>
-    <label class="st-drop" id="pqDrop" for="pqFile" tabindex="0">Drop ProQuest PDFs here, or click to choose them (one or many)</label>
+    <label class="st-drop" id="pqDrop" for="pqFile" tabindex="0">Drop ProQuest PDFs here, or click to choose them (one or many; up to 20 articles per PDF)</label>
     <input type="file" id="pqFile" accept=".pdf,application/pdf" multiple hidden disabled>
     <div class="upd-msg err st-msg" id="pqMsg" role="alert" hidden></div>
     <ul class="st-list nb-files" id="pqFiles"></ul>
