@@ -566,3 +566,6 @@ Before switch-over (and before every final zip or station republish), an automat
 
 ## LASTUPDATED-v1 (Sammy, 2026-11-03)
 The tracker's header shows a "Last updated" date: the date (Pacific) of the last successful save into the workbook (an update, Save my edits or a switch-over change), read from the save ledger; a reader copy shows the keeper's last save date carried in the refresh file. Small and in the masthead's own style (Sammy: "make it small and make sure it fits the style of everything"): one short line under or beside the "Press coverage tracker" subtitle, same small-caps font, size and muted colour as that subtitle, no new colours or boxes; approved exception to SAMELOOK-v2. Built in the next PC tracker round (after the tidy-up lands), with a look-check exception and a test.
+
+## FREEZE-v1 (Sammy, 2026-11-03: "do what you think the best course of action is in order to stay organized and efficient")
+Claude's call: the feature list is frozen at what is requested now; new ideas are noted in work/localapp/PLAN.md "After switch-over" and wait. Work proceeds in one ordered consolidation round (PLAN.md "Consolidation round"), one builder at a time on the PC tracker's shared files, so builders no longer collide; questions for Sammy are batched.

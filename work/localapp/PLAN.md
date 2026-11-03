@@ -73,3 +73,16 @@ Done to the real workbook from the Mac, never to an older copy:
 7. First real update: Make "for Update" file, Update run in the station, Bring in update, preview, Save (Sammy present). This is the end-to-end test.
 8. Make refresh file (full) for each colleague.
 Automatic from then on (built into the save and page): PRJUDGE-v1, PRCOLOR-v1 for new rows, LIBFILES-v1 names and folders, NewsBank/ProQuest saving, PCEDITS-v1, REVIEW_2 fixes, fast save, TIDY-v1, VIEWORIG-v1.
+
+## Consolidation round (FREEZE-v1; in this order, one builder at a time on shared PC files)
+Running now (finish, then commit): tidy-up (TIDY-v1) final suite; station round (PRJUDGE-v2, NewsBank TV, Fable audit fixes 1-5); data checks (print pages, translations, outlet-name authors, NewsBank fills: reports only); CHAINCHECK-v1 build.
+1. Other files column wiring (OTHERFILES-v1), then Note rename (NOTE-v1): each waits for the previous to commit.
+2. PC features: LASTUPDATED-v1; VIEWORIG-v1 (option B); PRCOLOR-v1 + PRJUDGE-v2 on the save (honour the station's per-item verdict; purple for press-release rows); NewsBank PC patches from the station round (print-page rows, Unlinked print pages writer); for-Update file exports Unlinked print pages links.
+3. Switch-over builder (restart from the WIP commit): Set up from the Mac library; the one "Switch-over changes" screen with every one-time step (DROPUNVERIFIED-v1, PRCOLOR-v1 recolour, PRJUDGE-v2 existing rows, OTHERFILES-v1 column, plus the data-check fixes Sammy approves).
+4. Sammy reviews the data-check reports (batched questions).
+5. Integration: fresh assemble; all suites (saver, review, review2, updatefolder, app, station); look check on changed routes; CHAINCHECK-v1; station republish if needed.
+6. CLEANUP-v1 (outdated code and decisions archived), suites again, final zip and IT note fingerprint.
+7. Switch-over day (checklist above).
+
+## After switch-over (ideas noted, not built)
+(none yet)
