@@ -42,7 +42,7 @@ function makeMemDb() {
           return {
             id, path: name + '/' + id,
             async get() { const has = c.docs.has(id); return { id, exists: has, data: () => (has ? clone(c.docs.get(id)) : undefined) }; },
-            async set(data) { const d = clone(data); c.docs.set(id, d); track(name, id, d); notify(c); },
+            async set(data) { const d = clone(data); if (name === 'runs' && d && Array.isArray(d.rows)) prAnnotateRows(d.rows, pg => col('pages').docs.get(pg)); c.docs.set(id, d); track(name, id, d); notify(c); },
             async update(data) { const d = Object.assign({}, c.docs.get(id) || {}, clone(data)); c.docs.set(id, d); track(name, id, d); notify(c); },
             async delete() { c.docs.delete(id); track(name, id, null); notify(c); },
             onSnapshot(cb) { const f = c.subs.add(cb) && (() => c.subs.delete(cb)); queueMicrotask(() => { try { cb({ id, exists: c.docs.has(id), data: () => clone(c.docs.get(id)) }); } catch (e) {} }); return f; },
@@ -75,10 +75,38 @@ function plainErr(e) {
   return 'Stopped: ' + m;
 }
 function sampleDenied(e) { S.sampleDeniedFlag = true; if (e && (e.code === 'not_granted' || e.code === 'unavailable')) { const n = document.getElementById('stSampleNote'); if (n) n.hidden = false; } }
+/* PRJUDGE-v1: the classify call is asked, as well, whether each item is a pure press release (a station-layer wrapper around the prompt: the tracker's own prompt
+   text is untouched). The answers, with each item's own text, are kept by link (S.pr) so the proposed rows can carry the decision and its reason. */
+S.pr = new Map();
+const prKey = u => String(u || '').toLowerCase().replace(/^https?:\/\/(www\.)?/, '').replace(/[#?].*$/, '').replace(/\/+$/, '');
+window.__prRel = () => (S.file && S.file.release_texts && S.file.release_texts.rel) || {};
+function prCall(v, t, a) {
+  const prompt = typeof a[0] === 'string' ? a[0] : '', aug = PRJudge.augmentPrompt(prompt);
+  const rest = a.slice(1);
+  return Promise.resolve(v.apply(t, [aug].concat(rest))).then(res => {
+    if (aug !== prompt) { try {
+      const its = PRJudge.itemsOfPrompt(prompt);
+      its.forEach((it, j) => { const k = Array.isArray(res) ? (res.find(o => o && +o.n === it.n) || res[j]) : null; S.pr.set(prKey(it.url), { text: it.text, title: it.title, claude: k && k.press_release !== undefined ? { press_release: k.press_release, pr_why: k.pr_why } : null }); });
+    } catch (e) {} }
+    return res;
+  });
+}
+/* proposed rows of a web run: the decision for each find, from its text and Claude's answer; "Yes" fills Press release (the PC save fills blanks only) */
+function prAnnotateRows(rows, pageDoc) {
+  (rows || []).forEach(r => {
+    if (!r || r._pr) return;
+    let rec = S.pr.get(prKey(r['Publisher link']));
+    if (!rec && r._page && pageDoc) { const pd = pageDoc(r._page); if (pd && pd.clean) rec = { text: String(pd.clean).replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 6000), title: pd.title || '', claude: null }; }   // a reprint candidate is not classified by Claude: its saved page text is judged by the text signals
+    if (!rec) return;
+    const j = PRJudge.judge({ text: rec.text, title: rec.title, outlet: r['Outlet'], url: r['Publisher link'], claude: rec.claude, rel: window.__prRel() });
+    r._pr = { v: j.v, why: j.why, by: j.by };
+    if (j.v === 'yes') { r['Press release'] = 'Yes'; r['Team note'] = ('press release: ' + j.why + (r['Team note'] ? '; ' + r['Team note'] : '')).slice(0, 600); }
+  });
+}
 function sampleWatch(f) {
   return new Proxy(f, {
     apply(t, th, a) { return Promise.resolve(t.apply(th, a)).catch(e => { sampleDenied(e); throw e; }); },
-    get(t, k) { const v = t[k]; if (k === 'json' && typeof v === 'function') return (...a) => Promise.resolve(v.apply(t, a)).catch(e => { sampleDenied(e); throw e; }); return typeof v === 'function' ? v.bind(t) : v; },
+    get(t, k) { const v = t[k]; if (k === 'json' && typeof v === 'function') return (...a) => prCall(v, t, a).catch(e => { sampleDenied(e); throw e; }); return typeof v === 'function' ? v.bind(t) : v; },
   });
 }
 const claudeForTracker = {

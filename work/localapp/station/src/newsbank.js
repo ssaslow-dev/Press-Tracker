@@ -24,6 +24,20 @@ function nbDocrefs(){
   }
   return NBX.docrefs;
 }
+/* the outlet as the tracker already spells it: the most used spelling among the sheet's Outlet names with the same key (covOutlet: case, "The", punctuation and a state in parentheses ignored) */
+let NBX_SPELL = null;
+function nbSpell(p){
+  if (p._ol) return p; p._ol = true;
+  if (!NBX_SPELL){
+    const cnt = new Map(), add = n => { n = String(n || '').trim(); if (n) cnt.set(n, (cnt.get(n) || 0) + 1); };
+    covLoad().rows.forEach(o => add(o.outlet)); D.forEach(r => add(String(r.outlet || '').replace(/\s*\([^)]*\)\s*$/, '')));
+    const best = new Map(); cnt.forEach((c, n) => { const k = covOutlet(n); const o = best.get(k); if (k && (!o || c > o.c || (c === o.c && n < o.n))) best.set(k, { n, c }); });
+    NBX_SPELL = best;
+  }
+  const hit = NBX_SPELL.get(covOutlet(p.outlet_clean));
+  if (hit && hit.n !== p.outlet_clean){ p.outlet_note = 'outlet “' + p.outlet + '” (NewsBank) filed as “' + hit.n + '” (the tracker’s spelling)'; p.outlet_clean = hit.n; }
+  return p;
+}
 const nbLink = p => NBParse.canonLink(p.docref);
 const nbCand = p => ({ link: nbLink(p), hl: p.headline, date: p.date, outlet: p.outlet_clean, pub: p.outlet_clean, plink: nbLink(p) });
 
@@ -31,21 +45,26 @@ const nbCand = p => ({ link: nbLink(p), hl: p.headline, date: p.date, outlet: p.
    -> { status: 'new' | 'reprint' | 'known' | 'dup_batch' | 'print_page' | 'thin', why, of? (story id for a reprint, first copy for dup_batch) } */
 function nbScreen(p, SRC){
   SRC = SRC || NBSRC.nb;
-  const key = p.docref_key;
+  const key = p.docref_key, isNb = SRC.id === 'nb';
+  if (isNb) nbSpell(p);
   if (p.kind === 'print_page') return key && NBX.seen.has(key) ? { status: 'dup_batch', why: 'the same print page appears twice in the PDFs added', of: NBX.seen.get(key) } : { status: 'print_page', why: 'a newspaper page image, not a story: listed as a print page to clip' };
   if (key && SRC.known().has(key)) return { status: 'known', why: 'already in the tracker (same ' + SRC.idName + ')' };
   if (key && NBX.seen.has(key)) return { status: 'dup_batch', why: 'the same story appears twice in the PDFs added (same ' + SRC.idName + ')', of: NBX.seen.get(key) };
+  // SAFETY: a story with no link and no readable header is never "new": it needs a look. A story with no link but a header is checked by headline, date and outlet,
+  // and if that finds nothing it still is not offered (no link = no way to tell it apart from a story already in the tracker): "needs a look".
+  if (isNb && !key && (p.how === 'citation' || !p.headline)) return { status: 'look', why: 'no NewsBank link and no readable header in the PDF: not added, check this story by hand', needs_check: true };
   if (!p.headline) return { status: 'new', why: 'no headline could be read: check it', needs_check: true };
   const c = SRC.cand(p), ch = covHit(c);
+  const noLink = isNb && !key, nl = r => noLink && (r.status === 'new' || r.status === 'reprint') ? { status: 'look', why: 'no NewsBank link was read for this story, and the headline check found it not in the tracker: not added, check it by hand (' + r.why + ')', needs_check: true } : r;
   if (ch && ch.same) return { status: 'known', why: 'already in the tracker (same outlet and headline as ' + ch.o.aid + ', within 3 days)' };
   const old = dupOf(Object.assign({}, c, { link: '', plink: '' }), D);   // no link: two NewsBank records share one host, which dupOf would read as one outlet
   if (old && old.same) return { status: 'known', why: 'already in the tracker (same story and outlet as ' + old.r.id + ')' };
   const st = ch && !ch.same ? byId.get(ch.o.sid) || byId.get(IDMAP_SID(ch.o.sid)) : old && !old.same ? old.r : null;
   const sid = ch && !ch.same ? ch.o.sid : old && !old.same ? old.r.id : '';
-  if (st && !ranIn(st, p.outlet_clean, '')) return { status: 'reprint', of: st.id, of_hl: st.hl, why: 'another outlet’s copy of “' + String(st.hl).slice(0, 60) + '” (' + st.id + '): proposed as a reprint; the PC save tests the text' };
+  if (st && !ranIn(st, p.outlet_clean, '')) return nl({ status: 'reprint', of: st.id, of_hl: st.hl, why: 'another outlet’s copy of “' + String(st.hl).slice(0, 60) + '” (' + st.id + '): proposed as a reprint; the PC save tests the text' });
   if (st) return { status: 'known', why: 'this outlet already has the story (' + st.id + ')' };
-  if (sid) return { status: 'reprint', of: sid, of_hl: '', why: 'another outlet’s copy of a story already in the tracker (' + sid + '): proposed as a reprint; the PC save tests the text' };
-  return { status: 'new', why: 'new story' };
+  if (sid) return nl({ status: 'reprint', of: sid, of_hl: '', why: 'another outlet’s copy of a story already in the tracker (' + sid + '): proposed as a reprint; the PC save tests the text' });
+  return nl({ status: 'new', why: 'new story' });
 }
 function nbRemember(p, key){ if (p.docref_key) NBX.seen.set(p.docref_key, key); }
 
@@ -132,16 +151,23 @@ async function nbRun(items, opts){
       it.c.gab = NAMES_HIM.test(it.c.title + ' ' + it.c.text) && TF_CONTEXT.test(gabrielContext(it.c.title + '\n' + it.c.text)); it.c.ctx = (it.c.title + '\n' + (it.c.gab ? gabrielContext(it.c.text) + '\n' : '') + it.c.text).slice(0, 1800); });
     // 1. Claude: topic, media, role, tone, language (and the English headline and summary of a non-English story)
     const cls = await nbClassify(news, opts.sample, say, SRC.preface);
-    const kept = [];
+    const kept = [], usedIds = new Set();
+    const prJudge = (it, kk, claude) => { const pj = PRJudge.judge({ text: it.p.text, title: it.p.headline, outlet: it.p.outlet, url: '', claude: claude ? kk : null, rel: window.__prRel ? window.__prRel() : null }); it.pr = pj; return pj; };
     news.forEach(it => {
-      const { k, claude } = cls.get(it) || { k: nbGuess(it), claude: false };
+      let { k, claude } = cls.get(it) || { k: nbGuess(it), claude: false };
+      // PRJUDGE-v1: is it a pure press release? Decided from its own text and Claude's answer; a pure release is not "left out as not press": it stays, marked Press release = Yes
+      const pj = prJudge(it, k, claude);
+      if (k.keep === false && pj.v === 'yes') k = Object.assign({}, k, { keep: true, why: 'press release (kept in the sheet, Press release = Yes): ' + pj.why });
       if (k.keep === false){ res.left.push({ hl: VS(it.p.headline, 200), outlet: VS(it.p.outlet_clean, 120), date: it.p.date, why: VS(k.why, 200) || 'Not press coverage about him.' }); it.skipped = VS(k.why, 200) || 'Claude: not press coverage about him'; return; }
       const kk = Object.assign({}, k, { date: it.p.date, outlet: it.p.outlet_clean, hl: it.p.headline, pub: VS(k.pub, 100) || it.p.outlet_clean });
       const r = toRow(it.c, kk); r._on = true; r._claude = claude; r._text = String(it.p.text || '').slice(0, 6000); r._nb = it; r._found_by = SRC.foundBy + ': ' + it.batch.name;
       r.src = SRC.srcName; r.plink = SRC.plink(it.p); r.pq = SRC.pq ? SRC.pq(it.p) : ''; r.lstat = ''; r._pageKey = ''; r._dateSrc = SRC.dateSrc;   // sheet_task.dates_v1 (patch 03) reads 'newsbank' as Date source "NewsBank" ("print edition" for a print record)
       if (SRC.print(it.p)) r.fmt = 'Print';
+      if (!SRC.link(it.p) || usedIds.has(r.id)) { let id = 'jg-' + hash6(it.key || String(kept.length)); while (usedIds.has(id) || byId.has(id) || (covLoad().idmap || {})[id]) id = 'jg-' + hash6(id + 'x'); r.id = id; }   // never the id of "no link" ('' hashes alike for every story)
+      usedIds.add(r.id);
       it.r = r; it.media = r.media; kept.push(it);
     });
+    reps0.forEach(it => prJudge(it, null, false));
     // 2. the publisher's own link (a search for the headline, then a look at the page): stories and reprints alike
     const lookup = kept.concat(reps0.map(it => { it.media = ''; return it; })), nlook = lookup.length;
     if (opts.links && opts.mcp && lookup.length){ say('Looking for the publisher’s own pages', 0); res.links.searched = nlook; await nbFindLinks(opts.mcp, lookup, say, SRC); res.links.found = lookup.filter(x => x.pub).length; }
@@ -225,7 +251,8 @@ function nbRowFill(row, it){
   row['Format'] = p.page ? 'Print' : (row['Format'] === 'Article' || !row['Format'] ? 'Article' : row['Format']);
   row['Headline'] = p.headline; row['Date'] = p.date; row['Year'] = p.date ? +p.date.slice(0, 4) : '';
   if (isRep){ row['Author / byline'] = p.author || ''; row['Tracker story code'] = ''; }
-  row['Team note'] = ['NewsBank PDF ' + it.batch.name + ' #' + it.batch.index + ' (' + TODAY + ')', p.thin ? 'citation page only, no text: no saved copy' : '', (p.flags || []).join('; '), it.linkNote ? 'publisher link not found: ' + it.linkNote : '', /\[[^\]]+\]/.test(p.outlet || '') && !/embargo|subscription|archive/i.test(p.outlet) ? 'NewsBank source “' + VS(p.outlet, 80) + '”: check show and network (SHOWNET-v1)' : ''].filter(Boolean).join('; ');
+  if (it.pr){ row._pr = { v: it.pr.v, why: it.pr.why, by: it.pr.by }; if (it.pr.v === 'yes') row['Press release'] = 'Yes'; }   // PRJUDGE-v1: the decision and its reason travel with the row; the PC save fills Press release (fill-blanks)
+  row['Team note'] = [it.pr && it.pr.v === 'yes' ? 'press release: ' + VS(it.pr.why, 220) : '', 'NewsBank PDF ' + it.batch.name + ' #' + it.batch.index + ' (' + TODAY + ')', p.thin ? 'citation page only, no text: no saved copy' : '', (p.flags || []).join('; '), p.outlet_note || '', it.linkNote ? 'publisher link not found: ' + it.linkNote : '', /\[[^\]]+\]/.test(p.outlet || '') && !/embargo|subscription|archive/i.test(p.outlet) ? 'NewsBank source “' + VS(p.outlet, 80) + '”: check show and network (SHOWNET-v1)' : ''].filter(Boolean).join('; ');
   if (!isRep && !it.pdf) { row['Saved Copy?'] = 'No'; }
   return row;   // an Original finds its pages doc by its temporary code (Tracker story code), a reprint by _page (set by proposeRows)
 }

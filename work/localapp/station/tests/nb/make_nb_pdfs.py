@@ -66,7 +66,7 @@ STORIES = [
     dict(k='batchdup8', same_as='new1'),
     dict(k='print9', hl='Council backs Gabriel bill on food dyes', d=(2026, 10, 27), src='Courier Print Test (CA)', au='', sec='Local', pg='A5', n=110),
     dict(k='printpage10', hl='Valley Courier Test: Page 4', d=(2026, 10, 26), src='Valley Courier Test (CA)', au='', sec='', pg='', n=0, image=True),
-] + [dict(k=f'f{i}', hl=f'Filler story {i}: {TOPICS[i]}', d=(2026, 10, 10 + i), src=f'Filler Gazette {i} (CA)', au=f'Writer {i}', sec='Metro', pg='', n=70 + 10 * i) for i in range(11, 21)]
+] + [dict(k=f'f{i}', hl=f'Filler story {i}: {TOPICS[i]}', d=(2026, 10, 10 + i), src=('Targeted News Service (USA)' if i == 15 else f'Filler Gazette {i} (CA)'), au=f'Writer {i}', sec='Metro', pg='', n=70 + 10 * i) for i in range(11, 21)]
 STORIES = STORIES[:20]
 
 
@@ -161,6 +161,113 @@ def make(path, stories, flow, record):
     return p.page
 
 
+# ---------------------------------------------------------------------------------------------------------------------------------------------
+# The REAL layout (Sammy's batches of 2026-11-03, see the station's NEWSBANK.md "real layout"): banner "Access World News - Historical and Current" at the top right
+# of every story, headline (ALL CAPS or mixed, several lines), "Date:" / "Source:" / "Section:" / "Word Count:" / "Author:" label lines, body, copyright line,
+# "CITATION (APA STYLE)" and the APA citation ("HEADLINE. (YYYY, Month D). Outlet. Available from NewsBank: <openurl link>."; with an author when there is one),
+# the openurl link broken at a fixed width, even in the middle of a word. Page-aligned flow ('pages': every story starts a page; a print page is followed by
+# text-less picture pages) and mid-page flow ('mid': the next story's banner sits right under the last citation).
+REAL = [
+    dict(k='r1', hl="CALIFORNIA LEGISLATIVE CENTRAL COAST CAUCUS ISSUES STATEMENT ON PRESIDENT TRUMP'S DANGEROUS REMARKS AGAINST LOS ANGELES AND SAN DIEGO", d=(2026, 10, 6), src='US Fed News (USA)', sec='', au='', n=345, release=True,
+         open='SACRAMENTO, Calif., Oct. 6 -- The California State Assembly Democratic Caucus issued the following news release:', words=120),
+    dict(k='r2', hl='Two new lawsuits reignite the debate over Nazi-looted art in the U.S.', d=(2026, 10, 6), src='CE Noticias Financieras: English', sec='News', au='', n=1339, release=False,
+         open='Jewish heirs of Holocaust victims and their representatives have filed two lawsuits in California to assert their claims over paintings.', words=420),
+    dict(k='r3', hl='Anheuser-Busch Invests $21 Million in Los Angeles, CA Facilities, Expands Local Manufacturing Skills Training', d=(2026, 9, 17), src='PR Newswire (USA)', sec='', au='', n=831, release=True,
+         open='LOS ANGELES, Sept. 17, 2026 /PRNewswire/ -- Anheuser-Busch today announced a $21 million investment in its Los Angeles facilities.', words=150),
+    dict(k='r4', hl='Budget chair says wildfire aid will move before the holiday recess', d=(2026, 10, 10), src='Valley Courier Test (CA)', sec='Metro', au='Jane Doe', n=640, release=False,
+         open='Assemblymember Jesse Gabriel told reporters on Friday that the wildfire aid package would move before the holiday recess.', words=160),
+    dict(k='r5', hl='Council hears from tenants', d=(2026, 10, 11), src='Filler Gazette 5 (CA)', sec='', au='', n=60, release=False,
+         open='Tenants spoke at the council meeting on Tuesday night about rent increases and Jesse Gabriel\'s bill.', words=20),
+    dict(k='r6', printpage=True, hl='Full Page', d=(2026, 11, 1), src='East Bay Times (CA)', publoc='(Oakland, California)', pg='18', blank_after=2),
+]
+
+
+def rhex(k):
+    return hexid('real-' + k)
+
+
+def real_cit(s):
+    yy, mm, dd = s['d']
+    if s.get('printpage'):
+        ref = 'image%252Fv2%25253A' + rhex(s['k']) + '%2540AWNB-1AB9BE40AB87C16A%25402461346-1AB9BE65EDB41DE5%254017-1AB9BE65EDB41DE5%2540'
+        return f'{s["hl"]}. ({yy}, {MONTHS[mm-1]} {dd}). {s["src"]}, p. {s["pg"]}. Available from NewsBank: https://infoweb.newsbank.com/apps/news/openurl?ctx_ver=z39.88-2004&rft_id=info%3Asid/infoweb.newsbank.com&svc_dat=WORLDNEWS&req_dat=0EB486B8E4C835BA&rft_val_format=info%3Aofi/fmt%3Akev%3Amtx%3Actx&rft_dat=document_id%3A{ref}.', 'image/v2%3A' + rhex(s['k']) + '%40AWNB-1AB9BE40AB87C16A%402461346-1AB9BE65EDB41DE5%4017-1AB9BE65EDB41DE5%40'
+    ref = 'news/' + rhex(s['k'])
+    au = ''
+    if s['au']:
+        f, l = s['au'].split(' ')[0], s['au'].split(' ')[-1]
+        au = f'{l}, {f[0]}. '
+    return f'{au}({yy}, {MONTHS[mm-1]} {dd}). {s["hl"]}. {s["src"]}. Available from NewsBank: https://infoweb.newsbank.com/apps/news/openurl?ctx_ver=z39.88-2004&rft_id=info%3Asid/infoweb.newsbank.com&svc_dat=WORLDNEWS&req_dat=0EB486B8E4C835BA&rft_val_format=info%3Aofi/fmt%3Akev%3Amtx%3Actx&rft_dat=document_id%3A{"news%252F" + rhex(s["k"])}.' if not au else \
+        f'{au}({yy}, {MONTHS[mm-1]} {dd}). {s["hl"]}. {s["src"]}. Available from NewsBank: https://infoweb.newsbank.com/apps/news/openurl?ctx_ver=z39.88-2004&rft_id=info%3Asid/infoweb.newsbank.com&svc_dat=WORLDNEWS&req_dat=0EB486B8E4C835BA&rft_val_format=info%3Aofi/fmt%3Akev%3Amtx%3Actx&rft_dat=document_id%3A{"news%252F" + rhex(s["k"])}.', ref
+
+
+def hardwrap(text, font, size, width):
+    """break by width, anywhere (a word is cut in the middle), as the real PDFs do"""
+    out, cur = [], ''
+    for ch in text:
+        if pdfmetrics.stringWidth(cur + ch, font, size) > width:
+            out.append(cur); cur = ch
+        else:
+            cur += ch
+    if cur: out.append(cur)
+    return out
+
+
+def make_real(path, flow, record):
+    import zlib
+    p = Pen(path, flow)
+    for i, s in enumerate(REAL, 1):
+        if flow == 'pages' and i > 1:
+            p.c.showPage(); p.page += 1; p.y = H - TOP
+        elif i > 1:
+            p.gap(26)
+        p.room(150)
+        page0, top = p.page, p.y
+        p.c.setFont('DJ', 10); p.c.drawRightString(W - 36, p.y - 10, 'Access World News – Historical and Current'); p.y -= 36
+        p.para(s['hl'], 'DJB', 14, 18, width=W - 150)
+        yy, mm, dd = s['d']
+        p.line(f'Date: {MONTHS[mm-1]} {dd}, {yy}', 'DJ', 10, 15)
+        p.line('Source: ' + s['src'], 'DJ', 10, 15)
+        if s.get('printpage'):
+            p.line('Publication Location: ' + s['publoc'], 'DJ', 10, 15); p.line('Page: ' + s['pg'], 'DJ', 10, 15); p.gap(14)
+            p.line('Copyright 2026 by NewsBank, inc. All Rights Reserved.', 'DJ', 8, 12); p.gap(10)
+        else:
+            if s['sec']: p.line('Section: ' + s['sec'], 'DJ', 10, 15)
+            if s['au']: p.line('Author: ' + s['au'], 'DJ', 10, 15)
+            p.line(f'Word Count: {s["n"]}', 'DJ', 10, 15); p.gap(14)
+            p.para(s['open'], 'DJ', 10, 13); p.gap(12)
+            body = lorem(s['words'], mention=False, seed=zlib.crc32(s['k'].encode()))
+            if s['release']:
+                body = body + ' CONTACT: Press Office, (916) 319-2030'
+            cut = body.find(' ', len(body) // 2)
+            for para in (body[:cut], body[cut:]):
+                p.para(para.strip(), 'DJ', 10, 13); p.gap(12)
+            p.line(f'Copyright (c) 2026 {s["src"].split(" (")[0]}. All rights reserved.', 'DJ', 8, 12); p.gap(10)
+        p.line('CITATION (APA STYLE)', 'DJ', 10, 15)
+        cit, ref = real_cit(s)
+        for ln in hardwrap(cit, 'DJ', 10, W - 72):
+            p.line(ln, 'DJ', 10, 15)
+        end_page = p.page
+        if s.get('blank_after'):
+            for _ in range(s['blank_after']):
+                p.c.showPage(); p.page += 1; p.y = H - TOP
+            pages_end = p.page
+        else:
+            pages_end = end_page
+        record.append(dict(key=s['k'], start_page=page0, end_page=pages_end, text_end_page=end_page, docref=ref, release=bool(s.get('release')), headline=s['hl'],
+                           date='%04d-%02d-%02d' % s['d'], source=s['src'], section=s.get('sec', ''), author=s.get('au', ''), words=s.get('n', 0), printpage=bool(s.get('printpage')), page=s.get('pg', '')))
+    p.end()
+    return p.page
+
+
+def main_real(out):
+    exp = {}
+    for name, flow in (('real_pages', 'pages'), ('real_mid', 'mid')):
+        rec = []
+        n = make_real(os.path.join(out, name + '.pdf'), flow, rec)
+        exp[name] = dict(pages=n, items=rec)
+    json.dump(exp, open(os.path.join(out, 'expected_real.json'), 'w'), indent=1, ensure_ascii=False)
+
+
 def main(out):
     os.makedirs(out, exist_ok=True)
     byk = {s['k']: s for s in STORIES}
@@ -192,6 +299,7 @@ def main(out):
     la = DictionaryObject({NameObject('/S'): NameObject('/Launch'), NameObject('/F'): TextStringObject('cmd.exe')})
     pg[NameObject('/AA')] = DictionaryObject({NameObject('/O'): w._add_object(la)})
     w.write(os.path.join(out, 'evil_launch.pdf'))
+    main_real(out)
     print(json.dumps({k: (v['pages'], v['n']) for k, v in exp.items() if k.startswith('batch')}))
 
 

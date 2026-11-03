@@ -21,20 +21,20 @@ const ARTICLES = {
     body: 'Assemblymember Jesse Gabriel (D-Encino) introduced a bill in Sacramento on Friday that would speed up clean air permits across California. "Californians should not wait years for clean air," Gabriel said in a statement to reporters at the Capitol. The measure would set a deadline for regional air districts and has the backing of several environmental groups, lawmakers said. ' + 'The bill is expected to go before the Assembly Natural Resources Committee early next year. '.repeat(8) },
   new2: { url: 'https://www.diariotest.example/2026/11/gabriel-ley-vivienda', title: 'Gabriel presenta ley de vivienda', date: dayAgo(1), author: '',
     body: 'El asambleísta Jesse Gabriel (D-Encino) presentó una ley de vivienda en Sacramento, California, que busca acelerar la construcción de viviendas asequibles en el Valle de San Fernando. ' + 'La propuesta pasará al comité de la Asamblea el próximo mes. '.repeat(10) },
-  rep: { url: 'https://www.anotherpaper-test.com/news/sports-prison-walls', title: exist2.hl, date: dayAgo(1), author: 'Wire Desk',
-    body: 'Assemblymember Jesse Gabriel (D-Encino) and other California lawmakers visited a prison sports program. ' + 'Organized sports can reduce recidivism, advocates said at the Sacramento hearing. '.repeat(10) },
+  rep: { url: 'https://www.globenewswire.com/news-release/2026/10/30/sports-prison-walls.html', title: exist2.hl, date: dayAgo(1), author: 'Wire Desk',
+    body: 'SACRAMENTO, Calif., Oct. 30 -- The California State Assembly Democratic Caucus issued the following news release: Assemblymember Jesse Gabriel (D-Encino) and other California lawmakers visited a prison sports program. ' + 'Organized sports can reduce recidivism, advocates said at the Sacramento hearing. '.repeat(10) },
 };
 const html = a => `<html><head><title>${a.title}</title></head><body><article><h1>${a.title}</h1><p>${a.body}</p></article></body></html>`;
 const SEARCH_HITS = [
   { url: ARTICLES.new1.url, title: ARTICLES.new1.title, date: ARTICLES.new1.date, snippet: 'Assemblymember Jesse Gabriel (D-Encino) introduced a bill to speed clean air permits in California.', site_name: 'Valley Gazette' },
   { url: ARTICLES.new2.url, title: ARTICLES.new2.title, date: ARTICLES.new2.date, snippet: 'El asambleísta Jesse Gabriel (D-Encino) presentó una ley de vivienda en California.', site_name: 'Diario Test' },
   { url: exist1.link, title: exist1.hl, date: exist1.date, snippet: 'Jesse Gabriel delivers $2.5 million, California Assembly Budget Chair.', site_name: exist1.outlet },   // same link as a story in the file: must not come back as new
-  { url: ARTICLES.rep.url, title: ARTICLES.rep.title, date: ARTICLES.rep.date, snippet: 'Assemblymember Jesse Gabriel (D-Encino) California prison sports.', site_name: 'Another Paper' },
+  { url: ARTICLES.rep.url, title: ARTICLES.rep.title, date: ARTICLES.rep.date, snippet: 'Assemblymember Jesse Gabriel (D-Encino) California prison sports.', site_name: 'GlobeNewswire' },
 ];
 const CLASSIFY = {
-  [ARTICLES.new1.url]: { keep: true, why: 'News story on his bill.', date: ARTICLES.new1.date, outlet: 'Valley Gazette', pub: 'Valley Gazette', hl: ARTICLES.new1.title, topic: 'Energy / environment', media: 'Online news', role: 'Named in headline', tone: 'Positive', twhy: 'Quotes Gabriel on his own bill.', author: '', lang: '', hl_en: '', text_en: '' },
-  [ARTICLES.new2.url]: { keep: true, why: 'Spanish-language story on his housing bill.', date: ARTICLES.new2.date, outlet: 'Diario Test', pub: 'Diario Test', hl: ARTICLES.new2.title, topic: 'Housing / homelessness', media: 'Online news', role: 'Named in headline', tone: 'Neutral', twhy: 'Straight news.', author: 'María López; Juan Pérez', lang: 'Spanish', hl_en: 'Gabriel introduces housing bill', text_en: 'Assemblymember Jesse Gabriel introduced a housing bill in Sacramento.' },
-  [ARTICLES.rep.url]: { keep: true, why: 'Same story as one in the log.', date: ARTICLES.rep.date, outlet: 'Another Paper', pub: 'Another Paper', hl: ARTICLES.rep.title, topic: 'Other / roundup', media: 'Online news', role: 'Mentioned in story', tone: 'Neutral', twhy: '', author: '', lang: '', hl_en: '', text_en: '' },
+  [ARTICLES.new1.url]: { keep: true, why: 'News story on his bill.', date: ARTICLES.new1.date, outlet: 'Valley Gazette', pub: 'Valley Gazette', hl: ARTICLES.new1.title, topic: 'Energy / environment', media: 'Online news', role: 'Named in headline', tone: 'Positive', twhy: 'Quotes Gabriel on his own bill.', author: '', lang: '', hl_en: '', text_en: '', press_release: 'no', pr_why: 'a reporter’s own story' },
+  [ARTICLES.new2.url]: { keep: true, why: 'Spanish-language story on his housing bill.', date: ARTICLES.new2.date, outlet: 'Diario Test', pub: 'Diario Test', hl: ARTICLES.new2.title, topic: 'Housing / homelessness', media: 'Online news', role: 'Named in headline', tone: 'Neutral', twhy: 'Straight news.', author: 'María López; Juan Pérez', lang: 'Spanish', hl_en: 'Gabriel introduces housing bill', text_en: 'Assemblymember Jesse Gabriel introduced a housing bill in Sacramento.', press_release: 'yes', pr_why: 'an official statement printed word for word' },
+  [ARTICLES.rep.url]: { keep: true, why: 'Same story as one in the log.', date: ARTICLES.rep.date, outlet: 'GlobeNewswire', pub: 'GlobeNewswire', hl: ARTICLES.rep.title, topic: 'Other / roundup', media: 'Online news', role: 'Mentioned in story', tone: 'Neutral', twhy: '', author: '', lang: '', hl_en: '', text_en: '', press_release: 'no', pr_why: 'x' },
 };
 const CALLS = [];
 
@@ -220,6 +220,13 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   check('pages docs saved for the new stories and the reprint candidate', S.pages.length >= 3 && S.pages.some(([id]) => /^rp-/.test(id)), JSON.stringify(S.pages.map(p => p[0])));
   check('translation doc for the Spanish find (headline + summary)', S.translations.length === 1 && S.translations[0][1].hl === 'Gabriel introduces housing bill' && S.translations[0][1].lang === 'Spanish', JSON.stringify(S.translations));
   check('author doc for the find whose page had no byline (Claude split “A; B”)', S.authors.length === 1 && /María López; Juan Pérez/.test(S.authors[0][1].author), JSON.stringify(S.authors));
+  { /* PRJUDGE-v1: the decision per find, with its reason, on the proposed rows (web finds) */
+    const R = run.rows || [], by = u => R.find(r => r['Publisher link'] === u);
+    check('PRJUDGE web: the prompt was asked for press_release and the answers reached the rows', R.every(r => r._pr && /^(yes|no)$/.test(r._pr.v)), JSON.stringify(R.map(r => r._pr)));
+    check('PRJUDGE web: a newspaper story (Claude no, no release signals) is No: Press release blank', by(ARTICLES.new1.url)._pr.v === 'no' && !by(ARTICLES.new1.url)['Press release'], JSON.stringify(by(ARTICLES.new1.url)._pr));
+    check('PRJUDGE web: Claude says "official statement printed word for word" but the outlet is a community news outlet: No (coverage), the reason says so', by(ARTICLES.new2.url)._pr.v === 'no' && !by(ARTICLES.new2.url)['Press release'] && /not on a wire or an official site/.test(by(ARTICLES.new2.url)._pr.why), JSON.stringify(by(ARTICLES.new2.url)._pr));
+    check('PRJUDGE web: a copy on a release wire (GlobeNewswire) that opens “… issued the following news release” is Yes from its text even though Claude said no; the reason is in the Team note', by(ARTICLES.rep.url)['Press release'] === 'Yes' && by(ARTICLES.rep.url)._pr.by === 'text' && /issued the following news release/.test(by(ARTICLES.rep.url)['Team note']) && /on a release wire/.test(by(ARTICLES.rep.url)._pr.why), JSON.stringify([by(ARTICLES.rep.url)['Team note'], by(ARTICLES.rep.url)._pr]));
+  }
   const toneRows = (run.rows || []).filter(r => r['Original or reprint'] === 'Original').map(r => r['Tone']);
   check('tone rated for new finds (in the proposed rows)', toneRows.includes('Positive') && toneRows.includes('Neutral'), JSON.stringify(toneRows));
   await page.waitForFunction(() => !document.querySelector('#st').textContent.includes('save the last run to the sheet'), null, { timeout: 5000 }).catch(() => {});

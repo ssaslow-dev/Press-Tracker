@@ -75,7 +75,8 @@ function pqRowFill(row, it){
   row['Edition'] = printed ? 'Print' : ''; row['Format'] = printed ? 'Print' : (row['Format'] === 'Article' || !row['Format'] ? 'Article' : row['Format']);
   row['Headline'] = p.headline; row['Date'] = p.date; row['Year'] = p.date ? +p.date.slice(0, 4) : '';
   if (isRep){ row['Author / byline'] = p.author || ''; row['Tracker story code'] = ''; }
-  row['Team note'] = ['ProQuest PDF ' + it.batch.name + ' (' + TODAY + ')', (p.flags || []).join('; '), p.outlet_note || '', it.linkNote ? 'publisher link not found: ' + it.linkNote : ''].filter(Boolean).join('; ');
+  if (it.pr){ row._pr = { v: it.pr.v, why: it.pr.why, by: it.pr.by }; if (it.pr.v === 'yes') row['Press release'] = 'Yes'; }   // PRJUDGE-v1
+  row['Team note'] = [it.pr && it.pr.v === 'yes' ? 'press release: ' + VS(it.pr.why, 220) : '', 'ProQuest PDF ' + it.batch.name + ' (' + TODAY + ')', (p.flags || []).join('; '), p.outlet_note || '', it.linkNote ? 'publisher link not found: ' + it.linkNote : ''].filter(Boolean).join('; ');
   return row;
 }
 NBSRC.pq = { id: 'pq', name: 'ProQuest', idName: 'ProQuest document id', foundBy: 'proquest-pdf', srcName: 'ProQuest, full text', preface: PQ_PREFACE, dateSrc: 'proquest', print: pqPrint,

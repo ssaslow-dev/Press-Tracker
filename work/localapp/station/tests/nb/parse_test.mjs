@@ -47,4 +47,45 @@ for (const name of ['batch_A', 'batch_B', 'batch_19', 'batch_1', 'batch_7']) {
   ok('print-page citation: no author, date, proxy host, image docref', q.author === '' && q.date === '2026-09-20' && /castatelib/.test(q.host) && /^image\/v2%3A/.test(q.docref), JSON.stringify(q));
   ok('docref hyphen restored after the julian date', NB.docrefFix('image/v2%3AAAAA%40AWNB-BBBB%402461304CCCCCCCCCCCCCCCC%404-D') .includes('%402461304-CCCCCCCCCCCCCCCC'), NB.docrefFix('image/v2%3AAAAA%40AWNB-BBBB%402461304CCCCCCCCCCCCCCCC%404-D'));
 }
+
+// ---- the REAL layout (banner, labelled header, ALL-CAPS headline, APA citation without author, openurl link wrapped at a fixed width, even inside a word) ----
+{
+  const er = JSON.parse(fs.readFileSync(path.join(dir, 'expected_real.json'), 'utf8'));
+  for (const name of ['real_pages', 'real_mid']) {
+    const pages = await readBatch(path.join(dir, name + '.pdf')), r = NB.splitBatch(pages), e = er[name];
+    ok(name + ': ' + e.items.length + ' stories found', r.stories.length === e.items.length, r.stories.length);
+    ok(name + ': nothing left over', r.tail.length === 0 && r.junk.length === 0, JSON.stringify([r.tail, r.junk]));
+    const ids = new Set(), keys = new Set();
+    r.stories.forEach((s, i) => {
+      const x = e.items[i], p = NB.parseStory(s), ctx = name + ' ' + x.key;
+      ok(ctx + ': page span ' + x.start_page + '-' + x.end_page, s.firstPage === x.start_page && s.lastPage === x.end_page, s.firstPage + '-' + s.lastPage);
+      ok(ctx + ': headline (all lines, whole words)', p.headline === x.headline, JSON.stringify(p.headline));
+      ok(ctx + ': date', p.date === x.date, p.date);
+      ok(ctx + ': source', p.outlet === x.source, p.outlet);
+      ok(ctx + ': section', p.section === x.section, p.section);
+      if (x.author) ok(ctx + ': author', p.author === x.author, p.author);
+      if (!x.printpage) ok(ctx + ': word count', p.words_nb === x.words, p.words_nb);
+      if (x.printpage) ok(ctx + ': printed page 18 and print_page kind', p.page === x.page && p.kind === 'print_page', p.page + ' ' + p.kind);
+      ok(ctx + ': docref from the openurl link (decoded twice)', p.docref === x.docref, p.docref + ' vs ' + x.docref);
+      ok(ctx + ': canonical sheet link', NB.canonLink(p.docref) === 'https://infoweb.newsbank.com/apps/news/document-view?p=WORLDNEWS&docref=' + x.docref, NB.canonLink(p.docref));
+      ok(ctx + ': no parse flags', p.flags.length === 0, p.flags.join('; '));
+      ok(ctx + ': the citation has the headline in whole words and "NewsBank"', p.citation.includes(x.headline) && /Available from NewsBank: https:\/\/infoweb\.newsbank\.com\/apps\/news\/openurl\?/.test(p.citation) && !/\w \w{1,2}\.? Available|DANGERO US/.test(p.citation), p.citation.slice(0, 160));
+      ok(ctx + ': the banner is not in the text', !/Access World News/.test(p.text) && !/Access World News/.test(p.headline), p.text.slice(0, 60));
+      if (!x.printpage) ok(ctx + ': body starts at the body', p.text.length > 100 && !/^Date:|^Source:/.test(p.text), p.text.slice(0, 60));
+      ok(ctx + ': unique key and docref', !ids.has(p.docref_key) && !keys.has(s.index), p.docref_key); ids.add(p.docref_key); keys.add(s.index);
+      if (name === 'real_pages') ok(ctx + ': page-aligned: no bands', s.bands.every(b => b.full) && !s.sharedFirst && !s.sharedLast, JSON.stringify(s.bands));
+    });
+    if (name === 'real_mid') ok(name + ': stories that share a page get a band, others none', r.stories[0].bands.some(b => !b.full) && r.stories[3].bands.every(b => b.full), JSON.stringify(r.stories.map(s => s.bands.filter(b => !b.full).length)));
+  }
+  // the citation's wrap, in words: lines cut in the middle of a word join without a space; the header puts back what the join cannot know
+  ok('fixLike restores a headline from a citation cut inside words', NB.fixLike('SAN DIEGO. (2026, October 6). US Fed News (USA). Available from New sBank: x', 'Available from NewsBank').includes('Available from NewsBank: x'), '');
+  ok('fixLike: DANGERO US -> DANGEROUS', NB.fixLike("TRUMP'S DANGERO US REMARKS. (2026", "TRUMP'S DANGEROUS REMARKS") === "TRUMP'S DANGEROUS REMARKS. (2026", '');
+  const q = NB.parseCitation('TWO NEW LAWSUITS REIGNITE THE DEBATE. (2026, October 6). CE Noticias Financieras: English. Available from NewsBank: https://infoweb.newsbank.com/apps/news/openurl?ctx_ver=z39.88-2004&rft_id=info%3Asid/infoweb.newsbank.co m&svc_dat=WORLDNEWS&rft_dat=document_id%3Anews%252F1AB14299E2B1ED70.');
+  ok('citation without an author: headline first, outlet after the date', q.author === '' && q.cit_title === 'TWO NEW LAWSUITS REIGNITE THE DEBATE' && q.cit_outlet === 'CE Noticias Financieras: English' && q.date === '2026-10-06' && q.docref === 'news/1AB14299E2B1ED70', JSON.stringify(q));
+  const q2 = NB.parseCitation('Doe, J. (2026, October 10). Budget chair says aid will move. Valley Courier Test (CA). Available from NewsBank: https://infoweb.newsbank.com/apps/news/openurl?x=1&rft_dat=document_id%3Anews%252F1AB14299E2B1ED70.');
+  ok('citation with an author', q2.has_author && q2.author === 'Doe, J' && q2.cit_title === '', JSON.stringify(q2));
+  // no readable header and no docref: the parser says so (the page then calls the story "needs a look", never new)
+  const bare = NB.parseStory({ lines: [{ p: 1, y: 700, h: 10, text: 'some words with no header at all' }], citation: 'nothing useful here' });
+  ok('no header and no link: flagged, no docref', bare.how === 'citation' && !bare.docref && bare.flags.length >= 2, JSON.stringify(bare.flags));
+}
 console.log(fail ? fail + ' FAILED' : 'all passed'); process.exit(fail ? 1 : 0);

@@ -64,4 +64,8 @@ check(str(nrows) + ' rows added, all Data Source Newsbank with a Saved Copy, Fil
 check('Date source is NewsBank (print edition for a print record)', all(r[ix['Date source']] in ('NewsBank', 'print edition') for r in new), {r[ix['Date source']] for r in new})
 check('each file named in File name exists in the pages folder under its year', all((out / 'pages' / str(r[ix['Date']])[:4] / str(r[ix['File name']])).is_file() for r in new))
 check('Mentions "Gabriel", Mention depth and Quoted come from the story text', all(r[ix['Mentions "Gabriel" in text']] in ('Yes', 'No') for r in new))
+# PRJUDGE-v1: a row the station judged a pure press release (Team note "press release: <reason>", Press release = Yes in the run doc) is Press release = Yes in the sheet
+pr = [r for r in new if 'press release:' in str(r[ix['Team note']])]
+check('PRJUDGE: the story the station judged a press release (' + str(len(pr)) + ') is Press release = Yes in the sheet, with the reason in its Team note', len(pr) >= 1 and all(r[ix['Press release']] == 'Yes' for r in pr), [(r[ix['Headline']], r[ix['Press release']]) for r in pr])
+check('PRJUDGE: the other new rows are not marked (fill blanks: the station only says Yes)', all(r[ix['Press release']] in (None, '', 'No') for r in new if r not in pr), [(r[ix['Headline']], r[ix['Press release']]) for r in new if r not in pr and r[ix['Press release']] not in (None, '', 'No')][:3])
 print('all passed' if not bad else f'{bad} FAILED'); sys.exit(1 if bad else 0)

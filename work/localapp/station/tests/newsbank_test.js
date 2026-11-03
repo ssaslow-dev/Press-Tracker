@@ -50,6 +50,7 @@ const INIT = ({ today, hl }) => {
     if (/^These items come from NewsBank/.test(prompt)) {
       return [...prompt.matchAll(/=== ITEM (\d+)\nURL: (\S+)\nPage title: (.*)\n/g)].map(m => {
         const t = m[3], r = { n: +m[1], keep: true, why: 'NewsBank story naming him.', date: '', outlet: '', pub: '', hl: t, topic: 'State budget', media: 'Newspaper', role: 'Mentioned in story', tone: 'Neutral', twhy: 'Straight news.', author: '', lang: '', hl_en: '', text_en: '' };
+        if (/^Filler story 15/.test(t)) return Object.assign(r, { press_release: 'yes', pr_why: 'the city’s own release posted in full' });   // PRJUDGE-v1
         if (/^Filler story 20/.test(t)) return Object.assign(r, { keep: false, why: 'A community calendar item, not press.' });
         if (/加布里埃尔/.test(t)) return Object.assign(r, { lang: 'Chinese', hl_en: 'Assemblymember Gabriel pushes California budget bill', text_en: 'He said the budget committee will review housing and wildfire spending.' });
         if (/^Gabriel presenta/.test(t)) return Object.assign(r, { lang: 'Spanish', hl_en: '' });
