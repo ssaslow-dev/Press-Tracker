@@ -155,6 +155,20 @@ def _diff_lines(res) -> list:
     return lines
 
 
+def names_lines(res) -> list:
+    """LIBFILES-v1 / STATIONNAMES: what the save's checks of the station's file names found (renames are listed, never silent)"""
+    nm = res.get('names') or {}
+    if not nm.get('present') or nm.get('error'):
+        return ['The station\'s file names could not be checked (' + str(nm.get('error'))[:120] + ')'] if nm.get('error') else []
+    out = [x for x in (nm.get('lines') or []) if x]
+    ns = nm.get('not_saved') or []
+    for x in ns[:5]:
+        out.append(f"Not saved to the library: {str(x.get('file') or '').rsplit('/', 1)[-1]} ({x.get('why')})")
+    if len(ns) > 5:
+        out.append(f'... and {len(ns) - 5} more files not saved')
+    return out
+
+
 def preview_result(pv, uid) -> dict:
     code = pv.get('exit_code')
     ref = pv.get('refusal')
@@ -165,7 +179,7 @@ def preview_result(pv, uid) -> dict:
             'Everything in it is already in the workbook, or it carries nothing to write.'], 'needs_person': [], 'token': None, 'stage': 'previewed'}
     if code != 0 or not pv.get('diff'):
         return {'ok': False, 'update_id': uid, 'line': 'The preview did not finish: ' + str(pv.get('line') or pv.get('stderr') or 'no answer')[:300]}
-    lines = _diff_lines(pv)
+    lines = _diff_lines(pv) + names_lines(pv)
     np_, total = needs_person(pv)
     warns = list(pv.get('warnings') or [])
     ph = (pv.get('photos') or {}).get('note')
@@ -185,7 +199,7 @@ def save_result(res) -> dict:
         if code == 3:
             out['lines'] = ['Nothing new to write.']
         return out
-    lines = _diff_lines(res)
+    lines = _diff_lines(res) + names_lines(res)
     wb = res.get('workbook') or {}
     if wb.get('backup'):
         lines.insert(0, f'Backup of the old workbook: {wb["backup"]}')

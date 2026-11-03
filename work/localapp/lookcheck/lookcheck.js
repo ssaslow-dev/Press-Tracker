@@ -158,6 +158,27 @@ sc('saved_copy_old_wide', '#clips', async p => { await openStory(p, STORY_OLD); 
 sc('saved_copy_old_mid', '#clips', async p => { await openStory(p, STORY_OLD); await p.evaluate(() => { const s = document.querySelector('#sheet'); s.scrollTop = 700; }); await sleep(700); }, { shot: 'view' });
 sc('saved_copy_old_end', '#clips', async p => { await openStory(p, STORY_OLD); await p.evaluate(() => { const s = document.querySelector('#sheet'); s.scrollTop = s.scrollHeight; }); await sleep(700); }, { shot: 'view' });
 sc('saved_copy_data_end', '#clips', async p => { await openStory(p, STORY_DATA); await p.evaluate(() => { const s = document.querySelector('#sheet'); s.scrollTop = s.scrollHeight; }); await sleep(700); }, { shot: 'view' });
+// v64 additions (RELXLOOK-v1, YTBROADCAST-v1, RELRECS-v1)
+const STORY_YT = process.env.LC_STORY_YT || 's04941';          // a station clip: Broadcast segment with an A/V YouTube link
+async function openReleaseWith(p, needles) {                   // walks the release list until a page shows every needle (same walk on both targets)
+  const n = await p.locator('.tt-open').count();
+  for (let i = 0; i < Math.min(n, 120); i++) {
+    await p.locator('.tt-open').nth(i).click(); await sleep(700);
+    const txt = await p.evaluate(() => document.body.innerText);
+    if (needles.every(x => txt.includes(x))) return i;
+    await p.evaluate(() => history.back()); await sleep(500);
+  }
+  throw new Error('no release page with ' + needles.join(' + '));
+}
+sc('release_page_later', '#press-releases', async p => { await openReleaseWith(p, ['Later coverage', 'Possibly related']); await sleep(1200); });
+sc('release_page_pick', '#press-releases', async p => { await openReleaseWith(p, ['Picked up']); await sleep(1200); });
+sc('story_yt_clip', '#clips', async p => { await openStory(p, STORY_YT); const t = await p.evaluate(() => document.querySelector('#sheet').innerText); if (!/YouTube \(station clip\)/.test(t)) throw new Error('no "YouTube (station clip)" link in the story sheet'); });
+const trOpen = async (p, lab) => { const s = p.locator('#view-tb details > summary').filter({ hasText: lab }).first(); if (await s.count()) { await s.scrollIntoViewIfNeeded(); await s.click(); await sleep(400); } };
+sc('releases_facets', '#press-releases', async p => { await trOpen(p, /^\s*Outlet, related stories/); await trOpen(p, /^\s*Pickup/); await trOpen(p, /^\s*Reporter, related stories/); await sleep(500); });
+sc('releases_quiet', '#press-releases', async p => {
+  await trOpen(p, /^\s*Pickup/);
+  const lab = p.locator('#view-tb label', { hasText: 'Nothing after 30 days' }).first(); if (!(await lab.count())) throw new Error('no Pickup choice'); await lab.click(); await sleep(1200);
+});
 sc('manage', '#clips', async p => { await p.click('#updBtn'); await sleep(1500); });
 
 // ---------------------------------------------------------------- the dump
