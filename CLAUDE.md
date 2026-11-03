@@ -89,6 +89,7 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 11. **Government computer** (GOVIT-v1): strict IT. On the PC: no installs, admin, registry, services or network connections; 127.0.0.1 only; files only in the app folder; signed official Python and hash-pinned packages; readable source. Get IT's OK first (`work/localapp/IT_NOTE.md`).
 12. **Several PCs** (MULTIPC-v2, replaces v1): each person keeps a local copy (running from the shared drive failed). One keeper saves; the keeper's tracker makes a "refresh file" the others drag in to match. Notes and views stay personal. Reader copies hide the save buttons.
 13. **Photos** (PHOTOLINK-v1): new saved copies link to the news sites' photos (Edge loads them when a copy is opened); existing copies keep embedded photos. The one exception to "the PC never goes online"; IT's note says so.
+14. **Library files** (LIBFILES-v1): everything brought in lands in the keeper's PC library in the existing layout (`<year>/` by story date; `_original_html/<year>/`, `_original_pdf/<year>/`, `Press releases/<year>/`), add-only; readers get them via refresh files.
 
 ## Open decisions for Sammy (don't assume answers)
 
