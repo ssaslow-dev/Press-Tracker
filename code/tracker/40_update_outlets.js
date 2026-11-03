@@ -97,7 +97,7 @@ function covBlock(id){ const el = typeof document !== 'undefined' && document.ge
 // as in build_data.py: scheme, www., fragment, query and trailing slash dropped
 // links that stop naming one article once the query is dropped (NewsBank's document-view, Google searches, library proxies) never match
 const COV_SHARED = /^google\.[a-z.]+\/search|^[^/]+$/;
-const covNormU = u => { let s = String(u || '').trim().toLowerCase(); s = canonMirror(s.replace(/^[a-z][a-z0-9+.-]*:\/\//, '').replace(/^www\./, '').split('#')[0]); const host = s.split('/')[0]; if (!/newsbank|oclc|google\.|proquest|(^|\.)youtube\.com$/.test(host)) s = s.split('?')[0]; return s.replace(/\/+$/, ''); };   /* YTLINK-v1: a YouTube watch link is identified by ?v=ID */
+const covNormU = u => { let s = String(u || '').trim().toLowerCase(); s = canonMirror(s.replace(/^[a-z][a-z0-9+.-]*:\/\//, '').replace(/^www\./, '').split('#')[0]); const host = s.split('/')[0]; if (!/newsbank|oclc|google\.|proquest|(^|\.)youtube\.com$|(^|\.)iranshahrnewsagency\.com$|(^|\.)chosundaily\.com$/.test(host)) s = s.split('?')[0]; return s.replace(/\/+$/, ''); };   /* YTLINK-v1: a YouTube watch link is identified by ?v=ID */
 // "Sacramento Bee, The", "The Sacramento Bee" and "The Sacramento Bee (CalMatters)" are one outlet
 const covOutlet = s => String(s || '').toLowerCase().replace(/\s*\([^)]*\)\s*$/, '').replace(/,\s*the$/, '').replace(/^the\s+/, '').replace(/[^a-z0-9]+/g, '');
 /* REQ-14 (UPDFIX-v1): a headline's first segment when split at " - ", " | ", " — ", " – " (normalized; only when it is REPRINT_MIN characters or more) */

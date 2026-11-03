@@ -27,6 +27,13 @@ for (const manual of [true, false]){
   ok(yt.length === 2 && yt.every(x => x.include_domains === 'youtube.com' && x.yt && x.keepDate) && yt[0].query === '"Jesse Gabriel"' && yt[1].query === '"Assemblymember Gabriel" OR "Assemblyman Gabriel"',
     `plan (${manual ? 'manual Since' : 'default'}): two YouTube searches, include_domains youtube.com, date filter (plan size ${P.length})`);
 }
+// LANGCAP-v1: the four new channels resolve (by name, trimmed), the Cantonese key with a trailing space too
+{ const E = (n, u) => X.ytChannelEntry(n, u);
+  ok(E('Noticias Telemundo').outlet === 'Noticias Telemundo' && E('CA Today 今日加州').outlet === 'NTD Television' && E('Sky Link TV Mandarin News 天下衛視 國語新聞頻道').outlet === 'Sky Link TV' && E('KBS News').outlet === 'KBS News' && E('KBS News').medium === 'TV',
+    'LANGCAP: Noticias Telemundo, CA Today, Sky Link Mandarin, KBS News map to their outlets');
+  ok(E('Sky Link TV Cantonese News 天下衛視 粵語新聞頻道 ').outlet === 'Sky Link TV' && E('  KBS News  ').outlet === 'KBS News' && E('Sky Link TV Mandarin News 天下衛視 國語新聞頻道 ').outlet === 'Sky Link TV', 'LANGCAP: names match after trimming whitespace (trailing space in the oEmbed name)');
+  ok(!E('VOA 한국어') && !E('邓洪说法') && !E('Telemundo eñe'), 'LANGCAP: VOA Korean and the lawyer channel are not mapped');
+  ok(E('x', 'https://www.youtube.com/@catoday4157').outlet === 'NTD Television', 'LANGCAP: CA Today also resolves by @handle'); }
 // 2. video ids
 ok(X.ytId('https://www.youtube.com/watch?v=P6zsjIepWaQ&t=5') === 'P6zsjIepWaQ' && X.ytId('https://www.youtube.com/shorts/abcdefghijk') === 'abcdefghijk' && X.ytId('https://youtu.be/P6zsjIepWaQ') === 'P6zsjIepWaQ'
   && X.ytId('https://www.youtube.com/@foxla') === '' && X.ytId('https://www.youtube.com/playlist?list=PL1') === '', 'video ids: watch, shorts, youtu.be; channels and playlists have none');

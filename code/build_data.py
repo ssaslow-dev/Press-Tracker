@@ -89,7 +89,7 @@ def norm_url(u):
     host = u.split('/')[0]
     # NewsBank / proxy / Google links identify the article only in the query string: keep it
     # YTLINK-v1: a YouTube watch link identifies the video only in its query string (?v=ID): keep it
-    if not re.search(r'newsbank|oclc|google\.|proquest|(^|\.)youtube\.com$', host): u = u.split('?')[0]
+    if not re.search(r'newsbank|oclc|google\.|proquest|(^|\.)youtube\.com$|(^|\.)iranshahrnewsagency\.com$|(^|\.)chosundaily\.com$', host): u = u.split('?')[0]
     return u.rstrip('/')
 def disp(o):  # NewsBank style "Sacramento Bee, The" -> "The Sacramento Bee" for display only
     o = s(o); m = re.match(r'^(.*), (The|La|El|Los|Las|Le|Les|Die|Der|Il)$', o)

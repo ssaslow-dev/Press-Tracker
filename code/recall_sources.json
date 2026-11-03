@@ -85,7 +85,7 @@
    },
    {
     "label": "Podcast episode pages",
-    "note": "PODSITE-v1 (Sammy 2026-11-02): web search of podcast episode pages, which carry title + description and are indexed; complements the iTunes API pass. A find's outlet is the show, not the platform (SHOWNET-v1); fix at save.",
+    "note": "PODSITE-v1 (Sammy 2026-11-02): web search of podcast episode pages, which carry title + description and are indexed; complements the iTunes API pass. A find's outlet is the show, not the platform (SHOWNET-v1); fix at save. DATEFILTER-v1: searched WITHOUT after_date (Apple Podcasts pages carry no date in the index, so any date filter returned 0 results, tested 2026-11-03); results older than the since date are dropped afterwards by their own date, undated ones kept for the normal checks.",
     "sites": [
      {
       "outlet": "Apple Podcasts (show named on page)",
@@ -98,6 +98,66 @@
      {
       "outlet": "iHeart podcasts (show named on page)",
       "site": "iheart.com/podcast"
+     }
+    ],
+    "nodate": true
+   },
+   {
+    "label": "Chinese-language press",
+    "note": "LANGCAP-v1 (Sammy 2026-11-03): his name in script on the two LA Chinese dailies; tested with after_date (3 results in a 2-month window, 2 of them missing from the undated search).",
+    "query": "\"Jesse Gabriel\" OR 加布里埃爾 OR 加布里埃尔 ({sites})",
+    "sites": [
+     {
+      "outlet": "World Journal",
+      "site": "worldjournal.com"
+     },
+     {
+      "outlet": "Sing Tao Daily (USA)",
+      "site": "singtaousa.com"
+     }
+    ]
+   },
+   {
+    "label": "Korean-language press",
+    "note": "LANGCAP-v1. Quoted Hangul name keeps the football/church 'Gabriel' noise out.",
+    "query": "\"제시 가브리엘\" ({sites})",
+    "sites": [
+     {
+      "outlet": "Korea Daily",
+      "site": "koreadaily.com"
+     },
+     {
+      "outlet": "Korea Times",
+      "site": "koreatimes.com"
+     }
+    ]
+   },
+   {
+    "label": "Hebrew-language press",
+    "note": "LANGCAP-v1. Hebrew News (hebrewnews.com) is the richest source.",
+    "query": "\"ג'סי גבריאל\" ({sites})",
+    "sites": [
+     {
+      "outlet": "Hebrew News",
+      "site": "hebrewnews.com"
+     }
+    ]
+   },
+   {
+    "label": "Armenian-American press",
+    "note": "LANGCAP-v1. English name; Asbarez, Massis Post, Armenian Mirror-Spectator.",
+    "sites": [
+     {
+      "outlet": "Asbarez",
+      "site": "asbarez.com"
+     },
+     {
+      "outlet": "Massis Post",
+      "site": "massispost.com"
+     },
+     {
+      "outlet": "Armenian Mirror-Spectator",
+      "site": "mirrorspectator.com"
      }
     ]
    }
@@ -139,26 +199,36 @@
   "name_regex": "\\bjesse\\s+gabriel\\b|\\bassembly\\s?(?:member|man|woman)\\s+(?:jesse\\s+)?gabriel\\b|\\bbudget\\s+chair\\s+(?:jesse\\s+)?gabriel\\b|\\basm\\.?\\s+(?:jesse\\s+)?gabriel\\b"
  },
  "ethnic": {
-  "note": "California ethnic-media outlets (ems_ca_outlets.json, from the Ethnic Media Services directory) not already on record: OR-grouped site: searches with after_date, Southern California first, at most max_calls searches a run. A group of Korean / Chinese / Armenian / Russian / Farsi outlets also searches his name in that script.",
+  "note": "California ethnic-media outlets (ems_ca_outlets.json, from the Ethnic Media Services directory) not already on record: OR-grouped site: searches with after_date, Southern California first, at most max_calls searches a run. A group of Korean / Chinese / Armenian / Russian / Farsi outlets also searches his name in that script. LANGCAP-v1 (2026-11-03): spellings from saved copies (work/lang_capture/SPELLINGS.md); Hebrew has no EMS outlets, so its entry only takes effect if a Hebrew group is added.",
   "or_size": 8,
   "max_calls": 28,
   "native": {
    "Korean": [
     "\"제시 가브리엘\"",
-    "\"개브리엘\" 의원"
+    "\"가브리엘\" 하원의원",
+    "\"가브리엘\" 주의원"
    ],
    "Chinese": [
     "\"加布里埃尔\"",
-    "\"加布里爾\""
+    "\"加布里爾\"",
+    "\"加布里埃爾\"",
+    "\"加布里尔\"",
+    "\"杰西·加布里埃尔\"",
+    "\"傑西·加布里埃爾\""
    ],
    "Armenian": [
-    "\"Ջեսի Գաբրիել\""
+    "\"Ջեսի Գաբրիել\"",
+    "\"Ճեսի Կապրիէլ\""
    ],
    "Russian": [
     "\"Джесси Габриэль\""
    ],
    "Iranian": [
     "\"جسی گابریل\""
+   ],
+   "Hebrew": [
+    "\"ג'סי גבריאל\"",
+    "\"ג׳סי גבריאל\""
    ]
   }
  },
@@ -166,7 +236,7 @@
   "note": "The office and caucus listing pages carry <time datetime=...Z> with a time of day (the page's created stamp, not an e-mail send time). Captured into the run doc, release_texts.json and the tab's Note. A midnight-UTC stamp (T00:00:00Z) is a date only and is ignored."
  },
  "youtube": {
-  "note": "YTSTATION-v1 (Sammy 2026-11-02): station YouTube channels. Two TinyFish searches per run (include_domains youtube.com, after_date = the run's since date). A video is kept only when its channel (as shown on the video page) is a key of `channels`; every other uploader is skipped (NOBLOGS-v1: judge by outlet; a TV or radio station's own clips stay). Add a station by adding its channel name here; `outlet` should be the tracker's existing Outlet name. The channel comes from YouTube's oEmbed endpoint (author_name, author_url) fetched through fetch_content; an entry may list `handles` (the @name in author_url, without @). Handles are matched case-insensitively and only listed where known; the name match is tried first.",
+  "note": "YTSTATION-v1 (Sammy 2026-11-02): station YouTube channels. Two TinyFish searches per run (include_domains youtube.com, after_date = the run's since date). A video is kept only when its channel (as shown on the video page) is a key of `channels`; every other uploader is skipped (NOBLOGS-v1: judge by outlet; a TV or radio station's own clips stay). Add a station by adding its channel name here; `outlet` should be the tracker's existing Outlet name. The channel comes from YouTube's oEmbed endpoint (author_name, author_url) fetched through fetch_content; an entry may list `handles` (the @name in author_url, without @). Handles are matched case-insensitively and only listed where known; the name match is tried first. LANGCAP-v1 (2026-11-03): + Noticias Telemundo, CA Today (NTD Television), Sky Link TV Mandarin, KBS News; names are matched after trimming (the Sky Link Cantonese oEmbed name has a trailing space). VOA Korean left out. DATEFILTER-v1: the YouTube searches keep the date filter (tested: it narrows to the window and does not suppress).",
   "queries": [
    "\"Jesse Gabriel\"",
    "\"Assemblymember Gabriel\" OR \"Assemblyman Gabriel\""
@@ -394,6 +464,42 @@
     "station": "",
     "network": "Sky Link TV",
     "medium": "TV"
+   },
+   "Noticias Telemundo": {
+    "outlet": "Noticias Telemundo",
+    "station": "",
+    "network": "Telemundo",
+    "medium": "TV",
+    "handles": [
+     "noticias"
+    ]
+   },
+   "CA Today 今日加州": {
+    "outlet": "NTD Television",
+    "station": "",
+    "network": "NTD",
+    "medium": "TV",
+    "handles": [
+     "catoday4157"
+    ]
+   },
+   "Sky Link TV Mandarin News 天下衛視 國語新聞頻道": {
+    "outlet": "Sky Link TV",
+    "station": "",
+    "network": "Sky Link TV",
+    "medium": "TV",
+    "handles": [
+     "SkyLinkTVnewsM"
+    ]
+   },
+   "KBS News": {
+    "outlet": "KBS News",
+    "station": "",
+    "network": "KBS",
+    "medium": "TV",
+    "handles": [
+     "newskbs"
+    ]
    }
   }
  }

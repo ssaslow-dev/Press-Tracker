@@ -19,7 +19,7 @@ const ctx = { D, TODAY: '2026-11-02', LAST: '2026-10-25', U: { since: '2026-10-2
   $: () => STUB, document, window: STUB, VS: (s, n) => String(s || '').slice(0, n), fmt: String, pl: (n, w) => n + ' ' + w, STOP_CODES: new Set() };
 vm.createContext(ctx);
 let fails = 0, n = 0; const ok = (c, m) => { n++; console.log((c ? 'PASS ' : 'FAIL ') + m); if (!c) fails++; };
-try { vm.runInContext(src + '\n;globalThis.__x = { tfPlan, gnewsParse, podcastParse, relStamp, tvQuery, tvCap, tvCaptions, podcastSearch, RC_DATA, searchPlan, tfDedupe, U };', ctx); }
+try { vm.runInContext(src + '\n;globalThis.__x = { tfInput, tfPlan, gnewsParse, podcastParse, relStamp, tvQuery, tvCap, tvCaptions, podcastSearch, RC_DATA, searchPlan, tfDedupe, U };', ctx); }
 catch(e){ console.log('FAIL load: ' + e.message); process.exit(1); }
 const X = ctx.__x; X.U.since = '2026-10-26'; 
 
@@ -41,19 +41,37 @@ ok(X.gnewsParse('[Some headline about Gabriel - Outlet](https://news.google.com/
 const needed = ['ktla.com', 'abc7.com', 'nbclosangeles.com', 'cbsnews.com', 'foxla.com', 'spectrumnews1.com', 'audacy.com', 'kfiam640.iheart.com', 'laist.com', 'telemundo52.com', 'univision.com',
   'valleynewsgroup.com', 'vannuysnewspress.com', 'sanfernandosun.com', 'dailynews.com', 'ivpressonline.com'];
 for (const manual of [true, false]){
-  X.U.sinceManual = manual ? '2026-10-26' : ''; const P = X.tfPlan(), pr = P.filter(x => /^Priority outlets/.test(x.label));
+  X.U.sinceManual = manual ? '2026-10-26' : ''; const P = X.tfPlan(), pr = P.filter(x => /^Priority outlets, (LA TV|Valley|Podcast)/.test(x.label));
   const hs = new Set(pr.flatMap(x => x.hosts));
-  ok(needed.every(h => hs.has(h)) && pr.every(x => x.keepDate && x.kind === 'fresh' && x.hosts.length <= 4 && x.query.split(' OR ').length === x.hosts.length), `priority outlets in the plan (${manual ? 'manual Since' : 'default'}): ${pr.length} OR-grouped searches with the date filter, all ${needed.length} hosts`);
+  ok(needed.every(h => hs.has(h)) && pr.every(x => x.keepDate && x.kind === 'fresh' && x.hosts.length <= 4 && x.query.split(' OR ').length === x.hosts.length && (x.noDate ? /Podcast/.test(x.label) : true)), `priority outlets in the plan (${manual ? 'manual Since' : 'default'}): ${pr.length} OR-grouped searches with the date filter, all ${needed.length} hosts`);
 }
 X.U.sinceManual = '2026-10-26';
-const P = X.tfPlan(), pr = P.filter(x => /^Priority outlets/.test(x.label));
+const P = X.tfPlan(), prAll = P.filter(x => /^Priority outlets/.test(x.label)), pr = prAll.filter(x => /^Priority outlets, (LA TV|Valley|Podcast)/.test(x.label));
 ok(pr.length === 6 && /site:cbsnews\.com\/losangeles/.test(pr.map(x => x.query).join(' ')), 'priority list = 12 LA TV/radio + 5 Valley sites + 3 podcast pages (PODSITE-v1) -> 6 searches; CBS LA keeps its path');
-ok(X.tfDedupe(P).plan.filter(x => /^Priority outlets/.test(x.label)).length === 6, 'dedupe keeps the priority searches');
+ok(prAll.length === 10 && X.tfDedupe(P).plan.filter(x => /^Priority outlets/.test(x.label)).length === 10, 'dedupe keeps all 10 priority searches (6 English + 4 language-press, LANGCAP-v1)');
+// LANGCAP-v1: language-press searches (query shapes tested live 2026-11-03, work/lang_capture/DATECHECK.md)
+const lp = lab => prAll.filter(x => x.label.indexOf('Priority outlets, ' + lab) === 0);
+ok(lp('Chinese').length === 1 && lp('Chinese')[0].query === '"Jesse Gabriel" OR 加布里埃爾 OR 加布里埃尔 (site:worldjournal.com OR site:singtaousa.com)' && lp('Chinese')[0].keepDate && !lp('Chinese')[0].noDate, 'LANGCAP: Chinese press search (World Journal, Sing Tao), date filter kept');
+ok(lp('Korean').length === 1 && lp('Korean')[0].query === '"제시 가브리엘" (site:koreadaily.com OR site:koreatimes.com)', 'LANGCAP: Korean press search (Korea Daily, Korea Times)');
+ok(lp('Hebrew').length === 1 && lp('Hebrew')[0].query === '"ג\'סי גבריאל" (site:hebrewnews.com)', 'LANGCAP: Hebrew press search (hebrewnews.com)');
+ok(lp('Armenian').length === 1 && lp('Armenian')[0].query === '"Jesse Gabriel" (site:asbarez.com OR site:massispost.com OR site:mirrorspectator.com)' && lp('Armenian')[0].hosts.length === 3, 'LANGCAP: Armenian-American press search (Asbarez, Massis Post, Mirror-Spectator)');
+// DATEFILTER-v1: what is actually sent to TinyFish
+X.U.since = '2026-10-26';
+{ const podQ = prAll.find(x => /Podcast/.test(x.label)), news = prAll.find(x => /^Priority outlets, LA TV/.test(x.label)), zh = lp('Chinese')[0];
+  for (const manual of ['', '2026-10-26']){ X.U.sinceManual = manual;
+    ok(podQ.noDate === true && !('after_date' in X.tfInput(podQ)) && !('noDate' in X.tfInput(podQ)), `DATEFILTER: podcast-page search is sent with no after_date (${manual ? 'manual Since' : 'default'})`);
+    ok(X.tfInput(news).after_date === '2026-10-26' && X.tfInput(zh).after_date === '2026-10-26' && !X.tfInput(news).hosts && !X.tfInput(news).keepDate, `DATEFILTER: LA TV and Chinese-press searches keep after_date (${manual ? 'manual Since' : 'default'})`); }
+  const yq = X.tfPlan().filter(x => x.kind === 'youtube'); X.U.sinceManual = '';
+  ok(yq.length === 2 && yq.every(x => X.tfInput(x).after_date === '2026-10-26' && X.tfInput(x).include_domains === 'youtube.com' && !('yt' in X.tfInput(x))), 'DATEFILTER: YouTube searches keep after_date + include_domains (tested: the date narrows, does not suppress)');
+  X.U.sinceManual = '2026-10-26'; }
 // 5. ethnic media
 const et = P.filter(x => /^Ethnic media/.test(x.label));
 ok(et.length > 0 && et.length <= 28 && et.every(x => x.keepDate && x.hosts.length <= 8 && x.kind === 'fresh'), `ethnic media: ${et.length} searches (cap 28), OR-of-8 with the date filter`);
 ok(!et.some(x => x.hosts.includes('lasentinel.net')), 'ethnic media: an outlet already on record (LA Sentinel) is not searched again');
 ok(et.some(x => /제시 가브리엘/.test(x.query) && x.hosts.length) && et.some(x => /加布里埃尔/.test(x.query)), 'ethnic media: Korean and Chinese groups also search his name in script');
+{ const N = rs.ethnic.native;
+  ok(['"加布里埃爾"', '"杰西·加布里埃尔"', '"傑西·加布里埃爾"', '"加布里埃尔"', '"加布里爾"'].every(x => N.Chinese.includes(x)) && N.Korean.includes('"가브리엘" 하원의원') && N.Korean.includes('"가브리엘" 주의원') && !N.Korean.some(x => /개브리엘/.test(x))
+    && N.Armenian.includes('"Ճեսի Կապրիէլ"') && N.Armenian.includes('"Ջեսի Գաբրիել"') && N.Hebrew.includes('"ג\'סי גבריאל"'), 'LANGCAP: native spellings (Chinese +3, Korean replaced, Armenian Western, Hebrew)'); }
 const first = et[0].hosts; ok(em.outlets.filter(o => first.includes(o.host)).every(o => o.region === 'Southern California'), 'ethnic media: Southern California outlets come first');
 // 3. TV
 ok(X.tvQuery('National') === '("jesse gabriel" OR "assemblymember gabriel" OR "assemblyman gabriel" OR "budget chair gabriel") (market:"National")', 'TV caption query names him four ways');

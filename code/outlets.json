@@ -53374,6 +53374,292 @@
    "note": "Cantonese-language news channel (YouTube: Sky Link TV Cantonese News); city/county not established",
    "rows_seen": 1,
    "originals_seen": 1
+  },
+  "world journal": {
+   "name": "World Journal",
+   "name_src": "sheet majority",
+   "variants": [],
+   "type": "foreign",
+   "house": "",
+   "publisher": "World Journal LLC",
+   "publisher_history": [],
+   "city": "",
+   "county": "",
+   "state": "NY",
+   "country": "US",
+   "medium": "Online news",
+   "reach": [
+    "Ethnic",
+    "National"
+   ],
+   "reach_conf": "medium",
+   "reach_default_by_rule": [
+    "Ethnic",
+    "National"
+   ],
+   "lang_reach": {},
+   "variant_reach": {},
+   "language": "Chinese",
+   "jewish": false,
+   "src": {
+    "reach": "LANGADD 2026-11-03: Chinese-language US daily (ethnic rule; national reach like Epoch Times)",
+    "name": "Update find",
+    "type": "table"
+   },
+   "decided_by": "Claude",
+   "decided_at": "2026-11-03",
+   "needs_sammy": "",
+   "note": "Chinese-language daily (United Daily News Group); US headquarters in New York; city not established",
+   "rows_seen": 0,
+   "originals_seen": 0
+  },
+  "sun media": {
+   "name": "Sun Media",
+   "name_src": "sheet majority",
+   "variants": [],
+   "type": "foreign",
+   "house": "",
+   "publisher": "",
+   "publisher_history": [],
+   "city": "",
+   "county": "",
+   "state": "Taiwan",
+   "country": "Taiwan",
+   "medium": "Online news",
+   "reach": [
+    "International"
+   ],
+   "reach_conf": "medium",
+   "reach_default_by_rule": [
+    "International"
+   ],
+   "lang_reach": {},
+   "variant_reach": {},
+   "language": "Chinese",
+   "jewish": false,
+   "src": {
+    "reach": "LANGADD 2026-11-03: Taiwan-based site (foreign rule)",
+    "name": "Update find",
+    "type": "table"
+   },
+   "decided_by": "Claude",
+   "decided_at": "2026-11-03",
+   "needs_sammy": "",
+   "note": "Taiwan news site (sunmedia.tw, 商傳媒)",
+   "rows_seen": 0,
+   "originals_seen": 0
+  },
+  "iranshahr news agency": {
+   "name": "Iranshahr News Agency",
+   "name_src": "sheet majority",
+   "variants": [],
+   "type": "foreign",
+   "house": "",
+   "publisher": "",
+   "publisher_history": [],
+   "city": "",
+   "county": "",
+   "state": "",
+   "country": "",
+   "medium": "Online news",
+   "reach": [],
+   "reach_conf": "none",
+   "reach_default_by_rule": [],
+   "lang_reach": {},
+   "variant_reach": {},
+   "language": "Persian",
+   "jewish": false,
+   "src": {
+    "reach": "LANGADD 2026-11-03: location not established: no Reach written",
+    "name": "Update find",
+    "type": "table"
+   },
+   "decided_by": "Claude",
+   "decided_at": "2026-11-03",
+   "needs_sammy": "",
+   "note": "Persian-language news agency (iranshahrnewsagency.com); home country not established, Reach left blank",
+   "rows_seen": 0,
+   "originals_seen": 0
+  },
+  "shafaqna": {
+   "name": "Shafaqna",
+   "name_src": "sheet majority",
+   "variants": [],
+   "type": "foreign",
+   "house": "",
+   "publisher": "Shafaqna Media",
+   "publisher_history": [],
+   "city": "",
+   "county": "",
+   "state": "Iran",
+   "country": "Iran",
+   "medium": "Online news",
+   "reach": [
+    "International"
+   ],
+   "reach_conf": "medium",
+   "reach_default_by_rule": [
+    "International"
+   ],
+   "lang_reach": {},
+   "variant_reach": {},
+   "language": "Persian",
+   "jewish": false,
+   "src": {
+    "reach": "LANGADD 2026-11-03: Iran-based Persian agency (foreign rule)",
+    "name": "Update find",
+    "type": "table"
+   },
+   "decided_by": "Claude",
+   "decided_at": "2026-11-03",
+   "needs_sammy": "",
+   "note": "Persian-language news agency (media.shafaqna.com, Shafaqna)",
+   "rows_seen": 0,
+   "originals_seen": 0
+  },
+  "news am": {
+   "name": "News.am",
+   "name_src": "sheet majority",
+   "variants": [],
+   "type": "foreign",
+   "house": "",
+   "publisher": "News AM LLC",
+   "publisher_history": [],
+   "city": "Yerevan",
+   "county": "",
+   "state": "Armenia",
+   "country": "Armenia",
+   "medium": "Online news",
+   "reach": [
+    "International"
+   ],
+   "reach_conf": "medium",
+   "reach_default_by_rule": [
+    "International"
+   ],
+   "lang_reach": {},
+   "variant_reach": {},
+   "language": "English",
+   "jewish": false,
+   "src": {
+    "reach": "LANGADD 2026-11-03: Armenia-based (foreign rule)",
+    "name": "Update find",
+    "type": "table"
+   },
+   "decided_by": "Claude",
+   "decided_at": "2026-11-03",
+   "needs_sammy": "",
+   "note": "Armenian news site (news.am), English edition; the sheet already carries row 10665 with Yerevan / Armenia",
+   "rows_seen": 0,
+   "originals_seen": 0
+  },
+  "massis post": {
+   "name": "Massis Post",
+   "name_src": "sheet majority",
+   "variants": [],
+   "type": "independent",
+   "house": "",
+   "publisher": "",
+   "publisher_history": [],
+   "city": "",
+   "county": "",
+   "state": "",
+   "country": "",
+   "medium": "Online news",
+   "reach": [
+    "Ethnic"
+   ],
+   "reach_conf": "low",
+   "reach_default_by_rule": [
+    "Ethnic"
+   ],
+   "lang_reach": {},
+   "variant_reach": {},
+   "language": "English",
+   "jewish": false,
+   "src": {
+    "reach": "LANGADD 2026-11-03: Armenian diaspora site (ethnic rule); location not established",
+    "name": "Update find",
+    "type": "table"
+   },
+   "decided_by": "Claude",
+   "decided_at": "2026-11-03",
+   "needs_sammy": "",
+   "note": "Armenian diaspora news site (massispost.com); home city not established",
+   "rows_seen": 0,
+   "originals_seen": 0
+  },
+  "chosun daily us": {
+   "name": "Chosun Daily (US)",
+   "name_src": "sheet majority",
+   "variants": [],
+   "type": "foreign",
+   "house": "",
+   "publisher": "",
+   "publisher_history": [],
+   "city": "",
+   "county": "",
+   "state": "",
+   "country": "",
+   "medium": "Online news",
+   "reach": [
+    "Ethnic"
+   ],
+   "reach_conf": "low",
+   "reach_default_by_rule": [
+    "Ethnic"
+   ],
+   "lang_reach": {},
+   "variant_reach": {},
+   "language": "Korean",
+   "jewish": false,
+   "src": {
+    "reach": "LANGADD 2026-11-03: Korean-language US site (ethnic rule); location not established",
+    "name": "Update find",
+    "type": "table"
+   },
+   "decided_by": "Claude",
+   "decided_at": "2026-11-03",
+   "needs_sammy": "",
+   "note": "Korean-language US site (chosundaily.com); home city not established",
+   "rows_seen": 0,
+   "originals_seen": 0
+  },
+  "kbs news": {
+   "name": "KBS News",
+   "name_src": "sheet majority",
+   "variants": [],
+   "type": "foreign",
+   "house": "",
+   "publisher": "Korean Broadcasting System",
+   "publisher_history": [],
+   "city": "Seoul",
+   "county": "",
+   "state": "South Korea",
+   "country": "South Korea",
+   "medium": "TV",
+   "reach": [
+    "International"
+   ],
+   "reach_conf": "medium",
+   "reach_default_by_rule": [
+    "International"
+   ],
+   "lang_reach": {},
+   "variant_reach": {},
+   "language": "Korean",
+   "jewish": false,
+   "src": {
+    "reach": "LANGADD 2026-11-03: South Korea-based broadcaster (foreign rule)",
+    "name": "Update find",
+    "type": "table"
+   },
+   "decided_by": "Claude",
+   "decided_at": "2026-11-03",
+   "needs_sammy": "",
+   "note": "KBS (South Korea public broadcaster) news; YouTube channel KBS News",
+   "rows_seen": 0,
+   "originals_seen": 0
   }
  },
  "decided": "2026-10-30 (REVIEW4-DATA-v1)"

@@ -200,8 +200,8 @@ def norm_url(u):
     u = canon_mirror(re.sub(r'^https?://(www\.)?', '', u.lower()).split('#')[0])   # REQ-14: mirror hosts
     host = u.split('/')[0]
     # NewsBank / proxy / Google links identify the article only in the query string: keep it
-    # YTLINK-v1: a YouTube watch link identifies the video only in its query string (?v=ID): keep it
-    if not re.search(r'newsbank|oclc|google\.|proquest|(^|\.)youtube\.com$', host):
+    # YTLINK-v1: a YouTube watch link identifies the video only in its query string (?v=ID): keep it; LANGADD (2026-11-03): same for iranshahrnewsagency.com (?ItemId=) and chosundaily.com (?wr_id=)
+    if not re.search(r'newsbank|oclc|google\.|proquest|(^|\.)youtube\.com$|(^|\.)iranshahrnewsagency\.com$|(^|\.)chosundaily\.com$', host):
         u = u.split('?')[0]
     return u.rstrip('/')
 
