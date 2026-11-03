@@ -1,0 +1,107 @@
+{
+ "about": "PROQUESTPDF-v1 answer 2 (Sammy, 2026-11-02): hand-kept rules and ProQuest-name -> tracker-outlet-name pairs. tools/build_pq_aliases.py reads this file, checks every pair against the workbook (the tracker name must be an Outlet the sheet already uses; the ProQuest name must not already match it by the plain rules) and writes data/proquest_outlets.json. Add a pair only with a source note that says where the ProQuest name was seen. 'place' (optional) is a word that must appear in ProQuest's place of publication; it is how the same generic name (Daily News) is told apart between cities.",
+ "pairs": [
+  {
+   "pq": "The Center Square",
+   "tracker": "Center Square California, The",
+   "kind": "sammy_example",
+   "source": "Sammy's own example (PROQUESTPDF-v1 answer 2; PROQUEST.md 7.4): ProQuest titles it 'The Center Square; Washington' for every state, NewsBank files the California desk as 'Center Square California, The' (26 rows in the snapshot workbook). The Texas desk ('Center Square Texas, The', 2 rows) is a separate outlet that the PC keeps apart (outlet_rules keep_separate), so it is not mapped."
+  },
+  {
+   "pq": "Daily News",
+   "place": "Los Angeles",
+   "tracker": "Daily News",
+   "kind": "data",
+   "source": "Data: 7 ProQuest rows carry Outlet 'Daily News' and 4 other rows 'Daily News' with Outlet city Los Angeles; outlet_rules.json lists 'daily news' as a generic name (one outlet per city) and aliases it to 'los angeles daily news'. ProQuest prints the city after the title, so only 'Daily News; Los Angeles, Calif.' is taken as the tracker's Daily News."
+  }
+ ],
+ "clean_rules": [
+  {
+   "id": "edition",
+   "rx": ",\\s*(?:late|early|final|national|metro|west|east|home|city|sunday|bulk|eastern|western|regional)\\b[^;]*?edition[^;]*$",
+   "to": "",
+   "flags": "i",
+   "source": "existing pqparse.outletOf; ProQuest naming pattern 'New York Times, Late Edition (East Coast)', 'Wall Street Journal, Eastern edition'",
+   "note": "drops the edition suffix"
+  },
+  {
+   "id": "online",
+   "rx": "\\s*\\((?:online|print|ed\\.|east coast|west coast)[^)]*\\)\\s*$",
+   "to": "",
+   "flags": "i",
+   "source": "existing pqparse.outletOf; ProQuest naming pattern 'Los Angeles Times (Online)'",
+   "note": "drops '(Online)', '(Print)', '(East Coast)' ..."
+  },
+  {
+   "id": "historical",
+   "rx": "\\s*\\((?:pre-\\d{4}[^)]*|\\d{4}\\s*-[^)]*)\\)\\s*$",
+   "to": "",
+   "flags": "i",
+   "source": "ProQuest naming pattern for historical files, 'Wall Street Journal (1923 - Current file)', 'Los Angeles Times (pre-1997 Fulltext)'. Not seen in this workbook; written from ProQuest's documented title style, so check it on the first real PDF",
+   "note": "drops the years-covered note"
+  },
+  {
+   "id": "bracket",
+   "rx": "\\s*\\[[^\\]]*\\]\\s*$",
+   "to": "",
+   "flags": "i",
+   "source": "existing pqparse.outletOf: a trailing [..] label",
+   "note": "drops '[subscription]'-style labels"
+  },
+  {
+   "id": "tail_punct",
+   "rx": "[,.]\\s*$",
+   "to": "",
+   "flags": "",
+   "source": "existing pqparse.outletOf",
+   "note": "drops a trailing comma or period"
+  }
+ ],
+ "key_steps": [
+  {
+   "id": "blogs",
+   "rx": "\\s*:\\s*blogs\\s*$",
+   "to": "",
+   "source": "code/sheet_task.py _outlet_base (OUTLETRULES-v1)"
+  },
+  {
+   "id": "todays_edition",
+   "rx": "\\s*\\(?\\btoday'?s edition\\b\\)?",
+   "to": "",
+   "source": "code/sheet_task.py _outlet_base"
+  },
+  {
+   "id": "article_last_to_first",
+   "rx": "^(.*?),\\s*(el|la|le|les|il|der|die|das)\\s*$",
+   "to": "$2 $1",
+   "source": "NewsBank files foreign names 'Mundo, El' / 'Presse Canadienne, La' (5 and 1 rows in the snapshot); ProQuest writes 'El Mundo'. Moved to the front here, removed in key_post, so both read the same",
+   "note": "only a comma + article at the very end"
+  },
+  {
+   "id": "the_last",
+   "rx": ",\\s*the(?=\\s*(?::|/|$))",
+   "to": "",
+   "source": "code/sheet_task.py _outlet_base"
+  },
+  {
+   "id": "the_first",
+   "rx": "^the\\s+",
+   "to": "",
+   "source": "code/sheet_task.py _outlet_base"
+  },
+  {
+   "id": "punct",
+   "rx": "[^a-z0-9]+",
+   "to": " ",
+   "source": "code/sheet_task.py _outlet_base"
+  }
+ ],
+ "key_post": [
+  {
+   "id": "article_first",
+   "rx": "^(?:el|la|le|les|il|der|die|das|l)\\s+(?=\\S)",
+   "to": "",
+   "source": "same note as article_last_to_first. Runs after the PC's feeds and aliases, so 'el pais ...' aliases still work"
+  }
+ ]
+}

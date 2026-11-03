@@ -55,16 +55,16 @@ res = json.loads((out / 'result1.json').read_text())
 nrows = res['verify']['rows_after'] - res['verify']['rows_before']
 print('   rows added:', nrows, json.dumps(res.get('verify'))[:160])
 check('verify ok', res['verify']['ok'], res['verify'])
-check('6 rows added (5 Originals + the reprint)', nrows == 6, nrows)
+check('7 rows added (6 Originals + the reprint)', nrows == 7, nrows)
 check('no copy refused, none skipped, none flagged (every PDF matched its checksum)', not res['pages_error'] and not res.get('pages_skipped') and not [x for x in res.get('pages_flagged', []) if 'pdf_missing' in x.get('flags', [])], (res['pages_error'][:1], res.get('pages_skipped', [])[:1], res.get('pages_flagged', [])[:1]))
-check('every story and reprint became a saved copy', len(res['pages']) == 6 and all(x['source'] == 'proquest pdf' for x in res['pages']), len(res['pages']))
+check('every story and reprint became a saved copy', len(res['pages']) == 7 and all(x['source'] == 'proquest pdf' for x in res['pages']), len(res['pages']))
 import openpyxl
 ws = openpyxl.load_workbook(out / 'out1.xlsx', read_only=True)['Coverage']
 rows = list(ws.iter_rows(values_only=True)); h = rows[0]; ix = {c: i for i, c in enumerate(h)}
 new = [r for r in rows[1:] if r[ix['Team note']] and 'ProQuest PDF' in str(r[ix['Team note']])]
-check('6 new rows carry the ProQuest PDF note', len(new) == 6, len(new))
+check('7 new rows carry the ProQuest PDF note', len(new) == 7, len(new))
 check('all are Data Source ProQuest with a ProQuest link (the one with no id has none) and the State Library form', all(r[ix['Data Source']] == 'ProQuest' for r in new)
-      and sum(1 for r in new if re.fullmatch(r'https://www\.proquest\.com/docview/\d{5,}', str(r[ix['ProQuest link']] or ''))) == 5
+      and sum(1 for r in new if re.fullmatch(r'https://www\.proquest\.com/docview/\d{5,}', str(r[ix['ProQuest link']] or ''))) == 6
       and all(str(r[ix['ProQuest via CA State Library']]) == 'https://castatelib.idm.oclc.org/login?url=' + str(r[ix['ProQuest link']]) for r in new if r[ix['ProQuest link']]), [(r[ix['ProQuest link']], r[ix['Data Source']]) for r in new])
 files = [r[ix['File name']] for r in new]
 check('Saved Copy Yes, File type "ProQuest pdf", File name pq<ID><o|r>-s<ID>.html (the library’s ProQuest copy name)', all(r[ix['Saved Copy?']] == 'Yes' and r[ix['File type']] == 'ProQuest pdf' and re.fullmatch(r'pq\d{5}[or]-s\d{5}\.html', str(r[ix['File name']])) for r in new), files)
@@ -79,7 +79,7 @@ shape = lambda t: re.sub(r'>[^<]*<', '><', t).replace(' ', '')
 check('the saved copy has the same tag shape as the library’s existing ProQuest copies (jg-pdf meta, article.jg-pdf-text, cap, h1, byline, paragraphs)',
       '<meta name="jg-pdf"' in h0 and 'class="jg-pdf-text"' in h0 and 'Text of the ProQuest PDF' in h0 and '<h1>' in h0 and re.sub(r'(<p>)+', '<p>', shape(h0))[:120].startswith(re.sub(r'(<p>)+', '<p>', shape(ex))[:60]), (shape(h0)[:160], shape(ex)[:160]))
 pdfs = sorted((pg / '_original_pdf').rglob('pq*.pdf'))
-check('the PDFs are kept as _original_pdf/<year>/pq<ID><o|r>-s<ID>.pdf, one per saved copy, same stem as the copy', len(pdfs) == npdf == 6 and {f.stem for f in pdfs} == {Path(str(r[ix["File name"]])).stem for r in new}, [str(f.relative_to(pg)) for f in pdfs])
+check('the PDFs are kept as _original_pdf/<year>/pq<ID><o|r>-s<ID>.pdf, one per saved copy, same stem as the copy', len(pdfs) == npdf == 7 and {f.stem for f in pdfs} == {Path(str(r[ix["File name"]])).stem for r in new}, [str(f.relative_to(pg)) for f in pdfs])
 check('each kept PDF is byte-identical to the one in the update folder', all(F.sha256_file(f) in {F.sha256_file(x) for x in (db / 'files').glob('*.pdf')} for f in pdfs))
 check('only these library paths are written: <year>/pq*.html and _original_pdf/<year>/pq*.pdf (no ws*/nb* file, nothing under _original_html)', all(re.fullmatch(r'(\d{4}/pq\d{5}[or]-s\d{5}\.html|_original_pdf/\d{4}/pq\d{5}[or]-s\d{5}\.pdf)', f.relative_to(pg).as_posix()) for f in pg.rglob('*') if f.is_file()), [f.relative_to(pg).as_posix() for f in pg.rglob('*') if f.is_file()][:12])
 # a second pass over the result: the same update again adds nothing

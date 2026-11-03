@@ -16,7 +16,7 @@ const INIT = () => {
   window.__dl = [];
   const mem = {}; const fakeDb = { collection: n => ({ doc: id => ({ set: async d => { (mem[n] = mem[n] || {})[id] = JSON.parse(JSON.stringify(d)); }, delete: async () => {}, get: async () => ({ exists: false, data: () => null }) }),
     get: async () => ({ docs: Object.entries(mem[n] || {}).map(([id, d]) => ({ id, data: () => d })) }), onSnapshot: cb => { cb({ docs: [] }); return () => {}; } }) };
-  window.claude = { use: async name => name === 'db' ? fakeDb : name === 'downloads' ? { save: async ({ filename, data }) => { window.__dl.push({ filename }); window.__lastDl = new Uint8Array(await data.arrayBuffer()); } } : null };
+  window.claude = { use: async name => name === 'db' ? fakeDb : name === 'downloads' ? { save: async ({ filename, data }) => { window.__lastDl = new Uint8Array(await data.arrayBuffer()); window.__dl.push({ filename }); } } : null };
 };
 (async () => {
   await new Promise(r => server.listen(0, '127.0.0.1', r));

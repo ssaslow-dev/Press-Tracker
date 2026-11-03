@@ -76,11 +76,48 @@ function bylineOf(s) {
   const parts = t.split(/\s*;\s*/).filter(Boolean).map(x => { const m = /^([^,]+),\s*([^,]+)$/.exec(x); return m ? squash(m[2] + ' ' + m[1]) : x; });
   return parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : parts[0] || '';
 }
+/* ---- outlet names (PROQUESTPDF-v1 answer 2) ----
+   All the rules are data: data/proquest_outlets.json, built by tools/build_pq_aliases.py. The page gets it through setTable (build_station.py inlines it);
+   node loads it by itself. Python builds the same keys: tests/pq/alias_test.mjs checks the two agree on every name. */
+let TABLE = null, PAIRS = null, GENERIC = null;
+function setTable(t) {
+  TABLE = t; PAIRS = new Map(); GENERIC = new Set((t && t.generic_needs_city) || []);
+  ((t && t.pairs) || []).forEach(p => { const a = PAIRS.get(p.key) || []; a.push(p); PAIRS.set(p.key, a); });
+}
+if (typeof require === 'function' && typeof module !== 'undefined' && module.exports) { try { setTable(require('../data/proquest_outlets.json')); } catch (e) { /* the page sets it */ } }
 /* "The Center Square ; Washington" / "Los Angeles Times; Los Angeles, Calif." / "New York Times, Late Edition (East Coast); New York, N.Y." -> the paper's name */
 function outletOf(s) {
   let t = squash(s).split(/\s*;\s*/)[0];
-  t = t.replace(/,\s*(?:late|early|final|national|metro|west|east|home|city|sunday|bulk|eastern|western|regional)\b[^;]*?edition[^;]*$/i, '').replace(/\s*\((?:online|print|ed\.|east coast|west coast)[^)]*\)\s*$/i, '').replace(/\s*\[[^\]]*\]\s*$/, '');
-  return squash(t).replace(/[,.]\s*$/, '');
+  if (TABLE) for (const r of TABLE.clean_rules) t = t.replace(new RegExp(r.rx, r.flags || ''), r.to);
+  return squash(t);
+}
+/* the PC's outlet key (code/sheet_task._outlet_base) as data steps: base = after key_steps; exact = base without a leading foreign article;
+   fold = after the PC's feeds and aliases (outlet_rules.json), then the same article rule */
+function outletKeys(name) {
+  let s = String(name == null ? '' : name).replace(/[\u2019\u2018]/g, "'").normalize('NFKD').replace(/[^\x00-\x7f]/g, '').toLowerCase().trim();
+  if (!TABLE) return { base: '', exact: '', fold: '' };
+  for (const r of TABLE.key_steps) s = (r.id === 'punct' ? s.replace(new RegExp(r.rx, 'g'), r.to) : s.replace(new RegExp(r.rx), r.to)).trim();
+  const base = s; if (!base) return { base: '', exact: '', fold: '' };
+  let k = base, hit = false;
+  for (const pre of Object.keys(TABLE.feeds || {})) if (base === pre || base.startsWith(pre + ' ')) { k = TABLE.feeds[pre]; hit = true; break; }
+  if (!hit && Object.prototype.hasOwnProperty.call(TABLE.aliases || {}, base)) k = TABLE.aliases[base];
+  const post = x => TABLE.key_post.reduce((a, r) => a.replace(new RegExp(r.rx), r.to), x);
+  return { base, exact: post(base), fold: post(k) };
+}
+/* name: the cleaned ProQuest name; place: the text after the ';' (and the Place of publication field); idx: { exact: Map(key -> tracker spelling), fold: Map } from the tracker's own outlets.
+   -> { name, how: 'pair' | 'tracker' | 'generic' | 'unknown' | 'none', src } . Order: a pair (a place-specific one first); a generic name (one outlet per city) with no pair is never
+   matched; then the tracker's own spelling of the same exact key, then of the same fold key; else the name as ProQuest has it. */
+function resolveOutlet(name, place, idx) {
+  const kk = outletKeys(name); if (!kk.exact) return { name, how: 'none' };
+  const pl = squash(place).toLowerCase();
+  const ps = PAIRS && PAIRS.get(kk.fold) || [];
+  const pr = ps.find(p => p.place && pl.includes(String(p.place).toLowerCase())) || ps.find(p => !p.place);
+  if (pr) return { name: pr.tracker, how: 'pair', src: pr.kind + ': ' + pr.pq + (pr.place ? ' (' + pr.place + ')' : '') };
+  if (GENERIC && GENERIC.has(kk.base)) return { name, how: 'generic' };
+  idx = idx || {};
+  const a = idx.exact && idx.exact.get(kk.exact); if (a) return { name: a, how: 'tracker', src: 'same name as the tracker’s ' + a };
+  const b = idx.fold && idx.fold.get(kk.fold); if (b) return { name: b, how: 'tracker', src: 'the tracker’s own folding (outlet_rules.json) makes it the same outlet as ' + b };
+  return { name, how: 'unknown' };
 }
 
 /* ---- reading ----
@@ -228,6 +265,6 @@ function storyHtml(p, row) {
     + (p.author ? '<p class="byline">By ' + esc(p.author) + '</p>' : '') + p.paras.map(x => '<p>' + esc(x) + '</p>').join('') + '</article></body></html>';
 }
 
-const api = { parsePdf, parseDate, bylineOf, outletOf, docviewId, canonLink, viaLink, storyHtml, labelOf };
+const api = { parsePdf, parseDate, bylineOf, outletOf, outletKeys, resolveOutlet, setTable, docviewId, canonLink, viaLink, storyHtml, labelOf };
 if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.PQParse = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

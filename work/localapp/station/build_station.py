@@ -117,6 +117,11 @@ def main():
     nb_parse = open(os.path.join(HERE, 'src', 'nbparse.js'), encoding='utf-8').read()
     nb_scope = open(os.path.join(HERE, 'src', 'newsbank.js'), encoding='utf-8').read()
     pq_parse = open(os.path.join(HERE, 'src', 'pqparse.js'), encoding='utf-8').read()   # PROQUESTPDF-v1
+    # PROQUESTPDF-v1 answer 2: the ProQuest -> tracker outlet-name map (data/proquest_outlets.json, built by tools/build_pq_aliases.py), inlined as data
+    pq_outlets_raw = open(os.path.join(HERE, 'data', 'proquest_outlets.json'), 'rb').read()
+    pq_outlets = json.loads(pq_outlets_raw.decode('utf-8'))
+    assert pq_outlets.get('version') == 1 and pq_outlets['clean_rules'] and pq_outlets['key_steps'] and pq_outlets['pairs'], 'proquest_outlets.json is incomplete (rerun tools/build_pq_aliases.py)'
+    pq_parse = pq_parse + '\nPQParse.setTable(' + json.dumps(pq_outlets, separators=(',', ':')).replace('</', '<\\/') + ');\n'
     pq_scope = open(os.path.join(HERE, 'src', 'proquest.js'), encoding='utf-8').read()
     pq_ui = open(os.path.join(HERE, 'src', 'proquest_ui.js'), encoding='utf-8').read()
     nb_scope = nb_scope + '\n' + pq_scope          # one text run inside the tracker's scope: NewsBank first, then the ProQuest source object
@@ -149,7 +154,7 @@ def main():
     open(p, 'w', encoding='utf-8').write(doc)
     info = {'index_html_bytes': len(doc.encode()), 'index_html_sha256': sha(doc.encode()), 'tracker_js_sha256': sha(js), 'tracker_js_parts_bytes': len(js),
             'shell_sha256': sha(shell.encode()), 'vendor': os.path.basename(vendor),
-            'pdf_libs': lib['info'], 'vendor_urls_in_strings': vend_urls, 'nb_scope_sha256': sha(nb_scope.encode()), 'nbparse_sha256': sha(nb_parse.encode()), 'pqparse_sha256': sha(pq_parse.encode()), 'pq_ui_sha256': sha(pq_ui.encode()), 'pq_scope_sha256': sha(pq_scope.encode()), 'nb_ui_sha256': sha(nb_ui.encode()),
+            'pdf_libs': lib['info'], 'vendor_urls_in_strings': vend_urls, 'nb_scope_sha256': sha(nb_scope.encode()), 'nbparse_sha256': sha(nb_parse.encode()), 'pqparse_sha256': sha(pq_parse.encode()), 'proquest_outlets_sha256': sha(pq_outlets_raw), 'proquest_outlets_pairs': len(pq_outlets['pairs']), 'pq_ui_sha256': sha(pq_ui.encode()), 'pq_scope_sha256': sha(pq_scope.encode()), 'nb_ui_sha256': sha(nb_ui.encode()),
             'fonts_woff2_inlined': nfonts, 'fonts_css_sha256': sha(fonts_css.encode()), 'station_css_sha256': sha(st_css.encode()), 'station_html_sha256': sha(st_html.encode()), 'station_js_sha256': sha(st_js.encode())}
     json.dump(info, open(os.path.join(a.out, 'build_info.json'), 'w'), indent=1)
     print(json.dumps(info, indent=1))

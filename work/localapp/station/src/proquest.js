@@ -17,6 +17,34 @@ function pqIds(){
   }
   return PQX_IDS;
 }
+/* PROQUESTPDF-v1 answer 2: the outlet's name. ProQuest names a paper its own way ("The Center Square; Washington"); the sheet holds the NewsBank form ("Center Square California, The").
+   Before the dedupe (and for the row's Outlet) the PDF's outlet is turned into the tracker's own name by PQParse.resolveOutlet: a pair in data/proquest_outlets.json, else the
+   tracker's own spelling of the same name (every Outlet of the sheet's rows and stories, most used spelling). A name nothing matches keeps ProQuest's name and the Team note says so. */
+let PQX_OUT = null;
+function pqOutIdx(){
+  if (!PQX_OUT){
+    const ex = new Map(), fo = new Map(), cnt = new Map();
+    const add = n => { n = String(n || '').trim(); if (n) cnt.set(n, (cnt.get(n) || 0) + 1); };
+    covLoad().rows.forEach(o => add(o.outlet));
+    D.forEach(r => add(String(r.outlet || '').replace(/\s*\([^)]*\)\s*$/, '')));   /* the sheet's Outlet names only (r.pub is a display name) */
+    const best = (m, k, n) => { const c = cnt.get(n); const o = m.get(k); if (!o || c > o.c || (c === o.c && n < o.n)) m.set(k, { n, c }); };
+    cnt.forEach((c, n) => { const k = PQParse.outletKeys(n); if (k.exact) { best(ex, k.exact, n); best(fo, k.fold, n); } });
+    const flat = m => { const o = new Map(); m.forEach((v, k) => o.set(k, v.n)); return o; };
+    PQX_OUT = { exact: flat(ex), fold: flat(fo) };
+  }
+  return PQX_OUT;
+}
+function pqResolve(p){
+  if (p._ol) return p; p._ol = true;
+  p.outlet_pq = p.outlet_clean;
+  const r = PQParse.resolveOutlet(p.outlet_clean, [String(p.pubtitle || '').split(';').slice(1).join(' '), p.place].join(' '), pqOutIdx());
+  p.outlet_how = r.how;
+  if ((r.how === 'pair' || r.how === 'tracker') && r.name !== p.outlet_clean){ p.outlet_note = 'outlet “' + p.outlet_clean + '” (ProQuest) filed as “' + r.name + '” (' + r.src + ')'; p.outlet_clean = r.name; }
+  else if (r.how === 'unknown') (p.flags || (p.flags = [])).push('outlet name from ProQuest; check');
+  else if (r.how === 'generic') (p.flags || (p.flags = [])).push('outlet name from ProQuest; check (“' + p.outlet_clean + '” is a generic name: the tracker keeps one outlet per city, and none matched)');
+  return p;
+}
+
 /* the record's link. A PDF with no readable document id has none; the tab then uses a stand-in so the tracker's own code (which keys finds by link)
    still works. The stand-in is never written to the sheet (pqRowFill leaves the ProQuest link blank for it). */
 const pqReal = p => p.link || '';
@@ -31,7 +59,7 @@ function pqMeta(it){
   const p = it.p, b = it.batch;
   return { docid: p.docid, url: pqReal(p), file: it.pdf ? 'files/' + it.fileId + '.pdf' : '', pdf_sha256: it.pdf ? it.pdf.sha256 : '', pdf_bytes: it.pdf ? it.pdf.bytes : 0,
     source_name: b.name, source_sha256: b.sha256, pages: p.pages,
-    header: { headline: p.headline, date: p.date, publication_title: p.pubtitle, outlet: p.outlet, author: p.author, section: p.section, pages: p.page, publisher: p.publisher, place: p.place,
+    header: { headline: p.headline, date: p.date, publication_title: p.pubtitle, outlet: p.outlet, outlet_filed_as: p.outlet_clean, outlet_how: p.outlet_how || '', author: p.author, section: p.section, pages: p.page, publisher: p.publisher, place: p.place,
       source_type: p.source_type, document_type: p.doc_type, language: p.language, issn: p.issn, copyright: p.copyright, database: p.database, publication_date_text: p.pubdate_raw },
     flags: p.flags || [], how: p.how };
 }
@@ -43,15 +71,15 @@ function pqRowFill(row, it){
   row._date_src = 'proquest';
   row['ProQuest link'] = real; row['ProQuest via CA State Library'] = real ? PQParse.viaLink(p.docid) : '';
   row['Publisher link'] = it.pub ? it.pub.url : ''; row['Link status'] = it.pub ? it.pub.status : '';
-  row['Section'] = VS(p.section, 120); row['Page'] = p.page || '';
+  row['Section'] = ''; row['Page'] = '';   /* PROQUESTPDF-v1 answer 1: Section and Page stay blank on ProQuest rows, always (the page only decides Print below) */
   row['Edition'] = printed ? 'Print' : ''; row['Format'] = printed ? 'Print' : (row['Format'] === 'Article' || !row['Format'] ? 'Article' : row['Format']);
   row['Headline'] = p.headline; row['Date'] = p.date; row['Year'] = p.date ? +p.date.slice(0, 4) : '';
   if (isRep){ row['Author / byline'] = p.author || ''; row['Tracker story code'] = ''; }
-  row['Team note'] = ['ProQuest PDF ' + it.batch.name + ' (' + TODAY + ')', (p.flags || []).join('; '), it.linkNote ? 'publisher link not found: ' + it.linkNote : ''].filter(Boolean).join('; ');
+  row['Team note'] = ['ProQuest PDF ' + it.batch.name + ' (' + TODAY + ')', (p.flags || []).join('; '), p.outlet_note || '', it.linkNote ? 'publisher link not found: ' + it.linkNote : ''].filter(Boolean).join('; ');
   return row;
 }
 NBSRC.pq = { id: 'pq', name: 'ProQuest', idName: 'ProQuest document id', foundBy: 'proquest-pdf', srcName: 'ProQuest, full text', preface: PQ_PREFACE, dateSrc: 'proquest', print: pqPrint,
   runMode: 'hand', runMark: 'proquest', metaKey: 'pq', runSource: 'ProQuest article PDFs',
   hint: p => '[ProQuest details: ' + [p.pubtitle && 'Publication: ' + p.pubtitle, p.source_type && 'Source type: ' + p.source_type, p.language && 'Language of publication: ' + p.language, p.publisher && 'Publisher: ' + p.publisher, p.section && 'Section: ' + p.section].filter(Boolean).join('; ') + ']\n',
   known: () => pqIds(), cand: pqCand, link: pqLink, plink: () => '', pq: pqReal, html: (p, row) => PQParse.storyHtml(p, row), meta: pqMeta, rowFill: pqRowFill };
-window.__pq = { screen: p => nbScreen(p, NBSRC.pq), remember: nbRemember, run: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pq })), ids: () => pqIds().size, version: 1 };
+window.__pq = { screen: p => nbScreen(pqResolve(p), NBSRC.pq), resolve: pqResolve, remember: nbRemember, run: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pq })), ids: () => pqIds().size, version: 1 };

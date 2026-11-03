@@ -47,7 +47,7 @@ check('the reference checker accepts the zip (allow-list, caps, hashes, PDF safe
 pdfs = {n: b for n, b in entries.items() if F.is_pdf_entry(n)}
 pages = {n: json.loads(b) for n, b in entries.items() if n.startswith('db/pages/')}
 pq = {n: d for n, d in pages.items() if d.get('pq')}
-check('6 PDFs, one per ProQuest pages doc (5 stories + 1 reprint)', len(pdfs) == 6 and len(pq) == 6, (len(pdfs), len(pq)))
+check('7 PDFs, one per ProQuest pages doc (6 stories + 1 reprint)', len(pdfs) == 7 and len(pq) == 7, (len(pdfs), len(pq)))
 check('the manifest marks them as pdf and carries their checksums', all(man['files'][n].get('kind') == 'pdf' for n in pdfs))
 check('file names are pq-<16 hex>', all(n.startswith('files/pq-') for n in pdfs))
 runs = [json.loads(b) for n, b in entries.items() if n.startswith('db/runs/')]
@@ -63,5 +63,5 @@ for n, d in pq.items():
 app = Path(scratch) / 'app'; lay = PCLayout(app); lay.workbook.parent.mkdir(parents=True, exist_ok=True)
 ins = TU.inspect_update(zp, lay)
 st = Path(ins['stage']) / 'db' / 'files'
-check('take_update.inspect unpacks the PDFs to staging/<id>/db/files/ (where sheet_task reads them)', len(list(st.glob('*.pdf'))) == 6, len(list(st.glob('*.pdf'))))
+check('take_update.inspect unpacks the PDFs to staging/<id>/db/files/ (where sheet_task reads them)', len(list(st.glob('*.pdf'))) == 7, len(list(st.glob('*.pdf'))))
 print('all passed' if not bad else f'{bad} FAILED'); sys.exit(1 if bad else 0)

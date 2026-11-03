@@ -29,6 +29,12 @@ The Update station's "Add ProQuest PDFs" box sends each ProQuest article with it
 
 No change to `pdftext_pypdf.py` (a ProQuest PDF has no bands) and none to the saver: `commit_library` already copies every file under the pages folder, so `_original_pdf/<year>/...` is committed add-only like `_original_html/`.
 
+**Section and Page** are never written for a ProQuest row (answer 1): the pages doc's `pq.header` still carries them as a record, and neither patch copies them.
+
 To wire in (not done: another builder is editing `assemble_app.py`): add, in the same place and the same way as the NewsBank ones and after them, `('sheet_task.py', '04_sheet_task_pqpdf.patch')` and `('date_rules.py', '05_date_rules_proquest.patch')`; copy the two patch files to `app/patches/`; regenerate `PIPELINE.sha256` (the assembler does).
 
 Tests: `python3 -I tests/e2e_pq_sheet_task.py ZIP WORKBOOK SCRATCH` (about 1.5 minutes: patches 01-05 on a copy of the pipeline, the station's real zip, a copy of the snapshot workbook: 6 rows, 6 `pq...html` copies, 6 `_original_pdf` PDFs, no conflicts, and a second pass adds nothing), `updatefolder/tests/test_pqpdf.py` (refusals, including hostile ProQuest PDFs), and the station's `tests/pq/verify_pq_zip.py`.
+
+## PROQUESTPDF-v1 answer 2: ProQuest outlet names (one more patch proposal, NOT wired in)
+
+`patches/06_sheet_task_pq_outlet_aliases.patch` (applies after 01 and 04; independent of them): `code/sheet_task.py` reads `proquest_outlets.json` (the Update station's `data/proquest_outlets.json`, copied beside `sheet_task.py` and `outlet_rules.json`) and adds each ProQuest-name -> tracker-name pair as an alias in `OUTLET_RULES['aliases']` (an alias already in `outlet_rules.json` wins; a place-specific pair is skipped because generic names are already told apart by city). Effect: `norm_outlet('The Center Square') == norm_outlet('Center Square California, The')`, and `Center Square Texas, The` stays separate (`keep_separate`). **Needed only if a ProQuest-named outlet can reach the save**: the station already writes the row's `Outlet` in the tracker's spelling, so the same-outlet and reprint checks see one outlet without it. No data file next to `sheet_task.py` = behaviour unchanged. To wire in: copy the data file and the patch to `app/patches/` and add `('sheet_task.py', '06_sheet_task_pq_outlet_aliases.patch')` after the 04 entry; regenerate `PIPELINE.sha256`. Test: `python3 -I -m unittest discover -s tests -t . -p test_pq_outlet_alias.py` (applies 01, 04, 06 to a copy; needs the `patch` program).

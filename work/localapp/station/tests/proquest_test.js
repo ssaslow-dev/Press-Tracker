@@ -82,7 +82,7 @@ const INIT = ({ hl }) => {
 
   /* everything in one drop: the good ones, the same file twice, a second download of the same article, the collisions, the refusals, and a non-PDF */
   fs.writeFileSync(path.join(OUT, 'notes.pdf'), 'These are my notes, not a PDF at all.\n');
-  const names = ['new3page', 'new3page_copy', 'dupe_v2', 'es', 'zh', 'nourl', 'noid', 'wire', 'noheading', 'known_id', 'known_hl', 'rep_other', 'partialdate', 'nopubtitle', 'two_articles', 'unrelated', 'newsbank_one', 'scanned'];
+  const names = ['new3page', 'new3page_copy', 'dupe_v2', 'es', 'zh', 'nourl', 'noid', 'wire', 'noheading', 'known_id', 'known_hl', 'known_cs', 'known_nyt', 'known_wsj', 'known_mundo', 'known_lat', 'unknown_outlet', 'rep_other', 'partialdate', 'nopubtitle', 'two_articles', 'unrelated', 'newsbank_one', 'scanned'];
   await page.setInputFiles('#pqFile', names.map(n => path.join(PDFS, n + '.pdf')).concat([path.join(OUT, 'notes.pdf')]));
   await page.waitForFunction(n => window.__station.state.pq.files.length === n && window.__station.state.pq.files.every(f => f.status !== 'reading') && !window.__station.state.pq.reading, names.length + 1, { timeout: 180000 });
   const files = await page.evaluate(() => window.__station.state.pq.files.map(f => ({ name: f.name, status: f.status, note: f.note, pages: f.pages })));
@@ -95,7 +95,7 @@ const INIT = ({ hl }) => {
     section: it.p.section, page: it.p.page, lang: it.p.language, flags: it.p.flags, pdf: it.pdf && it.pdf.bytes, fileId: it.fileId, words: it.p.body_words, include: it.include, problems: it.p.problems })));
   const I = n => items.find(i => i.file === n + '.pdf');
   const S1 = n => I(n).st;
-  check('statuses: new = new3page, es, zh, nourl, noid, wire, noheading', ['new3page', 'es', 'zh', 'nourl', 'noid', 'wire', 'noheading'].every(n => S1(n) === 'new'), JSON.stringify(items.map(i => i.file + ':' + i.st)));
+  check('statuses: new = new3page, es, zh, nourl, noid, wire, noheading, unknown_outlet', ['new3page', 'es', 'zh', 'nourl', 'noid', 'wire', 'noheading', 'unknown_outlet'].every(n => S1(n) === 'new'), JSON.stringify(items.map(i => i.file + ':' + i.st)));
   check('3-page article: headline, date, outlet, author, section, page and ProQuest id read from the details block', I('new3page').hl === E.new3page.hl && I('new3page').date === '2026-10-29' && I('new3page').outlet === 'Daily Valley Ledger Test' && I('new3page').author === 'Dana Whitfield' && I('new3page').section === 'California' && I('new3page').page === 'A3' && I('new3page').docid === '3411000001' && I('new3page').link === 'https://www.proquest.com/docview/3411000001', JSON.stringify(I('new3page')));
   check('every new story has its PDF copied (pdf-lib), named pq-<16 hex>', ['new3page', 'es', 'zh', 'nourl', 'noid', 'wire', 'noheading'].every(n => I(n).pdf > 1000 && /^pq-[0-9a-f]{16}$/.test(I(n).fileId)), JSON.stringify(items.map(i => [i.file, i.pdf, i.fileId])));
   check('details block placed before the text (layout B) is read too: Spanish story, two authors joined with “and”', I('es').author === 'Marta Lopez and Carlos Reyes' && I('es').date === '2026-10-28' && I('es').lang === 'Spanish' && I('es').outlet === 'La Opinión Test', JSON.stringify(I('es')));
@@ -105,6 +105,13 @@ const INIT = ({ hl }) => {
   check('no Title in the details: the page heading is used and flagged "check"', I('noheading').hl === E.noheading.hl && I('noheading').flags.some(f => /page heading/.test(f)), JSON.stringify(I('noheading')));
   check('already in the tracker by ProQuest document ID (even with a changed headline)', S1('known_id') === 'known' && /ProQuest document id/.test(I('known_id').why), JSON.stringify(I('known_id')));
   check('already in the tracker by headline, outlet and date (a ProQuest id the tracker does not have)', S1('known_hl') === 'known' && /same outlet and headline/.test(I('known_hl').why), JSON.stringify(I('known_hl')));
+  /* PROQUESTPDF-v1 answer 2: the story is in the tracker under its NewsBank name; the PDF carries ProQuest's name for the outlet. Not a reprint, not new: already there */
+  for (const [k, ProQ] of [['known_cs', 'The Center Square; Washington'], ['known_nyt', 'New York Times, Late Edition (East Coast); New York, N.Y.'], ['known_wsj', 'Wall Street Journal (Online); New York, N.Y.'], ['known_mundo', 'El Mundo; Madrid, Spain'], ['known_lat', 'Los Angeles Times (pre-1997 Fulltext); Los Angeles, Calif.']]) {
+    const ar = exp.existing.alias_rows[k];
+    check('ProQuest name “' + ProQ + '” is the tracker’s “' + ar.outlet + '”: the story (' + ar.aid + ') is already in the tracker, not a reprint', S1(k) === 'known' && I(k).outlet === ar.outlet && /already in the tracker \(same outlet and headline/.test(I(k).why), JSON.stringify(I(k)));
+  }
+  check('a ProQuest outlet name the tracker does not know is kept as ProQuest has it, flagged “outlet name from ProQuest; check”, and is not guessed into another outlet', S1('unknown_outlet') === 'new' && I('unknown_outlet').outlet === 'Fresno Brand New Gazette Test' && I('unknown_outlet').flags.includes('outlet name from ProQuest; check'), JSON.stringify(I('unknown_outlet')));
+  check('Section and Page are read from the PDF but only decide Print internally (the rows below carry neither)', I('new3page').section === 'California' && I('new3page').page === 'A3');
   check('another outlet with the same headline as a story in the tracker: a reprint of it', S1('rep_other') === 'reprint' && I('rep_other').of === exp.existing.rep_story, JSON.stringify(I('rep_other')));
   check('a second download of an article already in this session (different bytes, same ProQuest ID) is a repeat', S1('dupe_v2') === 'dup_batch' && /twice in the PDFs added/.test(I('dupe_v2').why), JSON.stringify(I('dupe_v2')));
   check('a publication date with no day needs a look and says why in plain words', S1('partialdate') === 'needs_look' && /no day/.test(I('partialdate').why) && !I('partialdate').include, I('partialdate').why);
@@ -116,14 +123,14 @@ const INIT = ({ hl }) => {
   check('refused and needs-a-look PDFs get no checkbox and no PDF copy', ['partialdate', 'nopubtitle', 'two_articles', 'scanned', 'unrelated', 'newsbank_one'].every(n => !I(n).include && !I(n).pdf));
   const tbl = await page.textContent('#pqBody'), sum = await page.textContent('#pqSummary');
   check('the list shows labels a person can read', /Needs a look/.test(tbl) && /Not a ProQuest article PDF/.test(tbl) && /Already in the tracker/.test(tbl) && /Twice in these PDFs/.test(tbl) && /Reprint/.test(tbl), tbl.slice(0, 300));
-  check('the summary adds up', /17 PDFs: 7 new, 1 reprint, 2 already in the tracker, 1 repeated in these PDFs, 4 need a look, 2 not ProQuest article PDFs\./.test(sum.replace(/\s+/g, ' ')) || /\b17 PDFs\b/.test(sum), sum);
+  check('the summary adds up', /23 PDFs: 8 new, 1 reprint, 7 already in the tracker, 1 repeated in these PDFs, 4 need a look, 2 not ProQuest article PDFs\./.test(sum.replace(/\s+/g, ' ')) || /\b23 PDFs\b/.test(sum), sum);
   await page.evaluate(() => { const it = window.__station.state.pq.items.find(i => i.batch.name === 'new3page.pdf'); window.__texts.new3page = it.p.text; });
   await page.screenshot({ path: path.join(OUT, 'pq_1_list.png'), fullPage: true });
 
   /* untick one new story: it must stay out */
   await page.uncheck(`input[data-pqk="${I('noheading').key}"]`);
   const addLabel = await page.textContent('#pqAdd');
-  check('the button says how many stories it adds (7 new minus 1 unticked, plus 1 reprint)', /Add 7 stories/.test(addLabel), addLabel);
+  check('the button says how many stories it adds (8 new minus 1 unticked, plus 1 reprint)', /Add 8 stories/.test(addLabel), addLabel);
   await page.click('#pqAdd');
   await page.waitForFunction(() => /Added:|Stopped/.test(document.querySelector('#pqProg').textContent), null, { timeout: 180000 });
   const prog = await page.textContent('#pqProg'); console.log('   ', prog);
@@ -132,18 +139,21 @@ const INIT = ({ hl }) => {
   fs.writeFileSync(path.join(OUT, 'session_docs.json'), JSON.stringify(S, null, 1));
   const run = S.runs.map(x => x[1])[0];
   check('one run doc: mode hand (the tracker’s “Added by hand”), proquest = today, searched_to blank, status done', S.runs.length === 1 && run.mode === 'hand' && run.proquest === TODAY && run.searched_to === '' && run.status === 'done' && !run.newsbank, JSON.stringify(run && { mode: run.mode, p: run.proquest, s: run.status, st: run.searched_to }));
-  check('the run doc names its source and the PDFs read', run.pq && run.pq.source === 'ProQuest article PDFs' && run.pq.pdfs === 6 && run.pq.batches.length === 7, JSON.stringify(run.pq));
+  check('the run doc names its source and the PDFs read', run.pq && run.pq.source === 'ProQuest article PDFs' && run.pq.pdfs === 7 && run.pq.batches.length === 8, JSON.stringify(run.pq));
   const rows = run.rows, orig = rows.filter(r => r['Original or reprint'] === 'Original'), rep = rows.filter(r => r['Original or reprint'] === 'Reprint');
-  check('rows: 5 Originals (7 new - the unticked one - the one Claude judged not press) and 1 Reprint', orig.length === 5 && rep.length === 1, orig.length + '/' + rep.length);
+  check('rows: 6 Originals (8 new - the unticked one - the one Claude judged not press) and 1 Reprint', orig.length === 6 && rep.length === 1, orig.length + '/' + rep.length);
   const cols = JSON.parse(fs.readFileSync(FILE, 'utf8')).covcols, idx = k => cols.indexOf(k);
   check('every row key is a Coverage column (or an underscore key) and in covcols order', rows.every(r => { const ks = Object.keys(r).filter(k => !k.startsWith('_')); return ks.every(k => idx(k) >= 0) && ks.every((k, i) => i === 0 || idx(ks[i - 1]) < idx(k)); }), JSON.stringify(rows.map(r => Object.keys(r).filter(k => !k.startsWith('_') && idx(k) < 0))));
   const r1 = orig.find(r => r.Headline === E.new3page.hl);
   check('Data Source ProQuest; ProQuest link and the State Library link in the sheet’s forms', r1['Data Source'] === 'ProQuest' && r1['ProQuest link'] === 'https://www.proquest.com/docview/3411000001' && r1['ProQuest via CA State Library'] === 'https://castatelib.idm.oclc.org/login?url=https://www.proquest.com/docview/3411000001', JSON.stringify(r1));
-  check('a page and a newspaper source make a print record: Edition Print, Format Print, Date source print edition, Page and Section kept', r1.Edition === 'Print' && r1.Format === 'Print' && r1['Date source'] === 'print edition' && r1.Page === 'A3' && r1.Section === 'California', JSON.stringify([r1.Edition, r1.Format, r1['Date source'], r1.Page, r1.Section]));
+  check('a page and a newspaper source make a print record: Edition Print, Format Print, Date source print edition, and Page and Section stay BLANK (PROQUESTPDF-v1 answer 1)', r1.Edition === 'Print' && r1.Format === 'Print' && r1['Date source'] === 'print edition' && !r1.Page && !r1.Section, JSON.stringify([r1.Edition, r1.Format, r1['Date source'], r1.Page, r1.Section]));
   check('date, outlet and author come from ProQuest’s details', r1.Date === '2026-10-29' && r1.Year === 2026 && r1.Outlet === 'Daily Valley Ledger Test' && r1['Author / byline'] === 'Dana Whitfield', JSON.stringify(r1));
   check('the publisher’s own page was found, confirmed by the same wording, and is a Publisher URL', r1['Publisher link'] === 'https://www.dailyvalleyledger-test.com/news/gabriel-wildfire-insurance-delays' && r1['Link status'] === 'Publisher URL', r1['Publisher link']);
+  check('Section and Page are blank on every ProQuest row, original and reprint', rows.length > 0 && rows.every(r => !r.Section && !r.Page), JSON.stringify(rows.map(r => [r.Section, r.Page])));
+  const rUn = orig.find(r => /bus shelters/.test(r.Headline));
+  check('the unknown outlet’s row keeps the ProQuest name and its Team note says to check it', rUn && rUn.Outlet === 'Fresno Brand New Gazette Test' && /outlet name from ProQuest; check/.test(rUn['Team note']), JSON.stringify(rUn && [rUn.Outlet, rUn['Team note']]));
   const rEs = orig.find(r => /^Gabriel presenta/.test(r.Headline));
-  check('a record without a page is Date source ProQuest, Edition blank, Format Article', rEs['Date source'] === 'ProQuest' && !rEs.Edition && rEs.Format === 'Article' && !rEs.Page, JSON.stringify([rEs['Date source'], rEs.Edition, rEs.Format]));
+  check('a record without a page is Date source ProQuest, Edition blank, Format Article', rEs['Date source'] === 'ProQuest' && !rEs.Edition && rEs.Format === 'Article' && !rEs.Page && !rEs.Section, JSON.stringify([rEs['Date source'], rEs.Edition, rEs.Format]));
   const rNu = orig.find(r => r.Headline === E.nourl.hl);
   check('a publisher page that is found but blocked is kept as the Publisher link with the blocked status (NEWSBANKPDF answer 3)', /resedacourier-test\.com\/news\/lunch-funding/.test(rNu['Publisher link'] || '') && rNu['Link status'] === 'Search link only', JSON.stringify([rNu['Publisher link'], rNu['Link status']]));
   const rNi = orig.find(r => r.Headline === E.noid.hl);
@@ -160,7 +170,7 @@ const INIT = ({ hl }) => {
   const rp = rep[0];
   check('the reprint: Reprint of the story in the tracker, Data Source ProQuest, its own pages doc (rp-) and reprints doc, text test left to the PC', rp['Story ID'] === exp.existing.rep_story && rp['Data Source'] === 'ProQuest' && /^rp-[0-9a-z]+$/.test(rp._page) && /docview\/3411000009$/.test(rp['ProQuest link']) && S.pages.some(p => p[0] === rp._page && p[1].pq && p[1].pq.file) && S.reprints.length === 1, JSON.stringify(rp));
   const pdocs = S.pages.map(x => x[1]).filter(d => d.pq);
-  check('a pages doc per story and reprint (6), each naming its PDF with sha256 and size', pdocs.length === 6 && pdocs.every(d => /^files\/pq-[0-9a-f]{16}\.pdf$/.test(d.pq.file) && /^[0-9a-f]{64}$/.test(d.pq.pdf_sha256) && d.pq.pdf_bytes > 1000 && /^[0-9a-f]{64}$/.test(d.pq.source_sha256)), pdocs.length);
+  check('a pages doc per story and reprint (7), each naming its PDF with sha256 and size', pdocs.length === 7 && pdocs.every(d => /^files\/pq-[0-9a-f]{16}\.pdf$/.test(d.pq.file) && /^[0-9a-f]{64}$/.test(d.pq.pdf_sha256) && d.pq.pdf_bytes > 1000 && /^[0-9a-f]{64}$/.test(d.pq.source_sha256)), pdocs.length);
   const d1 = pdocs.find(d => d.title === E.new3page.hl);
   check('the pages doc holds the text in the library’s ProQuest-copy form (jg-pdf meta, "Text of the ProQuest PDF (3 pages)", h1, byline)', /<meta name="jg-pdf" content="" data-pages="3" data-shown="text">/.test(d1.clean) && /<article class="jg-pdf-text"><p class="pdf-cap">Text of the ProQuest PDF \(3 pages\)<\/p><h1>/.test(d1.clean) && /<p class="byline">By Dana Whitfield<\/p>/.test(d1.clean), d1.clean.slice(0, 400));
   check('the saved text has no page furniture and no details block', !/PDF GENERATED BY PROQUEST|Page \d of \d|Document URL|ProQuest document ID|Publication title/.test(d1.clean) && /Jesse Gabriel/.test(d1.clean));
@@ -191,7 +201,7 @@ const INIT = ({ hl }) => {
 
   /* step 3: pack */
   await page.waitForFunction(() => !document.querySelector('#stPack').disabled, null, { timeout: 20000 });
-  check('step 3 says how many ProQuest PDFs the update holds', /6 ProQuest PDFs/.test(await page.textContent('#stPackStatus')), await page.textContent('#stPackStatus'));
+  check('step 3 says how many ProQuest PDFs the update holds', /7 ProQuest PDFs/.test(await page.textContent('#stPackStatus')), await page.textContent('#stPackStatus'));
   await page.click('#stPack');
   await page.waitForFunction(() => window.__dl.length > 0, null, { timeout: 60000 });
   const dl = await page.evaluate(() => ({ name: window.__dl[0].filename, size: window.__dl[0].size }));

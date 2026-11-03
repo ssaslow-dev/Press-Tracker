@@ -1,0 +1,649 @@
+{
+ "id": "PROQUESTPDF-v1 outlet names",
+ "version": 1,
+ "about": "Built by tools/build_pq_aliases.py from data/proquest_outlets_curated.json (rules and hand-kept pairs), code/outlet_rules.json (the tracker's own folding) and the workbook's ProQuest rows. How a ProQuest PDF's outlet is named: (1) clean_rules turn the Publication title into a name (text before ';', edition and '(Online)' suffixes off); (2) the name gets a key: key_steps then the PC's feeds and aliases then key_post (exact = before the PC aliases, fold = after); (3) a pair (below) wins; a generic name (generic_needs_city) with no pair for its place is never matched; else the tracker's own spelling for the same exact key, then the same fold key; else the cleaned name is kept and the row's Team note says 'outlet name from ProQuest; check'. Nothing is guessed.",
+ "inputs": {
+  "outlet_rules_sha256": "ae1ead772e4826ffa970d4247d71cf3a1288de09acc82b6058ab045f0940a9de",
+  "curated_sha256": "b987da0243c0447fe9aed176a6226b0910b12ef7115d58677316a28f9b4a574d",
+  "workbook_rows": 8193,
+  "proquest_rows": 336,
+  "proquest_html_copies": 460
+ },
+ "clean_rules": [
+  {
+   "id": "edition",
+   "rx": ",\\s*(?:late|early|final|national|metro|west|east|home|city|sunday|bulk|eastern|western|regional)\\b[^;]*?edition[^;]*$",
+   "to": "",
+   "flags": "i",
+   "source": "existing pqparse.outletOf; ProQuest naming pattern 'New York Times, Late Edition (East Coast)', 'Wall Street Journal, Eastern edition'",
+   "note": "drops the edition suffix"
+  },
+  {
+   "id": "online",
+   "rx": "\\s*\\((?:online|print|ed\\.|east coast|west coast)[^)]*\\)\\s*$",
+   "to": "",
+   "flags": "i",
+   "source": "existing pqparse.outletOf; ProQuest naming pattern 'Los Angeles Times (Online)'",
+   "note": "drops '(Online)', '(Print)', '(East Coast)' ..."
+  },
+  {
+   "id": "historical",
+   "rx": "\\s*\\((?:pre-\\d{4}[^)]*|\\d{4}\\s*-[^)]*)\\)\\s*$",
+   "to": "",
+   "flags": "i",
+   "source": "ProQuest naming pattern for historical files, 'Wall Street Journal (1923 - Current file)', 'Los Angeles Times (pre-1997 Fulltext)'. Not seen in this workbook; written from ProQuest's documented title style, so check it on the first real PDF",
+   "note": "drops the years-covered note"
+  },
+  {
+   "id": "bracket",
+   "rx": "\\s*\\[[^\\]]*\\]\\s*$",
+   "to": "",
+   "flags": "i",
+   "source": "existing pqparse.outletOf: a trailing [..] label",
+   "note": "drops '[subscription]'-style labels"
+  },
+  {
+   "id": "tail_punct",
+   "rx": "[,.]\\s*$",
+   "to": "",
+   "flags": "",
+   "source": "existing pqparse.outletOf",
+   "note": "drops a trailing comma or period"
+  }
+ ],
+ "key_steps": [
+  {
+   "id": "blogs",
+   "rx": "\\s*:\\s*blogs\\s*$",
+   "to": "",
+   "source": "code/sheet_task.py _outlet_base (OUTLETRULES-v1)"
+  },
+  {
+   "id": "todays_edition",
+   "rx": "\\s*\\(?\\btoday'?s edition\\b\\)?",
+   "to": "",
+   "source": "code/sheet_task.py _outlet_base"
+  },
+  {
+   "id": "article_last_to_first",
+   "rx": "^(.*?),\\s*(el|la|le|les|il|der|die|das)\\s*$",
+   "to": "$2 $1",
+   "source": "NewsBank files foreign names 'Mundo, El' / 'Presse Canadienne, La' (5 and 1 rows in the snapshot); ProQuest writes 'El Mundo'. Moved to the front here, removed in key_post, so both read the same",
+   "note": "only a comma + article at the very end"
+  },
+  {
+   "id": "the_last",
+   "rx": ",\\s*the(?=\\s*(?::|/|$))",
+   "to": "",
+   "source": "code/sheet_task.py _outlet_base"
+  },
+  {
+   "id": "the_first",
+   "rx": "^the\\s+",
+   "to": "",
+   "source": "code/sheet_task.py _outlet_base"
+  },
+  {
+   "id": "punct",
+   "rx": "[^a-z0-9]+",
+   "to": " ",
+   "source": "code/sheet_task.py _outlet_base"
+  }
+ ],
+ "key_post": [
+  {
+   "id": "article_first",
+   "rx": "^(?:el|la|le|les|il|der|die|das|l)\\s+(?=\\S)",
+   "to": "",
+   "source": "same note as article_last_to_first. Runs after the PC's feeds and aliases, so 'el pais ...' aliases still work"
+  }
+ ],
+ "feeds": {
+  "associated press": "associated press",
+  "targeted news service": "targeted news service"
+ },
+ "aliases": {
+  "adrian rojas elliot medium": "adrianelliot medium com",
+  "alfred twu medium": "alfredtwu medium com",
+  "anthony cabassa substack": "cabassa substack com",
+  "artists4democracy substack": "artists4democracy substack com",
+  "bradyunited medium": "bradyunited medium com",
+  "brett hense substack": "criticalreport substack com",
+  "cafecoado substack": "cafecoado substack com",
+  "california current substack": "open substack com",
+  "carol kocivar substack": "carolkocivar substack com",
+  "cnet com": "cnet",
+  "cnn newsroom cnn": "cnn",
+  "cnn wire service": "cnn",
+  "codepink substack": "codepink substack com",
+  "collegian san joaquin delta college": "collegian@stockton",
+  "daily herald dupage county edition": "daily herald@arlington heights",
+  "daily news": "los angeles daily news",
+  "doug porter substack": "dougporter substack com",
+  "el pais america edition": "el pais",
+  "el pais english": "el pais",
+  "el pais mexico edition": "el pais",
+  "excelsior california": "excelsior orange county register weekly",
+  "food navigator": "foodnavigator usa",
+  "good morning america": "abc",
+  "goodmorningamerica com": "abc",
+  "independent the independent on sunday": "independent@london",
+  "jay f substack": "datastream substack com",
+  "joe goldman substack": "doinggoodtogether substack com",
+  "joe guzzardi substack": "joeguzzardi substack com",
+  "john kobylt show": "kfi am 640",
+  "john mcginness": "news 93 1 kfbk",
+  "john phillips show": "790 kabc",
+  "kathleen willcox substack": "kathleenwillcox substack com",
+  "ken cook substack": "thenewlede substack com",
+  "kpcc": "laist",
+  "lassen news": "lassen county times",
+  "marincountyconfidential substack": "marincountyconfidential substack com",
+  "micah l sifry substack": "theconnector substack com",
+  "michael berry show": "ktrh",
+  "mike wax medium": "spillikinaerospace medium com",
+  "morning edition": "npr",
+  "morning edition npr": "npr",
+  "mornings with maria": "fox business",
+  "mornings with maria fox business": "fox business",
+  "nadia rahman medium": "nadiarahman medium com",
+  "navik12tracker substack": "navik12tracker substack com",
+  "northridge chatsworth patch": "patch",
+  "northwest arkansas democrat gazette": "arkansas democrat gazette",
+  "pais el": "el pais",
+  "paul brown substack": "paulbrown832245 substack com",
+  "paul thornton substack": "goldenstatereport substack com",
+  "philip lempert substack": "phillempert substack com",
+  "politico california playbook": "politico",
+  "politico california playbook pm": "politico",
+  "politico pro": "politico",
+  "reason com": "reason",
+  "stephen sachs substack": "altapolicywonk substack com",
+  "steve brooks substack": "inproximity substack com",
+  "story is with elex michaelson": "cnn",
+  "story is with elex michaelson the cnn": "cnn",
+  "times sunday times": "times@london",
+  "tribune@san luis obispo": "san luis obispo tribune",
+  "truthtony substack": "truthtony substack com",
+  "tucker carlson tonight": "fox news",
+  "tucker carlson tonight fox news": "fox news",
+  "valley news 30 day embargo": "valley news",
+  "week uk edition": "week",
+  "week us edition": "week",
+  "jewish journal": "jewish journal of greater los angeles",
+  "daily bruin": "daily bruin university of california los angeles",
+  "kabc 790 am": "790 kabc",
+  "greater la kcrw": "kcrw",
+  "kqed political breakdown": "kqed",
+  "jeff krasno podcast": "commune with jeff krasno",
+  "one commune": "commune with jeff krasno",
+  "noticias telemundo": "telemundo",
+  "kpcc 89 3 fm": "laist",
+  "laist 89 3 fm airtalk audio": "laist",
+  "laist 89 3": "laist"
+ },
+ "generic_needs_city": [
+  "times",
+  "herald",
+  "tribune",
+  "gazette",
+  "independent",
+  "daily news",
+  "daily herald",
+  "collegian",
+  "journal",
+  "news",
+  "record",
+  "sun",
+  "post",
+  "star",
+  "press",
+  "courier times",
+  "news tribune",
+  "daily press",
+  "daily record",
+  "news herald",
+  "record herald",
+  "watertown daily times"
+ ],
+ "pairs": [
+  {
+   "pq": "The Center Square",
+   "place": "",
+   "key": "center square",
+   "tracker": "Center Square California, The",
+   "tracker_rows": 26,
+   "kind": "sammy_example",
+   "source": "Sammy's own example (PROQUESTPDF-v1 answer 2; PROQUEST.md 7.4): ProQuest titles it 'The Center Square; Washington' for every state, NewsBank files the California desk as 'Center Square California, The' (26 rows in the snapshot workbook). The Texas desk ('Center Square Texas, The', 2 rows) is a separate outlet that the PC keeps apart (outlet_rules keep_separate), so it is not mapped."
+  },
+  {
+   "pq": "Daily News",
+   "place": "Los Angeles",
+   "key": "los angeles daily news",
+   "tracker": "Daily News",
+   "tracker_rows": 46,
+   "kind": "data",
+   "source": "Data: 7 ProQuest rows carry Outlet 'Daily News' and 4 other rows 'Daily News' with Outlet city Los Angeles; outlet_rules.json lists 'daily news' as a generic name (one outlet per city) and aliases it to 'los angeles daily news'. ProQuest prints the city after the title, so only 'Daily News; Los Angeles, Calif.' is taken as the tracker's Daily News."
+  }
+ ],
+ "seen_in_proquest_rows": [
+  {
+   "outlet": "Politico",
+   "rows": 109
+  },
+  {
+   "outlet": "Los Angeles Times",
+   "rows": 78
+  },
+  {
+   "outlet": "University Wire",
+   "rows": 13
+  },
+  {
+   "outlet": "TCA News Service",
+   "rows": 12
+  },
+  {
+   "outlet": "TCA Regional News",
+   "rows": 9
+  },
+  {
+   "outlet": "Oakland Post, The",
+   "rows": 8
+  },
+  {
+   "outlet": "Daily News",
+   "rows": 7
+  },
+  {
+   "outlet": "New York Times, The",
+   "rows": 7
+  },
+  {
+   "outlet": "Wall Street Journal",
+   "rows": 6
+  },
+  {
+   "outlet": "Washington Post, The",
+   "rows": 6
+  },
+  {
+   "outlet": "Inside Cal EPA",
+   "rows": 5
+  },
+  {
+   "outlet": "Desert Sun, The",
+   "rows": 4
+  },
+  {
+   "outlet": "Mundo, El",
+   "rows": 4
+  },
+  {
+   "outlet": "Arizona Republic",
+   "rows": 3
+  },
+  {
+   "outlet": "CNN Wire Service",
+   "rows": 3
+  },
+  {
+   "outlet": "Green Queen",
+   "rows": 3
+  },
+  {
+   "outlet": "Los Angeles Sentinel",
+   "rows": 3
+  },
+  {
+   "outlet": "Press Democrat, The",
+   "rows": 3
+  },
+  {
+   "outlet": "Cybersecurity Policy Report",
+   "rows": 2
+  },
+  {
+   "outlet": "Inside EPA's Climate Extra",
+   "rows": 2
+  },
+  {
+   "outlet": "Insider",
+   "rows": 2
+  },
+  {
+   "outlet": "Precinct Reporter",
+   "rows": 2
+  },
+  {
+   "outlet": "Southern California Record, The",
+   "rows": 2
+  },
+  {
+   "outlet": "U.S. Newswire",
+   "rows": 2
+  },
+  {
+   "outlet": "Visalia Times-Delta",
+   "rows": 2
+  },
+  {
+   "outlet": "Ad Law Access",
+   "rows": 1
+  },
+  {
+   "outlet": "American Israelite, The",
+   "rows": 1
+  },
+  {
+   "outlet": "American School & University",
+   "rows": 1
+  },
+  {
+   "outlet": "Antiwar.com",
+   "rows": 1
+  },
+  {
+   "outlet": "As It Happens",
+   "rows": 1
+  },
+  {
+   "outlet": "Boston Globe",
+   "rows": 1
+  },
+  {
+   "outlet": "CALmatters",
+   "rows": 1
+  },
+  {
+   "outlet": "CNN",
+   "rows": 1
+  },
+  {
+   "outlet": "California CPA",
+   "rows": 1
+  },
+  {
+   "outlet": "Contify Energy News",
+   "rows": 1
+  },
+  {
+   "outlet": "Daily Breeze",
+   "rows": 1
+  },
+  {
+   "outlet": "Daily Caller, The",
+   "rows": 1
+  },
+  {
+   "outlet": "Epoch Times, The",
+   "rows": 1
+  },
+  {
+   "outlet": "Fox & Hounds",
+   "rows": 1
+  },
+  {
+   "outlet": "India West",
+   "rows": 1
+  },
+  {
+   "outlet": "Inside EPA's Toxics Regulation News",
+   "rows": 1
+  },
+  {
+   "outlet": "Inside PFAS Policy",
+   "rows": 1
+  },
+  {
+   "outlet": "Jewish Bulletin of Northern California",
+   "rows": 1
+  },
+  {
+   "outlet": "Jewish News Syndicate",
+   "rows": 1
+  },
+  {
+   "outlet": "Jewish News of Greater Phoenix",
+   "rows": 1
+  },
+  {
+   "outlet": "Jewish Telegraphic Agency",
+   "rows": 1
+  },
+  {
+   "outlet": "Leaf Chronicle, The",
+   "rows": 1
+  },
+  {
+   "outlet": "Manufacturing.net",
+   "rows": 1
+  },
+  {
+   "outlet": "Moderate Voice, The",
+   "rows": 1
+  },
+  {
+   "outlet": "Moment",
+   "rows": 1
+  },
+  {
+   "outlet": "Monterey County Weekly",
+   "rows": 1
+  },
+  {
+   "outlet": "Nation's Restaurant News",
+   "rows": 1
+  },
+  {
+   "outlet": "New York Times Español",
+   "rows": 1
+  },
+  {
+   "outlet": "Political Transcript Wire",
+   "rows": 1
+  },
+  {
+   "outlet": "Presse Canadienne, La",
+   "rows": 1
+  },
+  {
+   "outlet": "Proactive Investors",
+   "rows": 1
+  },
+  {
+   "outlet": "Reno Gazette-Journal",
+   "rows": 1
+  },
+  {
+   "outlet": "Tech Policy Press",
+   "rows": 1
+  },
+  {
+   "outlet": "Telecommunications Reports",
+   "rows": 1
+  },
+  {
+   "outlet": "Village Voice, The",
+   "rows": 1
+  },
+  {
+   "outlet": "Washington Examiner",
+   "rows": 1
+  },
+  {
+   "outlet": "Washington Jewish Week",
+   "rows": 1
+  },
+  {
+   "outlet": "Week, The",
+   "rows": 1
+  },
+  {
+   "outlet": "Well News, The",
+   "rows": 1
+  }
+ ],
+ "evidence": {
+  "library_publication_lines": [
+   {
+    "publication_line": "Collegian",
+    "filed_under": "University Wire",
+    "copies": 1
+   },
+   {
+    "publication_line": "Daily Bruin",
+    "filed_under": "Daily Bruin: University of California-Los Angeles",
+    "copies": 1
+   },
+   {
+    "publication_line": "Daily Californian",
+    "filed_under": "University Wire",
+    "copies": 3
+   },
+   {
+    "publication_line": "Golden Gate Xpress",
+    "filed_under": "University Wire",
+    "copies": 2
+   },
+   {
+    "publication_line": "The California Aggie",
+    "filed_under": "University Wire",
+    "copies": 1
+   },
+   {
+    "publication_line": "The Griffon News",
+    "filed_under": "University Wire",
+    "copies": 1
+   },
+   {
+    "publication_line": "The Orion",
+    "filed_under": "University Wire",
+    "copies": 2
+   },
+   {
+    "publication_line": "The Pan American",
+    "filed_under": "University Wire",
+    "copies": 1
+   },
+   {
+    "publication_line": "The Poly Post",
+    "filed_under": "University Wire",
+    "copies": 1
+   },
+   {
+    "publication_line": "The State Hornet",
+    "filed_under": "University Wire",
+    "copies": 1
+   }
+  ],
+  "library_note": "The library's ProQuest html copies are text made from the PDFs and carry no ProQuest publication title. The only 'Publication:' lines are inside University Wire items, naming the student paper; every ProQuest row among them is filed under 'University Wire', the wire's own name (the one exception is a NewsBank row, Daily Bruin, whose second source is such a copy), so they give no alias. The workbook's 64 ProQuest Outlet names (seen_in_proquest_rows) show only the tracker's side."
+ },
+ "stats": {
+  "pairs": 2,
+  "clean_rules": 5,
+  "key_steps": 7,
+  "outlet_rules_aliases": 78,
+  "outlet_rules_aliases_with_a_tracker_outlet": 72,
+  "outlet_rules_feeds": 2,
+  "generic_names": 22,
+  "tracker_outlets": 1321,
+  "proquest_outlet_names_seen": 64,
+  "fold_key_collisions": 19
+ },
+ "fold_key_collisions": {
+  "los angeles daily news": {
+   "Los Angeles Daily News": 115,
+   "Daily News": 46,
+   "Daily News, The": 2
+  },
+  "laist": {
+   "LAist": 48,
+   "KPCC": 6
+  },
+  "targeted news service": {
+   "Targeted News Service": 161,
+   "Targeted News Service: U.S. Business": 2,
+   "Targeted News Service: Public Colleges and Universities": 1,
+   "Targeted News Service: U.S. House of Representatives": 1,
+   "Targeted News Service: U.S. Senate": 1
+  },
+  "foodnavigator usa": {
+   "Food Navigator": 2,
+   "FoodNavigator-USA": 14
+  },
+  "sacramento bee": {
+   "Sacramento Bee, The": 190,
+   "Sacramento Bee, The: Blogs": 1,
+   "Sacramento Bee Today's Edition, The": 11
+  },
+  "associated press": {
+   "Associated Press News Service, The": 29,
+   "Associated Press": 5,
+   "Associated Press: US Politics & Government Online": 16,
+   "Associated Press State Wire: California": 35,
+   "Associated Press: Governmental News Report": 12,
+   "Associated Press: US News Online": 17,
+   "Associated Press: Financial News": 2,
+   "Associated Press: Worldstream": 7,
+   "Associated Press: Los Angeles Metro Area": 3
+  },
+  "daily herald": {
+   "Daily Herald": 4,
+   "Daily Herald, The": 1
+  },
+  "cnn": {
+   "CNN": 13,
+   "CNN Wire Service": 6
+  },
+  "fresno bee": {
+   "Fresno Bee, The": 37,
+   "Fresno Bee Today's Edition, The": 3
+  },
+  "modesto bee": {
+   "Modesto Bee, The": 31,
+   "Modesto Bee Today's Edition, The": 2
+  },
+  "merced sun star": {
+   "Merced Sun-Star, The": 24,
+   "Merced Sun-Star Today's Edition, The": 3
+  },
+  "tribune": {
+   "Tribune, The": 11,
+   "Tribune Today's Edition, The": 2
+  },
+  "week": {
+   "Week, The: US Edition": 2,
+   "Week, The": 1
+  },
+  "pais": {
+   "El País: Mexico Edition": 4,
+   "El País: America Edition": 5,
+   "El País: English": 1,
+   "El País": 1,
+   "País, El": 1
+  },
+  "abc": {
+   "Good Morning America": 1,
+   "ABC": 2
+  },
+  "arkansas democrat gazette": {
+   "Arkansas Democrat-Gazette": 3,
+   "Northwest Arkansas Democrat-Gazette": 2
+  },
+  "progressive": {
+   "Progressive, The": 1,
+   "LA Progressive": 4
+  },
+  "politico": {
+   "Politico": 184,
+   "Politico Pro": 17,
+   "Politico California Playbook": 7,
+   "Politico California Playbook PM": 2
+  },
+  "telemundo": {
+   "Telemundo": 1,
+   "Noticias Telemundo": 5
+  }
+ }
+}

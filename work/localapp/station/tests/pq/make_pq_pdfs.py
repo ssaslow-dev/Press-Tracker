@@ -175,6 +175,24 @@ def main(out, fu_path):
     add('known_id', hl=with_pq['hl'] + ' (corrected)', d=D(with_pq['date']), pub='The Center Square; Washington', au_pq='Shannon, Madeline', docid=pqid, n=150, layout='A', pages_hint=1, stype='Wire Feed')
     add('known_hl', hl=hl_row[5].capitalize() if False else byid[hl_row[1]]['hl'], d=D(hl_row[4]), pub=hl_row[3] + '; Test City, Calif.', au_pq='Writer, Test', docid='3411000008', n=150, layout='A', pages_hint=1)
     add('rep_other', hl=byid[rep_row[1]]['hl'], d=D(rep_row[4]), pub='Another Gazette Test; Fresno, Calif.', au_pq='Wire, Desk', docid='3411000009', n=150, layout='A', pages_hint=1)
+    # --- PROQUESTPDF-v1 answer 2: a story the tracker already has under its NewsBank name, dropped as a ProQuest PDF under ProQuest's name ---
+    # (each uses a ProQuest id the tracker does not have, so only the outlet alias can say it is already there)
+    def row_of(outlet, kinds='OR'):
+        r = next((r for r in cov['rows'] if r[3] == outlet and r[2] in kinds and r[4] and len(r[5]) >= 25), None)
+        assert r, outlet
+        return r
+    ALIASED = [('known_cs', 'Center Square California, The', 'The Center Square; Washington', 'Wire Feed'),
+               ('known_nyt', 'New York Times, The', 'New York Times, Late Edition (East Coast); New York, N.Y.', 'Newspapers'),
+               ('known_wsj', 'Wall Street Journal', 'Wall Street Journal (Online); New York, N.Y.', 'Newspapers'),
+               ('known_mundo', 'Mundo, El', 'El Mundo; Madrid, Spain', 'Newspapers'),
+               ('known_lat', 'Los Angeles Times', 'Los Angeles Times (pre-1997 Fulltext); Los Angeles, Calif.', 'Newspapers')]
+    alias_rows = {}
+    for i, (k, outlet, pub, stype) in enumerate(ALIASED):
+        r = row_of(outlet)
+        alias_rows[k] = dict(aid=r[0], sid=r[1], outlet=outlet, hl=r[5], date=r[4])
+        add(k, hl=r[5][0].upper() + r[5][1:], d=D(r[4]), pub=pub, au_pq='Writer, Test', docid='34110000%02d' % (20 + i), n=150, layout='A', pages_hint=1, stype=stype)
+    # a ProQuest name nothing in the tracker matches: kept as ProQuest has it, with the Team note
+    add('unknown_outlet', hl='Gabriel bill on bus shelters clears a Fresno committee, hearing told', d=(2026, 10, 22), pub='Fresno Brand New Gazette Test; Fresno, Calif.', au_pq='Dean, Roy', docid='3411000030', n=150, layout='A', pages_hint=1, stype='Newspapers')
     # --- refused or needing a look ---
     add('partialdate', hl='Gabriel bill on harbor safety passes a committee', d=(2026, 9, 1), pub='Harbor Review Test; Long Beach, Calif.', au_pq='Tran, Hoa', docid='3411000010', n=150, layout='A', pages_hint=1, pubdate='Sep 2026')
     add('nopubtitle', hl='Gabriel and farmers talk water rights in Fresno', d=(2026, 9, 20), pub='X', au_pq='Dean, Roy', docid='3411000011', n=150, layout='B', pages_hint=1, drop=('Publication title',))
@@ -227,7 +245,7 @@ def main(out, fu_path):
     la = DictionaryObject({NameObject('/S'): NameObject('/Launch'), NameObject('/F'): TextStringObject('cmd.exe')})
     w.pages[0][NameObject('/AA')] = DictionaryObject({NameObject('/O'): w._add_object(la)})
     w.write(os.path.join(out, 'evil_launch.pdf'))
-    exp['existing'] = dict(known_id_story=with_pq['id'], known_hl_story=hl_row[1], rep_story=rep_row[1])
+    exp['existing'] = dict(known_id_story=with_pq['id'], known_hl_story=hl_row[1], rep_story=rep_row[1], alias_rows=alias_rows)
     json.dump(exp, open(os.path.join(out, 'expected.json'), 'w'), indent=1, ensure_ascii=False)
     print(json.dumps({k: v['pages'] for k, v in exp['stories'].items()}), exp['existing'])
 
