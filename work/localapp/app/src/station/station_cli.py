@@ -18,6 +18,7 @@ import contextlib
 import io
 import json
 import os
+import re
 import socket
 import subprocess
 import sys
@@ -33,6 +34,7 @@ import post_save            # noqa: E402
 import refresh as R         # noqa: E402
 import setup_mac as SM      # noqa: E402
 import drop_unverified as DR   # noqa: E402
+import switchover as SW   # noqa: E402
 
 PY_FLAGS = ['-B', '-X', 'utf8', '-I']
 _TMP = {'dir': None}       # set by boot(): data/tmp inside the app folder
@@ -71,6 +73,7 @@ class _SubprocessShim:
 def boot(lay):
     os.environ['AJG_NO_NETWORK'] = '1'
     os.environ['AJG_LINK_PHOTOS'] = '1'
+    os.environ['AJG_PRINT_LIB'] = str(lay.library)      # PRINTORIG-v1 (patch 26): build_data lists print originals found by name in the library
     os.environ['AJG_RESERVED_IDS'] = str(DR.reserved_path(lay))     # DROPUNVERIFIED-v1: patches 19 and 20 read it (a missing file changes nothing)
     tmp = lay.data / 'tmp'
     tmp.mkdir(parents=True, exist_ok=True)
@@ -302,6 +305,9 @@ def _reader_only_line(what):
 def do_refresh_make(lay, TU, a):
     try:
         with C.AppLock(lay.state, 'refresh_make'):
+            if os.environ.get('AJG_TEST_HANG') == 'refresh_make':      # tests only: a job that stops moving (the page must be told, and the job stopped)
+                import time
+                time.sleep(3600)
             r = R.make(lay, full=a.full)
     except C.AppLockBusy as e:
         return out({'ok': False, 'locked': True, 'line': C.busy_line(e.info, e.age)})
@@ -443,10 +449,60 @@ def do_drop_apply(lay, TU, a):
     return out({'ok': True, 'written': True, 'line': 'Done', 'headline': f'{r["n_rows"]} unverified reprints removed', 'lines': lines, 'warnings': warn, **r})
 
 
+def _payload(a):
+    try:
+        d = json.loads(a.payload or '{}')
+    except ValueError:
+        d = {}
+    return d if isinstance(d, dict) else {}
+
+
+def do_switch_preview(lay, TU, a):
+    d = _payload(a)
+    try:
+        return out(SW.preview_all(lay, include_low=bool(d.get('include_low')), datafix_files=d.get('files')))
+    except SW.SwitchRefused as e:
+        return out({'ok': False, 'line': e.msg}, 2)
+
+
+def do_switch_apply(lay, TU, a):
+    d = _payload(a)
+
+    def init_fn(note):
+        return TU.init_baseline(lay, note=note)['exit_code']
+    try:
+        with C.AppLock(lay.state, 'switchover'):
+            r = SW.apply_steps(lay, d.get('steps') or [], d.get('digests') or {}, init_fn, include_low=bool(d.get('include_low')), datafix_files=d.get('files'))
+            try:
+                r['page_rebuild'] = rebuild_page(lay)       # once, after the workbook has changed
+            except Exception as e:          # noqa: BLE001
+                r['page_rebuild'] = {'ok': False, 'error': repr(e)[:300]}
+    except C.AppLockBusy as e:
+        return out({'ok': False, 'locked': True, 'written': False, 'line': C.busy_line(e.info, e.age)})
+    except (SW.SwitchRefused, DR.DropRefused, SW.OF.OtherFilesRefused) as e:
+        return out({'ok': False, 'written': False, 'line': e.msg}, 2)
+    warn = [] if (r.get('page_rebuild') or {}).get('ok') else ['The page could not be rebuilt: use "Rebuild the page" under Repairs.']
+    return out({'ok': True, 'written': True, 'line': 'Done', 'warnings': warn, **r})
+
+
+def do_switch_finish(lay, TU, a):
+    return out(SW.finish(lay))
+
+
+def do_switch_remove_file(lay, TU, a):
+    nm = str(_payload(a).get('name') or '')
+    f = lay.data / 'switchover' / 'datafix' / nm
+    moved = lay.data / 'switchover' / 'datafix_removed'
+    if f.is_file() and re.fullmatch(r'[A-Za-z0-9._ ()-]{1,120}\.csv', nm):
+        moved.mkdir(parents=True, exist_ok=True)
+        os.replace(f, moved / f'{C.stamp()}-{nm}')
+    return out({'ok': True})
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('verb', choices=['make', 'inspect', 'preview', 'save', 'reject', 'init', 'rebuild', 'refresh_make', 'refresh_take', 'edits_preview', 'edits_save',
-                                         'setup_check', 'setup_run', 'drop_preview', 'drop_apply'])
+                                         'setup_check', 'setup_run', 'drop_preview', 'drop_apply', 'switch_preview', 'switch_apply', 'switch_finish', 'switch_remove_file'])
     ap.add_argument('--root', required=True)
     ap.add_argument('--zip')
     ap.add_argument('--update')
@@ -457,6 +513,7 @@ def main(argv=None):
     ap.add_argument('--folder')
     ap.add_argument('--list')
     ap.add_argument('--repairs', action='store_true')
+    ap.add_argument('--payload')
     a = ap.parse_args(argv)
     a.edits_only = a.verb == 'edits_save'
     lay = C.layout(a.root)
@@ -465,14 +522,16 @@ def main(argv=None):
         post_save.recover(lay)       # a crash inside the last post-save sync must not leave the pipeline list refusing every job (REVIEW_2 finding 5)
     except Exception:       # noqa: BLE001
         pass
-    if R.role(lay) != 'keeper' and a.verb in ('inspect', 'preview', 'save', 'reject', 'init', 'edits_preview', 'edits_save', 'setup_check', 'setup_run', 'drop_preview', 'drop_apply'):
+    if R.role(lay) != 'keeper' and a.verb in ('inspect', 'preview', 'save', 'reject', 'init', 'edits_preview', 'edits_save', 'setup_check', 'setup_run', 'drop_preview', 'drop_apply', 'switch_preview', 'switch_apply', 'switch_finish', 'switch_remove_file'):
         return out({'ok': False, 'written': False, 'line': _reader_only_line('take in updates, save edits, accept the workbook, set up from the Mac library or remove unverified reprints')}, 2)
     try:
         return {'make': lambda: do_make(lay, MFU, a), 'inspect': lambda: do_inspect(lay, TU, a), 'preview': lambda: do_preview(lay, TU, a),
                 'save': lambda: do_save(lay, TU, a), 'edits_preview': lambda: do_edits_preview(lay, TU, a), 'edits_save': lambda: do_save(lay, TU, a), 'reject': lambda: do_reject(lay, TU, a), 'init': lambda: do_init(lay, TU, a),
                 'rebuild': lambda: do_rebuild(lay, TU, a), 'refresh_make': lambda: do_refresh_make(lay, TU, a),
                 'refresh_take': lambda: do_refresh_take(lay, TU, a), 'setup_check': lambda: do_setup_check(lay, TU, a),
-                'setup_run': lambda: do_setup_run(lay, TU, a), 'drop_preview': lambda: do_drop_preview(lay, TU, a), 'drop_apply': lambda: do_drop_apply(lay, TU, a)}[a.verb]()
+                'setup_run': lambda: do_setup_run(lay, TU, a), 'drop_preview': lambda: do_drop_preview(lay, TU, a), 'drop_apply': lambda: do_drop_apply(lay, TU, a),
+                'switch_preview': lambda: do_switch_preview(lay, TU, a), 'switch_apply': lambda: do_switch_apply(lay, TU, a), 'switch_finish': lambda: do_switch_finish(lay, TU, a),
+                'switch_remove_file': lambda: do_switch_remove_file(lay, TU, a)}[a.verb]()
     except Exception as e:                                # noqa: BLE001
         return out({'ok': False, 'line': 'Something unexpected went wrong: ' + repr(e)[:300]}, 1)
 

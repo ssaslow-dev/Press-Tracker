@@ -125,6 +125,7 @@ def tidy_pipeline(pipe: Path):
     patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '15_tracker_js_tidy_css.patch')
     patched_copy(pipe / 'tabs' / 'reporters.js', pipe / 'tabs' / 'reporters.js', ap_ / '16_tabs_reporters_tidy.patch')
     patched_copy(pipe / 'tabs' / 'outlets.js', pipe / 'tabs' / 'outlets.js', ap_ / '17_tabs_outlets_tidy.patch')
+    patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '27_tracker_js_vieworig.patch')     # VIEWORIG-v1 (option B): "View original" for print originals
     apply_subs([pipe / 'tracker.js', pipe / 'shell.html'] + sorted((pipe / 'tabs').glob('*.js')), ap_ / '18_wording_tidy.subs.json')
     apply_subs([pipe / 'tracker.js', pipe / 'shell.html'] + sorted((pipe / 'tabs').glob('*.js')), ap_ / '21_note_wording.subs.json')   # NOTE-v1
 
@@ -132,7 +133,7 @@ def tidy_pipeline(pipe: Path):
 def patch_index_tidy(idx: Path):
     """TIDY-v1: the same patches on a page already built (each must match exactly once)"""
     ap_ = HERE / 'patches'
-    for n in ('15_tracker_js_tidy_css', '16_tabs_reporters_tidy', '17_tabs_outlets_tidy'):
+    for n in ('15_tracker_js_tidy_css', '16_tabs_reporters_tidy', '17_tabs_outlets_tidy', '27_tracker_js_vieworig'):
         patched_copy(idx, idx, ap_ / (n + '.patch'))
     apply_subs([idx], ap_ / '18_wording_tidy.subs.json')
     apply_subs([idx], ap_ / '21_note_wording.subs.json')   # NOTE-v1
@@ -282,8 +283,12 @@ def copy_app_code(root: Path, pb: Path, info: dict):
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '14_sheet_task_pq_outlet_aliases.patch')
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '19_sheet_task_reserved_ids.patch')       # DROPUNVERIFIED-v1: ids of rows deleted for good stay reserved
     patched_copy(pipe / 'build_data.py', pipe / 'build_data.py', ap_ / '20_build_data_reserved_ids.patch')
+    patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '22_sheet_task_prjudge2.patch')            # PRJUDGE-v2: the station's per-item press-release verdict
+    patched_copy(pipe / 'date_rules.py', pipe / 'date_rules.py', ap_ / '23_date_rules_airdate.patch')              # NBTV-v1: Date source 'air date (Pacific)'
+    patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '24_sheet_task_printpages.patch')           # PRINTPAGES-v1: print-page rows, Unlinked print pages writer, known-story copies
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '25_sheet_task_otherfiles.patch')            # OTHERFILES-v1 / ORIGCOPIES-v1: extra original copies, Other files column, print originals by name
     patched_copy(pipe / 'build_data.py', pipe / 'build_data.py', ap_ / '26_build_data_printorig.patch')            # PRINTORIG-v1 (option B): rec['po'] from the library's _original_pdf names
+    patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '28_sheet_task_prcolor.patch')               # PRCOLOR-v1: Press release = Yes rows are purple (#7030A0)
     shutil.copy2(LOCALAPP / 'station' / 'data' / 'proquest_outlets.json', pipe / 'proquest_outlets.json')    # PROQUESTPDF-v1 answer 2 (one source: the station's data)
     patched_copy(pipe / 'shell.html', pipe / 'shell.html', ap_ / '08_shell_localfonts.patch')
     patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '07_tracker_js_localfonts.patch')

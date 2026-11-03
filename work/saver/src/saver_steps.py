@@ -31,12 +31,20 @@ def sha256_file(path) -> str:
 
 
 def read_sheet_task_constants(path, names=('VT_DERIVED_REL', 'VT_NEW_OK')) -> dict:
-    """literal module-level assignments of sheet_task.py, by ast (the file is not imported). Raises KeyError if one is missing or not a literal."""
+    """literal module-level assignments of sheet_task.py, by ast (the file is not imported). A name that stands for a module-level string constant
+    (e.g. PRINT_TAB = 'Unlinked print pages') inside such a literal is replaced by that string first. Raises KeyError if one is missing or not a literal."""
+    import copy
     tree = ast.parse(Path(path).read_text(encoding='utf-8'))
+    strs = {n.targets[0].id: n.value.value for n in tree.body
+            if isinstance(n, ast.Assign) and len(n.targets) == 1 and isinstance(n.targets[0], ast.Name) and isinstance(n.value, ast.Constant) and isinstance(n.value.value, str)}
+
+    class Sub(ast.NodeTransformer):
+        def visit_Name(self, node):
+            return ast.copy_location(ast.Constant(strs[node.id]), node) if node.id in strs else node
     found = {}
     for node in tree.body:
         if isinstance(node, ast.Assign) and len(node.targets) == 1 and isinstance(node.targets[0], ast.Name) and node.targets[0].id in names:
-            found[node.targets[0].id] = ast.literal_eval(node.value)
+            found[node.targets[0].id] = ast.literal_eval(ast.fix_missing_locations(Sub().visit(copy.deepcopy(node.value))))
     missing = [n for n in names if n not in found]
     if missing:
         raise KeyError(f'sheet_task.py has no literal {missing}')

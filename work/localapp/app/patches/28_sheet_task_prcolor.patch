@@ -1,0 +1,23 @@
+--- a/code/sheet_task.py
++++ b/code/sheet_task.py
+@@ -3596,14 +3596,17 @@
+     def mark_red(self):
+         red = Font(color='00C00000')
++        purple = Font(color='007030A0')     # PRCOLOR-v1 (PC): rows with Press release = Yes are purple across the whole row; the other rows the tracker hides stay red
+         pr = lambda r: str(self.s.get(r, 'Press release') or '').strip().lower() == 'yes'
+         cand = set(range(self.first_new_row + 1, self.s.last_row + 1)) | {self.s.rows.get(x['aid']) for x in self.res.get('releases_flagged', [])}
+         for r in sorted(x for x in cand if x):
+             kind = self.s.get(r, 'Original or reprint')
+             o = self.s.original_row(self.s.get(r, 'Story ID')) if kind == 'Reprint' else r
+             if not (pr(r) or kind not in ('Original', 'Reprint') or o is None or pr(o)):
+                 continue
++            tint = purple if pr(r) else red
+             for c in range(1, len(self.s.hdr) + 1):
+                 cell = self.s.ws.cell(r, c)
+                 f = copy.copy(cell.font)
+-                cell.font = Font(name=f.name, sz=f.sz, b=f.b, i=f.i, u=f.u, strike=f.strike, vertAlign=f.vertAlign, color=red.color)
+-            self.res['red_rows'].append(self.s.get(r, 'Article ID'))
++                cell.font = Font(name=f.name, sz=f.sz, b=f.b, i=f.i, u=f.u, strike=f.strike, vertAlign=f.vertAlign, color=tint.color)
++            self.res['red_rows'].append(self.s.get(r, 'Article ID'))
++            if pr(r):
++                self.res.setdefault('purple_rows', []).append(self.s.get(r, 'Article ID'))

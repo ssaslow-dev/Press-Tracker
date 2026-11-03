@@ -150,7 +150,7 @@ class MakeForUpdate(unittest.TestCase):
 
     def test_rows_index_has_every_row_kind(self):
         rows = self.fu['rows']
-        self.assertEqual(rows['cols'], ['aid', 'sid', 'kind', 'outlet', 'date', 'hl', 'links'])
+        self.assertEqual(rows['cols'], ['aid', 'sid', 'kind', 'outlet', 'date', 'hl', 'links', 'files'])
         kinds = {r[0]: r[2] for r in rows['rows']}
         self.assertEqual(kinds['00001'], 'O')
         self.assertEqual(kinds['00002'], 'R')

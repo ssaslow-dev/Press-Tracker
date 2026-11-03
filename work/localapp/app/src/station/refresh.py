@@ -151,6 +151,7 @@ def make(lay, full=False, auto=True) -> dict:
     if role(lay) != 'keeper':
         raise RefreshRefused('NOT_KEEPER', 'Only the keeper copy of the tracker makes refresh files.')
     wb = lay.workbook
+    C.beat_to(lay.state / 'job_heartbeat')
     if not wb.is_file():
         raise RefreshRefused('NO_WORKBOOK', 'The workbook is not in the data folder.')
     ws = C.workbook_state(lay)
@@ -206,6 +207,9 @@ def make(lay, full=False, auto=True) -> dict:
         raise RefreshRefused('CHANGED', 'The workbook changed while the refresh file was being made. Try again.')
     manifest = {'format': FORMAT, 'format_version': 2 if deleted else 1, 'created_at': created, 'kind': 'full' if full else 'incremental', 'seq': seq,
                 'base_seq': prev_seq, 'workbook_name': wb.name, 'workbook_sha256': sha_wb, 'files': manifest_files}
+    lu = C.last_updated(lay.state)
+    if lu:
+        manifest['last_updated'] = lu       # LASTUPDATED-v1: the keeper's last save date (Pacific), shown in a reader's masthead
     if deleted:
         manifest['deleted'] = deleted
     out = lay.data / 'refresh_out'
@@ -218,6 +222,7 @@ def make(lay, full=False, auto=True) -> dict:
         for n, p in files.items():
             ct = zipfile.ZIP_STORED if os.path.splitext(n)[1].lower() in MEDIA | {'.pdf'} else zipfile.ZIP_DEFLATED
             z.write(p, n, compress_type=ct)
+            C.beat()
     os.replace(part, dest)
     C.atomic_write(_state_file(lay, 'refresh_state.json'), json.dumps({'last_seq': seq, 'last_at': created, 'shards': new_map or st.get('shards') or {},
                                                                     'last_file': name}, indent=1).encode())
@@ -236,6 +241,7 @@ def _read_checked(z: zipfile.ZipFile, info: zipfile.ZipInfo, sink=None):
             if n > info.file_size or n > CAP_ENTRY:
                 raise RefreshRefused('TOO_BIG', f'{info.filename[:60]} is larger than its header says')
             h.update(b)
+            C.beat()
             if sink:
                 sink(b)
     if n != info.file_size:
@@ -336,6 +342,7 @@ def trim_refresh_backups(lay, wb: Path, keep: int = 3) -> list:
 
 def take(lay, zip_path, init_fn) -> dict:
     """verify, then apply. init_fn(note) re-seeds the saver ledger with the new workbook (returns the exit code)."""
+    C.beat_to(lay.state / 'job_heartbeat')
     if role(lay) == 'keeper':
         raise RefreshRefused('IS_KEEPER', 'This is the keeper copy. It makes refresh files; it does not take them in.')
     man = verify(zip_path)
@@ -436,7 +443,8 @@ def take(lay, zip_path, init_fn) -> dict:
         raise RefreshRefused('LEDGER', 'The workbook was replaced, but the tracker could not record it as its starting point. Use "Accept the workbook as it is now" (Tracker files, under Repairs).')
     C.atomic_write(_state_file(lay, 'refresh_applied.json'), json.dumps({'seq': man['seq'], 'kind': man['kind'], 'created_at': man['created_at'],
                                                                      'applied_at': C.utc_now().isoformat(timespec='seconds'),
-                                                                     'workbook_sha256': man['workbook_sha256']}, indent=1).encode())
+                                                                     'workbook_sha256': man['workbook_sha256'],
+                                                                     'last_updated': man['last_updated'] if re.fullmatch(r'\d{4}-\d{2}-\d{2}', str(man.get('last_updated'))) else ''}, indent=1).encode())
     res['workbook_sha256'] = man['workbook_sha256']
     return res
 

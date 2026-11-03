@@ -26,6 +26,7 @@ from urllib.parse import parse_qs, unquote, urlsplit
 
 import common as C
 import refresh as R
+import switchover as SW
 import server as S
 
 HERE = Path(__file__).resolve().parent
@@ -40,6 +41,8 @@ SHA_OK = re.compile(r'^[0-9a-f]{64}$')
 TOKEN_OK = re.compile(r'^[0-9a-f]{8,64}$')
 RF_OK = re.compile(r'^refresh_(full|incr)_[0-9]{4}_[0-9TZ]+_[0-9a-f]{8}( \([0-9]+\))?\.zip$')
 FU_OK = re.compile(r'^for_update_[0-9]{12}_[0-9a-f]{8}( \([0-9]+\))?\.json$')
+STALL_WARN, STALL_KILL = int(os.environ.get('AJG_TEST_STALL_WARN') or 45), int(os.environ.get('AJG_TEST_STALL_KILL') or 240)   # seconds without any sign of progress (tests shorten them)
+PRINT_ORIG_OK = re.compile(r'^_original_pdf/(\d{4})/(\d{5}_p\d{1,4}(?:-\d{1,4})?\.pdf)$')
 SHARD_OK = re.compile(r'^[A-Za-z0-9][A-Za-z0-9._-]*\.json$')
 
 
@@ -58,7 +61,7 @@ class Jobs:
         self.done = {}
 
     def summary(self, j):
-        return None if j is None else {k: j[k] for k in ('id', 'verb', 'state', 'started', 'seconds') if k in j}
+        return None if j is None else {k: j[k] for k in ('id', 'verb', 'state', 'started', 'seconds', 'stalled') if k in j}
 
     def start(self, verb: str, args: list):
         with self.lock:
@@ -82,19 +85,80 @@ class Jobs:
         except OSError:
             pass
         try:
-            p = subprocess.run(cmd, cwd=str(self.root), capture_output=True, text=True, encoding='utf-8', errors='replace', env=env, timeout=7200)
-            try:
-                res = json.loads(p.stdout.strip().splitlines()[-1])
-            except (ValueError, IndexError):
-                res = {'ok': False, 'line': 'The job gave no answer. ' + (p.stderr or '')[-300:]}
-            res['exit_code'] = p.returncode
-        except subprocess.TimeoutExpired:
-            res = {'ok': False, 'line': 'The job took too long and was stopped. The save program may still be finishing: check the workbook status in a few minutes before trying again.'}
+            res = self._watched(j, verb, cmd, env)
         except OSError as e:
             res = {'ok': False, 'line': f'The job could not start: {e}'[:300]}
         j['result'] = res
         j['seconds'] = round(time.time() - j['started'], 1)
         j['state'] = 'done'
+
+    def _activity(self, since):
+        """the newest sign that a refresh job is moving: its heartbeat file, or a growing .part file of the refresh being written (epoch seconds; `since` when none)"""
+        best = since
+        try:
+            best = max(best, (Path(self.root) / 'data' / 'state' / 'job_heartbeat').stat().st_mtime)
+        except OSError:
+            pass
+        try:
+            for f in (Path(self.root) / 'data' / 'refresh_out').glob('*.part'):
+                best = max(best, f.stat().st_mtime)
+        except OSError:
+            pass
+        return best
+
+    def _watched(self, j, verb, cmd, env):
+        """Run the job. The refresh jobs (making or taking in a refresh file) are watched (CHAINCHECK-v1 follow-up a): when nothing has moved for STALL_WARN seconds the page is
+        told ('stalled'); after STALL_KILL seconds the job is stopped, its half-written file removed and the page gets a plain failure. Nothing is changed by a stopped job."""
+        watch = verb in ('refresh_make', 'refresh_take')
+        try:
+            (Path(self.root) / 'data' / 'state' / 'job_heartbeat').unlink()
+        except OSError:
+            pass
+        p = subprocess.Popen(cmd, cwd=str(self.root), stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8', errors='replace', env=env)
+        box = {}
+        th = threading.Thread(target=lambda: box.update(zip(('out', 'err'), p.communicate())), daemon=True)
+        th.start()
+        t0 = time.time()
+        while th.is_alive():
+            th.join(1.0 if watch else 5.0)
+            if time.time() - t0 > 7200:
+                p.kill()
+                th.join(10)
+                return {'ok': False, 'line': 'The job took too long and was stopped. The save program may still be finishing: check the workbook status in a few minutes before trying again.'}
+            if watch and th.is_alive():
+                quiet = time.time() - self._activity(t0)
+                j['stalled'] = round(quiet) if quiet >= STALL_WARN else 0
+                if quiet >= STALL_KILL:
+                    p.kill()
+                    th.join(10)
+                    self._after_kill(p.pid)
+                    return {'ok': False, 'stalled': True, 'line': f'Making the file stopped moving for {int(quiet // 60)} minutes, so the tracker stopped it. Nothing was changed. '
+                            'Close other programs that use the disk, wait a minute and try again.' if verb == 'refresh_make' else
+                            f'Bringing in the file stopped moving for {int(quiet // 60)} minutes, so the tracker stopped it. Nothing was changed. Wait a minute and try again.'}
+        j['stalled'] = 0
+        try:
+            res = json.loads((box.get('out') or '').strip().splitlines()[-1])
+        except (ValueError, IndexError):
+            res = {'ok': False, 'line': 'The job gave no answer. ' + (box.get('err') or '')[-300:]}
+        res['exit_code'] = p.returncode
+        return res
+
+    def _after_kill(self, pid):
+        """a stopped refresh job: its half-written .part files and its lock are put away (moved, nothing deleted that was whole)"""
+        base = Path(self.root) / 'data'
+        for f in (base / 'refresh_out').glob('*.part'):
+            try:
+                f.unlink()
+            except OSError:
+                pass
+        lk = base / 'state' / 'app.lock'
+        try:
+            info = json.loads(lk.read_text(encoding='utf-8'))
+            if info.get('pid') == pid:
+                (base / 'state' / 'logs').mkdir(parents=True, exist_ok=True)
+                os.replace(lk, base / 'state' / 'logs' / f'app.lock.stopped.{int(time.time())}')
+        except (OSError, ValueError):
+            pass
 
     def get(self, jid):
         j = self.done.get(jid)
@@ -129,7 +193,21 @@ class StationHandler(S.Handler):
     def _static(self, path, head):
         if path.startswith('/articles/'):
             return self._articles(path, head)
+        if path.startswith('/library/'):
+            return self._library_pdf(path, head)
         return super()._static(path, head)
+
+    def _library_pdf(self, path, head):
+        """VIEWORIG-v1: a print original (page scan) from the library, opened in Edge's PDF viewer. Only _original_pdf/<year>/<Article ID>_p<pages>.pdf names are served."""
+        m = PRINT_ORIG_OK.match(path[len('/library/'):])
+        if not m:
+            return self._err(404, 'not found', head)
+        f = self.server.lay.library / '_original_pdf' / m.group(1) / m.group(2)
+        try:
+            body = f.read_bytes()
+        except OSError:
+            return self._err(404, 'not found', head)
+        return self._send(200, body, 'application/pdf', {'Cache-Control': 'no-cache', 'Content-Disposition': 'inline'}, head)
 
     def _articles(self, path, head):
         name = path[len('/articles/'):]
@@ -170,6 +248,8 @@ class StationHandler(S.Handler):
         want = 'reader' if kind == 'refresh' else 'keeper'
         if kind == 'manifest':
             return self._upload_manifest(q)
+        if kind == 'datafix':
+            return self._upload_datafix(q)
         if R.role(self.server.lay) != want:
             return self._err(403, 'This copy of the tracker %s.' % ('is the keeper copy and does not take refresh files' if want == 'reader' else 'is a reader copy and does not take in updates'))
         name = re.sub(r'[^A-Za-z0-9._ -]', '_', os.path.basename((q.get('name') or ['update.zip'])[0]))[:80]
@@ -202,6 +282,33 @@ class StationHandler(S.Handler):
         except OSError as e:
             return self._err(500, f'could not store the upload: {e}')
         return self._json({'ok': True, 'file': dest.name, 'bytes': n, 'sha256': h.hexdigest()})
+
+    def _upload_datafix(self, q):
+        """SWITCHOVER-v1: an approved data-check fixes file (CSV) for the Switch-over changes screen; kept in data/switchover/datafix/, never run by itself"""
+        lay = self.server.lay
+        if R.role(lay) != 'keeper':
+            return self._err(403, 'Only the keeper copy applies data-check fixes.')
+        name = re.sub(r'[^A-Za-z0-9._ -]', '_', os.path.basename((q.get('name') or ['fixes.csv'])[0]))[:80]
+        if not name.lower().endswith('.csv'):
+            return self._err(400, 'The approved fixes must be a .csv file.')
+        n = int(self.headers.get('Content-Length') or 0)
+        if n <= 0 or n > 20 * 2**20:
+            return self._err(413, 'That file is empty or larger than 20 MB.')
+        d = lay.data / 'switchover' / 'datafix'
+        d.mkdir(parents=True, exist_ok=True)
+        dest = d / name
+        k = 2
+        while dest.exists():
+            dest = d / f'{Path(name).stem} ({k}).csv'
+            k += 1
+        body = self.rfile.read(n)
+        if len(body) != n:
+            return self._err(400, 'The upload was cut off. Try again.')
+        try:
+            dest.write_bytes(body)
+        except OSError as e:
+            return self._err(500, f'could not store the upload: {e}')
+        return self._json({'ok': True, 'file': dest.name, 'bytes': n})
 
     # -- /_local/
     def _local(self, method, path, query, head):
@@ -261,7 +368,7 @@ class StationHandler(S.Handler):
             return self._err(405, 'method not allowed', head)
         d = self._body_json()
         r_ = R.role(lay)
-        if rest in ('inspect', 'preview', 'save', 'reject', 'init', 'refresh_make', 'edits_preview', 'edits_save', 'setup_check', 'setup_run', 'drop_preview', 'drop_apply') and r_ != 'keeper':
+        if rest in ('inspect', 'preview', 'save', 'reject', 'init', 'refresh_make', 'edits_preview', 'edits_save', 'setup_check', 'setup_run', 'drop_preview', 'drop_apply', 'switch_preview', 'switch_apply', 'switch_finish', 'switch_remove_file') and r_ != 'keeper':
             return self._json({'ok': False, 'line': 'This copy of the tracker is a reader copy. Only the keeper copy takes in updates, saves edits, accepts the workbook, sets up from the Mac library, removes unverified reprints or makes refresh files. Edits made in a reader copy stay in that copy and are not saved anywhere else.'}, 403)
         if rest == 'refresh_take' and r_ == 'keeper':
             return self._json({'ok': False, 'line': 'This is the keeper copy. It makes refresh files; it does not take them in.'}, 403)
@@ -300,6 +407,24 @@ class StationHandler(S.Handler):
             if rest == 'setup_run' and d.get('repairs') is True:
                 args.append('--repairs')
             verb = rest
+        elif rest in ('switch_preview', 'switch_apply', 'switch_finish', 'switch_remove_file'):
+            low = d.get('include_low') is True
+            files = d.get('files')
+            if files is not None and (not isinstance(files, list) or len(files) > 50 or not all(isinstance(x, str) and re.match(r'^[A-Za-z0-9._ ()-]{1,120}\.csv$', x) for x in files)):
+                return self._err(400, 'bad list of fixes files')
+            payload = {'include_low': low, 'files': files}
+            if rest == 'switch_apply':
+                steps, dig = d.get('steps'), d.get('digests')
+                if not isinstance(steps, list) or not steps or not all(x in ('drop_unverified', 'prjudge', 'prcolor', 'other_files', 'datafix') for x in steps) \
+                        or not isinstance(dig, dict) or not all(isinstance(v, str) and re.match(r'^[0-9a-f]{0,16}$', v) for v in dig.values()):
+                    return self._err(400, 'The steps must be looked at first.')
+                payload.update(steps=steps, digests=dig)
+            if rest == 'switch_remove_file':
+                nm = str(d.get('name') or '')
+                if not re.match(r'^[A-Za-z0-9._ ()-]{1,120}\.csv$', nm):
+                    return self._err(400, 'bad file name')
+                payload['name'] = nm
+            verb, args = rest, ['--payload=' + json.dumps(payload)]
         elif rest == 'drop_preview':
             verb = 'drop_preview'
         elif rest == 'drop_apply':
@@ -378,7 +503,13 @@ class StationServer(S.TrackerServer):
                 'job': self.jobs.summary(self.jobs.current), 'page_built': (lay.data / 'site' / 'index.html').is_file(),
                 'pipeline_ok': (lay.pipeline / 'PIPELINE.sha256').is_file(),
                 'last_for_update': fu[-1].name if fu else None, 'edits_pending': self._edits_pending(), 'time': time.time(),
-                'setup_done': self._logs('setup-*.json') is not None, 'drop_done': self._logs('drop-unverified-*.json')}
+                'last_updated': self._last_updated(), 'switchover': SW.screen_status(lay) if R.role(lay) == 'keeper' else None, 'setup_done': self._logs('setup-*.json') is not None, 'drop_done': self._logs('drop-unverified-*.json')}
+
+    def _last_updated(self):
+        """LASTUPDATED-v1: keeper = newest saving ledger entry; reader = the date its last refresh file carried"""
+        if R.role(self.lay) == 'keeper':
+            return C.last_updated(self.lay.state)
+        return (R._read_json(self.lay.state / 'refresh_applied.json', {}) or {}).get('last_updated') or ''
 
     def _logs(self, pat):
         """DROPUNVERIFIED-v1 / SWITCHOVER-v1: the date of the newest finished log of this kind (setup: any), or None"""

@@ -258,7 +258,7 @@ def check_staged(before: Path, after: Path, expect_tabs) -> list:
 
 # ---------------------------------------------------------------- apply
 
-def apply(lay, token: str, init_fn) -> dict:
+def apply(lay, token: str, init_fn, shared_backup=None) -> dict:
     """init_fn(note) -> exit code: re-seeds the saver ledger with the new workbook (the ledger's own `init`)."""
     wb = lay.workbook
     if not wb.is_file():
@@ -277,15 +277,18 @@ def apply(lay, token: str, init_fn) -> dict:
         raise OtherFilesRefused('CHANGED', 'The workbook changed since you looked. Preview again. Nothing was changed.')
     stamp = C.stamp()
     before_sha = p['workbook_sha256']
-    lay.backups.mkdir(parents=True, exist_ok=True)
-    bk = lay.backups / f'{wb.stem} BACKUP before add_other_files_column {stamp}.xlsx'
-    n = 2
-    while bk.exists():
-        bk = bk.with_name(f'{bk.stem} ({n}){bk.suffix}')
-        n += 1
-    shutil.copy2(wb, bk)
-    if C.sha256_file(bk) != before_sha:
-        raise OtherFilesRefused('BACKUP_FAILED', 'The backup could not be made correctly, so nothing was changed.')
+    if shared_backup is not None:       # the Switch-over changes screen made the one backup of the whole session (switchover.py)
+        bk = Path(shared_backup)
+    else:
+        lay.backups.mkdir(parents=True, exist_ok=True)
+        bk = lay.backups / f'{wb.stem} BACKUP before add_other_files_column {stamp}.xlsx'
+        n = 2
+        while bk.exists():
+            bk = bk.with_name(f'{bk.stem} ({n}){bk.suffix}')
+            n += 1
+        shutil.copy2(wb, bk)
+        if C.sha256_file(bk) != before_sha:
+            raise OtherFilesRefused('BACKUP_FAILED', 'The backup could not be made correctly, so nothing was changed.')
     import openpyxl
     tmpd = lay.data / 'tmp'
     tmpd.mkdir(parents=True, exist_ok=True)

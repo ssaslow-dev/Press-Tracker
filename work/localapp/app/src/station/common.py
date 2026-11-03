@@ -39,7 +39,32 @@ def sha256_file(p) -> str:
     with open(p, 'rb') as f:
         for b in iter(lambda: f.read(1 << 20), b''):
             h.update(b)
+            beat()
     return h.hexdigest()
+
+
+# CHAINCHECK-v1 follow-up (a): a long job (making or taking in a refresh file) touches this file as it works; the page's server reads its age to tell
+# "still working" from "stuck" (a job that stops moving is reported and stopped, never left running silently).
+_BEAT = {'path': None, 't': 0.0}
+
+
+def beat_to(path):
+    _BEAT['path'] = Path(path) if path else None
+    _BEAT['t'] = 0.0
+
+
+def beat():
+    p = _BEAT['path']
+    if p is None:
+        return
+    now = time.monotonic()
+    if now - _BEAT['t'] >= 1.0:
+        _BEAT['t'] = now
+        try:
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(str(time.time()), encoding='utf-8')
+        except OSError:
+            pass
 
 
 _sha_cache: dict = {}
@@ -215,6 +240,44 @@ def read_ledger(state: Path) -> list:
     except OSError:
         pass
     return out
+
+
+# LASTUPDATED-v1: what counts as "the tracker was updated": a save (update, Save my edits) or a one-time switch-over change of the workbook.
+UPDATE_VERBS = {'save', 'drop_unverified', 'add_other_files_column', 'recolor_press_releases', 'press_release_judge', 'apply_datafix'}
+
+
+def _us_dst(u: datetime) -> bool:
+    """US daylight time (second Sunday of March 02:00 to first Sunday of November 02:00, local) for a naive-or-UTC datetime, by hand (no tz database on the PC)"""
+    from datetime import timedelta
+    y = u.year
+
+    def nth_sunday(month, n):
+        d = datetime(y, month, 1)
+        d += timedelta(days=(6 - d.weekday()) % 7)
+        return d + timedelta(weeks=n - 1)
+    start = nth_sunday(3, 2) + timedelta(hours=2 + 8)
+    end = nth_sunday(11, 1) + timedelta(hours=2 + 7)
+    return start <= u.replace(tzinfo=None) < end
+
+
+def pacific_date(iso) -> str:
+    """'YYYY-MM-DD' (US Pacific) of an ISO time from the ledger (UTC when it has no zone); '' when it cannot be read"""
+    from datetime import timedelta
+    try:
+        u = datetime.fromisoformat(str(iso).replace('Z', '+00:00'))
+    except ValueError:
+        return ''
+    if u.tzinfo is not None:
+        u = u.astimezone(timezone.utc).replace(tzinfo=None)
+    return (u - timedelta(hours=7 if _us_dst(u) else 8)).date().isoformat()
+
+
+def last_updated(state: Path) -> str:
+    """LASTUPDATED-v1: Pacific date of the newest ledger entry that changed the workbook ('' when none)"""
+    for e in reversed(read_ledger(state)):
+        if e.get('verb') in UPDATE_VERBS and e.get('at'):
+            return pacific_date(e['at'])
+    return ''
 
 
 def baseline(state: Path):

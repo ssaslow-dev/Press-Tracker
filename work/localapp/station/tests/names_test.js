@@ -3,13 +3,14 @@ const N = require('../src/names.js');
 let failed = 0; const check = (name, ok, extra) => { if (!ok) failed++; console.log((ok ? 'PASS ' : 'FAIL ') + name + (!ok && extra !== undefined ? '  -> ' + JSON.stringify(extra) : '')); };
 const eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
+const LONG = ' word'.repeat(70);   // a web page needs 60+ words of body to get a library copy (the PC's copy_check R5)
 const next = { aid: 10670, s: 4942, pr: 245 };
 const row = (o) => Object.assign({ 'Original or reprint': 'Original', Date: '2026-11-01', Year: 2026 }, o);
 const pages = {
-  'jg-aaaaaa': { url: 'https://x/a', clean: '<html>clean A</html>', scoped: '<html>scoped A</html>' },
+  'jg-aaaaaa': { url: 'https://x/a', clean: '<html>clean A' + LONG + '</html>', scoped: '<html>scoped A' + LONG + '</html>' },
   'jg-bbbbbb': { url: 'https://infoweb.newsbank.com/x', clean: '<article>nb text</article>', nb: { docref: 'd', file: 'files/nb-0123456789abcdef.pdf', pdf_sha256: 'x' } },
   'jg-cccccc': { url: 'https://www.proquest.com/docview/1', clean: '<article>pq text</article>', pq: { docid: '1', file: 'files/pq-fedcba9876543210.pdf', pdf_sha256: 'y', header: {} } },
-  'rp-111111111111': { url: 'https://y/r', clean: '<html>reprint</html>', scoped: '' },
+  'rp-111111111111': { url: 'https://y/r', clean: '<html>reprint' + LONG + '</html>', scoped: '' },
 };
 const runs = [{
   id: 'run-1', at: '2026-11-03T10:00:00Z',
@@ -36,7 +37,7 @@ check('releases in (date, url) order get pr00245, pr00246; a pre-2020-11-18 cauc
   eq(pl.releases.map(r => [r.prid, r.url.split('/').pop(), !!r.copy]), [['pr00245', 'a', true], ['pr00246', 'b', true], ['pr00247', 'empty', false]]), pl.releases);
 check('release files: copy and raw page under Press releases / _original_html/Press releases', pl.releases[0].copy === 'library/Press releases/2026/pr00245.html' && pl.releases[0].raw === 'library/_original_html/Press releases/2026/pr00245.html');
 check('the first free numbers after the update', eq(pl.used, { aid: 10675, s: 4945, pr: 248 }), pl.used);
-check('files list: html text carried, pdfs by reference', pl.files.filter(f => f.kind === 'pdf').length === 2 && pl.files.find(f => f.path === it[0].copy).text === '<html>scoped A</html>' && pl.files.find(f => f.path === it[0].raw).text === '<html>clean A</html>');
+check('files list: html text carried, pdfs by reference', pl.files.filter(f => f.kind === 'pdf').length === 2 && pl.files.find(f => f.path === it[0].copy).text === '<html>scoped A' + LONG + '</html>' && pl.files.find(f => f.path === it[0].raw).text === '<html>clean A' + LONG + '</html>');
 const mb = N.manifestBlock(pl, '2026-11-03');
 check('manifest block: version, from_next, items and releases', mb.version === 1 && eq(mb.from_next, { aid: 10670, s: 4942, pr: 245 }) && mb.items.length === 5 && mb.releases.length === 3);
 
@@ -53,4 +54,14 @@ check('the same file and the same run name the same way (the PC resolves the cla
 const p3 = N.plan({ next, runs: [{ id: 'r', at: '1', rows: [row({ 'Story ID': 's05000' }), row({ 'Story ID': 's04930' })] }], pages: {}, today: '2026-11-03', existingStories: new Set(['s04930']) });
 check('a real, unused Story ID is kept; an existing one gets a new story', p3.items[0].sid === 's05000' && p3.items[1].sid === 's04942', p3.items.map(x => x.sid));
 check('stem and parseStem', N.stem('pq', '08882', 'Reprint', 's03441') === 'pq08882r-s03441' && eq(N.parseStem('nb00002o-s00001'), { fmt: 'nb', aid: '00002', kind: 'o', sid: 's00001' }));
+// YouTube clip / short page rule: under 60 words of body = no library copy named (the PC's copy_check R5 would refuse it); 60 or more = named
+{
+  const short = N.plan({ next: { aid: 1, s: 1, pr: 1 }, runs: [{ id: 'r', at: '2026-11-03T10:00:00Z', rows: [{ 'Article ID': 'NEW-1', 'Story ID': 'sNEW-1', 'Tracker story code': 'jg-aaaaaa', 'Original or reprint': 'Original', Date: '2026-11-01', Year: 2026 }] }],
+    pages: { 'jg-aaaaaa': { url: 'https://www.youtube.com/watch?v=x', clean: '<html><h1>KTLA clip</h1><p>' + 'word '.repeat(57) + '</p></html>' } }, today: '2026-11-03', existingStories: new Set(), storyOfCode: () => '' });
+  check('a page of 59 words (2 + 57) gets no copy name (PC rule R5: under 60 words)', short.items[0].copy === '' && short.items[0].raw === '' && short.files.length === 0, short.items[0]);
+  const ok60 = N.plan({ next: { aid: 1, s: 1, pr: 1 }, runs: [{ id: 'r', at: '2026-11-03T10:00:00Z', rows: [{ 'Article ID': 'NEW-1', 'Story ID': 'sNEW-1', 'Tracker story code': 'jg-aaaaaa', 'Original or reprint': 'Original', Date: '2026-11-01', Year: 2026 }] }],
+    pages: { 'jg-aaaaaa': { url: 'https://www.youtube.com/watch?v=x', clean: '<html><h1>KTLA clip</h1><p>' + 'word '.repeat(58) + '</p></html>' } }, today: '2026-11-03', existingStories: new Set(), storyOfCode: () => '' });
+  check('a page of 60 words (2 + 58) gets its copy name', /\.html$/.test(ok60.items[0].copy), ok60.items[0]);
+  check('words are counted like the PC: letters only, tags and entities ignored, CJK two characters a word', N.wordsIn('<p>a b&nbsp;c 12 3 d_e</p>') === 5 && N.wordsIn('<b>' + '漢'.repeat(120) + '</b>') === 60, [N.wordsIn('<p>a b&nbsp;c 12 3 d_e</p>'), N.wordsIn('<b>' + '漢'.repeat(120) + '</b>')]);
+}
 console.log(failed ? failed + ' FAILED' : 'all passed'); process.exit(failed ? 1 : 0);

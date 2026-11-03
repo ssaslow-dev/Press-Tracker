@@ -652,11 +652,11 @@ class Switchover(unittest.TestCase):
                            {'op': 'screenshot', 'path': str(T.SHOTS / 'switchover_f1_checked.png')},
                            {'op': 'click', 'text': 'Copy and set up'},
                            {'op': 'wait_text', 'name': 'done', 'text': ['The tracker is set up.'], 'timeout': 900000},
-                           {'op': 'click', 'text': 'Remove unverified reprints'},
-                           {'op': 'wait_text', 'name': 'prev', 'text': ['unverified reprints would be removed'], 'timeout': 600000},
-                           {'op': 'eval', 'name': 'applyDisabled', 'expr': "document.querySelector('#ajgf-drop-apply').disabled"},
-                           {'op': 'click_sel', 'sel': '#ajgf-drop-ok'},
-                           {'op': 'eval', 'name': 'applyEnabled', 'expr': "document.querySelector('#ajgf-drop-apply').disabled"},
+                           {'op': 'click', 'text': 'Look at the changes'},
+                           {'op': 'wait_text', 'name': 'prev', 'text': ['Coverage rows are "Reprint (unverified)"'], 'timeout': 900000},
+                           {'op': 'eval', 'name': 'applyDisabled', 'expr': "document.querySelector('#ajgf-sw-all').disabled"},
+                           {'op': 'click_sel', 'sel': '#ajgf-sw-ok'},
+                           {'op': 'eval', 'name': 'applyEnabled', 'expr': "document.querySelector('#ajgf-sw-all').disabled"},
                            {'op': 'screenshot', 'path': str(T.SHOTS / 'switchover_f2_preview.png')}], 'so_ui', timeout=3000)
             r = out['results']
             self.assertNotIn('crash', r, r)
@@ -664,10 +664,11 @@ class Switchover(unittest.TestCase):
             self.assertIn('No workbook yet', r['p0'])
             self.assertIn('Reload the tracker', r['done_panel'])
             self.assertIn('stories in the tracker', r['done_panel'])
-            self.assertIn('Next: remove unverified reprints', r['done_panel'])
+            self.assertIn('Switch-over changes', r['done_panel'])
             self.assertIn('420 Coverage rows are "Reprint (unverified)"', r['prev_panel'])
+            self.assertNotIn('Set up again from the Mac library', r['p0'])
             self.assertTrue(r['applyDisabled'])
-            self.assertFalse(r['applyEnabled'], 'ticking the box enables Remove them')
+            self.assertFalse(r['applyEnabled'], 'ticking the box enables Confirm all')
             self.assertEqual(sha(data(U) / 'workbook' / WB_NAME), sha(S['mac'] / WB_NAME), 'previewing changes nothing')
             self.assertEqual(out['errors'], [], out['errors'])
         finally:

@@ -38,6 +38,12 @@ function pageDocId(obj, pages) {
   keys.push(obj['Article ID'] || '', own ? (obj._ph_sid || obj['Story ID'] || '') : '');
   return keys.find(k => has(k)) || '';
 }
+/* The PC's rule for a web page's saved copy (copy_check R5: a page with under 60 words of body, e.g. a YouTube clip with a short description, is not saved to the library): the
+   station counts words the same way (letters-only runs, CJK characters counted two to a word) and names no copy for such a page, so the folder and the save agree. */
+const wordsIn = (html) => { const t = String(html || '').replace(/<(script|style)[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/gi, ' ').replace(/&[a-z]+;|&#\d+;/gi, ' ');
+  const cjk = (t.match(/[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/g) || []).length;
+  return (t.replace(/[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]/g, ' ').match(/\p{L}+/gu) || []).length + Math.floor(cjk / 2); };
+const MIN_COPY_WORDS = 60;
 const libName = (sub, year, name) => 'library/' + (sub ? sub + '/' : '') + year + '/' + name;
 
 /* opts: { next:{aid,s,pr}, runs:[{id, at, rows:[...], releases_new:[...]}], pages:{id: doc}, today:'YYYY-MM-DD', storyOfCode:(code)=>sid|'', existingStories:Set }
@@ -78,7 +84,7 @@ function plan(opts) {
           if (d.pq.file) { it.pdf = libName('_original_pdf', year, st + '.pdf'); it.pdf_for = String(d.pq.file); files.push({ path: it.pdf, kind: 'pdf', pdfFor: it.pdf_for, doc }); }
         } else {
           const sc = String(d.scoped || ''), cl = String(d.clean || ''), t = sc.trim() ? sc : cl;
-          if (t.trim()) {
+          if (t.trim() && wordsIn(t) >= MIN_COPY_WORDS) {
             it.copy = libName('', year, st + '.html'); files.push({ path: it.copy, kind: 'html', text: t, doc });
             // the save keeps the page as fetched under _original_html whenever cleaning changed it, which is nearly always: the station names it too (the fullest page it holds)
             it.raw = libName('_original_html', year, st + '.html'); files.push({ path: it.raw, kind: 'html', text: cl.trim() ? cl : sc, doc });
@@ -118,6 +124,6 @@ function manifestBlock(pl, today) {
     items: pl.items.filter(i => !i.skipped).map(i => ({ run: i.run, row: i.row, doc: i.doc, aid: i.aid, sid: i.sid, kind: i.kind, fmt: i.fmt, year: i.year, copy: i.copy, raw: i.raw, pdf: i.pdf, pdf_for: i.pdf_for })),
     releases: pl.releases.map(r => ({ run: r.run, url: r.url, prid: r.prid, year: r.year, copy: r.copy, raw: r.raw })) };
 }
-const api = { plan, manifestBlock, stem, parseStem, pageDocId, yearOf, releasePage };
+const api = { wordsIn, MIN_COPY_WORDS, plan, manifestBlock, stem, parseStem, pageDocId, yearOf, releasePage };
 if (typeof module !== 'undefined' && module.exports) module.exports = api; else root.AJGNames = api;
 })(typeof globalThis !== 'undefined' ? globalThis : this);

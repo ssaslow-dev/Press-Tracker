@@ -286,6 +286,18 @@ class Helpers(unittest.TestCase):
         self.assertIn('Related count', c['VT_DERIVED_REL'])
         self.assertIn('Press releases', c['VT_NEW_OK'])
 
+    def test_constants_resolve_a_named_string_constant(self):
+        # PRINTPAGES-v1 (PC patch 24): VT_NEW_OK names PRINT_TAB, a module-level string
+        import tempfile
+        with tempfile.TemporaryDirectory() as t:
+            f = Path(t) / 'sheet_task.py'
+            f.write_text("PRINT_TAB = 'Unlinked print pages'\nVT_DERIVED_REL = {'Related count'}\nVT_NEW_OK = {'Press releases', PRINT_TAB}\n", encoding='utf-8')
+            c = ST.read_sheet_task_constants(f)
+            self.assertEqual(c['VT_NEW_OK'], {'Press releases', 'Unlinked print pages'})
+            f.write_text("VT_DERIVED_REL = {'Related count'}\nVT_NEW_OK = {'Press releases', SOMETHING_ELSE()}\n", encoding='utf-8')
+            with self.assertRaises(ValueError):
+                ST.read_sheet_task_constants(f)
+
     def test_offline_env_points_every_proxy_at_a_dead_port(self):
         env = ST.offline_env()
         self.assertTrue(all(env[k] == ST.DEAD_PROXY for k in ST.PROXY_VARS))

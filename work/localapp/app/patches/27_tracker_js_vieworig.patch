@@ -1,0 +1,12 @@
+--- a/pipeline/tracker.js
++++ b/pipeline/tracker.js
+@@ -1,2 +1,10 @@
+   const doc = $('#doc');
++  { const po = Array.isArray(r.po) ? r.po : [];   /* VIEWORIG-v1 (PC tracker): print originals (page scans) found by name in the library; no button when there are none */
++    if (po.length) {
++      const one = x => `<span class="lkw"><a href="/library/_original_pdf/${esc(x.f)}" target="_blank" rel="noopener" data-lk="po"><b>View original ↗</b><span>printed page${/-/.test(x.p) ? 's' : ''} ${esc(x.p)} (PDF)</span></a></span>`;
++      let box = sheet.querySelector('.dlinks');
++      if (!box) { const nt = sheet.querySelector('.sheet-meta > .note'); if (nt) { nt.insertAdjacentHTML('beforebegin', '<div class="dlinks"></div>'); box = nt.previousElementSibling; } }
++      if (box && !box.querySelector('[data-lk="po"]')) box.insertAdjacentHTML('afterbegin', po.map(one).join(''));
++    } }
+   const pdf = pdfOf(html), dl = sheet.querySelector('.dlinks');

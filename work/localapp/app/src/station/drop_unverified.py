@@ -283,7 +283,7 @@ def _check_staged(lay, before: Path, after: Path, p: dict) -> list:
     return bad[:30]
 
 
-def apply(lay, token: str, init_fn) -> dict:
+def apply(lay, token: str, init_fn, shared_backup=None) -> dict:
     """init_fn(note) -> exit code: re-seeds the saver ledger with the new workbook (the ledger's own `init`)."""
     wb = lay.workbook
     if not wb.is_file():
@@ -303,15 +303,18 @@ def apply(lay, token: str, init_fn) -> dict:
     stamp = C.stamp()
     before_sha = p['workbook_sha256']
     # 1. backup (rule 7)
-    lay.backups.mkdir(parents=True, exist_ok=True)
-    bk = lay.backups / f'{wb.stem} BACKUP before drop_unverified {stamp}.xlsx'
-    n = 2
-    while bk.exists():
-        bk = bk.with_name(f'{bk.stem} ({n}){bk.suffix}')
-        n += 1
-    shutil.copy2(wb, bk)
-    if C.sha256_file(bk) != before_sha:
-        raise DropRefused('BACKUP_FAILED', 'The backup could not be made correctly, so nothing was changed.')
+    if shared_backup is not None:       # the Switch-over changes screen made the one backup of the whole session (switchover.py)
+        bk = Path(shared_backup)
+    else:
+        lay.backups.mkdir(parents=True, exist_ok=True)
+        bk = lay.backups / f'{wb.stem} BACKUP before drop_unverified {stamp}.xlsx'
+        n = 2
+        while bk.exists():
+            bk = bk.with_name(f'{bk.stem} ({n}){bk.suffix}')
+            n += 1
+        shutil.copy2(wb, bk)
+        if C.sha256_file(bk) != before_sha:
+            raise DropRefused('BACKUP_FAILED', 'The backup could not be made correctly, so nothing was changed.')
     # 2. the staged workbook (unique name, the app's own temp folder on the same drive)
     import openpyxl
     tmpd = lay.data / 'tmp'

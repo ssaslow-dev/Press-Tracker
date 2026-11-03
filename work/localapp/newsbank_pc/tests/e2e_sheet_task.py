@@ -38,7 +38,8 @@ AA.patched_copy(pipe / 'pdftext_pypdf.py', pipe / 'pdftext_pypdf.py', NBPC / 'pa
 AA.patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', NBPC / 'patches' / '07_sheet_task_prjudge2.patch')    # PRJUDGE-v2: honours the station's No for other issuers' items
 AA.patched_copy(pipe / 'date_rules.py', pipe / 'date_rules.py', NBPC / 'patches' / '08_date_rules_airdate.patch')      # NBTV-v1: Date source "air date (Pacific)"
 AA.patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', NBPC / 'patches' / '09_sheet_task_printpages.patch')   # PRINTPAGES-v1 / ORIGCOPIES-v1: print originals, Unlinked print pages rows, extra copies
-check('patches 01, 02, 03, 07, 08, 09 apply exactly once to the current files', True)
+AA.patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', REPO / 'work' / 'localapp' / 'app' / 'patches' / '28_sheet_task_prcolor.patch')   # PRCOLOR-v1: Press release = Yes rows are purple
+check('patches 01, 02, 03, 07, 08, 09, 28 apply exactly once to the current files', True)
 check('patch 03 gives the same module as newsbank_pc/pdftext_pypdf.py', (pipe / 'pdftext_pypdf.py').read_text() == (NBPC / 'pdftext_pypdf.py').read_text())
 
 app = scratch / 'app'; lay = PCLayout(app); lay.workbook.parent.mkdir(parents=True); shutil.copy2(wb, lay.workbook)
@@ -73,6 +74,11 @@ check('Mentions "Gabriel", Mention depth and Quoted come from the story text', a
 pr = [r for r in new if 'press release:' in str(r[ix['Team note']])]
 check('PRJUDGE: the story the station judged a press release (' + str(len(pr)) + ') is Press release = Yes in the sheet, with the reason in its Team note', len(pr) >= 1 and all(r[ix['Press release']] == 'Yes' for r in pr), [(r[ix['Headline']], r[ix['Press release']]) for r in pr])
 check('PRJUDGE: the other new rows are not marked (fill blanks: the station only says Yes)', all(r[ix['Press release']] in (None, '', 'No') for r in new if r not in pr), [(r[ix['Headline']], r[ix['Press release']]) for r in new if r not in pr and r[ix['Press release']] not in (None, '', 'No')][:3])
+# PRCOLOR-v1: every cell of a row with Press release = Yes is purple (7030A0), not red; rows the tracker hides for other reasons stay red
+_full = openpyxl.load_workbook(out / 'out1.xlsx')['Coverage']; _hd = [c.value for c in _full[1]]; _pi = _hd.index('Press release'); _ai = _hd.index('Article ID')
+_prows = [r for r in range(2, _full.max_row + 1) if str(_full.cell(r, _ai + 1).value or '') in {str(x[ix['Article ID']]) for x in pr}]
+_col = lambda r: {str(_full.cell(r, c).font.color.rgb if _full.cell(r, c).font and _full.cell(r, c).font.color else '') for c in range(1, len(_hd) + 1)}
+check('PRCOLOR: the Press release = Yes rows the save added are purple across the whole row (' + str(len(_prows)) + ')', len(_prows) >= 1 and all(_col(r) == {'007030A0'} for r in _prows), [_col(r) for r in _prows][:2])
 # PRJUDGE-v2 (patch 07): the same update with the station's verdict for the wire-named row changed to No (its text is not a release): the save must not mark it Yes by the outlet name
 db2 = scratch / 'db2'; shutil.copytree(db, db2)
 for rf in (db2 / 'runs').glob('*.json'):
