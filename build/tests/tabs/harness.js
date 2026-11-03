@@ -14,8 +14,14 @@ const mods = MOD === 'all' ? ['_framework'].concat(fs.readdirSync(__dirname).fil
 const VPS = process.env.VP === 'desk' ? [{ width: 1400, height: 1000 }] : process.env.VP === 'phone' ? [{ width: 390, height: 844 }] : [{ width: 1400, height: 1000 }, { width: 390, height: 844 }];
 const srv = http.createServer((q, s) => { const u = decodeURIComponent(q.url.split('?')[0]); const f = path.join(ROOT, u === '/' ? 'index.html' : u);
   fs.readFile(f, (e, b) => { if (e){ s.writeHead(404); s.end(); return; } s.writeHead(200, { 'content-type': f.endsWith('.html') ? 'text/html' : 'application/json' }); s.end(b); }); });
+// REPO-LOCAL (fixed clock): the tabs' date presets (3 / 12 months, "Active within" ...) count back from the page's own today (code/tracker/00_head.js TODAY,
+// which reads new Date() in America/Los_Angeles) and the tests' independent models count back from h.TODAY(). Both used the real clock, so the counts moved with
+// the calendar (and with UTC vs Los Angeles near midnight). Every page now runs with the clock fixed at the day the fixture blocks were taken from (the
+// 2026-10-30 workbook snapshot, 20:00 UTC = 13:00 in Los Angeles: same date in both zones). TABS_NOW=real uses the real clock; TABS_NOW=<ISO instant> another instant.
+const NOW = process.env.TABS_NOW === 'real' ? null : (process.env.TABS_NOW || '2026-10-30T20:00:00Z');
 const results = []; let cur = '';
 const PAGE = () => MOD === '_framework' || process.env.PAGE === 'stub' ? 'stub.html' : '';
+const skip = (name, why) => { results.push(['SKIP', cur + name, why]); console.log('SKIP ' + cur + name + '  -- ' + why); };
 const ok = (name, cond, info) => { results.push([cond ? 'PASS' : 'FAIL', cur + name, info || '']); console.log((cond ? 'PASS ' : 'FAIL ') + cur + name + (info && !cond ? '  -- ' + String(info).slice(0, 300) : '')); };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 (async () => {
@@ -34,7 +40,7 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     }
     for (const vp of VPS) {
       cur = `[${mod} ${vp.width}] `;
-      const bctx = await browser.newContext({ viewport: vp, permissions: ['clipboard-read', 'clipboard-write'] }); const pg = await bctx.newPage();
+      const bctx = await browser.newContext({ viewport: vp, permissions: ['clipboard-read', 'clipboard-write'] }); if (NOW) await bctx.clock.setFixedTime(new Date(NOW)); const pg = await bctx.newPage();
       const errors = []; pg.on('pageerror', e => errors.push(String(e))); pg.on('console', m => { if (m.type() === 'error' && !/404|Failed to load/.test(m.text())) errors.push(m.text()); });
       await pg.addInitScript(([fw]) => {
         window.__dl = []; window.__clip = null; if (fw) window.__STUB_IDS = fw;
@@ -53,7 +59,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
       }
       const V = () => `#tbBody .tb-view[data-tb="${id}"]:not([hidden])`;
       const h = {
-        page: pg, errors, viewport: vp, phone: vp.width <= 640, id, slug, sleep,
+        skip, page: pg, errors, viewport: vp,
+        /* v18Full: the v18 baseline page (page shell with its own data) is there; the repository has only the stripped shell.html */
+        v18Full: fs.existsSync(path.join(L, 'build', 'shell', 'index.html')), phone: vp.width <= 640, id, slug, sleep,
         blocksDir: path.join(ROOT, 'blocks'),
         // INCL-v1 (final-codedesign 2026-10-29): the page's ctx.D = dCount() leaves List-only stories out unless "Include list-only
         // mentions" is on, so the tests' independent models see the same set; dataAll() = every record (the Clips list, badges)
@@ -128,5 +136,5 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
     }
   }
   await browser.close(); srv.close();
-  const f = results.filter(r => r[0] === 'FAIL').length; console.log(`\n${results.length - f}/${results.length} passed`); process.exit(f ? 1 : 0);
+  const f = results.filter(r => r[0] === 'FAIL').length, sk = results.filter(r => r[0] === 'SKIP').length; console.log(`\n${results.length - f - sk}/${results.length - sk} passed` + (sk ? `, ${sk} skipped` : '')); process.exit(f ? 1 : 0);
 })();

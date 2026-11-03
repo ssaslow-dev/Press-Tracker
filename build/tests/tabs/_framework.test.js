@@ -52,12 +52,13 @@ module.exports = async (pg, ok, h) => {
   /* v19 changes Home on purpose: no 30-day line (HOMELINE-off), upkeep items moved to Manage (HOMEUPKEEP-v1). The heading and the
      tiles keep their size; everything else keeps its width and column */
   const hm1 = JSON.parse(rel(g1, 'home')), hm0 = JSON.parse(rel(g0, 'home'));
-  ok('Home: heading = v18, no 30-day line, tiles/attention/tone keep their size and column', JSON.stringify(hm1[0]) === JSON.stringify(hm0[0]) && hm1[1] === null   /* the baseline page (build/shell/index.html, the same file the build starts from) has carried HOMELINE-off since 2026-10-30, so v18's 30-day line is no longer there to compare: only 'none now' is checked */
+  const okv = h.v18Full ? ok : name => h.skip(name, 'needs build/shell/index.html (the v18 baseline page with its own data), which is not in this repository');   // REPO-LOCAL
+  okv('Home: heading = v18, no 30-day line, tiles/attention/tone keep their size and column', JSON.stringify(hm1[0]) === JSON.stringify(hm0[0]) && hm1[1] === null   /* the baseline page (build/shell/index.html, the same file the build starts from) has carried HOMELINE-off since 2026-10-30, so v18's 30-day line is no longer there to compare: only 'none now' is checked */
     && [2, 3, 4].every(i => hm1[i][0] === hm0[i][0] && hm1[i][2] === hm0[i][2]) && hm1[2][3] === hm0[2][3], JSON.stringify(hm1) + ' vs ' + JSON.stringify(hm0));
   /* the v18 page carries its own (older) data, so row heights and the story count differ with the data; the layout is compared on what does not:
      rail, toolbar and chips exactly; table and pager by left edge and width, the table starting where v18's does and the pager below it */
   { const a = JSON.parse(rel(g1, 'clipsNoRel')), b = JSON.parse(rel(g0, 'clips'));
-    ok('Clips layout = v18 (below the header; release badges hidden, RELCLIPS-v1; table/pager heights follow the data)', JSON.stringify(a.slice(0, 3)) === JSON.stringify(b.slice(0, 3)) && [3, 4].every(i => a[i] && b[i] && a[i][0] === b[i][0] && a[i][2] === b[i][2]) && a[3][1] === b[3][1] && a[4][1] >= a[3][1] + a[3][3] - 2, JSON.stringify(a) + ' vs ' + JSON.stringify(b)); }
+    okv('Clips layout = v18 (below the header; release badges hidden, RELCLIPS-v1; table/pager heights follow the data)', JSON.stringify(a.slice(0, 3)) === JSON.stringify(b.slice(0, 3)) && [3, 4].every(i => a[i] && b[i] && a[i][0] === b[i][0] && a[i][2] === b[i][2]) && a[3][1] === b[3][1] && a[4][1] >= a[3][1] + a[3][3] - 2, JSON.stringify(a) + ' vs ' + JSON.stringify(b)); }
   /* the count is the fixture's own story count (Clips shows every story, List-only included), computed from data.json, not v18's */
   { const n = h.dataAll().length; ok('Clips count = every story in the fixture data', g1.clipsN.includes(n.toLocaleString('en-US') + ' of ' + n.toLocaleString('en-US')), g1.clipsN + ' vs ' + n); }
 
