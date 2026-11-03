@@ -65,7 +65,7 @@ Done to the real workbook from the Mac, never to an older copy:
 2. Old workspace's Claude makes `Tracker library manifest.sha256` (workbook + year folders, _original_html, _original_pdf, Press releases).
 3. Sammy copies those plus the manifest to a private cloud folder, downloads it fully onto the PC Desktop.
 4. Unzip the final PC tracker (empty data); Tracker files > Set up from the Mac library: every file checked against the manifest, then copied in; ledger seeded.
-5. One-time changes to the new sheet, each with preview, backup and confirm:
+5. One-time changes to the new sheet, from ONE "Switch-over changes" screen (one backup first, all previews together, confirm all or step by step; shown only that once):
    a. DROPUNVERIFIED-v1: delete all "Reprint (unverified)" rows (counted fresh) and their files; IDs stay reserved.
    b. PRCOLOR-v1: recolour every Press release = Yes row purple (#7030A0); only font colour changes.
    c. PRJUDGE-v2: mark Press release = Yes on the 3 missed wire releases (01190, 01364, 00290; not 01759), and set Press release = No (font black) on the ~119 other-issuer reposts on news outlets; own-release copies untouched; 13 organisation-site posts listed for Sammy. All re-checked on the real workbook first.
