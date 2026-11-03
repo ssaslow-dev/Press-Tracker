@@ -81,6 +81,7 @@ Running now (finish, then commit): tidy-up (TIDY-v1) final suite; station round 
 3. Switch-over builder (restart from the WIP commit): Set up from the Mac library; the one "Switch-over changes" screen with every one-time step (DROPUNVERIFIED-v1, PRCOLOR-v1 recolour, PRJUDGE-v2 existing rows, OTHERFILES-v1 column, plus the data-check fixes Sammy approves).
 4. Sammy reviews the data-check reports (batched questions).
 5. Integration: fresh assemble; all suites (saver, review, review2, updatefolder, app, station); look check on changed routes; CHAINCHECK-v1; station republish if needed.
+   Then PARITYTEST-v1, the final functionality comparison: the live tracker's files (fetched read-only, run locally with a stand-in for its storage; its database is never touched) and the final PC tracker, both built from the same workbook copy, driven side by side through every feature (each tab and route, search, filters, sorting, story sheet, reprint groups, links, notes, saved views, edits, downloads/exports, charts). Same inputs must give the same rows, counts, outputs and look; the only differences allowed are the recorded exceptions (SAMELOOK-v2 list). Any other difference is fixed or brought to Sammy. Must pass before the final zip; re-run after CLEANUP-v1.
 6. CLEANUP-v1 (outdated code and decisions archived), suites again, final zip and IT note fingerprint.
 7. Switch-over day (checklist above).
 

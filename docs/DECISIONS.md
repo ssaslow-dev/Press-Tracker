@@ -569,3 +569,6 @@ The tracker's header shows a "Last updated" date: the date (Pacific) of the last
 
 ## FREEZE-v1 (Sammy, 2026-11-03: "do what you think the best course of action is in order to stay organized and efficient")
 Claude's call: the feature list is frozen at what is requested now; new ideas are noted in work/localapp/PLAN.md "After switch-over" and wait. Work proceeds in one ordered consolidation round (PLAN.md "Consolidation round"), one builder at a time on the PC tracker's shared files, so builders no longer collide; questions for Sammy are batched.
+
+## PARITYTEST-v1 (2026-11-03, Sammy)
+Sammy: "ensure that there's a final test that compares artifact functionality to the new software." Before the final zip, a side-by-side functionality test runs the live tracker's own files (fetched read-only, run locally with a storage stand-in; the live artifact and its database are never touched) and the final PC tracker on the same workbook copy, through every feature. Results must match except the recorded SAMELOOK-v2 exceptions. It runs in consolidation step 5 and again after CLEANUP-v1; it must pass before the zip is sent. Builds on the look check (work/localapp/lookcheck/), which compares look; this compares behaviour.
