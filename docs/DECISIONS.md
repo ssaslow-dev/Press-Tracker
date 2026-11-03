@@ -513,3 +513,4 @@ LIBFILES-v1 (Sammy, 2026-11-03, follow-up 2: STATIONNAMES): the Update station i
 
 ## NOQUEUE-v1 (Sammy, 2026-11-03)
 Drop the review queue and the wanted-originals lookups from the new setup: "eliminate the review que and the wanted originals, I don't need that". Replaces SWITCHOVER-v1's "the review queue moves into the PC tracker" and UPDATESTATION-v1 follow-up 7 (2). The PC save runs without --queue (QUEUEAPPLY-v1 not used); the save's `origin_wanted` list (CHAINORIG-v1) is not acted on and not shown as a to-do. The for-Update file does not carry it. Nothing else about reprint detection changes.
+SWITCHOVER-v1 (Sammy, 2026-11-03, follow-up): the repo snapshot in data/ stays at bc21c9fb until switch-over, even though the old workspace's bundles carry newer workbook copies (0bccc1fc, 2026-11-03). Newer copies are used only as scratch test data, never committed.
