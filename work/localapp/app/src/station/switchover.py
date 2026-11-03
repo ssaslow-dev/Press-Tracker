@@ -385,6 +385,19 @@ def check_cells(before: Path, after: Path, changes: list, links: list) -> list:
                 continue
             if x_.freeze_panes != y_.freeze_panes or (x_.auto_filter.ref or '') != (y_.auto_filter.ref or ''):
                 bad.append(f'{n}: frozen panes or auto-filter changed')
+            cache_a, cache_b = {}, {}
+
+            def info(cache, cell):
+                """(look without font colour, font colour rgb, has a font colour, its theme): worked out once per distinct style (cheap per cell)"""
+                st = getattr(cell, '_style', None)
+                if st is None:                  # a merged-away cell has no look of its own
+                    return (None, None, False, None)
+                k = (st.fontId, st.fillId, st.borderId, st.numFmtId, st.alignmentId)
+                v = cache.get(k)
+                if v is None:
+                    fc = cell.font.color
+                    v = cache[k] = (_sig_nocolor(cell), _norm_rgb(fc), fc is not None, getattr(fc, 'theme', None) if fc is not None else None)
+                return v
             for r in range(1, x_.max_row + 1):
                 for c in range(1, x_.max_column + 1):
                     a, b = x_.cell(r, c), y_.cell(r, c)
@@ -392,13 +405,13 @@ def check_cells(before: Path, after: Path, changes: list, links: list) -> list:
                     exp = want_val.get(k, a.value)
                     if (b.value or None) != (exp or None) if isinstance(exp, str) or exp is None else b.value != exp:
                         bad.append(f'{n} row {r} column {c}: {str(a.value)[:30]!r} -> {str(b.value)[:30]!r} (expected {str(exp)[:30]!r})')
-                    if _sig_nocolor(a) != _sig_nocolor(b):
+                    ia, ib = info(cache_a, a), info(cache_b, b)
+                    if ia[0] != ib[0]:
                         bad.append(f'{n} row {r} column {c}: the look changed')
-                    ca, cb = _norm_rgb(a.font.color), _norm_rgb(b.font.color)
                     if k in want_font:
-                        if cb != want_font[k] or (want_font[k] is None and b.font.color is not None and _norm_rgb(b.font.color) is not None):
-                            bad.append(f'{n} row {r} column {c}: font colour is {cb}, expected {want_font[k]}')
-                    elif (ca, a.font.color is None) != (cb, b.font.color is None) or (a.font.color is not None and getattr(a.font.color, 'theme', None) != getattr(b.font.color, 'theme', None)):
+                        if ib[1] != want_font[k]:
+                            bad.append(f'{n} row {r} column {c}: font colour is {ib[1]}, expected {want_font[k]}')
+                    elif ia[1:] != ib[1:]:
                         bad.append(f'{n} row {r} column {c}: the font colour changed')
                 if len(bad) > 20:
                     return bad[:20]
