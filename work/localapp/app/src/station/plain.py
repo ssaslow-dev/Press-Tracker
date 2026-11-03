@@ -109,10 +109,15 @@ def _examples(items, k=3):
     return [o for o in out if o]
 
 
+NOQUEUE_KEYS = ('fetch_plan', 'origin_wanted', 'queue_conflicts')
+
+
 def needs_person(res) -> tuple[list, int]:
     jud = res.get('judgment') or {}
     lines, total = [], 0
     for key, items in jud.items():
+        if key in NOQUEUE_KEYS:      # NOQUEUE-v1: the wanted-originals list and queue conflicts are not shown as a to-do
+            continue
         if key == 'fetch_plan' or not isinstance(items, list) or not items:
             continue
         total += len(items)

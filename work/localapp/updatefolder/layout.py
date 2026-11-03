@@ -10,7 +10,7 @@
         state/                   ledger.jsonl, logs/, saver.lock
         copies/articles/         manifest.json + year shards (read by the save)
         db/<collection>/<id>.json   the tracker's own store (notes, views, edits, runs ...)
-        queue/                   review queue (items/ decisions/ applied/), optional
+        (no queue/: NOQUEUE-v1)
         for_update/              files made by make_for_update.py
         updates/staging/<id>/    an unpacked update (manifest.json + db/)
         updates/work/<id>/       saver outputs (preview-1, save-1 ...)

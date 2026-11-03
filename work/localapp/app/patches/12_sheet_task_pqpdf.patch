@@ -1,0 +1,81 @@
+--- a/code/sheet_task.py
++++ b/code/sheet_task.py
+@@ -1296,6 +1296,56 @@
+     def nb_doc(p):
+         return isinstance(p, dict) and isinstance(p.get('nb'), dict) and bool(p['nb'].get('docref') or p['nb'].get('file'))
+ 
++    # ---------- PROQUESTPDF-v1: a ProQuest article's text is the saved copy; its PDF (files/<id>.pdf in the update folder) is kept as the original ----------
++    @staticmethod
++    def pq_doc(p):
++        return isinstance(p, dict) and isinstance(p.get('pq'), dict) and bool(p['pq'].get('header') or p['pq'].get('docid') or p['pq'].get('file'))
++
++    def apply_pq_pdf(self, pid, p, aid, r, pages_dir):
++        """The saved copy is the story's text as HTML in the library's ProQuest-copy form (made by the Update station from the PDF),
++        <year>/pq<Article ID><o|r>-<Story ID>.html, File type "ProQuest pdf" (the sheet's own word for these copies, Data Source ProQuest). The PDF it was
++        read from is kept beside the originals, add-only: _original_pdf/<year>/pq<Article ID><o|r>-<Story ID>.pdf, checked against the checksum the page
++        gave. A missing or wrong PDF is reported and does not stop the text copy (the text is what the tracker and the reprint test read)."""
++        import os, hashlib
++        pq = p['pq']
++        suf = {'Original': 'o', 'Reprint': 'r'}.get(self.s.get(r, 'Original or reprint'), '')
++        st = str(self.s.get(r, 'Story ID') or '').strip()
++        stem = f'pq{aid}{suf}' + (f'-{st}' if st else '')
++        d = norm_val(self.s.get(r, 'Date'))
++        year = d[:4] if re.match(r'^\d{4}', d) else str(self.s.get(r, 'Year') or '')[:4] or self.today[:4]
++        info = {'page': pid, 'aid': aid, 'file': f'{year}/{stem}.html', 'url': p.get('url', ''), 'source': 'proquest pdf', 'status': 'proquest', 'flags': [], 'removed': 0,
++                'words': [None, None], 'header_conflicts': []}
++        chk = self.check_page(pid, {})
++        if chk['verdict'] == 'error':
++            self.fill(r, 'Saved Copy?', 'No', 'pages', pid)
++            self.res['pages_error'].append(dict(info, why=chk['reason']))
++            return
++        html = chk['html']
++        self.saved_html[aid] = html
++        raw = None
++        if pq.get('file'):
++            path = self.nb_pdf_path(pq)
++            raw = open(path, 'rb').read() if path else None
++            if raw is not None and hashlib.sha256(raw).hexdigest() != pq.get('pdf_sha256'):
++                raw = None
++            if raw is None:
++                info['flags'] = ['pdf_missing']
++                self.res['pages_flagged'].append(dict(info, why='the ProQuest PDF is missing or does not match its checksum: the text copy is saved without it'))
++        if pages_dir:
++            os.makedirs(os.path.join(pages_dir, year), exist_ok=True)
++            with open(os.path.join(pages_dir, year, stem + '.html'), 'w', encoding='utf-8') as f:
++                f.write(html)
++            if raw is not None:
++                os.makedirs(os.path.join(pages_dir, '_original_pdf', year), exist_ok=True)
++                with open(os.path.join(pages_dir, '_original_pdf', year, stem + '.pdf'), 'wb') as f:
++                    f.write(raw)
++                info['original_pdf'] = f'_original_pdf/{year}/{stem}.pdf'
++        self.fill(r, 'Saved Copy?', 'Yes', 'pages', pid)
++        self.fill(r, 'File type', 'ProQuest pdf', 'pages', pid)
++        self.fill(r, 'File name', stem + '.html', 'pages', pid)
++        self.fill_counts(r, {'html': html}, pid)
++        self.res['pages'].append(info)
++
+     def nb_pdf_path(self, nb):
+         import os
+         fid = os.path.basename(str(nb.get('file') or ''))
+@@ -1353,6 +1403,11 @@
+         if pid in self.page_checks:
+             return self.page_checks[pid]
+         p = (self.db.get('pages') or {}).get(pid) or {}
++        if self.pq_doc(p):   # PROQUESTPDF-v1: ProQuest's own text (made by the Update station from the PDF): not a web page, so no cleaning and no web copy checks
++            h = p.get('clean') or ''
++            self.page_checks[pid] = {'verdict': 'ok' if h.strip() else 'error', 'reason': '' if h.strip() else 'no text', 'source': 'proquest', 'page': h, 'html': h, 'status': 'proquest',
++                                     'flags': [], 'removed': 0, 'words': [None, None], 'header': {'conflicts': []}, 'pq': True}
++            return self.page_checks[pid]
+         if self.nb_doc(p):   # NEWSBANKPDF-v1: NewsBank's own text (made by the Update station from the PDF): not a web page, so no cleaning and no web copy checks
+             h = p.get('clean') or ''
+             self.page_checks[pid] = {'verdict': 'ok' if h.strip() else 'error', 'reason': '' if h.strip() else 'no text', 'source': 'newsbank', 'page': h, 'html': h, 'status': 'newsbank',
+@@ -1506,6 +1561,9 @@
+             if self.nb_doc(p):   # NEWSBANKPDF-v1
+                 self.apply_nb_pdf(pid, p, aid, r, pages_dir)
+                 continue
++            if self.pq_doc(p):   # PROQUESTPDF-v1
++                self.apply_pq_pdf(pid, p, aid, r, pages_dir)
++                continue
+             chk = self.check_page(pid, row)
+             if self.s.new_scheme:   # library naming: ws<Article ID><o|r>-s<Story ID>.html (DECISIONS 2026-10-27)
+                 suf = {'Original': 'o', 'Reprint': 'r'}.get(self.s.get(r, 'Original or reprint'), '')

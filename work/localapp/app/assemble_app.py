@@ -12,7 +12,7 @@ work/saver/src. Writes only into --out. Python 3.11+ on the build machine, inter
 Layout (FORMAT.md section 3, code under app/ through layout.json):
     AJG Tracker/  Start Tracker.cmd  READ ME FIRST.txt  layout.json
       python/      app/{site-packages,server,station,updatefolder,saver,pipeline,docs}
-      data/        workbook library backups state copies/articles db queue for_update updates/{incoming,staging,work,done,rejected} site tmp
+      data/        workbook library backups state copies/articles db for_update updates/{incoming,staging,work,done,rejected} site tmp
 """
 from __future__ import annotations
 
@@ -233,6 +233,14 @@ def copy_app_code(root: Path, pb: Path, info: dict):
     shutil.copy2(ap_ / 'photolink.py', pipe / 'photolink.py')
     patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '06_tracker_js_photolink.patch')    # the viewer keeps linked photos; every page rebuild uses this tracker.js
     # LOCALFONTS-v1: no Google Fonts request from the PC page or the viewer frame; the fonts are served from data\site\fonts (copy_fonts)
+    # NEWSBANKPDF-v1 / PROQUESTPDF-v1 / LIBFILES-v1: NewsBank and ProQuest story PDFs are saved into the library (order matters: 04 patches lines 01 added, 05 those of 02)
+    patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '09_sheet_task_nbpdf.patch')
+    patched_copy(pipe / 'date_rules.py', pipe / 'date_rules.py', ap_ / '10_date_rules_newsbank.patch')
+    patched_copy(pipe / 'pdftext_pypdf.py', pipe / 'pdftext_pypdf.py', ap_ / '11_pdftext_pypdf_band.patch')
+    patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '12_sheet_task_pqpdf.patch')
+    patched_copy(pipe / 'date_rules.py', pipe / 'date_rules.py', ap_ / '13_date_rules_proquest.patch')
+    patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '14_sheet_task_pq_outlet_aliases.patch')
+    shutil.copy2(LOCALAPP / 'station' / 'data' / 'proquest_outlets.json', pipe / 'proquest_outlets.json')    # PROQUESTPDF-v1 answer 2 (one source: the station's data)
     patched_copy(pipe / 'shell.html', pipe / 'shell.html', ap_ / '08_shell_localfonts.patch')
     patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '07_tracker_js_localfonts.patch')
     spec = importlib.util.spec_from_file_location('pipeline_sha', REPO / 'work' / 'saver' / 'tools' / 'pipeline_sha.py')
@@ -247,7 +255,7 @@ def copy_app_code(root: Path, pb: Path, info: dict):
 
 # ---------------------------------------------------------------- data\
 
-DATA_DIRS = ['workbook', 'library', 'backups', 'state', 'copies/articles', 'db', 'queue', 'for_update', 'updates/incoming', 'updates/staging',
+DATA_DIRS = ['workbook', 'library', 'backups', 'state', 'copies/articles', 'db', 'for_update', 'updates/incoming', 'updates/staging',
              'updates/work', 'updates/done', 'updates/rejected', 'updates/refresh_incoming', 'refresh_out', 'site/data', 'tmp']
 
 

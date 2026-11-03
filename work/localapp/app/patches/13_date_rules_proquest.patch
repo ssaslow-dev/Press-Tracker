@@ -1,0 +1,11 @@
+--- a/code/date_rules.py
++++ b/code/date_rules.py
+@@ -31,6 +31,8 @@
+     """the Update button's internal _date_src -> Date source vocabulary"""
+     if str(date_src or '') == 'newsbank':   # NEWSBANKPDF-v1: a record read from a NewsBank PDF (its date is NewsBank's; a print record is a print edition)
+         return 'print edition' if edition == 'Print' else 'NewsBank'
++    if str(date_src or '') == 'proquest':   # PROQUESTPDF-v1: a record read from a ProQuest PDF (its date is ProQuest's; a print record is a print edition)
++        return 'print edition' if edition == 'Print' else 'ProQuest'
+     return {'page': 'page byline', 'claude': 'page byline', 'tinyfish': 'page metadata', 'snippet': 'search snippet (converted)',
+             'none': 'undated', 'edited': 'copied from Original', 'url': 'URL',
+             'reprint': 'copied from reprint'}.get(str(date_src or ''), 'print edition' if edition == 'Print' else 'unknown')

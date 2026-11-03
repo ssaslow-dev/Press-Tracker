@@ -1,0 +1,112 @@
+--- a/code/sheet_task.py
++++ b/code/sheet_task.py
+@@ -1291,6 +1291,53 @@
+                 self.res['edits_clear'].append(sid)
+ 
+     # ---------- pages (CLEAN-v1) ----------
++    # ---------- NEWSBANKPDF-v1: a NewsBank story's own PDF (files/<id>.pdf in the update folder) is the saved copy ----------
++    @staticmethod
++    def nb_doc(p):
++        return isinstance(p, dict) and isinstance(p.get('nb'), dict) and bool(p['nb'].get('docref') or p['nb'].get('file'))
++
++    def nb_pdf_path(self, nb):
++        import os
++        fid = os.path.basename(str(nb.get('file') or ''))
++        if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,119}\.pdf', fid) or not getattr(self, 'db_dir', None):
++            return None
++        pth = os.path.join(self.db_dir, 'files', fid)
++        return pth if os.path.isfile(pth) else None
++
++    def apply_nb_pdf(self, pid, p, aid, r, pages_dir):
++        """Save the PDF as <year>/nb<Article ID><o|r>-<Story ID>.pdf (the library's NewsBank name), fill Saved Copy? / File type / File name and the
++        text-derived cells from the story's own text. A story with no PDF (a citation page only) gets Saved Copy? No and no file (DECISIONS 2026-10-27)."""
++        import os, hashlib
++        nb = p['nb']
++        suf = {'Original': 'o', 'Reprint': 'r'}.get(self.s.get(r, 'Original or reprint'), '')
++        st = str(self.s.get(r, 'Story ID') or '').strip()
++        fname = f'nb{aid}{suf}' + (f'-{st}' if st else '') + '.pdf'
++        d = norm_val(self.s.get(r, 'Date'))
++        year = d[:4] if re.match(r'^\d{4}', d) else str(self.s.get(r, 'Year') or '')[:4] or self.today[:4]
++        info = {'page': pid, 'aid': aid, 'file': f'{year}/{fname}', 'url': p.get('url', ''), 'source': 'newsbank pdf', 'status': 'newsbank', 'flags': [], 'removed': 0,
++                'words': [None, None], 'header_conflicts': []}
++        if not nb.get('file'):
++            self.fill(r, 'Saved Copy?', 'No', 'pages', pid)
++            self.res.setdefault('pages_skipped', []).append(dict(info, why='NewsBank citation page only: no saved copy'))
++            return
++        path = self.nb_pdf_path(nb)
++        raw = open(path, 'rb').read() if path else None
++        if raw is None or hashlib.sha256(raw).hexdigest() != nb.get('pdf_sha256'):
++            self.fill(r, 'Saved Copy?', 'No', 'pages', pid)
++            self.res['pages_error'].append(dict(info, why='the NewsBank PDF is missing or does not match its checksum: no saved copy'))
++            return
++        html = p.get('clean') or ''
++        self.saved_html[aid] = html
++        if pages_dir:
++            os.makedirs(os.path.join(pages_dir, year), exist_ok=True)
++            with open(os.path.join(pages_dir, year, fname), 'wb') as f:
++                f.write(raw)
++        self.fill(r, 'Saved Copy?', 'Yes', 'pages', pid)
++        self.fill(r, 'File type', 'Newsbank pdf', 'pages', pid)
++        self.fill(r, 'File name', fname, 'pages', pid)
++        self.fill_counts(r, {'html': html}, pid, words=blank(self.s.get(r, 'Word count')))   # a NewsBank row keeps NewsBank's own word count
++        self.res['pages'].append(info)
++
+     def page_doc_id(self, obj):
+         """the pages doc of a proposed row: keyed by the find's temporary code (Tracker story code) or a placeholder"""
+         pages = self.db.get('pages') or {}
+@@ -1306,6 +1353,11 @@
+         if pid in self.page_checks:
+             return self.page_checks[pid]
+         p = (self.db.get('pages') or {}).get(pid) or {}
++        if self.nb_doc(p):   # NEWSBANKPDF-v1: NewsBank's own text (made by the Update station from the PDF): not a web page, so no cleaning and no web copy checks
++            h = p.get('clean') or ''
++            self.page_checks[pid] = {'verdict': 'ok' if h.strip() else 'error', 'reason': '' if h.strip() else 'no text', 'source': 'newsbank', 'page': h, 'html': h, 'status': 'newsbank',
++                                     'flags': [], 'removed': 0, 'words': [None, None], 'header': {'conflicts': []}, 'nb': True}
++            return self.page_checks[pid]
+         best = None
+         for key in ('scoped', 'clean'):
+             body = p.get(key) or ''
+@@ -1451,6 +1503,9 @@
+                 continue
+             r = self.s.rows[aid]
+             row = {c: norm_val(self.s.get(r, c)) for c in ('Outlet', 'Date', 'Headline', 'Publisher link', 'NewsBank article link', 'ProQuest link')}
++            if self.nb_doc(p):   # NEWSBANKPDF-v1
++                self.apply_nb_pdf(pid, p, aid, r, pages_dir)
++                continue
+             chk = self.check_page(pid, row)
+             if self.s.new_scheme:   # library naming: ws<Article ID><o|r>-s<Story ID>.html (DECISIONS 2026-10-27)
+                 suf = {'Original': 'o', 'Reprint': 'r'}.get(self.s.get(r, 'Original or reprint'), '')
+@@ -1524,6 +1579,8 @@
+         a bare "Gabriel" with nothing to tell which one is kept and reported (gabriel_unclear)."""
+         t = str(obj.get('Headline') or '') + '\n' + self.page_text(chk['html'])
+         v = CH.jesse_check(t, self.rules())
++        if chk.get('nb') and v != 'other':   # NEWSBANKPDF-v1: NewsBank drops captions and guest lists; text without his name is not grounds (DECISIONS 2026-10-27)
++            return None
+         if v == 'other':
+             m = CH.rx(self.rules()['other_gabriel']).search(t)
+             return f"another Gabriel, not Jesse Gabriel ({m.group(0) if m else 'other Gabriel'})"
+@@ -2427,13 +2484,14 @@
+             if c != 'Author / byline':
+                 self.fill(r, c, v, 'authors', self.s.get(r, 'Article ID'))
+ 
+-    def fill_counts(self, r, chk, pid):
++    def fill_counts(self, r, chk, pid, words=True):
+         """Word count (CJK by character) and Mentions "Gabriel" in text (non-Latin forms too) of the saved, cleaned page"""
+         if RR is not None:
+             t = RR.html_text(chk['html'])[0].replace('\x01', ' ').replace('\x02', ' ')
+         else:
+             t = self.page_text(chk['html'])
+-        self.fill(r, 'Word count', CH.nwords(t), 'pages', pid)
++        if words:   # NEWSBANKPDF-v1: a NewsBank row keeps NewsBank's own word count
++            self.fill(r, 'Word count', CH.nwords(t), 'pages', pid)
+         self.fill(r, 'Mentions "Gabriel" in text', 'Yes' if CH.gab_re(self.rules()).search(t) else 'No', 'pages', pid)
+         qd = quoted_him(t, CH.gab_re(self.rules()), self.s.get(r, 'Author / byline'))
+         if 'Mention depth' in self.s.col:   # INCL-v1: derived from the same saved text; a blank result stays blank
+@@ -4752,6 +4810,7 @@
+     sheet = Sheet(a.xlsx)
+     task = Task(sheet, db, a.today)
+     task.copies_dir, task.bills_path = a.copies, a.bills   # AUTO-v1
++    task.db_dir = a.db_dir or (_os.path.join(_os.path.dirname(_os.path.abspath(a.db)), 'db_in') if a.db else None)   # NEWSBANKPDF-v1: story PDFs are read from <db_dir>/files/; the saver gives --db db.json and keeps the unpacked update beside it as db_in/ (no --db-dir)
+     task.release_texts, task.library_dir = a.release_texts, a.library   # RELCHECK-v2
+     task.img_cache = a.img_cache   # PHOTOS-v2 F6
+     task.release_related = a.release_related   # RELBUTTON-v1

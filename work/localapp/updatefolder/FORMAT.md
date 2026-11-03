@@ -166,7 +166,7 @@ One app folder; the program reads and writes only inside it (the update zip the 
     state/              ledger.jsonl, logs/, saver.lock
     copies/articles/    manifest.json + year shards (read by the save)
     db/<collection>/<id>.json   the tracker's own store: runs, edits, notes, views, ...
-    queue/              review queue (items/ decisions/ applied/), optional
+    (no queue/ folder: NOQUEUE-v1)
     for_update/         files made by make_for_update.py
     updates/staging/<id>/   unpacked update: manifest.json + db/ (+ zip_sha256.txt)
     updates/work/<id>/      saver outputs: preview-1/, save-1/ and their result json
@@ -179,7 +179,7 @@ One app folder; the program reads and writes only inside it (the update zip the 
 Flow (`take_update.py`, or the same functions called by the server):
 
 1. `inspect --zip UPDATE.zip`: allow-list, caps, manifest and hashes, JSON check; unpack to `updates/staging/<id>/`; fingerprint comparison. Result has `update_id`, `fingerprint {status: match|mismatch|unknown, message}`, `proceed`.
-2. `preview --update <id>`: runs `saver.py preview --workbook <workbook> --db staging/<id>/db --pipeline <pipeline> --copies <copies> --library <library> --backups <backups> --out updates/work/<id>/preview-1 --state <state> [--queue <queue>] [--today D]`. Writes nothing to the workbook, library or backups. The result carries the saver's `diff` (rows added, cells filled, items needing Sammy) and `diff.token`.
+2. `preview --update <id>`: runs `saver.py preview --workbook <workbook> --db staging/<id>/db --pipeline <pipeline> --copies <copies> --library <library> --backups <backups> --out updates/work/<id>/preview-1 --state <state> [--today D]`. Writes nothing to the workbook, library or backups. The result carries the saver's `diff` (rows added, cells filled, items needing Sammy) and `diff.token`.
 3. `save --update <id> --token <token>`: the same arguments plus `--token T --master-is-local --no-rebuild` (`--rebuild` is opt-in until the rebuild has run once against the real pipeline). The saver does the backup, checked swap, pages add-only, ledger, retention. If the workbook was written (exit 0, 5 or 6): the update's run docs are merged into `db/runs/` with the saver's `writeback.json` applied (`ids`, `sheet.written: true`, `review`); a different existing doc with the same id is first moved to `db/_replaced/`; edits the save consumed are moved to `db/_archived/edits/`; the staging folder is moved to `updates/done/<id>/`. Any other outcome leaves the update in staging and the local db unchanged.
 4. `init`: `saver.py init` with the workbook's current checksum (first run, or accepting Sammy's own Excel edit).
 

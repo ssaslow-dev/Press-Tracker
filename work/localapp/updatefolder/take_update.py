@@ -187,8 +187,7 @@ def run_saver(layout: PCLayout, verb: str, update_id: str, *, accept_mismatch=Fa
     cmd = [sys.executable, '-I', str(sv), verb, '--workbook', str(layout.workbook), '--db', str(dbp), '--pipeline', str(layout.pipeline),
            '--copies', str(layout.copies), '--library', str(layout.library), '--backups', str(layout.backups), '--out', str(out),
            '--state', str(layout.state), '--json', str(out.with_name(out.name + '.result.json'))]
-    if layout.queue.is_dir():
-        cmd += ['--queue', str(layout.queue)]
+    # NOQUEUE-v1: the review queue is gone from the PC tracker; the save is never given --queue
     if today:
         cmd += ['--today', today]
     if run:

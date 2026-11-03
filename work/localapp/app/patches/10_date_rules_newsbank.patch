@@ -1,0 +1,11 @@
+--- a/code/date_rules.py
++++ b/code/date_rules.py
+@@ -29,6 +29,8 @@
+ 
+ def source_from_update(date_src, edition=''):
+     """the Update button's internal _date_src -> Date source vocabulary"""
++    if str(date_src or '') == 'newsbank':   # NEWSBANKPDF-v1: a record read from a NewsBank PDF (its date is NewsBank's; a print record is a print edition)
++        return 'print edition' if edition == 'Print' else 'NewsBank'
+     return {'page': 'page byline', 'claude': 'page byline', 'tinyfish': 'page metadata', 'snippet': 'search snippet (converted)',
+             'none': 'undated', 'edited': 'copied from Original', 'url': 'URL',
+             'reprint': 'copied from reprint'}.get(str(date_src or ''), 'print edition' if edition == 'Print' else 'unknown')

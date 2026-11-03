@@ -1,0 +1,29 @@
+--- a/code/sheet_task.py
++++ b/code/sheet_task.py
+@@ -255,6 +255,26 @@
+     return re.sub(r'[^a-z0-9]+', ' ', s).strip()
+ 
+ 
++def _load_proquest_aliases():
++    """PROQUESTPDF-v1 answer 2: ProQuest names its outlets its own way ("The Center Square; Washington"); the sheet holds the NewsBank form
++    ("Center Square California, The"). proquest_outlets.json (next to this file; built by the Update station's tools/build_pq_aliases.py) lists
++    ProQuest-name -> tracker-name pairs. Each becomes an alias here, so the save's same-outlet and reprint checks read a ProQuest name and the
++    sheet's name as one outlet. A pair that exists in outlet_rules.json already wins; a pair with a place (a generic name such as Daily News)
++    is skipped, because norm_outlet(name, city) already tells generic names apart by city."""
++    try:
++        d = json.load(open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)), 'proquest_outlets.json'), encoding='utf-8'))
++    except (OSError, ValueError):
++        return
++    al = OUTLET_RULES.setdefault('aliases', {})
++    for p in d.get('pairs') or []:
++        src, dst = _outlet_base(p.get('pq')), _outlet_base(p.get('tracker'))
++        if src and dst and src != dst and not p.get('place'):
++            al.setdefault(src, dst)
++
++
++_load_proquest_aliases()
++
++
+ def norm_outlet(s, city=''):
+     """one key per outlet (OUTLETRULES-v1): feeds fold to their outlet, generic names are one outlet per Outlet city
+     ("times@london"), aliases (outlet_rules.json) map variants to the outlet's key"""
