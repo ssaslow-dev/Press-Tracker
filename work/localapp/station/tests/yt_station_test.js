@@ -20,9 +20,9 @@ const ABC = { id: 's99001', code: 'jg-seg001', aid: '99001', date: dayAgo(2), pr
 fu.stories.unshift(ABC);
 if (STRIP) delete fu.fetchrules.recall;
 const FILE = path.join(OUT, 'for_update_yt.json'); fs.writeFileSync(FILE, JSON.stringify(fu));
-const V = { A: 'AAAAAAAAAAA', B: 'BBBBBBBBBBB', C: 'CCCCCCCCCCC' };
+const V = { A: 'AAAAAAAAAAA', B: 'BBBBBBBBBBB', C: 'CCCCCCCCCCC', D: 'DDDDDDDDDDD' };
 const yurl = id => 'https://www.youtube.com/watch?v=' + id;
-const CH = { [V.A]: ['ABC10', 'https://www.youtube.com/@ABC10'], [V.B]: ['KTLA 5', 'https://www.youtube.com/@KTLA'], [V.C]: ['Random Political Blog', 'https://www.youtube.com/@randomblog'] };
+const CH = { [V.A]: ['ABC10', 'https://www.youtube.com/@ABC10'], [V.B]: ['KTLA 5', 'https://www.youtube.com/@KTLA'], [V.C]: ['Random Political Blog', 'https://www.youtube.com/@randomblog'], [V.D]: ['KBS News', 'https://www.youtube.com/@newskbs'] };
 const KTLA = { url: 'https://ktla.com/news/california/gabriel-test-priority-find/', title: 'Gabriel proposes new fire insurance rules', date: dayAgo(1) };
 const POD = { url: 'https://podcasts.apple.com/us/podcast/the-capitol-test/id1234567890?i=1000700000001', title: 'Budget Chair Jesse Gabriel on the California budget', date: dayAgo(1) };
 const body = (t, extra) => 'Assemblymember Jesse Gabriel (D-Encino) spoke about ' + t + ' in Sacramento on Friday. ' + (extra || 'Lawmakers said the budget would be debated next week in California. ').repeat(8);
@@ -30,18 +30,19 @@ const HITS = [
   { re: /site:ktla\.com/, hits: [{ url: KTLA.url, title: KTLA.title, date: KTLA.date, snippet: 'Assemblymember Jesse Gabriel (D-Encino) proposes fire insurance rules.', site_name: 'KTLA' }] },
   { re: /site:podcasts\.apple\.com/, hits: [{ url: POD.url, title: POD.title, date: POD.date, snippet: 'Budget Chair Jesse Gabriel joins the show.', site_name: 'The Capitol Test' }] },
 ];
-const YT_HITS = [V.A, V.B, V.C].map((id, i) => ({ url: yurl(id), title: ['Assemblymember Jesse Gabriel on the budget (ABC10)', 'Jesse Gabriel on wildfire insurance', 'Jesse Gabriel is wrong about everything'][i], date: dayAgo(i === 0 ? 2 : 1), snippet: 'Assemblymember Jesse Gabriel (D-Encino) California.', site_name: 'YouTube' }));
+const YT_HITS = [V.A, V.B, V.C, V.D].map((id, i) => ({ url: yurl(id), title: ['Assemblymember Jesse Gabriel on the budget (ABC10)', 'Jesse Gabriel on wildfire insurance', 'Jesse Gabriel is wrong about everything', 'Jesse Gabriel on the California budget (KBS News)'][i], date: dayAgo(i === 0 ? 2 : 1), snippet: 'Assemblymember Jesse Gabriel (D-Encino) California.', site_name: 'YouTube' }));
 const CLASSIFY = {};
 const base = (o) => Object.assign({ keep: true, why: 'Names him.', topic: 'Budget / finance', media: 'Online news', role: 'Named in headline', tone: 'Neutral', twhy: 'Straight news.', author: '', lang: '', hl_en: '', text_en: '' }, o);
 CLASSIFY[KTLA.url] = base({ date: KTLA.date, outlet: 'KTLA', pub: 'KTLA', hl: KTLA.title, topic: 'Insurance' });
 CLASSIFY[POD.url] = base({ date: POD.date, outlet: 'The Capitol Test', pub: 'The Capitol Test', hl: POD.title });
 CLASSIFY[yurl(V.A)] = base({ date: dayAgo(2), outlet: 'ABC10', pub: 'ABC10', hl: YT_HITS[0].title });
 CLASSIFY[yurl(V.B)] = base({ date: dayAgo(1), outlet: 'KTLA', pub: 'KTLA', hl: YT_HITS[1].title, topic: 'Insurance' });
+CLASSIFY[yurl(V.D)] = base({ date: dayAgo(1), outlet: 'KBS News', pub: 'KBS News', hl: YT_HITS[3].title });
 CLASSIFY[yurl(V.C)] = base({ date: dayAgo(1), outlet: 'Random Political Blog', pub: 'Random Political Blog', hl: YT_HITS[2].title });
 const ytPage = (id) => '<html><body><h1>' + YT_HITS.find(h => h.url.endsWith(id)).title + '</h1><p>Date</p><p>' + new Date(Date.parse(YT_HITS.find(h => h.url.endsWith(id)).date + 'T12:00:00Z')).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) + '</p><yt-attributed-string>Assemblymember Jesse Gabriel (D-Encino) talks California budget.</yt-attributed-string></body></html>';
 const PAGES = {};
 [KTLA, POD].forEach(a => { PAGES[a.url] = { title: a.title, html: '<html><head><title>' + a.title + '</title></head><body><article><h1>' + a.title + '</h1><p>' + body(a.title) + '</p></article></body></html>' }; });
-[V.A, V.B, V.C].forEach(id => { PAGES[yurl(id)] = { title: YT_HITS.find(h => h.url.endsWith(id)).title, html: ytPage(id) }; });
+[V.A, V.B, V.C, V.D].forEach(id => { PAGES[yurl(id)] = { title: YT_HITS.find(h => h.url.endsWith(id)).title, html: ytPage(id) }; });
 /* ---- local server: the page inside the skeleton the Artifact tool adds; the for-Update file; nothing else ---- */
 const shellHead = (() => { const s = fs.readFileSync(path.join(__dirname, '..', '..', 'vendor', fs.readdirSync(path.join(__dirname, '..', '..', 'vendor')).filter(d => d.startsWith('live_')).sort().pop(), 'pipeline', 'shell.html'), 'utf8'); return s.slice(0, s.indexOf('<body>') + 6).replace(/<link rel="(?:preconnect|stylesheet)"[^>]*fonts\.g[^>]*>\s*/g, ''); })();   // the Artifact tool's skeleton has no font links; the vendor head's Google links are not part of the page under test
 const wrapped = shellHead + fs.readFileSync(PAGE, 'utf8') + '</body></html>';
@@ -96,17 +97,23 @@ const INIT = ({ hits, yt, pages, classify, itunes, ch }) => {
   await page.setInputFiles('#stFile', FILE); await page.waitForSelector('#stLoaded:not([hidden])', { timeout: 60000 });
   await page.waitForFunction(() => document.querySelector('#updGo'), null, { timeout: 30000 });
   const rc = await page.evaluate(() => { try { const b = JSON.parse(document.getElementById('fetchrules').textContent); return { has: !!b.recall, pri: ((b.recall.priority || {}).groups || []).length, yt: Object.keys(((b.recall.youtube || {}).channels) || {}).length, ems: (((b.recall.ethnic || {}).outlets) || []).length }; } catch (e) { return { err: String(e) }; } });
-  check(STRIP ? 'file without a recall block: the station supplies its default lists (priority groups, YouTube channels, ethnic outlets)' : 'the recall block in the file reaches the tracker code', rc.has && rc.pri === 3 && rc.yt >= 30 && rc.ems > 100, JSON.stringify(rc));
+  check(STRIP ? 'file without a recall block: the station supplies its default lists (priority groups, YouTube channels, ethnic outlets)' : 'the recall block in the file reaches the tracker code', rc.has && rc.pri === 7 && rc.yt >= 30 && rc.ems > 100, JSON.stringify(rc));
   check('station states when it used its own default lists', STRIP === await page.evaluate(() => !!window.__station.state.recallDefault || !!(window.__station.recallDefault)), '');
   await page.click('#runFind'); await page.waitForSelector('#rcScrim:not([hidden])'); await page.click('#rcYes');
   await page.waitForFunction(() => { const f = document.querySelector('#updBody'); return f && (document.querySelector('#updAdd') || /Added|Nothing new|Stopped|nothing/i.test(f.textContent)) && !document.querySelector('#updStop'); }, null, { timeout: 240000 });
   const calls = await page.evaluate(() => window.__calls);
   const S_ = calls.filter(c => c.tool === 'search');
-  check('priority-outlet searches ran (LA TV and radio, Valley weeklies, podcast sites) with a date filter', ['site:ktla.com', 'site:valleynewsgroup.com', 'site:podcasts.apple.com', 'site:open.spotify.com/episode'].every(s => S_.some(c => c.q.includes(s) && c.after)), JSON.stringify(S_.filter(c => /podcasts\.apple|valleynews/.test(c.q)).map(c => c.q)));
+  check('priority-outlet searches ran (LA TV and radio, Valley weeklies, podcast sites) with a date filter (the podcast-page group without one: DATEFILTER-v1)', ['site:ktla.com', 'site:valleynewsgroup.com'].every(s => S_.some(c => c.q.includes(s) && c.after)) && S_.some(c => c.q.includes('site:open.spotify.com/episode') && !c.after), JSON.stringify(S_.filter(c => /podcasts\.apple|valleynews/.test(c.q)).map(c => c.q)));
+  const has = (re, pred) => S_.some(c => re.test(c.q) && (!pred || pred(c)));
+  check('LANGCAP-v1: Chinese-language press search sent with the native-script query and a date', has(/加布里埃爾/, c => /site:worldjournal\.com/.test(c.q) && /singtaousa\.com/.test(c.q) && c.after) && has(/加布里埃尔/), JSON.stringify(S_.filter(c => /加布/.test(c.q)).map(c => [c.q, c.after])));
+  check('LANGCAP-v1: Korean search "제시 가브리엘" sent with a date', has(/"제시 가브리엘"/, c => /koreadaily|koreatimes/.test(c.q) && c.after), JSON.stringify(S_.filter(c => /가브리엘/.test(c.q)).map(c => [c.q, c.after])));
+  check("LANGCAP-v1: Hebrew search \"ג'סי גבריאל\" sent with a date", has(/ג'סי גבריאל/, c => /hebrewnews/.test(c.q) && c.after), JSON.stringify(S_.filter(c => /גבריאל/.test(c.q)).map(c => [c.q, c.after])));
+  check('LANGCAP-v1: Armenian-press search ("Jesse Gabriel", Asbarez, Massis Post, Mirror-Spectator) sent with a date', has(/"Jesse Gabriel"/, c => /asbarez/.test(c.q) && /massispost/.test(c.q) && /mirrorspectator/.test(c.q) && c.after), JSON.stringify(S_.filter(c => /asbarez/.test(c.q)).map(c => [c.q, c.after])));
+  check('DATEFILTER-v1: the podcast-page group is sent without after_date', S_.filter(c => /site:open\.spotify\.com\/episode/.test(c.q)).length === 1 && S_.filter(c => /site:open\.spotify\.com\/episode/.test(c.q)).every(c => !c.after), JSON.stringify(S_.filter(c => /spotify/.test(c.q)).map(c => [c.q, c.after])));
   const Y = S_.filter(c => /youtube/.test(c.inc));
   check('exactly two station YouTube searches, include_domains youtube.com, with the date filter', Y.length === 2 && Y.every(c => c.after), JSON.stringify(Y));
   const oe = calls.filter(c => c.tool === 'fetch_content' && c.urls.some(u => /youtube\.com\/oembed/.test(u)));
-  check('channels read through oEmbed (fetch_content, batched)', oe.length >= 1 && oe[0].urls.length === 3, JSON.stringify(oe.map(c => c.urls.length)));
+  check('channels read through oEmbed (fetch_content, batched)', oe.length >= 1 && oe[0].urls.length === 4, JSON.stringify(oe.map(c => c.urls.length)));
   check('the iTunes podcast pass ran through fetch_content', calls.some(c => c.tool === 'fetch_content' && c.urls.some(u => /itunes\.apple\.com\/search/.test(u))));
   const ytOpened = calls.filter(c => c.tool === 'fetch_content' && c.urls.some(u => /youtube\.com\/watch/.test(u))).flatMap(c => c.urls);
   check('the other uploader\'s video (not a station channel) was never opened', !ytOpened.includes(yurl(V.C)), JSON.stringify(ytOpened));
@@ -123,6 +130,8 @@ const INIT = ({ hits, yt, pages, classify, itunes, ch }) => {
   check('the attached clip is not also a new story', byLink(yurl(V.A)).length === 0);
   const ytRowB = byLink(yurl(V.B))[0];
   check('KTLA clip is a new Broadcast segment story (Medium TV, outlet KTLA, source YouTube station channel)', !!ytRowB && ytRowB['Format'] === 'Broadcast segment' && ytRowB['Medium'] === 'TV' && ytRowB['Outlet'] === 'KTLA' && /YouTube station channel/.test(ytRowB['Data Source'] || ''), JSON.stringify(ytRowB));
+  const ytRowD = byLink(yurl(V.D))[0];
+  check('KBS News YouTube clip is kept as a station clip (Broadcast segment, Medium TV, outlet KBS News, source YouTube station channel)', !!ytRowD && ytRowD['Format'] === 'Broadcast segment' && ytRowD['Medium'] === 'TV' && ytRowD['Outlet'] === 'KBS News' && /YouTube station channel/.test(ytRowD['Data Source'] || ''), JSON.stringify(ytRowD));
   const av = rows.filter(r => r._av || r.av);
   check('the zip row for the new clip carries its Audio & video details (_av: Channel KTLA 5, Station KTLA)', !!(ytRowB && ytRowB._av && ytRowB._av.Channel === 'KTLA 5' && ytRowB._av.Station === 'KTLA' && ytRowB._av['YouTube link'] === yurl(V.B)), JSON.stringify(ytRowB && ytRowB._av));
   check('priority-search find (KTLA site) was added as a story', rows.some(r => r['Publisher link'] === KTLA.url), '');
