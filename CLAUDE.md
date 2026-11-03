@@ -48,22 +48,20 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 
   A Fable reviewer sees code, rules and test results only, never the builder's notes.
 
-## Current work: the save program (`work/saver/`)
+## Current work: the new tracker (status 2026-11-03)
 
-- **Goal:** replace the ~30 manual steps in `code/sheet_task_prompt.md` with one program, `saver.py preview|save`. It works on local paths only; getting the workbook in and out is a separate adapter. It runs on Windows and Linux, Python 3.11+.
-- **Rules:** `work/saver/SAVE_RULES.md`. Sammy approved them on 2026-10-31 (SAVER-RULES-v1); his answers are at the end of that file and override SAVER_SPEC.md.
-- **Spec:** `work/saver/SAVER_SPEC.md`, about 20 Sonnet hours in total.
-- **Status:**
-  - Part 1 is built: `saver_diff.py` and the preview path. The replay of the 2026-10-30 save matches cell for cell. The replay fixture (in.xlsx, the staged result, db/) is not in this repo because it contains the workbook.
-  - Fable's review (`work/saver/REVIEW_1.md`) findings are fixed; all 25 tests in `work/saver/tests/review/` pass.
-  - Part 2 is built (2026-10-31): `save` (backup, checked swap, pages add-only, removals moved to `_to_delete/`, ledger, keep 3 saver backups, rebuild). 95 saver tests pass. See `work/saver/README.md`.
-  - Not yet run: a replay against a real past save (the fixture is not in this repo), and the rebuild against the real published pipeline (only stubs so far; use `--no-rebuild` until it has run once).
-  - Hold lifted (Sammy, 2026-11-02): the saver is the save engine of the local app (LOCALAPP-v1); work on everything is go.
-- **Next steps:**
-  1. Replay more past saves.
-  2. Fable reviews the whole program.
-  3. First supervised live save.
-- **Known bug from the 2026-10-30 manual save:** article shards were copied into `copies/articles/articles/`, nested one level too deep, so relmatch read stale shards. Two `release_related.json` entries are `bill` where they should be `text`. The next save fixes them.
+Plan: `work/localapp/PLAN.md`. Three parts, all built and tested on copies (no real saves yet):
+- **PC tracker** (`work/localapp/app/`, assembled by `assemble_app.py`): portable Windows folder (NuGet CPython 3.13.16 + 10 hash-pinned wheels, `work/localapp/winpack/`), local server on 127.0.0.1:8765 (`work/localapp/server/`), the tracker page with the Update/tone/author/translation buttons hidden, a "Tracker files" panel (Make "for Update" file, Bring in update, Accept the workbook, refresh files for readers), keeper/reader roles. Pipeline patches 01-14 applied to a copy at assembly (winpack, photolink, local fonts, NewsBank/ProQuest saving). Look check (`work/localapp/lookcheck/`) clean against live v65 on the routes the latest code touched; last full clean run against v63-era files.
+- **Update station** (`work/localapp/station/`): private artifact (URL above), version 1793683389-6ec5: the live tracker's own Update code (v65), "Add NewsBank PDFs" and "Add ProQuest PDFs" boxes, names files by NAMING-v2, needs the for-Update file first. Never tested with a real TinyFish run yet (needs Sammy). Final checks wait for Sammy's additions (UPDATESTATION-v1 follow-up 8).
+- **Save engine** (`work/saver/`): `saver.py preview|save` with all refusal checks; rules in `SAVE_RULES.md` (SAVER-RULES-v1); learns YTSTATION/YTBROADCAST/YTLINK. Formats between the parts: `work/localapp/updatefolder/FORMAT.md`.
+
+Next steps:
+1. Sammy tests the PC tracker zip and one real Update run (station -> folder -> PC preview).
+2. Fable reviews everything that writes the workbook or library (checkpoint 3).
+3. Station final checks after Sammy's additions; publish it on the office claude.ai account.
+4. Switch-over with Sammy (SWITCHOVER-v1): replace the snapshot with the current Mac master and library, first real save, full refresh files for readers.
+
+Importing the old workspace's change bundles: docs/CHANGES_*.md. Copy code/ and build/ files as they come, keep the repo-only changes listed in docs/REPO_LOCAL_CHANGES.md, place new DECISIONS entries before the marker line, never commit bundle workbooks (SWITCHOVER-v1 follow-up), then rebuild js_merged.js, re-apply PC patches, rebuild and republish the station.
 
 ## Build decisions (Sammy, 2026-10-31, NEWPROJECT-v1)
 
