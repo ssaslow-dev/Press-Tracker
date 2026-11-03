@@ -64,10 +64,31 @@ const mem = makeMemDb();
 
 /* ---------- the window the tracker code sees: the real one, except window.claude (its db is the in-memory one above) ---------- */
 const realClaude = window.claude;
+/* Claude's consent is asked at the first call, so a "no" only shows then: remember it and show the red note above the Update panel */
+function plainErr(e) {
+  const c = e && e.code, m = String(e && e.message || e || '');
+  if (c === 'server_not_connected' || c === 'server_not_found' || c === 'selection_required') return 'Stopped. TinyFish is not connected on this account. In claude.ai open Settings, Connectors, connect TinyFish, then reload this page.';
+  if (c === 'needs_reauth') return 'Stopped. The TinyFish connection has lapsed. Reconnect TinyFish in claude.ai (Settings, Connectors), then reload this page.';
+  if (c === 'not_in_manifest' || c === 'approval_required' || c === 'consent_required' || c === 'not_granted' || c === 'capability_disabled' || c === 'capability_removed') return 'Stopped. TinyFish or Claude was not allowed for this page. Allow it from the page’s Permissions menu, then reload this page.';
+  if (c === 'blocked_by_policy') return 'Stopped. Your organization’s policy blocks this for the page. Ask your administrator.';
+  if (c === 'cancelled') return 'Stopped.';
+  return 'Stopped: ' + m;
+}
+function sampleDenied(e) { S.sampleDeniedFlag = true; if (e && (e.code === 'not_granted' || e.code === 'unavailable')) { const n = document.getElementById('stSampleNote'); if (n) n.hidden = false; } }
+function sampleWatch(f) {
+  return new Proxy(f, {
+    apply(t, th, a) { return Promise.resolve(t.apply(th, a)).catch(e => { sampleDenied(e); throw e; }); },
+    get(t, k) { const v = t[k]; if (k === 'json' && typeof v === 'function') return (...a) => Promise.resolve(v.apply(t, a)).catch(e => { sampleDenied(e); throw e; }); return typeof v === 'function' ? v.bind(t) : v; },
+  });
+}
 const claudeForTracker = {
   use: async name => {
     if (name === 'db') return mem.collection ? mem : null;
-    try { return realClaude && realClaude.use ? await realClaude.use(name) : null; } catch (e) { return null; }
+    try {
+      const r = realClaude && realClaude.use ? await realClaude.use(name) : null;
+      if (name === 'sample' && typeof r === 'function') return sampleWatch(r);
+      return r;
+    } catch (e) { return null; }
   },
 };
 const winProxy = new Proxy(window, {
@@ -205,14 +226,15 @@ function showLoaded() {
     ['Stories', esc(fmtN(j.stories.length) + ' in the tracker, ' + fmtN(j.rows.rows.length) + ' spreadsheet rows checked for duplicates')],
     ['Last full update searched to', esc(m.searched_to || 'no record')],
     ['Earlier finds waiting for a save', esc(fmtN(Object.keys(m.clips || {}).length) + ' stories, ' + fmtN(Object.keys(m.reprints || {}).length) + ' reprints')],
-  ].concat((j.notes || []).map(n => ['Note', esc(n)]));
+  ];
+  if ((j.notes || []).length) console.info('for-Update file notes (not shown):', j.notes);
   $('#stFacts').innerHTML = facts.map(([k, v]) => '<dt>' + esc(k) + '</dt><dd>' + v + '</dd>').join('');
   $('#stDrop').hidden = true; $('#stLoaded').hidden = false;
   $('#st-step1').classList.add('st-done');
   ['#st-step2', '#st-step3', '#st-nb', '#st-pq'].forEach(s => { const el = $(s); if (el) el.classList.remove('st-lock'); });
   ['#nbFile', '#pqFile'].forEach(s => { const el = $(s); if (el) el.disabled = false; });
   showAge();
-  $('#stStep2Cap').textContent = 'Press Update database. Same searches and same checks as the tracker’s button; tone, authors and translations are filled in for each new story.';
+  $('#stStep2Cap').textContent = 'Press Update database. It searches the web for new stories about him (about 700 TinyFish searches, 25 minutes or more), checks them against the file, and fills in tone, authors and translations for each new one. Keep this tab open until it finishes.';
   const f = $('#runFind'); if (f) f.disabled = false;
   updatePackUi();
 }
@@ -394,12 +416,49 @@ async function recordPacked(runIds, filename, zsha, nfiles) {
 
 /* the tracker's own sentences that send the user to a chat for saving to the sheet do not apply here */
 const TAKE = 'Download the update folder in step 3 to take it to the PC tracker.';
-const FIX = [[/as batch PDFs into Documents\/Gabriel press PDFs, then ask Claude to extract them\./g, 'as batch PDFs, then drop them into “Add NewsBank PDFs” below.'], [/To put (?:it|them) in the (?:sheet|spreadsheet), ask Claude in chat to “save the last run to the sheet”\./g, TAKE], [/Ask Claude in chat to “save the last run to the sheet”\./g, TAKE],
-  [/when you ask Claude in chat to “save the last run to the sheet”/g, 'when the update folder (step 3) is taken in on the PC tracker']];
+const FIX = [
+  [/as batch PDFs into Documents\/Gabriel press PDFs, then ask Claude to extract them\./g, 'as batch PDFs, then drop them into “Add NewsBank PDFs” below.'],
+  [/The finds are saved in this tracker\. To put (?:it|them) in the (?:sheet|spreadsheet), ask Claude in chat to “save the last run to the sheet”\./g, 'The finds are kept in this page until you download the update folder (step 3) and take it to the PC tracker.'],
+  [/The sheet step \(done in chat\) applies this test to/g, 'The PC tracker applies this test, when the update folder is taken in, to'],
+  [/Saved in the tracker, not in the sheet yet\. Ask Claude in chat to “save the last run to the sheet”\./g, 'Kept in this page, not yet taken to the PC tracker. Download the update folder in step 3.'],
+  [/Saved in the tracker\. To put it in the sheet, ask Claude in chat to “save the last run to the sheet”\./g, 'Kept for the update folder. Download it in step 3 to take it to the PC tracker.'],
+  [/(Added .+?)\. To put it in the sheet, ask Claude in chat to “save the last run to the sheet”\./g, '$1. Download the update folder in step 3 to take it to the PC tracker.'],
+  [/Removed\. Its rows move to the spreadsheet’s Removed tab when you ask Claude in chat to “save the last run to the sheet”\./g, 'Removed. The PC tracker removes it when the update folder (step 3) is taken in.'],
+  [/Changes show in the tracker at once and go into the spreadsheet/g, 'Changes show here at once and are saved'],
+  [/Removing a story takes it out of the tracker at once; when that is saved its rows move to the spreadsheet’s Removed tab\./g, 'Removing a story takes it out of this list at once; the PC tracker removes it when the update folder is taken in.'],
+  [/Searches the web for new coverage of Gabriel and saves what it finds in this tracker\. To put it in the master spreadsheet, ask Claude in chat afterwards\./g, 'Searches the web for new coverage of Gabriel and keeps what it finds in this page. Download the update folder in step 3 afterwards to take it to the PC tracker.'],
+  [/To put (?:it|them) in the (?:sheet|spreadsheet), ask Claude in chat to “save the last run to the sheet”\./g, TAKE],
+  [/Ask Claude in chat to “save the last run to the sheet”\./g, TAKE],
+  [/when you ask Claude in chat to “save the last run to the sheet”/g, 'when the update folder (step 3) is taken in on the PC tracker'],
+  [/Done\. Saved in the tracker\./g, 'Done. Kept for the update folder.'],
+  [/Save them in the tracker/g, 'Keep them for the update folder'],
+  [/Saved in the tracker\. Download/g, 'Kept for the update folder. Download'],
+  [/Saving in the tracker/g, 'Keeping them for the update folder'],
+  [/Nothing new to write\./g, 'Nothing new to keep.'],
+  [/^(Added .+) to the tracker$/g, '$1 to the update'],
+  [/placeholder IDs, not yet in the spreadsheet/g, 'IDs are given when the PC tracker saves it'],
+  [/edited, not yet in the spreadsheet/g, 'edited, not yet taken to the PC tracker'],
+  [/ not yet in the spreadsheet\. They go in with the next update\./g, ' will go into the update folder in step 3.'],
+  [/^Spreadsheet rows/g, 'Rows for the PC tracker'],
+  [/^Not confirmed \(not in the spreadsheet\)/g, 'Not confirmed (not added)'],
+  [/^Find & refresh$/g, 'Run an update'],
+  [/They’re in Clips now\./g, 'They’re kept for the update folder.'],
+  [/The stories’ reprints now include them\./g, 'The reprints are kept for the update folder.'],
+  [/ or use Edit details in a story's panel\./g, '.'],
+  [/Added 0 clips\. (The reprints are kept)/g, '$1'],
+  [/\bsearchs\b/g, 'searches'],
+  [/Finding stories needs the tracker open in Claude with the TinyFish connector\. The clips you see are still current as of the last rebuild\./g, 'TinyFish is not available on this page. In claude.ai, connect TinyFish (Settings, Connectors), allow it for this page, then reload it and press Update database again.'],
+  [/Finding stories needs the tracker open in Claude with connectors available\./g, 'TinyFish is not available on this page. In claude.ai, connect TinyFish (Settings, Connectors), allow it for this page, then reload it and press Update database again.'],
+  [/TinyFish wasn’t allowed for this tracker\. Allow it from the artifact’s Permissions menu/g, 'TinyFish wasn’t allowed for this page. Allow it from this page’s Permissions menu'],
+];
+const FIX_RX = /to the tracker|saves what it finds|save the last run to the sheet|Gabriel press PDFs|in the tracker|in the spreadsheet|Spreadsheet rows|sheet step|Find & refresh|Clips now|reprints now include|story's panel|searchs|Nothing new to write|Finding stories needs|allowed for this tracker|Changes show in the tracker/;
 function fixTexts(root) {
   const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-  const hits = []; for (let n = w.nextNode(); n; n = w.nextNode()) if (/save the last run to the sheet|Gabriel press PDFs/.test(n.nodeValue)) hits.push(n);
+  const hits = []; for (let n = w.nextNode(); n; n = w.nextNode()) if (FIX_RX.test(n.nodeValue)) hits.push(n);
   hits.forEach(n => { let t = n.nodeValue; FIX.forEach(([a, b]) => { t = t.replace(a, b); }); if (t !== n.nodeValue) n.nodeValue = t; });
+  // buttons and paragraphs that point at parts the station does not have (Clips tab, Refresh from files, "Write them in now")
+  root.querySelectorAll('[data-goclips], [data-logpush]').forEach(e => { e.hidden = true; });
+  root.querySelectorAll('#upd p').forEach(p => { if (/^Refresh from files doesn’t search/.test(p.textContent)) p.hidden = true; });
 }
 
 function init() {
@@ -417,6 +476,7 @@ function init() {
   const mo = new MutationObserver(() => { clearTimeout(moT); moT = setTimeout(() => { fixTexts($('#st')); const t = document.getElementById('toast'); if (t) fixTexts(t); updatePackUi(); }, 150); });
   mo.observe($('#st'), { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['aria-busy', 'class'] });
   const tn = document.getElementById('toast'); if (tn) mo.observe(tn, { subtree: true, childList: true, characterData: true });
+  setInterval(() => { const rc = document.getElementById('rcScrim'); if (rc && !rc.hidden) fixTexts(rc); }, 200);   // the confirm dialog is built by the tracker code after start
   setInterval(updatePackUi, 1000);
   window.__station = { state: S, sess, pack, pending, zipStore, loadFile, mirrorBusy: () => mirroring || mirrorQ.size > 0, mirrorFail: () => mirrorFail };   // for the tests
 }

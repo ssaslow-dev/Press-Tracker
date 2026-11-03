@@ -101,25 +101,27 @@ async function pqAdd() {
     const pending = [...NBS.pdfs.values(), ...PQS.pdfs.values()].reduce((a, x) => a + x.bytes.length, 0);
     if (pending > NB_PDF_CAP) throw new Error('The PDFs in this tab add up to ' + fmtN(Math.round(pending / 1048576)) + ' MB, over the ' + (NB_PDF_CAP >> 20) + ' MB one update can hold. Add some now, download the update folder, then reload this page for the rest.');
     let sample = null, mcp = null;
-    try { sample = realClaude && realClaude.use ? await realClaude.use('sample') : null; } catch (e) { sample = null; }
+    try { sample = realClaude && realClaude.use ? await claudeForTracker.use('sample') : null; } catch (e) { sample = null; }
     try { mcp = realClaude && realClaude.use ? await realClaude.use('mcp') : null; } catch (e) { mcp = null; }
     const wl = [];
-    if (!sample) wl.push('Claude (sampling) is not available here: tone, topic, language and translation could not be filled in. The rows are marked and need checking.');
+    if (!sample) wl.push('Claude is not available on this page, or you did not allow it: tone, topic, language and translation could not be filled in. The rows are marked and need checking. Allow Claude from the page’s Permissions menu and reload to rate them.');
     const wantLinks = $('#pqLinks').checked;
-    if (wantLinks && !mcp) wl.push('The TinyFish connector is not available: the publishers’ own links were not looked up.');
+    if (wantLinks && !mcp) wl.push('TinyFish is not available on this page: the publishers’ own links were not looked up. Connect TinyFish in claude.ai (Settings, Connectors), allow it for this page and reload, or untick the box and add the stories without the links.');
+    S.sampleDeniedFlag = false;
     const res = await window.__pq.run(chosen, { say, links: wantLinks && !!mcp, sample, mcp, mark: (c, id) => { S.noMirror.add(c + '.' + id); } });
     PQS.lastItems = Object.assign(PQS.lastItems || {}, Object.fromEntries(res.items.map(x => [x.key, x])));
     res.items.forEach(x => PQS.added.add(x.key));
     PQS.lastRun = res;
+    if (sample && S.sampleDeniedFlag) wl.unshift('Claude was not allowed for this page, so tone, topic, language and translation could not be filled in. The rows are marked and need checking. Allow Claude from the page’s Permissions menu and reload to rate them.');
     if (res.errors && res.errors.length) res.errors.forEach(e => wl.push(e));
     const nl = res.links.found;
     prog.textContent = 'Added: ' + fmtN(res.counts.stories) + ' new ' + (res.counts.stories === 1 ? 'story' : 'stories') + ', ' + fmtN(res.counts.reprint_rows) + ' reprint row' + (res.counts.reprint_rows === 1 ? '' : 's') + ' (' + fmtN(res.counts.rows) + ' spreadsheet rows)'
       + (res.links.searched ? '; publisher’s own page found for ' + fmtN(nl) + ' of ' + fmtN(res.links.searched) : '') + (res.counts.left ? '; ' + fmtN(res.counts.left) + ' left out (listed below)' : '') + '. Download the update folder in step 3.';
     res.left.forEach(x => wl.push('Left out: ' + x.hl + ' (' + x.outlet + ', ' + x.date + '): ' + x.why));
-    if (!res.saved) wl.push('The run could not be saved in this tab’s store: the rows are in the list but will not be in the update folder.');
+    if (!res.saved) wl.push('The run could not be kept in this tab: the rows are in the list but will not be in the update folder.');
     if (wl.length) { warn.innerHTML = wl.map(x => '<li>' + esc(x) + '</li>').join(''); warn.hidden = false; }
   } catch (e) {
-    prog.textContent = 'Stopped: ' + (e && e.message ? e.message : e);
+    prog.textContent = plainErr(e);
   } finally { PQS.busy = false; pqDrawAll(); nbDrawAll(); updatePackUi(); }
 }
 function pqWire() {

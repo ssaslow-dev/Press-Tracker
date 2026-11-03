@@ -44,7 +44,7 @@ function nbScreen(p, SRC){
   const sid = ch && !ch.same ? ch.o.sid : old && !old.same ? old.r.id : '';
   if (st && !ranIn(st, p.outlet_clean, '')) return { status: 'reprint', of: st.id, of_hl: st.hl, why: 'another outlet’s copy of “' + String(st.hl).slice(0, 60) + '” (' + st.id + '): proposed as a reprint; the PC save tests the text' };
   if (st) return { status: 'known', why: 'this outlet already has the story (' + st.id + ')' };
-  if (sid) return { status: 'reprint', of: sid, of_hl: '', why: 'another outlet’s copy of a story already in the sheet (' + sid + '): proposed as a reprint; the PC save tests the text' };
+  if (sid) return { status: 'reprint', of: sid, of_hl: '', why: 'another outlet’s copy of a story already in the tracker (' + sid + '): proposed as a reprint; the PC save tests the text' };
   return { status: 'new', why: 'new story' };
 }
 function nbRemember(p, key){ if (p.docref_key) NBX.seen.set(p.docref_key, key); }
@@ -116,7 +116,7 @@ async function nbClassify(items, sample, say, preface){
   }
   return out;
 }
-function nbGuess(it){ return { keep: true, why: 'Not read by Claude (no sampling): check the fields.', date: it.p.date, outlet: it.p.outlet_clean, pub: it.p.outlet_clean, hl: it.p.headline, topic: 'Other / roundup', media: 'Newspaper', role: /Gabriel/.test(it.p.headline) ? 'Named in headline' : 'Mentioned in story' }; }
+function nbGuess(it){ return { keep: true, why: 'Not read by Claude: check the fields.', date: it.p.date, outlet: it.p.outlet_clean, pub: it.p.outlet_clean, hl: it.p.headline, topic: 'Other / roundup', media: 'Newspaper', role: /Gabriel/.test(it.p.headline) ? 'Named in headline' : 'Mentioned in story' }; }
 
 /* ---------- the whole run ----------
    items: [{ key, p, screen, fileId, pdf: {sha256, bytes} | null, batch: {name, sha256, index, firstPage, lastPage, span}, include }] (status new or reprint only)
