@@ -101,17 +101,6 @@ class Server:
             return r.read()
 
 
-def ui(server: Server, steps: list, name: str, workdir: Path, timeout=2400):
-    """run a list of steps (ui_pc.js) against the server's page in Chromium; returns {results, errors, external}"""
-    sp = workdir / f'{name}.steps.json'
-    sp.write_text(json.dumps(steps))
-    env = dict(os.environ, PLAYWRIGHT_MODULE=NODE_MODULES)
-    p = subprocess.run(['node', str(HERE / 'ui_pc.js'), server.base, str(sp)], capture_output=True, text=True, env=env, timeout=timeout)
-    if p.returncode:
-        raise RuntimeError('node failed: ' + p.stderr[-800:])
-    return json.loads(p.stdout.strip().splitlines()[-1])
-
-
     def call(self, method, path, body=None, raw=None, headers=None):
         h = {'X-Local-Token': getattr(self, 'token', '')}
         h.update(headers or {})
@@ -141,3 +130,15 @@ def ui(server: Server, steps: list, name: str, workdir: Path, timeout=2400):
                 return r['result']
             time.sleep(1)
         raise TimeoutError(verb)
+
+
+def ui(server: Server, steps: list, name: str, workdir: Path, timeout=2400):
+    """run a list of steps (ui_pc.js) against the server's page in Chromium; returns {results, errors, external}"""
+    sp = workdir / f'{name}.steps.json'
+    sp.write_text(json.dumps(steps))
+    env = dict(os.environ, PLAYWRIGHT_MODULE=NODE_MODULES)
+    p = subprocess.run(['node', str(HERE / 'ui_pc.js'), server.base, str(sp)], capture_output=True, text=True, env=env, timeout=timeout)
+    if p.returncode:
+        raise RuntimeError('node failed: ' + p.stderr[-800:])
+    return json.loads(p.stdout.strip().splitlines()[-1])
+

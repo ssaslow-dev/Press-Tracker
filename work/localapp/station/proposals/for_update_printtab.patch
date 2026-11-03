@@ -1,0 +1,54 @@
+--- a/work/localapp/updatefolder/make_for_update.py
++++ b/work/localapp/updatefolder/make_for_update.py
+@@ -94,2 +94,46 @@
+ 
++def extend_rows(rows_block: dict, workbook: Path) -> dict:
++    """PRINTPAGES-v1 / ORIGCOPIES-v1 (proposal): the Update station must (1) recognise a NewsBank print page that the workbook already lists, and (2) know which rows already
++    hold a NewsBank PDF. So the rows block gets (a) a column `files` (the row's File name; File name 2; Other files, "; "-joined; '' when none) and (b) one row of kind 'P' for every
++    row of the "Unlinked print pages" tab that has a print-page link: [Article ID, '', 'P', Outlet, Date, '', [links], files]. No article text. A row with an old column list is left alone."""
++    import openpyxl
++    cols = list(rows_block.get('cols') or [])
++    if 'files' in cols or not cols:
++        return rows_block
++    wb = openpyxl.load_workbook(workbook, read_only=True, data_only=True)
++    def table(name):
++        if name not in wb.sheetnames:
++            return [], []
++        it = wb[name].iter_rows(values_only=True)
++        hdr = [str(c or '') for c in next(it, [])]
++        return hdr, [r for r in it if r and any(v not in (None, '') for v in r)]
++    ch, crows = table('Coverage')
++    ix = {h: i for i, h in enumerate(ch)}
++    files = {}
++    for r in crows:
++        aid = str(r[ix['Article ID']] or '').strip() if 'Article ID' in ix else ''
++        if aid:
++            files[aid] = '; '.join(str(r[ix[c]]).strip() for c in ('File name', 'File name 2', 'Other files') if c in ix and r[ix[c]] not in (None, ''))
++    ai = cols.index('aid')
++    out = dict(rows_block)
++    out['cols'] = cols + ['files']
++    out['rows'] = [list(a) + [files.get(str(a[ai]), '')] for a in rows_block['rows']]
++    ph, prows = table('Unlinked print pages')
++    pi = {h: i for i, h in enumerate(ph)}
++    for r in prows:
++        links = [str(r[pi[c]]).strip() for c in ('NewsBank print-page link', 'NewsBank print article link') if c in pi and r[pi[c]] not in (None, '')]
++        aid = str(r[pi['Article ID']] or '').strip() if 'Article ID' in pi else ''
++        if not aid or not links:
++            continue
++        d = r[pi['Date']] if 'Date' in pi else ''
++        d = d.strftime('%Y-%m-%d') if hasattr(d, 'strftime') else str(d or '')[:10]
++        row = [''] * len(cols)
++        for k, v in (('aid', aid), ('kind', 'P'), ('outlet', str(r[pi['Outlet']] or '') if 'Outlet' in pi else ''), ('date', d), ('links', links)):
++            if k in cols:
++                row[cols.index(k)] = v
++        out['rows'].append(row + [''])
++    wb.close()
++    return out
++
++
+ def build_blocks(workbook: Path, pipeline: Path, tmp: Path, *, legacy=None, sid_map=None, insights=None) -> tuple[dict, list]:
+@@ -167,2 +211,4 @@
+         notes += n2
++        if isinstance(blocks.get('rows'), dict):
++            blocks['rows'] = extend_rows(blocks['rows'], copy)   # PRINTPAGES-v1 (proposal)
+     data = [project_story(r) for r in blocks.pop('data')]
