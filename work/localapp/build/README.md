@@ -22,6 +22,8 @@ Needs Python 3.11+, pandas, openpyxl, beautifulsoup4, and `bash` (it runs `build
 
 Logs: `OUTDIR/apply_all.log`, `OUTDIR/build_sh.log`, `OUTDIR/stage/work/build_last/` (both builds and block comparison).
 
+Checked 2026-11-03 against the live tracker v63 (1793663249-2674): with the repository's `code/`, `build/tabs/` and the v63 workbook this build's `index.html` is byte-identical to the live page (sha256 `63cc5317...`). The earlier merge of `release_related.json` from the live page (`--related-from`) is gone: the repository copy now holds every relation the page has.
+
 ## Serve and look
 
     cd OUTDIR/site && python3 -m http.server 8765 --bind 127.0.0.1    # then open http://127.0.0.1:8765/index.html

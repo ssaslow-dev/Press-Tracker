@@ -183,10 +183,13 @@ class Allow:
     removed_aids: set
     assigned_ids: set          # Article IDs sheet_task assigned this run
     removed_rows_n: int
+    yt_cells: set = field(default_factory=set)       # (aid, column): Format / Medium of a story that became a broadcast story (YTBROADCAST-v1)
+    yt_item_aids: set = field(default_factory=set)   # aid whose Audio & video details Item type became "Broadcast segment" (YTBROADCAST-v1)
 
     @classmethod
     def from_results(cls, *results) -> 'Allow':
         rc, swap, swap_old, retry, queue, removed, assigned = {}, set(), set(), set(), set(), set(), set()
+        yt_cells, yt_item = set(), set()
         n_removed = 0
         for res in results:
             res = res or {}
@@ -200,6 +203,11 @@ class Allow:
             for x in res.get('retry_cleared') or []:
                 for col in ('File name', 'Saved Copy?'):
                     retry.add((str(x.get('aid')), col))
+            for e in res.get('yt_attached') or []:   # YTSTATION-v1 / YTBROADCAST-v1: sheet_task.apply_yt_attach lists the cells it overrode
+                for col in e.get('cells') or []:
+                    yt_cells.add((str(e.get('aid')), col))
+                if any(str(x).startswith('AV Item type') for x in e.get('changed') or []):
+                    yt_item.add(str(e.get('aid')))
             for e in res.get('queue_applied') or []:
                 for aid, col in e.get('cells') or []:
                     queue.add((str(aid), col))
@@ -222,7 +230,7 @@ class Allow:
             for e in res.get('origin_swaps') or []:
                 if e.get('new_original'):
                     assigned.add(str(e['new_original']))
-        return cls(rc, swap, swap_old, retry, queue, removed, assigned, n_removed)
+        return cls(rc, swap, swap_old, retry, queue, removed, assigned, n_removed, yt_cells, yt_item)
 
 
 # ---------------------------------------------------------------- report
@@ -472,7 +480,7 @@ def compare(before, after, result=None, result2=None, *, derived_rel, new_ok) ->
                 if blank(bv):
                     rep.changes.append(Change(name, ra, key, col, 'filled', bv, av, 'blank_fill'))
                     continue
-                tag = _allowed_change(name, aid, story, col, av, allow, derived_rel)
+                tag = _allowed_change(name, aid, story, col, av, allow, derived_rel, bv)
                 rep.changes.append(Change(name, ra, key, col, 'changed', bv, av, tag))
                 if not tag:
                     rep.add_problem('OVERWRITE', 'cell_changed', f'{name} / {key} / {col}: {text(bv)[:50]!r} -> {text(av)[:50]!r}')
@@ -513,7 +521,7 @@ def _link_problems(rep, name, key, labels, bl, al):
             rep.add_problem('OVERWRITE', 'hyperlink_target', f'{name} / {key}: hyperlink in {lab} now points to {al[col][:60]!r} (was {target[:60]!r})')
 
 
-def _allowed_change(sheet, aid, story, col, new, allow: Allow, derived_rel) -> str:
+def _allowed_change(sheet, aid, story, col, new, allow: Allow, derived_rel, old=None) -> str:
     if sheet in (COVERAGE, ORIGINALS):
         if col == REPRINT_COL and story in allow.reprint_new:
             rec = allow.reprint_new[story]
@@ -526,6 +534,15 @@ def _allowed_change(sheet, aid, story, col, new, allow: Allow, derived_rel) -> s
             return 'retry_cleared'
         if (aid, col) in allow.queue_cells:
             return 'queue_applied'
+        # YTBROADCAST-v1 (the one recorded override of fill-blanks-only for station YouTube clips): only these two exact changes, and only
+        # for a cell sheet_task.apply_yt_attach reports it changed. Format -> "Broadcast segment"; Medium "Video" -> TV or Radio.
+        if (aid, col) in allow.yt_cells:
+            if col == 'Format' and text(new) == 'Broadcast segment':
+                return 'yt_attach'
+            if col == 'Medium' and text(old) == 'Video' and text(new) in ('TV', 'Radio'):
+                return 'yt_attach'
+    if sheet == AV_TAB and col == 'Item type' and aid in allow.yt_item_aids and text(new) == 'Broadcast segment':
+        return 'yt_attach'
     if sheet == PRESS and col in derived_rel:
         return 'rel_derived'
     return ''

@@ -20,7 +20,7 @@ One program does "save the last run to the sheet" on files in a folder. Moving t
 - The last save was never confirmed where the master lives.
 - sheet_task.py's own verification fails, in either pass.
 - Row counts don't add up: after = before + added − moved to Removed; Originals tab must match.
-- A filled cell would change, outside the recorded exceptions ("# of reprints", Removed moves, Original swap, RETRY/BLOCKED row taking its copy, decided review-queue merge, Press releases derived columns). The saver checks this itself.
+- A filled cell would change, outside the recorded exceptions ("# of reprints", Removed moves, Original swap, RETRY/BLOCKED row taking its copy, decided review-queue merge, Press releases derived columns, station YouTube attach (YTBROADCAST-v1: Format to "Broadcast segment", Medium "Video" to TV/Radio, Audio & video details Item type to "Broadcast segment", only for cells sheet_task lists in `yt_attached`)). The saver checks this itself.
 - A new row's Article ID is not one sheet_task.py assigned in this run.
 - A tab, header, hyperlink or key row would go missing.
 - The backup's checksum, or the master's after the swap, doesn't match.

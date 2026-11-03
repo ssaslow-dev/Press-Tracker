@@ -22,7 +22,7 @@ A new, private claude.ai artifact, **AJG Update Station**, that holds only today
 
 ## Build inputs
 
-- `code/tracker/NN_*.js`, concatenated by `code/apply_all_patches.py --tracker-js` (the same bytes as the tracker build; sha256 `92e2b785...` equals the live tracker's `pipeline/tracker.js`).
+- `code/tracker/NN_*.js`, concatenated by `code/apply_all_patches.py --tracker-js` (the same bytes as the tracker build; sha256 `4b8c5c1f...` (2026-11-02, v63) equals the live tracker's `pipeline/tracker.js`).
 - `work/localapp/vendor/live_*/pipeline/shell.html`: the live page's HTML and CSS (SAMELOOK-v1). Its Google Fonts links are removed at build time (see "Moving to another account").
 - `src/station.*`.
 

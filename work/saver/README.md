@@ -64,6 +64,10 @@ See `SAVER_SPEC.md` section 8. In: the folders above, byte-identical to the stor
 - Photos of new saves are never downloaded (the pipeline runs with a dead proxy); pages that need a photo not in `--img-cache` are saved without it.
 - The replay fixture (`tests/replay.py`, the `SAVER_SLOW` test) holds the workbook and is not in the repository: set `SAVER_FIXTURE=<folder>`. Without it those tests skip.
 
+## Station YouTube clips (YTBROADCAST-v1, 2026-11-03)
+
+sheet_task's `attach` step turns an existing story into a broadcast story (Format and Audio & video details Item type to "Broadcast segment", Medium "Video" to TV/Radio). It is the one recorded override of fill-blanks-only, and `saver_diff` allows exactly those changes (tag `yt_attach`), only for the cells and story IDs listed in `result.yt_attached`. `yt_attach_unplaced` (an attach item whose tracked story was not found) is a judgment item. Note: a run doc that has only `attach` items and no `rows` is not "work" for sheet_task, so the save says "Nothing new to write" (tests/test_saver_yt.py documents it). Tests: `tests/test_saver_yt.py`.
+
 ## Tests
 
     cd work/saver

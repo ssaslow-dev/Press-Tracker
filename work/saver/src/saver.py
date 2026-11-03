@@ -47,11 +47,12 @@ REVIEW_KEYS = ('print_pages', 'backfill_finds', 'conflicts', 'removed', 'removal
                'av_date_fixes', 'av_show_to_channel', 'releases_new', 'releases_flagged', 'releases_skipped', 'releases_untestable',
                'releases_review', 'releases_unmarked', 'releases_dual', 'release_copies', 'origin_swaps', 'origin_nocopy', 'origin_merge',
                'nocopy_finds', 'print_counterpart', 'wire_blend', 'outlet_untyped', 'outlet_new', 'unverified_hits', 'placeholder_reused',
-               'origin_swaps_undone', 'retry_cleared', 'nocopy_filled', 'queue_applied', 'queue_conflicts')
+               'origin_swaps_undone', 'retry_cleared', 'nocopy_filled', 'queue_applied', 'queue_conflicts', 'yt_attached', 'yt_attach_unplaced')
 # SPEC 7.3 judgment items that sheet_task already lists under the same key; the saver adds needs_fetch, name_collision,
 # release_candidates_missing itself. nocopy_rows_without_copy has no key of that name in result.json: it is filled from `nocopy_finds`.
 JUDGMENT_KEYS = ('origin_wanted', 'conflicts', 'date_review', 'av_date_review', 'reprint_untested', 'reprint_check', 'outlet_unresolved',
-                 'outlet_new', 'outlet_untyped', 'gabriel_unclear', 'unknown_story', 'held', 'print_pages', 'backfill_finds', 'queue_conflicts')
+                 'outlet_new', 'outlet_untyped', 'gabriel_unclear', 'unknown_story', 'held', 'print_pages', 'backfill_finds', 'queue_conflicts',
+                 'yt_attach_unplaced')
 
 
 class Refuse(Exception):
