@@ -57,7 +57,7 @@ Plan: `work/localapp/PLAN.md`. Three parts, all built and tested on copies (no r
 
 Next steps:
 1. Sammy tests the PC tracker zip and one real Update run (station -> folder -> PC preview).
-2. Fable checkpoint 3 done (work/saver/REVIEW_2.md); findings fixed. PCEDITS-v1 (Manage edits saved with updates) to build.
+2. Fable checkpoint 3 done (work/saver/REVIEW_2.md); findings fixed. PCEDITS-v1 built (Manage edits saved with updates or via "Save my edits").
 3. Station final checks after Sammy's additions; publish it on the office claude.ai account.
 4. Switch-over with Sammy (SWITCHOVER-v1): replace the snapshot with the current Mac master and library, first real save, full refresh files for readers.
 
