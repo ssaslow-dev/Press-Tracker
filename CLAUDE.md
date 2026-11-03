@@ -15,7 +15,7 @@ Press-coverage database for CA Assemblymember Jesse Gabriel (AD-46), kept by Sam
 Docs written before the move refer to the old workspace root `L = /tmp/.../scratchpad/lib`. In this repository, that root is the repo itself (`L/code` = `code/`, `L/DECISIONS.md` = `docs/DECISIONS.md`).
 
 **Not in this repository:**
-- Master workbook: `~/Desktop/Tracker library/AJG Coverage - NewsBank.xlsx` on Sammy's Mac. It is the single source of truth. Current sha256 starts `bc21c9fb` (2026-10-30 save).
+- Master workbook: `~/Desktop/Tracker library/AJG Coverage - NewsBank.xlsx` on Sammy's Mac. It is the single source of truth. Current sha256 starts `62786489` (2026-11-02, after the OUTLETFILL, SAFEFILL, YTBROADCAST and YTNEW writes: docs/CHANGES_2026-11-02.md). The repo snapshot in `data/` is still `bc21c9fb` (2026-10-30), 5 writes behind; it is replaced at switch-over.
 - Article library: `~/Desktop/Tracker library/<year>/`, `_original_html/<year>/`, `Press releases/<year>/`, and `Backups/`, all on the Mac. It is add-only.
 - Live tracker (claude.ai artifact): https://claude.ai/artifact/5wHur4aRkSbAu6FscDpTjv, also at https://claude.ai/code/artifact/27f923dc-2407-40a0-b8a9-ec3dfed87ad9. Its database holds runs, pages, edits and similar. Capabilities: db, downloads, sample, and mcp TinyFish (search, fetch_content).
 - Shared read-only copy: https://claude.ai/artifact/6vhKKcNXarhSKwnCMk3Bks. Rebuild it with `code/make_viewer.py` after every tracker publish.
