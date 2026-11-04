@@ -20,6 +20,7 @@ import difflib
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -36,8 +37,9 @@ import run_lookcheck as RL  # noqa: E402  (free_port, wait_http)
 
 LEDGER_AT = '2026-11-03T07:30:00+00:00'          # 2026-11-02 in Los Angeles
 LAST_UPDATED = 'Last updated Nov. 2, 2026'
-PO_AID, PO_FILE = '00056', '_original_pdf/2026/00056_p15.pdf'     # row 00056 (s00019) gets a print original
+PO_AID, PO_FILE = '10651', '_original_pdf/2026/10651_p15.pdf'     # row 10651 (s04930, an Original) gets a print original
 PHOTO_ID = 's02546'
+PHOTO_NTH = 2          # the third photo of that copy (the first is the lead photo, which the viewer treats specially)
 PHOTO_URL = 'https://upload.wikimedia.org/wikipedia/commons/4/47/PNG_transparency_demonstration_1.png'
 LIGHT_ALL = None
 DARK_TESTS = ['every_tab', 'story_sheet', 'tab_tables', 'manage_panel', 'saved_copy']
@@ -78,7 +80,8 @@ def prepare_pc(T, root: Path, srv, photo: bool):
 def alter_shard(path: Path):
     d = json.loads(path.read_text(encoding='utf-8'))
     h = d[PHOTO_ID]
-    i = h.index('src="data:')
+    spots = [m.start() for m in re.finditer(r'src="(?:jgimg|data):', h)]      # the live copies keep photos as jgimg: references (the page resolves them from img/)
+    i = spots[PHOTO_NTH]
     j = h.index('"', i + 5)
     d[PHOTO_ID] = h[:i] + f'src="{PHOTO_URL}' + h[j:]
     tmp = path.with_name(path.name + '.new')
@@ -150,6 +153,11 @@ def main():
                     if left:
                         print('WARNING: the PC data copy was not empty before', name, left[:5], flush=True)
                     prepare_pc(T, root, srv, photo)
+                    if photo:
+                        import urllib.request
+                        got = urllib.request.urlopen(srv.base + '/articles/2025.json').read().decode('utf-8', 'replace')
+                        page = urllib.request.urlopen(srv.base + '/').read().decode('utf-8', 'replace')
+                        print('PC serves the altered shard:', PHOTO_URL in got, '| page keeps linked photos (IMG_LINK):', 'const IMG_LINK' in page, flush=True)
                     e2 = dict(env, PT_LASTUPD=LAST_UPDATED if role == 'keeper' else '', PT_PO_AID=PO_AID, PT_PHOTO_ID=PHOTO_ID if photo else '')
                     art = refx / 'articles'
                     if photo:                                   # the reference gets the same altered copy
@@ -167,7 +175,7 @@ def main():
                 finally:
                     srv.stop()
                     shutil.rmtree(work, ignore_errors=True)
-                    if photo:
+                    if photo and not art.is_symlink():
                         shutil.rmtree(art)
                         os.symlink(a.live_site / 'articles', art)
     finally:

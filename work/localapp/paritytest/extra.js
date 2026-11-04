@@ -121,15 +121,22 @@ module.exports = (T, H) => {
     else if (link.length) throw new Error('the reference shows View original');
     out.sheet = await sheetFull(p, true); out.id = id; return out; };
 
-  // PHOTOLINK-v1: a saved copy whose photos are links (the runner swapped one embedded photo of PT_PHOTO_ID for a web address on both sides): same frame, same sources
+  // PHOTOLINK-v1: a saved copy whose photos are links (the runner swapped one photo of PT_PHOTO_ID for a web address on both sides). This is the one recorded difference: the PC page keeps the linked photo
+  // (no referrer, loaded lazily; asserted here), the live page drops it (asserted here). Everything else in the frame (heading, sandbox, the photos that are not links) must match; the photo counts are
+  // compared with the linked photo taken out.
   T.linked_photo = async (p, base, out) => {
     const id = process.env.PT_PHOTO_ID; if (!id) { out.skipped = 'not prepared'; return out; }
+    // the test machine is offline and the viewer removes photos that fail to load, so the linked photo's address is answered here with a 1-pixel picture
+    await p.context().route('https://upload.wikimedia.org/**', r => r.fulfill({ status: 200, contentType: 'image/png', body: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64') }));
     await openById(p, id);
-    out.frame = await p.evaluate(async () => { const f = document.querySelector('#doc iframe'); if (!f) return { frame: false }; const d = f.contentDocument; await new Promise(r => setTimeout(r, 1500));
+    const f = await p.evaluate(async () => { const f = document.querySelector('#doc iframe'); if (!f) return { frame: false }; const d = f.contentDocument; await new Promise(r => setTimeout(r, 1500));
+      const rem = [...d.images].filter(i => /^https?:/.test(i.getAttribute('src') || ''));
       const src = i => { const s = i.getAttribute('src') || ''; return s.startsWith('data:') ? 'data' : s.replace(/^https?:\/\/127\.0\.0\.1:\d+/, ''); };
-      return { frame: true, n: d.images.length, srcs: [...d.images].map(src).join('|'), sandbox: f.getAttribute('sandbox'), h1: (d.querySelector('h1') || {}).textContent, remote: [...d.images].filter(i => /^https?:/.test(i.getAttribute('src') || '')).length }; });
-    if (!out.frame.remote) throw new Error('the prepared copy has no linked photo: ' + JSON.stringify(out.frame));
-    return out; };
+      return { frame: true, nOther: d.images.length - rem.length, srcsOther: [...d.images].filter(i => !rem.includes(i)).map(src).join('|'), sandbox: f.getAttribute('sandbox'), h1: (d.querySelector('h1') || {}).textContent,
+        remote: rem.length, remoteAttrs: rem.map(i => i.getAttribute('referrerpolicy') + '/' + i.getAttribute('loading')).join('|') }; });
+    if (p.__target === 'pc') { if (f.remote !== 1 || f.remoteAttrs !== 'no-referrer/lazy') throw new Error('the PC page should keep one linked photo (no-referrer, lazy): ' + JSON.stringify(f)); }
+    else if (f.remote) throw new Error('the live page shows a linked photo: ' + JSON.stringify(f));
+    delete f.remote; delete f.remoteAttrs; out.frame = f; return out; };
 
   T.exports_more = async (p, base, out) => {   // the whole-file download (workbook), per-tab exports at default state, and a filtered export
     await p.click('nav.tabs button[data-tab=db]'); await sleep(1200);
