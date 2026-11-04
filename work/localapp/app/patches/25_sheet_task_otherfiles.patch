@@ -20,7 +20,7 @@
 +        fill {column: value}}]: another original copy (a PDF) of a story already in the tracker. No new row; only blank cells are filled (the links and print cells named in
 +        EXTRA_FILL_OK). The PDF is kept add-only as _original_pdf/<year>/<fmt><id><o|r>-<Story ID>.pdf (a name already taken by another file gets -v2, -v3 ...) and its name is
 +        APPENDED to the row's "Other files" cell ("; "-separated; names already there are never changed or removed), or, for `to` file2_else_other, put in File type 2 /
-+        File name 2 when those are blank. A workbook without the column: nothing is appended and the copy is listed in res['other_files_skipped'].
++        File name 2 when those are blank. The Update station's `cells` ({column: value}) are filled the same way, blank cells only. A row whose File name already holds a PDF of the same kind (nb / pq) is skipped. A workbook without the column: nothing is appended and the copy is listed in res['other_files_skipped'].
 +        Lists: res['other_files'] ([{aid, names, before}], what the saver's diff may allow), res['other_files_skipped'], res['extra_copies_saved']."""
 +        import os, hashlib
 +        self.res.setdefault('other_files', []); self.res.setdefault('other_files_skipped', [])
@@ -47,6 +47,9 @@
 +                    continue
 +                if is_print and not re.fullmatch(r'\d{1,4}(-\d{1,4})?', str(x.get('pages') or '')):
 +                    skip('a print original needs its page numbers (16 or 16-21)')
++                    continue
++                if not is_print and any(re.search(r'(^|;\s*)' + fmt + r'[^;]*\.pdf', norm_val(self.s.get(r, c)), re.I) for c in ('File name', 'File name 2') if c in self.s.col):
++                    skip('the row already holds a ' + ('NewsBank' if fmt == 'nb' else 'ProQuest') + ' PDF (the same record)')   # REVIEW_3 finding 1: its saved copy is already this PDF
 +                    continue
 +                path = self.nb_pdf_path({'file': 'files/' + fid})
 +                raw = open(path, 'rb').read() if path else None
@@ -107,6 +110,9 @@
 +                    where = self.OTHER_COL
 +                for c, v in (x.get('fill') or {}).items():
 +                    if c in self.EXTRA_FILL_OK and not blank(v):
++                        self.fill(r, c, v, 'extra_copies', rid)
++                for c, v in (x.get('cells') or {}).items():      # the Update station's own cells (Section, Author / byline, Word count, citation, link): blank cells only (REVIEW_3 finding 1)
++                    if c in self.s.col and c != self.OTHER_COL and not blank(v) and blank(self.s.get(r, c)):
 +                        self.fill(r, c, v, 'extra_copies', rid)
 +                self.res.setdefault('extra_copies_saved', []).append({'run': rid, 'aid': aid, 'file': f'_original_pdf/{year}/{name}', 'in': where})
 +

@@ -38,11 +38,17 @@ AA.patched_copy(pipe / 'pdftext_pypdf.py', pipe / 'pdftext_pypdf.py', NBPC / 'pa
 AA.patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', NBPC / 'patches' / '07_sheet_task_prjudge2.patch')    # PRJUDGE-v2: honours the station's No for other issuers' items
 AA.patched_copy(pipe / 'date_rules.py', pipe / 'date_rules.py', NBPC / 'patches' / '08_date_rules_airdate.patch')      # NBTV-v1: Date source "air date (Pacific)"
 AA.patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', NBPC / 'patches' / '09_sheet_task_printpages.patch')   # PRINTPAGES-v1 / ORIGCOPIES-v1: print originals, Unlinked print pages rows, extra copies
+AA.patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', REPO / 'work' / 'localapp' / 'app' / 'patches' / '25_sheet_task_otherfiles.patch')   # OTHERFILES-v1: the ONE handler of a run's extra_copies (REVIEW_3 finding 1)
 AA.patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', REPO / 'work' / 'localapp' / 'app' / 'patches' / '28_sheet_task_prcolor.patch')   # PRCOLOR-v1: Press release = Yes rows are purple
-check('patches 01, 02, 03, 07, 08, 09, 28 apply exactly once to the current files', True)
+check('patches 01, 02, 03, 07, 08, 09, 25, 28 apply exactly once to the current files', True)
 check('patch 03 gives the same module as newsbank_pc/pdftext_pypdf.py', (pipe / 'pdftext_pypdf.py').read_text() == (NBPC / 'pdftext_pypdf.py').read_text())
 
 app = scratch / 'app'; lay = PCLayout(app); lay.workbook.parent.mkdir(parents=True); shutil.copy2(wb, lay.workbook)
+import openpyxl as _ox0
+_b0 = _ox0.load_workbook(lay.workbook)    # after switch-over day the workbook has the "Other files" column (OTHERFILES-v1)
+for _t0 in ('Coverage', 'Originals'):
+    _b0[_t0].cell(1, _b0[_t0].max_column + 1).value = 'Other files'
+_b0.save(lay.workbook); _b0.close()
 ins = TU.inspect_update(zp, lay)
 stage = Path(ins['stage']); db = stage / 'db'
 npdf = len(list((db / 'files').glob('*.pdf')))
@@ -111,8 +117,8 @@ check('PRINTPAGES: those rows carry Data Source Newsbank, Date source print edit
 files_pp = [x['file'] for x in res.get('print_pages_saved', [])]
 check('PRINTPAGES: each print page is kept as _original_pdf/<year>/<Article ID>_p<page>.pdf (PRINTORIG-v1 option B)', files_pp and all(re.match(r'^_original_pdf/\d{4}/\d{5}_p[0-9A-Za-z-]+\.pdf$', f) and (out / 'pages' / f).is_file() and (out / 'pages' / f).read_bytes()[:5] == b'%PDF-' for f in files_pp), files_pp)
 check('PRINTPAGES: no print page was saved as a story copy (no nb*.pdf for them) and no unknown-story report', not [x for x in res.get('unknown_story', []) if str(x.get('id', '')).startswith(('pp-', 'kn-'))], res.get('unknown_story', [])[:3])
-ec = res.get('extra_copies', []); sk = res.get('extra_copies_skipped', [])
+ec = res.get('extra_copies_saved', []); sk = res.get('other_files_skipped', []); _ofiles = res.get('other_files', [])
 check('ORIGCOPIES: every known story\'s copy (' + str(want_copies) + ') was either kept as an extra original copy or skipped because its row already holds a NewsBank PDF; none lost silently', want_copies >= 1 and len(ec) + len(sk) == want_copies, (want_copies, len(ec), len(sk)))
-check('ORIGCOPIES: a kept copy is _original_pdf/<year>/nb<Article ID><o|r>-<Story ID>.pdf, add-only; with no "Other files" column it is kept and not listed', all(re.match(r'^_original_pdf/\d{4}/nb\d{5}[or]-s\d{5}\.pdf$', x['file']) and (out / 'pages' / x['file']).is_file() for x in ec) and all(x.get('listed') is False for x in ec), ec[:2])
+check('ORIGCOPIES: a kept copy is _original_pdf/<year>/nb<Article ID><o|r>-<Story ID>.pdf, add-only; named once in "Other files" (one handler: no -v2 twin)', all(re.match(r'^_original_pdf/\d{4}/nb\d{5}[or]-s\d{5}\.pdf$', x['file']) and (out / 'pages' / x['file']).is_file() for x in ec) and len(_ofiles) == len(ec) and not [x for x in ec if '-v2' in x['file']], ec[:2])
 check('ORIGCOPIES: a row that already holds a NewsBank PDF gets nothing', all('already holds' in x['why'] for x in sk), sk[:2])
 print('all passed' if not bad else f'{bad} FAILED'); sys.exit(1 if bad else 0)

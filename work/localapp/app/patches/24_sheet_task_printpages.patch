@@ -36,24 +36,17 @@
 +        _original_pdf/<year>/<Article ID>_p<page>.pdf (PRINTORIG-v1 option B). as 'reprint': the page is the print edition of a story the intern
 +        confirmed; its Reprint row (made from the run's rows) names the Article ID. as 'unlinked': a row of the "Unlinked print pages" tab is
 +        written (the run's print_rows entry for this page: its own Article ID from the one sequence, the link and citation, never an existing link twice).
-+        An extra original copy (a run's extra_copies entry): the PDF of a story already in the tracker is kept as
-+        _original_pdf/<year>/nb<Article ID><o|r>-<Story ID>.pdf and listed in "Other files" (OTHERFILES-v1), unless the row already holds a NewsBank PDF
-+        (File name nb*.pdf: the same record); only blank cells are filled (Section, Author / byline, Word count, the citation, the link)."""
++        Extra original copies (a run's extra_copies) are NOT handled here: apply_extra_copies (patch 25) is the one handler."""
 +        pages = self.db.get('pages') or {}
-+        prows, copies = {}, []
++        prows = {}
 +        for rid, run in (self.db.get('runs') or {}).items():
 +            for x in (run or {}).get('print_rows') or []:
 +                if isinstance(x, dict) and x.get('_page'):
 +                    prows[x['_page']] = x
-+            for x in (run or {}).get('extra_copies') or []:
-+                if isinstance(x, dict):
-+                    copies.append(x)
 +        for pid, p in pages.items():
 +            p = p or {}
 +            if self.nb_kind(p) == 'print_page':
 +                self._print_page(pid, p, prows.get(pid), pages_dir)
-+        for x in copies:
-+            self._extra_copy(x, pages_dir)
 +
 +    def _year_of(self, d, fallback=''):
 +        d = norm_val(d)
@@ -106,47 +99,6 @@
 +        info.update({'aid': aid, 'file': f'_original_pdf/{year}/{fname}', 'row': PRINT_TAB, 'status': self._write_original_pdf(pages_dir, year, fname, raw)})
 +        self.res.setdefault('print_pages_saved', []).append(info)
 +        self.res.setdefault('print_rows_added', []).append({'aid': aid, 'outlet': norm_val(prow.get('Outlet')), 'date': norm_val(prow.get('Date')), 'page': page})
-+
-+    def _extra_copy(self, entry, pages_dir):
-+        """one entry of a run's extra_copies: {aid, fmt ('nb' | 'pq'), file 'files/<id>.pdf', pdf_sha256, cells} (the update folder's own contract)"""
-+        import hashlib, os
-+        aid = str(entry.get('aid') or entry.get('row') or '').strip()
-+        r = self.s.rows.get(aid)
-+        info = {'aid': aid, 'file_in': entry.get('file')}
-+        if not r:
-+            self.res.setdefault('extra_copies_skipped', []).append(dict(info, why='the row is not in the workbook'))
-+            return
-+        names = [norm_val(self.s.get(r, c)) for c in ('File name', 'File name 2', 'Other files') if c in self.s.col]
-+        fmt = re.sub(r'[^a-z]', '', str(entry.get('fmt') or 'nb').lower()) or 'nb'
-+        if any(re.search(r'(^|;\s*)' + fmt + r'[^;]*\.pdf', n, re.I) for n in names):
-+            self.res.setdefault('extra_copies_skipped', []).append(dict(info, why='the row already holds a ' + ('NewsBank' if fmt == 'nb' else 'ProQuest') + ' PDF (the same record)'))
-+            return
-+        fid = os.path.basename(str(entry.get('file') or ''))
-+        path = os.path.join(self.db_dir, 'files', fid) if getattr(self, 'db_dir', None) and re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9._-]{0,119}\.pdf', fid) else None
-+        raw = open(path, 'rb').read() if path and os.path.isfile(path) else None
-+        if raw is None or hashlib.sha256(raw).hexdigest() != entry.get('pdf_sha256'):
-+            self.res['pages_error'].append({'page': fid, 'why': 'the extra copy PDF is missing or does not match its checksum: not saved'})
-+            return
-+        suf = {'Original': 'o', 'Reprint': 'r'}.get(self.s.get(r, 'Original or reprint'), '')
-+        st = str(self.s.get(r, 'Story ID') or '').strip()
-+        fname = f'{fmt}{aid}{suf}' + (f'-{st}' if st else '') + '.pdf'
-+        year = self._year_of(self.s.get(r, 'Date'), self.s.get(r, 'Year'))
-+        info.update({'file': f'_original_pdf/{year}/{fname}', 'status': self._write_original_pdf(pages_dir, year, fname, raw)})
-+        if 'Other files' in self.s.col:
-+            cur = norm_val(self.s.get(r, 'Other files'))
-+            if fname not in [x.strip() for x in cur.split(';')]:
-+                self.s.put(r, 'Other files', (cur + '; ' if cur else '') + fname)
-+                info['listed'] = True
-+        else:
-+            info['listed'] = False
-+            info['note'] = 'no "Other files" column yet (OTHERFILES-v1 is added on switch-over day): the file is kept, not listed'
-+        filled = []
-+        for col, v in (entry.get('cells') or {}).items():
-+            if col in self.s.col and not blank(v) and blank(self.s.get(r, col)):
-+                if self.fill(r, col, v, 'extra copy PDF', fid) == 'written':
-+                    filled.append(col)
-+        info['filled'] = filled
-+        self.res.setdefault('extra_copies', []).append(info)
 +
      def apply_pages(self, pages_dir):
 @@ -1551,2 +1697,4 @@
