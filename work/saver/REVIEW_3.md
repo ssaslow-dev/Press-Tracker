@@ -20,8 +20,8 @@ Suites run by me (2026-11-04):
 
 | suite | result |
 |---|---|
-| `work/saver`: `tests` (`python3 -I -m unittest discover -s tests -t tests`) | see the line at the end of this file |
-| `work/saver`: `tests/review`, `tests/review2` (unittest) | see the line at the end of this file |
+| `work/saver`: `tests` (`python3 -I -m unittest discover -s tests -t tests`) | 140 tests, OK (1 skipped: the replay fixture holds the workbook and is not in the repository), 252 s |
+| `work/saver`: `tests/review` (checkpoint 1) and `tests/review2` (REVIEW_2's tests, now green after the fixes) | 25 + 5 tests, OK |
 | `work/localapp/updatefolder`: `tests` (pytest) | 95 passed, 24 subtests passed, 79 s |
 | **new** `work/saver/tests/review3/test_review3_extracopies.py` (the PC build's patched sheet_task through `saver.py preview`) | 2 tests: **2 FAIL** (finding 1) |
 | **new** `work/localapp/app/tests/review3/test_review3_switchover.py` (the station modules on a stand-in app folder) | 4 tests: **4 FAIL** (findings 2, 3, 4, 6) |

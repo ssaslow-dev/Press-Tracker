@@ -108,6 +108,8 @@ def main():
                s, count=1, flags=re.S)
     s = one(s, '${age > 3 ? `<div class="attn-i"><i class="warn"></i>', '${false ? `<div class="attn-i"><i class="warn"></i>', 'update reminder in Data checks')
 
+    s = one(s, "pick:new Set(), mg:'log',", "pick:new Set(), mg:'quality',", 'Manage opens on Data checks')
+
     # 4. title, masthead line, hiding rules, shim (before the page's first script)
     s = re.sub(r'<title>AJG Press Coverage Tracker</title>', '<title>AJG Press Coverage Tracker (Preview)</title>', s, count=1)
     line = '<div class="prev-line" id="prevLine">Preview, read-only, data as of %s</div>' % as_of_txt
