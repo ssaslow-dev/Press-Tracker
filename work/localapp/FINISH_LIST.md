@@ -22,9 +22,9 @@ One list for everything left. Claude keeps it current after every step and repor
 | # | Item | Who | Status |
 |---|---|---|---|
 | B1 | Mac starts: unzip, self-check, Open Anyway, Safari | Sammy | done 2026-11-04 |
-| B2 | Test kit (small data copy) and checklist part 2; Mac fixes prepared (accented names, hidden files, Safari unzip message, wording) | Claude | running |
+| B2 | Test kit (small data copy) and checklist part 2; Mac fixes prepared (accented names, hidden files, Safari unzip message, wording) | Claude | done 2026-11-04 |
 | B3 | Mac fixes put into the shared code after A2 | Claude | after A2 |
-| B4 | Data test on the Mac with the kit (setup, View original, for-Update file, refresh file) | Sammy | after B2 |
+| B4 | Data test on the Mac with the kit (setup, View original, for-Update file, refresh file) | Sammy | ready now |
 | B5 | Mac and Windows swap a refresh file and an update folder both ways | Sammy | after B4 |
 | B6 | Final Mac zip from the finished code | Claude | after B3-B5 |
 
