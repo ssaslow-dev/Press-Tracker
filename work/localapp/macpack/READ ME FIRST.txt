@@ -16,3 +16,16 @@ Everything else works as in the Windows version: the Tracker files button (top r
 Do not open the workbook in Excel while saving.
 The tracker makes no internet connections except that newer saved articles show their photos from the news site's own page.
 More detail: app/docs/ (README.md, IT_NOTE_APP.md; they describe the Windows folder, the rules are the same).
+
+TO INSTALL A NEW VERSION (when Claude sends a new zip)
+Your data (workbook, library, backups, notes, saved views) is in the folder's "data" folder. The new version only replaces the program parts, never "data".
+  1. Close the tracker (its Terminal window).
+  2. In Terminal, unzip the new zip somewhere else (not on top of your tracker folder):
+       cd ~/Downloads
+       unzip ~/Downloads/"AJG Tracker Mac.zip"
+  3. Run the installer from that new folder:
+       bash "AJG Tracker/Install update.command"
+  4. When it asks, drag the folder you use now (the one with Start Tracker.command and data in it) into the Terminal window and press Return.
+  5. It checks everything first and says plainly if something is wrong; nothing is changed until the checks pass. At the end it says "Done".
+  6. Start the tracker the way you always do. Delete the new folder in Downloads.
+The old program parts stay in "_previous_version" inside your tracker folder, in case you want to go back. Delete that folder once the new version has worked for you.

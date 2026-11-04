@@ -52,11 +52,13 @@ def build_wheels(root, a, info):
 
 def top_files(root, a, _orig=A.top_files):
     _orig(root, a)
-    for f in ('Start Tracker.cmd', 'start_tracker.sh', 'READ ME FIRST.txt'):
+    for f in ('Start Tracker.cmd', 'start_tracker.sh', 'READ ME FIRST.txt', 'Install update.cmd'):
         (root / f).unlink(missing_ok=True)
     shutil.copy2(HERE / 'Start Tracker.command', root / 'Start Tracker.command')
     shutil.copy2(HERE / 'READ ME FIRST.txt', root / 'READ ME FIRST.txt')
+    shutil.copy2(HERE / 'Install update.command', root / 'Install update.command')
     os.chmod(root / 'Start Tracker.command', 0o755)
+    os.chmod(root / 'Install update.command', 0o755)
     shutil.copy2(HERE.parent / 'winpack' / 'selfcheck.py', root / 'app' / 'station' / 'selfcheck.py') if (root / 'app' / 'station').is_dir() else None
 
 

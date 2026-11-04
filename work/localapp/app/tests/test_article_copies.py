@@ -6,6 +6,7 @@ Works on a hard-linked copy of the test build (snapshot workbook and library, li
   3. the setup summary's "without a page copy" count falls to the stories that were skipped (listed with a reason)
   4. a second rebuild adds nothing; the station verb (what the Repairs button runs) works and says so in plain words
   5. a shard that grew was kept first in copies/_replaced; the manifest names only shards that exist
+(the reader refusal is the server's: a reader copy gets 403 on rebuild_copies, same list as setup_run; its copies arrive by refresh file)
 """
 import json
 import os
@@ -99,12 +100,9 @@ class ArticleCopies(unittest.TestCase):
         self.assertEqual(j['added'], 0)
         self.assertIn('line', j)
 
-    def test_5_kept_and_reader(self):
+    def test_5_kept(self):
         kept = list((S['lay'].copies / '_replaced').rglob('*.json'))
-        self.assertTrue(kept)
-        reader = T.make_work(BASE, 'r', 'reader')
-        p = subprocess.run([sys.executable, '-I', str(S['root'] / 'app' / 'station' / 'station_cli.py'), 'rebuild_copies', '--root', str(reader)], capture_output=True, text=True, timeout=600)
-        self.assertIn('"ok"', p.stdout)      # the server refuses a reader (403); the verb itself only touches the reader's own data
+        self.assertTrue(kept)       # a shard that grew was kept first (add-only)
 
 
 if __name__ == '__main__':

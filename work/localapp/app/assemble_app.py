@@ -380,6 +380,7 @@ def top_files(root: Path, a):
     src = HERE / 'src' / 'launcher'
     (root / 'Start Tracker.cmd').write_bytes(crlf((src / 'Start Tracker.cmd').read_bytes()))
     (root / 'READ ME FIRST.txt').write_bytes(crlf((src / 'READ ME FIRST.txt').read_bytes()))
+    (root / 'Install update.cmd').write_bytes(crlf((src / 'Install update.cmd').read_bytes()))      # A16: puts this version into an existing tracker folder, data\ untouched
     if a.target == 'linux':
         p = root / 'start_tracker.sh'
         p.write_text('#!/bin/sh\ncd "$(dirname "$0")"\nexec python/bin/python -B -X utf8 -I app/station/launcher.py "$@"\n', encoding='utf-8')

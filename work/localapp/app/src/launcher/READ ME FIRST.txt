@@ -20,6 +20,7 @@ Keeper:
     Remove unverified reprints         (once, at switch-over) deletes the "Reprint (unverified)" rows, their saved files and their Audio & video rows. You see the full list first.
     Set up again from the Mac library  only if the first setup went wrong (it replaces the workbook; a backup is made first).
     Rebuild the tracker page           builds the page again from the workbook.
+    Rebuild saved copies               adds every saved copy that is in your library but cannot be opened yet (setup and every save already do this; this is a second try).
 Everyone else:
   Bring in refresh file    drop in the keeper's refresh file. Your own notes and saved views are kept.
 An amber dot on the button means something needs attention (Excel has the workbook open, a save is running, or the workbook was changed outside the tracker).
@@ -39,6 +40,17 @@ TO UPDATE THE TRACKER (keeper, weekly or monthly)
   3. Download the update zip from the Update station.
   4. Tracker files > Bring in update, drop the zip in, look at the preview, press Save.
   5. Tracker files > Make refresh file, and pass it to everyone else.
+
+TO INSTALL A NEW VERSION OF THE PROGRAM (when Claude sends a new zip)
+  Your data (workbook, library, backups, notes, saved views) lives in this folder's "data" folder. The new version only replaces the program parts, never "data".
+  1. Close the tracker (the black window).
+  2. Unzip the new zip somewhere else (for example in Downloads). Do not unzip it on top of this folder.
+  3. Open the new folder and double-click "Install update.cmd".
+  4. When it asks, drag the folder you use now (the one with "Start Tracker" and "data" in it) into the black window and press Enter.
+  5. It checks everything first and says plainly if something is wrong; nothing is changed until the checks pass. At the end it says "Done".
+  6. Start the tracker the way you always do. Delete the new folder you unzipped (you do not need it any more).
+  The old program parts are kept in the "_previous_version" folder inside your tracker folder, in case you ever want to go back. Delete that folder once the new version has worked for you.
+  Reader copies are updated the same way. If the program was changed in a way that needs it, Claude will say so: then open Tracker files > Repairs > Rebuild the tracker page once.
 
 The tracker program itself makes no internet connections and reads and writes only inside this folder.
 One exception: newer saved articles show their photos from the news site's own page, so Edge loads those pictures when you open such an article.
