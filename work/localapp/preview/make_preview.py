@@ -17,13 +17,15 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 TEXT_CAP = 600
 HIDE = (  # everything that writes, updates, downloads or opens a library file
     '#runFind,#runRefresh,#raStrip,[data-runfind],#updGo,#updRefresh,#updSave,#updAdd,#updCopy,#updAgain,'
-    '[data-trate],[data-afind],[data-trstory],[data-tstop],[data-astop],[data-dl],#bkCsv,#ajgf-btn,'
+    '[data-trate],[data-afind],[data-trstory],[data-tstop],[data-astop],[data-dl="sheet"],#ajgf-btn,'
     '[data-editstory],.tsel,.notebox,.tonebox .tone-status,#fileIn,#dirIn,'
     '#mgTabs [data-mg="upd"],#mgTabs [data-mg="log"],#mgTabs [data-mg="saved"],[data-mgopen="upd"],[data-mgopen="log"],[data-mgopen="saved"]'
     '{display:none!important}')
 NO_INTERNAL_HIDE = '.tonebox,.badge.tone,[data-rtone]{display:none!important}'
-PREV_CSS = ('.prev-line{font-size:var(--fs-sm);letter-spacing:.06em;text-transform:uppercase;color:#b9c8dc;'
-            'padding:0 0 10px;line-height:1.35}')
+PREV_CSS = ('header.mast .wrap{position:relative}'   # the line sits in the masthead's free space (where Update and Refresh were), so no page moves
+            '.prev-line{position:absolute;top:0;right:150px;height:80px;display:flex;align-items:center;text-align:right;'
+            'font-size:var(--fs-sm);letter-spacing:.06em;text-transform:uppercase;color:#b9c8dc;line-height:1.35;max-width:36%}'
+            '@media (max-width:1100px){.prev-line{position:static;height:auto;padding:0 0 10px;max-width:none;text-align:left}}')
 PLACEHOLDER = ('<div class="lbl">Not in this preview</div>', '<div class="lbl">Saved copy not added yet</div>')
 
 

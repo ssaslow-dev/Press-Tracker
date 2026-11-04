@@ -57,10 +57,26 @@
     };
   }
   var db = { collection: collection };
+  /* a normal browser download (the list the viewer is looking at, as the page builds it; nothing is read from files) */
+  var downloads = {
+    save: function (o) {
+      return new Promise(function (resolve, reject) {
+        try {
+          var data = o && o.data, name = (o && o.filename) || 'download';
+          var blob = data instanceof Blob ? data : new Blob([data == null ? '' : data]);
+          var u = URL.createObjectURL(blob), a = document.createElement('a');
+          a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove();
+          setTimeout(function () { URL.revokeObjectURL(u); }, 10000);
+          resolve({ saved: true, filename: name });
+        } catch (e) { reject(e); }
+      });
+    }
+  };
   window.claude = {
     __preview: true,
     use: function (name) {
       if (name === 'db') return Promise.resolve(db);
+      if (name === 'downloads') return Promise.resolve(downloads);
       return Promise.reject(fail('not_declared', 'The capability "' + name + '" is not available in the preview.'));
     }
   };
