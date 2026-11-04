@@ -126,11 +126,14 @@ class ExtraCopyOnce(unittest.TestCase):
         code, res = cli('init', '--workbook', self.master, '--state', self.state, '--sha', sha(self.master.read_bytes()))
         self.assertEqual(code, 0, res)
 
+    def preview(self, out):
+        return cli('preview', '--workbook', self.master, '--db', self.db, '--pipeline', PIPE, '--copies', self.d / 'copies', '--library', self.d / 'library',
+                   '--backups', self.d / 'backups', '--out', out, '--state', self.state, '--today', '2026-10-30')
+
     def test_one_extra_copy_gives_one_library_file_and_one_name(self):
         import openpyxl
         out = self.d / 'out1'
-        code, res = cli('preview', '--workbook', self.master, '--db', self.db, '--pipeline', PIPE, '--copies', self.d / 'copies', '--library', self.d / 'library',
-                        '--backups', self.d / 'backups', '--out', out, '--state', self.state, '--today', '2026-10-30')
+        code, res = self.preview(out)
         self.assertEqual(code, 0, res)
         r1 = json.loads((out / 'result.json').read_text(encoding='utf-8'))
         pdfs = sorted(p.name for p in (out / 'pages' / '_original_pdf' / '2026').glob('*.pdf')) if (out / 'pages' / '_original_pdf' / '2026').is_dir() else []
@@ -145,6 +148,22 @@ class ExtraCopyOnce(unittest.TestCase):
         self.assertEqual(pdfs, ['nb10001o-s00001.pdf'], detail)
         self.assertEqual(str(cell or '').strip(), 'nb10001o-s00001.pdf', detail)
         self.assertEqual(len(r1.get('extra_copies') or []) + len(r1.get('extra_copies_saved') or []), 1, 'the one extra copy is handled once: ' + json.dumps(detail, default=str)[:800])
+
+    def test_a_row_that_already_lists_a_file_can_still_take_an_extra_copy(self):
+        """the same update against a row whose "Other files" cell already names a file (any row that got an extra copy in an earlier update):
+        the second handling appends a second name sheet_task does not report, and the saver's OTHERFILES-v1 append rule refuses the whole save"""
+        import openpyxl
+        wb = openpyxl.load_workbook(self.master)
+        for tab in ('Coverage', 'Originals'):
+            ws = wb[tab]
+            hdr = [c.value for c in ws[1]]
+            ws.cell(2, hdr.index('Other files') + 1).value = 'pq10001o-s00001.pdf'
+        wb.save(self.master)
+        wb.close()
+        code, res = cli('init', '--workbook', self.master, '--state', self.state, '--sha', sha(self.master.read_bytes()))
+        self.assertEqual(code, 0, res)
+        code, res = self.preview(self.d / 'out2')
+        self.assertEqual((code, res.get('refusal')), (0, None), {'line': res.get('line'), 'refusal': res.get('refusal'), 'disallowed': (res.get('diff') or {}).get('disallowed')})
 
 
 if __name__ == '__main__':
