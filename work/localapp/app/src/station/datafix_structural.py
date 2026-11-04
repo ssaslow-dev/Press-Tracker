@@ -110,6 +110,26 @@ def plan(tabs: dict, today: str, pending_links=frozenset()) -> dict:
 
 # ---------------------------------------------------------------- the two hooks for switchover.run_cell_step
 
+def _delete_row_keep_links(ws, idx):
+    """openpyxl's delete_rows leaves a moved cell's hyperlink at its old coordinate (the save has the same fix, sheet_task.delete_rows_keep_links): delete, re-anchor the links, and move the row heights/hidden flags up"""
+    ws.delete_rows(idx, 1)
+    dims = ws.row_dimensions
+    old = {k: dims[k] for k in list(dims.keys()) if isinstance(k, int)}
+    if any(k >= idx for k in old):
+        for k in list(old):
+            if k >= idx:
+                del dims[k]
+        for k, d in sorted(old.items()):
+            if k <= idx:
+                continue
+            d.index = k - 1
+            dims[k - 1] = d
+    for c in list(ws._cells.values()):
+        h = c.hyperlink
+        if h is not None and h.ref != c.coordinate:
+            h.ref = c.coordinate
+
+
 def make_transform(pl: dict, lay, stamp: str):
     """called with the openpyxl book after the Coverage cell changes: retire the Unlinked rows (listed to a CSV first), then rebuild Originals from Coverage (as the save does)"""
     def transform(book):
@@ -125,7 +145,7 @@ def make_transform(pl: dict, lay, stamp: str):
                     w.writerow([r['key']] + [_s(c.value) for c in ws[r['row']]])
             for r in sorted(pl['retire'], key=lambda x: -x['row']):
                 assert _s(ws.cell(r['row'], 1).value) == r['key'] or any(_s(c.value) == r['key'] for c in ws[r['row']][:3]), 'row moved'
-                ws.delete_rows(r['row'])
+                _delete_row_keep_links(ws, r['row'])
             last = ws.max_row
             if ws.auto_filter.ref:
                 from openpyxl.utils import get_column_letter
@@ -156,6 +176,8 @@ def _rebuild_originals(book):
             d = o.cell(oi, oc)
             d.value = s.value
             d._style = copy.copy(s._style)
+            if s.hyperlink is not None and (s.hyperlink.target or s.hyperlink.location):
+                d.hyperlink = s.hyperlink.target or s.hyperlink.location
     for oc, c in enumerate(cols, start=1):
         w = ws.column_dimensions[get_column_letter(c)].width or widths.get(get_column_letter(oc))
         if w:
@@ -190,6 +212,25 @@ def make_check(pl: dict):
             norm = lambda rows: [[_s(c) for c in r] for r in rows if any(_s(c) for c in r)]
             if norm(exp) != norm(got):
                 bad.append('Originals does not match the Original rows of Coverage')
+            # hyperlinks of the two skipped tabs (the generic check leaves them to this one)
+            import other_files_column as OF
+            hb, ha = OF._hyperlinks(before), OF._hyperlinks(after)
+            from openpyxl.utils.cell import coordinate_from_string, column_index_from_string
+            def split(ref):
+                c, r = coordinate_from_string(ref)
+                return column_index_from_string(c), r
+            if UNLINKED in hb or UNLINKED in ha:
+                gone_rows = {r['row'] for r in pl['retire']}
+                exp_l = sorted(t for ref, t in hb.get(UNLINKED, []) if split(ref)[1] not in gone_rows)
+                if exp_l != sorted(t for ref, t in ha.get(UNLINKED, [])):
+                    bad.append(f'{UNLINKED}: the hyperlinks are not "before minus the retired rows\'"')
+            if pl['swaps']:
+                orig_rows = {k + 1 for k, r in enumerate(cov) if k and r[oc] == 'Original'}
+                exp_o = sorted(t for ref, t in ha.get(COVERAGE, []) if split(ref)[1] in orig_rows and split(ref)[0] - 1 in cols)
+                if exp_o != sorted(t for ref, t in ha.get(ORIGINALS, [])):
+                    bad.append('Originals hyperlinks do not match the Original rows of Coverage')
+            elif sorted(t for ref, t in hb.get(ORIGINALS, [])) != sorted(t for ref, t in ha.get(ORIGINALS, [])):
+                bad.append('Originals hyperlinks changed')
             ids = [_s(r[0]) for r in got[1:] if _s(r[0])]
             if len(ids) != len(set(ids)):
                 bad.append('Originals lists an Article ID twice')

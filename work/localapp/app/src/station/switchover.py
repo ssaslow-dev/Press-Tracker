@@ -421,8 +421,9 @@ def check_cells(before: Path, after: Path, changes: list, links: list, skip_tabs
                     fc = cell.font.color
                     v = cache[k] = (_sig_nocolor(cell), _norm_rgb(fc), fc is not None, getattr(fc, 'theme', None) if fc is not None else None)
                 return v
-            for r in range(1, x_.max_row + 1):
-                for c in range(1, x_.max_column + 1):
+            nrows, ncols = x_.max_row, x_.max_column      # worked out once: on an editable sheet each call walks every cell
+            for r in range(1, nrows + 1):
+                for c in range(1, ncols + 1):
                     a, b = x_.cell(r, c), y_.cell(r, c)
                     k = (n, r, c)
                     exp = want_val.get(k, a.value)
@@ -438,7 +439,7 @@ def check_cells(before: Path, after: Path, changes: list, links: list, skip_tabs
                         bad.append(f'{n} row {r} column {c}: the font colour changed')
                 if len(bad) > 20:
                     return bad[:20]
-            for r in range(1, x_.max_row + 1):
+            for r in range(1, nrows + 1):
                 p, q = x_.row_dimensions[r], y_.row_dimensions[r]
                 if (p.height, p.hidden) != (q.height, q.hidden):
                     bad.append(f'{n} row {r}: height or hidden flag changed')
@@ -451,6 +452,8 @@ def check_cells(before: Path, after: Path, changes: list, links: list, skip_tabs
     for tab, ref, url in links:
         want[tab] = sorted(set(want.get(tab, [])) | {(ref, url)})
     for n in set(hb) | set(ha):
+        if n in skip_tabs:          # that step's own check looks at these
+            continue
         if sorted(ha.get(n, [])) != want.get(n, []):
             bad.append(f'{n}: hyperlinks differ from the plan (before {len(hb.get(n, []))}, after {len(ha.get(n, []))})')
     return bad[:20]
