@@ -78,6 +78,7 @@ const pageDocs = page => page.evaluate(() => { const o = {}; for (const [id, v] 
   await page.waitForFunction(() => window.__dl && window.__dl.length > 0, null, { timeout: 240000 });
   const au = await page.evaluate(() => ({ dl: window.__dl, run: !!window.__station.state.nb.lastRun, added: window.__station.state.nb.added.size, left: window.__station.state.nb.items.filter(x => !window.__station.state.nb.added.has(x.key) && x.include).length }));
   check('automatic mode: dropped PDF -> read -> added -> one update folder downloaded, with no click', au.run && au.dl.length === 1 && /^ajg_update_.*\.zip$/.test(au.dl[0].filename) && au.dl[0].size > 10000 && au.left === 0, JSON.stringify(au));
+  if (process.env.AJG_DUMP_ZIP) { const b = await page.evaluate(() => Array.from(window.__lastDl)); require('fs').writeFileSync(process.env.AJG_DUMP_ZIP, Buffer.from(b)); }   // for verify_nb_zip.py (the PC's own checks)
   await page.waitForTimeout(4000); check('and it is not downloaded a second time', (await page.evaluate(() => window.__dl.length)) === 1);
   await X.close();
   console.log(C.failed ? C.failed + ' FAILED' : 'all passed'); process.exit(C.failed ? 1 : 0);
