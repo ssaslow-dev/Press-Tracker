@@ -122,10 +122,12 @@ const claudeForTracker = {
     } catch (e) { return null; }
   },
 };
-const winProxy = new Proxy(window, {
-  get(t, k) { if (k === 'claude') return claudeForTracker; const v = t[k]; return typeof v === 'function' && !/^[A-Z]/.test(String(k)) ? v.bind(t) : v; },
-  set(t, k, v) { t[k] = v; return true; },
-  has(t, k) { return k in t; },
+/* The proxy's target is a plain empty object, not window: the runtime now defines window.claude as read-only and non-configurable, and a proxy on
+   window may not answer a different value for such a property (a JavaScript rule), which stopped the Update button. Every read and write still goes to window. */
+const winProxy = new Proxy({}, {
+  get(_, k) { if (k === 'claude') return claudeForTracker; const v = window[k]; return typeof v === 'function' && !/^[A-Z]/.test(String(k)) ? v.bind(window) : v; },
+  set(_, k, v) { window[k] = v; return true; },
+  has(_, k) { return k in window; },
 });
 window.__stationWin = winProxy;
 
