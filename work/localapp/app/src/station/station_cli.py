@@ -543,7 +543,16 @@ def main(argv=None):
                 'switch_preview': lambda: do_switch_preview(lay, TU, a), 'switch_apply': lambda: do_switch_apply(lay, TU, a), 'switch_finish': lambda: do_switch_finish(lay, TU, a),
                 'switch_remove_file': lambda: do_switch_remove_file(lay, TU, a)}[a.verb]()
     except Exception as e:                                # noqa: BLE001
-        return out({'ok': False, 'line': 'Something unexpected went wrong: ' + repr(e)[:300]}, 1)
+        import traceback
+        where = ' | '.join(f'{Path(f.filename).name}:{f.lineno} {f.name}' for f in traceback.extract_tb(e.__traceback__)[-4:])
+        files = ' '.join(str(x) for x in (getattr(e, 'filename', None), getattr(e, 'filename2', None)) if x)
+        try:
+            logs = lay.state / 'logs'
+            logs.mkdir(parents=True, exist_ok=True)
+            (logs / f'error-{a.verb}-{C.stamp()}.txt').write_text(traceback.format_exc(), encoding='utf-8')
+        except Exception:                                 # noqa: BLE001
+            pass
+        return out({'ok': False, 'line': 'Something unexpected went wrong: ' + repr(e)[:200] + (f' (file: {files})' if files else '') + f' [at {where}]'}, 1)
 
 
 if __name__ == '__main__':
