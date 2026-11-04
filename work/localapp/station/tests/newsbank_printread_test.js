@@ -68,5 +68,14 @@ const pageDocs = page => page.evaluate(() => { const o = {}; for (const [id, v] 
   run = await lastRun(page);
   check('the person’s own pick is kept: only the other page is read (1 picture call)', (await page.evaluate(() => window.__calls.filter(c => c.images).length)) === 1 && run.rows.some(r => r['Story ID'] === 's01903'), '');
   await X.close();
+  /* 7. AUTOSTATION-v1: automatic mode: the PDF is dropped and nothing else is clicked: pages are read, added, and the update folder downloads by itself (one file) */
+  X = await H.start(PAGE, stub, { images: 3, auto: true }); page = X.page; await page.evaluate(() => { window.__scn = 1; });
+  await H.loadFile(page, FU); await page.uncheck('#nbLinks').catch(() => {});
+  await page.setInputFiles('#nbFile', path.join(DIR, 'multi3.pdf'));
+  await page.waitForFunction(() => window.__dl && window.__dl.length > 0, null, { timeout: 240000 });
+  const au = await page.evaluate(() => ({ dl: window.__dl, run: !!window.__station.state.nb.lastRun, added: window.__station.state.nb.added.size, left: window.__station.state.nb.items.filter(x => !window.__station.state.nb.added.has(x.key) && x.include).length }));
+  check('automatic mode: dropped PDF -> read -> added -> one update folder downloaded, with no click', au.run && au.dl.length === 1 && /^ajg_update_.*\.zip$/.test(au.dl[0].filename) && au.dl[0].size > 10000 && au.left === 0, JSON.stringify(au));
+  await page.waitForTimeout(4000); check('and it is not downloaded a second time', (await page.evaluate(() => window.__dl.length)) === 1);
+  await X.close();
   console.log(C.failed ? C.failed + ' FAILED' : 'all passed'); process.exit(C.failed ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(2); });

@@ -55,10 +55,10 @@ function nbScreen(p, SRC){
   if (key && NBX.seen.has(key)) return { status: 'dup_batch', why: 'the same story appears twice in the PDFs added (same ' + SRC.idName + ')', of: NBX.seen.get(key) };
   // SAFETY: a story with no link and no readable header is never "new": it needs a look. A story with no link but a header is checked by headline, date and outlet,
   // and if that finds nothing it still is not offered (no link = no way to tell it apart from a story already in the tracker): "needs a look".
-  if (isNb && !key && (p.how === 'citation' || !p.headline)) return { status: 'look', why: 'no NewsBank link and no readable header in the PDF: not added, check this story by hand', needs_check: true };
+  if (isNb && !key && (p.how === 'citation' || !p.headline)) return { status: 'look', why: 'no NewsBank link and no readable header in the PDF: cannot be confirmed, so it is not added and only listed here', needs_check: true };
   if (!p.headline) return { status: 'new', why: 'no headline could be read: check it', needs_check: true };
   const c = SRC.cand(p), ch = covHit(c);
-  const noLink = isNb && !key, nl = r => noLink && (r.status === 'new' || r.status === 'reprint') ? { status: 'look', why: 'no NewsBank link was read for this story, and the headline check found it not in the tracker: not added, check it by hand (' + r.why + ')', needs_check: true } : r;
+  const noLink = isNb && !key, nl = r => noLink && (r.status === 'new' || r.status === 'reprint') ? { status: 'look', why: 'no NewsBank link was read for this story, and the headline check found it not in the tracker: cannot be confirmed, so it is not added and only listed here (' + r.why + ')', needs_check: true } : r;
   if (ch && ch.same) return { status: 'known', why: 'already in the tracker (same outlet and headline as ' + ch.o.aid + ', within 3 days)' };
   const old = dupOf(Object.assign({}, c, { link: '', plink: '' }), D);   // no link: two NewsBank records share one host, which dupOf would read as one outlet
   if (old && old.same) return { status: 'known', why: 'already in the tracker (same story and outlet as ' + old.r.id + ')' };

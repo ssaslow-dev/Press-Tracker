@@ -55,8 +55,8 @@ async function pqReadFile(file) {
     }
     rec.status = 'ok'; rec.stories = total;
     const mine = PQS.items.slice(-total), nok = mine.filter(x => x.p.status === 'ok').length;
-    rec.note = total === 1 ? pages.length + ' page' + (pages.length === 1 ? '' : 's') + ': ' + (mine[0].p.status === 'ok' ? (mine[0].p.headline || '').slice(0, 80) : mine[0].screen.status === 'refused' ? 'not a ProQuest article PDF' : 'needs a look')
-      : total + ' articles in ' + pages.length + ' pages: ' + nok + ' read' + (total - nok ? ', ' + (total - nok) + ' need a look' : '') + '.' + (total > 20 ? ' This PDF holds ' + total + ' articles; next time save batches of up to 20 so the page stays responsive.' : '');
+    rec.note = total === 1 ? pages.length + ' page' + (pages.length === 1 ? '' : 's') + ': ' + (mine[0].p.status === 'ok' ? (mine[0].p.headline || '').slice(0, 80) : mine[0].screen.status === 'refused' ? 'not a ProQuest article PDF' : 'not added (cannot be confirmed)')
+      : total + ' articles in ' + pages.length + ' pages: ' + nok + ' read' + (total - nok ? ', ' + (total - nok) + ' not added (cannot be confirmed)' : '') + '.' + (total > 20 ? ' This PDF holds ' + total + ' articles; next time save batches of up to 20 so the page stays responsive.' : '');
   } catch (e) {
     rec.status = 'error'; rec.note = 'could not be read: ' + (e && e.message ? e.message : e);
     if (rec.sha && PQS.shas.get(rec.sha) === file.name) PQS.shas.delete(rec.sha);
@@ -75,7 +75,7 @@ function pqAddFiles(files) {
   });
 }
 
-const PQ_LABEL = Object.assign({}, NB_LABEL, { needs_look: 'Needs a look', refused: 'Not a ProQuest article PDF' });
+const PQ_LABEL = Object.assign({}, NB_LABEL, { needs_look: 'Not added (cannot be confirmed)', refused: 'Not a ProQuest article PDF' });
 function pqDrawFiles() {
   $('#pqFiles').innerHTML = PQS.files.map(f => '<li class="nb-file nb-' + f.status + '"><b>' + esc(f.name) + '</b> ' + esc(f.status === 'reading' ? 'reading… ' + f.note : f.note) + '</li>').join('');
 }
@@ -95,13 +95,14 @@ function pqDrawAll() {
   }).join('');
   const parts = [];
   if (c.new) parts.push(fmtN(c.new) + ' new'); if (c.reprint) parts.push(fmtN(c.reprint) + ' reprint' + (c.reprint === 1 ? '' : 's')); if (c.known) parts.push(fmtN(c.known) + ' already in the tracker');
-  if (c.dup_batch) parts.push(fmtN(c.dup_batch) + ' repeated in these PDFs'); if (c.needs_look) parts.push(fmtN(c.needs_look) + ' need' + (c.needs_look === 1 ? 's' : '') + ' a look'); if (c.refused) parts.push(fmtN(c.refused) + ' not ProQuest article PDFs');
+  if (c.dup_batch) parts.push(fmtN(c.dup_batch) + ' repeated in these PDFs'); if (c.needs_look) parts.push(fmtN(c.needs_look) + ' not added (cannot be confirmed)'); if (c.refused) parts.push(fmtN(c.refused) + ' not ProQuest article PDFs');
   if (c.added) parts.push(fmtN(c.added) + ' added to the update');
   const sm = $('#pqSummary'); sm.hidden = !items.length; sm.textContent = items.length ? fmtN(items.length) + ' PDF' + (items.length === 1 ? '' : 's') + ': ' + parts.join(', ') + '.' : '';
   const add = $('#pqAdd'); add.textContent = pick.length ? 'Add ' + fmtN(pick.length) + (pick.length === 1 ? ' story' : ' stories') + ' to the update' : 'Add to the update';
   add.disabled = !pick.length || PQS.busy || PQS.reading || NBS.busy || trackerBusy();
   $('#pqLinksRow').hidden = !items.length;
 }
+const pqPickable = () => PQS.items.filter(it => !PQS.added.has(it.key) && (it.screen.status === 'new' || it.screen.status === 'reprint') && it.include);
 async function pqAdd() {
   if (PQS.busy || NBS.busy) return;
   const chosen = PQS.items.filter(it => !PQS.added.has(it.key) && (it.screen.status === 'new' || it.screen.status === 'reprint') && it.include);

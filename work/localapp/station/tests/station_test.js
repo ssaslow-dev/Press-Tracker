@@ -97,6 +97,7 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   const ctx = await browser.newContext({ viewport: { width: 1200, height: 1000 }, acceptDownloads: true });
   const pages = {}; Object.values(ARTICLES).forEach(a => { pages[a.url] = { title: a.title, html: html(a), author: a.author }; });
   await ctx.addInitScript(INIT, { hits: SEARCH_HITS, pages, classify: CLASSIFY, today: TODAY, dbMode: DBMODE });
+  await ctx.addInitScript(() => { try { localStorage.setItem('ajg_station_auto', '0'); } catch (e) {} });   // AUTOSTATION-v1: these tests click each step themselves (the automatic mode has its own test)
   const outside = []; await ctx.route(u => !/^(http:\/\/127\.0\.0\.1[:/]|data:|blob:|about:)/.test(u.href), r => { outside.push(r.request().url()); r.abort(); });   // LOCALFONTS-v1: record and refuse any request that leaves the machine
   const page = await ctx.newPage();
   const errors = []; page.on('pageerror', e => errors.push('pageerror: ' + e.message)); page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });

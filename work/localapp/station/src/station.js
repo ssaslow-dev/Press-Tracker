@@ -179,6 +179,7 @@ async function offerRecovery() {
     if (!runs.length) return;
     S.recoverable = keep;
     const el = $('#stRecover'); el.hidden = false;
+    if (S.auto) { await recover(); el.hidden = false; $('#stRecoverBtn').hidden = true; $('#stRecoverTxt').textContent = 'Recovered ' + fmtN(runs.length) + (runs.length === 1 ? ' run' : ' runs') + ' that an earlier tab left undownloaded (' + fmtN(keep.length) + ' saved items); they go into the update folder below.'; return; }
     $('#stRecoverTxt').textContent = 'An earlier tab left ' + fmtN(runs.length) + (runs.length === 1 ? ' run' : ' runs') + ' from this file that was not downloaded (' + fmtN(keep.length) + ' saved items). Recover ' + (runs.length === 1 ? 'it' : 'them') + ' to pack them, or ignore this and press Update again.';
   } catch (e) { console.warn('recovery check failed', e); }
 }
@@ -344,6 +345,24 @@ function pending() {
   return { runs, stories, reprints, rows, running };
 }
 function trackerBusy() { const f = $('#runFind'); return !!(f && (f.getAttribute('aria-busy') === 'true' || f.classList.contains('busy'))) || !!$('#updStop'); }
+/* AUTOSTATION-v1: the station does the next step itself. Nothing here runs on a schedule: it reacts to what the person did (dropped PDFs, pressed Update) while this page is open.
+   1. PDFs read and waiting -> added to the update (after any run that is going finishes); 2. everything finished and quiet for 6 s -> the update folder downloads; 3. an earlier tab's unsaved runs are recovered on load.
+   A step that fails is not retried by itself (the same list of items, the same runs: the signature below); the buttons stay as the manual way. */
+S.auto = (() => { try { return localStorage.getItem('ajg_station_auto') !== '0'; } catch (e) { return true; } })();
+const autoSig = { nb: '', pq: '', pack: '', packAt: 0, packed: '' };
+function autoTick() {
+  if (!S.auto || !S.loaded || S.recovering) return;
+  const nb = S.nb, pq = S.pq;
+  if (!nb || !pq || nb.busy || nb.reading || pq.busy || pq.reading || S.busyPack || trackerBusy()) { autoSig.packAt = 0; return; }
+  const np = nbPickable(), pp = pqPickable();
+  if (np.length) { const sg = np.map(x => x.key).join('|'); if (sg !== autoSig.nb) { autoSig.nb = sg; nbAdd(); } return; }
+  if (pp.length) { const sg = pp.map(x => x.key).join('|'); if (sg !== autoSig.pq) { autoSig.pq = sg; pqAdd(); } return; }
+  const p = pending();
+  if (!p.runs.length || p.running) { autoSig.pack = ''; return; }
+  const sg = p.runs.map(([id, v]) => id + ':' + v.seq).join('|');
+  if (sg !== autoSig.pack) { autoSig.pack = sg; autoSig.packAt = Date.now(); return; }
+  if (Date.now() - autoSig.packAt >= 6000 && sg !== autoSig.packed) { autoSig.packed = sg; pack(); }
+}
 function updatePackUi() {
   if (!S.loaded) return;
   const p = pending(), busy = trackerBusy();
@@ -528,6 +547,8 @@ function init() {
   const tn = document.getElementById('toast'); if (tn) mo.observe(tn, { subtree: true, childList: true, characterData: true });
   setInterval(() => { const rc = document.getElementById('rcScrim'); if (rc && !rc.hidden) fixTexts(rc); }, 200);   // the confirm dialog is built by the tracker code after start
   setInterval(updatePackUi, 1000);
+  const au = $('#stAuto'); if (au) { au.checked = S.auto; au.addEventListener('change', () => { S.auto = au.checked; try { localStorage.setItem('ajg_station_auto', S.auto ? '1' : '0'); } catch (e) { /* no storage: the choice lasts for this page only */ } }); }
+  setInterval(autoTick, 1000);
   window.__station = { state: S, sess, pack, pending, zipStore, loadFile, mirrorBusy: () => mirroring || mirrorQ.size > 0, mirrorFail: () => mirrorFail };   // for the tests
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();

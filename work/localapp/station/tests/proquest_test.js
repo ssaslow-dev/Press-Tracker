@@ -66,6 +66,7 @@ const INIT = ({ hl }) => {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1300, height: 1100 }, acceptDownloads: true });
   await ctx.addInitScript(INIT, { hl: { new3page: E.new3page.hl, nourl: E.nourl.hl, wire: E.wire.hl } });
+  await ctx.addInitScript(() => { try { localStorage.setItem('ajg_station_auto', '0'); } catch (e) {} });   // AUTOSTATION-v1: these tests click each step themselves (the automatic mode has its own test)
   const outside = []; await ctx.route(u => !/^(http:\/\/127\.0\.0\.1[:/]|data:|blob:|about:)/.test(u.href), r => { outside.push(r.request().url()); r.abort(); });
   const page = await ctx.newPage();
   const errors = []; page.on('pageerror', e => errors.push('pageerror: ' + e.message)); page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });

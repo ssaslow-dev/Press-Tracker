@@ -91,6 +91,7 @@ const INIT = ({ hits, yt, pages, classify, itunes, ch }) => {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1200, height: 1000 }, acceptDownloads: true });
   await ctx.addInitScript(INIT, { hits: HITS.map(h => ({ re: { source: h.re.source }, hits: h.hits })), yt: YT_HITS, pages: PAGES, classify: CLASSIFY, itunes, ch: CH });
+  await ctx.addInitScript(() => { try { localStorage.setItem('ajg_station_auto', '0'); } catch (e) {} });   // AUTOSTATION-v1: these tests click each step themselves (the automatic mode has its own test)
   const page = await ctx.newPage(); const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message)); page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
   await page.goto(base + '/index.html'); await page.waitForSelector('#stDrop');

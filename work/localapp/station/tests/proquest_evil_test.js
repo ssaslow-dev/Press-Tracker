@@ -24,6 +24,7 @@ const INIT = () => {
   for (const kind of ['openaction', 'embedded', 'launch']) {
     const ctx = await browser.newContext({ viewport: { width: 1300, height: 1100 } });
     await ctx.addInitScript(INIT);
+    await ctx.addInitScript(() => { try { localStorage.setItem('ajg_station_auto', '0'); } catch (e) {} });   // AUTOSTATION-v1: these tests click each step themselves (the automatic mode has its own test)
     const page = await ctx.newPage(); const errs = []; page.on('pageerror', e => errs.push(e.message));
     await page.goto(base + '/'); await page.setInputFiles('#stFile', FILE); await page.waitForSelector('#stLoaded:not([hidden])', { timeout: 90000 });
     await page.waitForFunction(() => window.__pq && window.__pq.version === 1, null, { timeout: 30000 });

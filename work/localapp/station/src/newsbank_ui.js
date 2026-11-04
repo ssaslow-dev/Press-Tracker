@@ -170,7 +170,7 @@ async function nbStoryPdf(src, st, meta) {
 
 function nbBatchWarn(r) {
   const w = [];
-  if (r.looks) w.push(r.looks + ' of its stories need a look: no NewsBank link could be read, so they are not added.');
+  if (r.looks) w.push(r.looks + ' of its stories could not be confirmed (no NewsBank link could be read), so they are not added. They are only listed here; nothing is needed from you.');
   if (r.junk && r.junk.length) w.push('text before the first story was left out: ' + r.junk.slice(0, 2).join(' / ').slice(0, 120));
   if (r.noheader) w.push(r.noheader + ' of its stories have no readable header (details come from the citation).');
   if (r.tail.length) w.push('text after the last citation was left out: ' + r.tail.slice(0, 2).join(' / ').slice(0, 120));
@@ -249,7 +249,7 @@ function nbAddFiles(files) {
 }
 
 /* ---------- the list on the page ---------- */
-const NB_LABEL = { new: 'New', reprint: 'Reprint', known: 'Already in the tracker', dup_batch: 'Twice in these PDFs', print_page: 'Print page (not an article)', look: 'Needs a look', skipped: 'Left out', reprint_in_batch: 'Reprint of another in these PDFs' };
+const NB_LABEL = { new: 'New', reprint: 'Reprint', known: 'Already in the tracker', dup_batch: 'Twice in these PDFs', print_page: 'Print page (not an article)', look: 'Not added (cannot be confirmed)', skipped: 'Left out', reprint_in_batch: 'Reprint of another in these PDFs' };
 function nbDrawFiles() {
   $('#nbFiles').innerHTML = NBS.files.map(f => '<li class="nb-file nb-' + f.status + '"><b>' + esc(f.name) + '</b> ' + esc(f.status === 'reading' ? 'reading… ' + f.note : f.note)
     + (f.warn && f.warn.length ? '<ul>' + f.warn.map(w => '<li class="nb-w">' + esc(w) + '</li>').join('') + '</ul>' : '') + '</li>').join('');
@@ -281,12 +281,14 @@ function nbDrawAll() {
   }).join('') + (rows.length > 600 ? '<tr><td colspan="6">… and ' + fmtN(rows.length - 600) + ' more (the update includes them all).</td></tr>' : '');
   const parts = [];
   if (c.new) parts.push(fmtN(c.new) + ' new'); if (c.reprint) parts.push(fmtN(c.reprint) + ' reprint' + (c.reprint === 1 ? '' : 's')); if (c.known) parts.push(fmtN(c.known) + ' already in the tracker');
-  if (c.look) parts.push(fmtN(c.look) + ' need' + (c.look === 1 ? 's' : '') + ' a look (not added)'); if (c.dup_batch) parts.push(fmtN(c.dup_batch) + ' repeated in these PDFs'); if (c.print_page) parts.push(fmtN(c.print_page) + ' print page' + (c.print_page === 1 ? '' : 's')); if (c.added) parts.push(fmtN(c.added) + ' added to the update');
+  if (c.look) parts.push(fmtN(c.look) + ' not added (cannot be confirmed)'); if (c.dup_batch) parts.push(fmtN(c.dup_batch) + ' repeated in these PDFs'); if (c.print_page) parts.push(fmtN(c.print_page) + ' print page' + (c.print_page === 1 ? '' : 's')); if (c.added) parts.push(fmtN(c.added) + ' added to the update');
   const sm = $('#nbSummary'); sm.hidden = !items.length; sm.textContent = items.length ? fmtN(NBS.files.filter(f => f.status === 'ok').length) + ' PDF' + (NBS.files.filter(f => f.status === 'ok').length === 1 ? '' : 's') + ', ' + fmtN(items.length) + ' stories: ' + parts.join(', ') + '.' : '';
   const add = $('#nbAdd'); add.textContent = pick.length ? 'Add ' + fmtN(pick.length) + (pick.length === 1 ? ' story' : ' stories') + ' to the update' : 'Add to the update';
   add.disabled = !pick.length || NBS.busy || NBS.reading || (S.pq && S.pq.busy) || trackerBusy();
   $('#nbLinksRow').hidden = !items.length;
 }
+/* AUTOSTATION-v1: what an add would take now (the same rule nbAdd uses) */
+const nbPickable = () => NBS.items.filter(it => !NBS.added.has(it.key) && it.include && (it.screen.status === 'new' || it.screen.status === 'reprint' || it.screen.status === 'print_page' || (it.screen.status === 'known' && !!it.pdf)));
 async function nbAdd() {
   if (NBS.busy || (S.pq && S.pq.busy)) return;
   const take = NBS.items.filter(it => !NBS.added.has(it.key) && (it.screen.status === 'new' || it.screen.status === 'reprint' || it.screen.status === 'print_page' || (it.screen.status === 'known' && !!it.pdf)));
@@ -316,7 +318,7 @@ async function nbAdd() {
     if (res.errors && res.errors.length) res.errors.forEach(e => wl.push(e));
     const nl = res.links.found;
     prog.textContent = 'Added: ' + fmtN(res.counts.stories) + ' new ' + (res.counts.stories === 1 ? 'story' : 'stories') + ', ' + fmtN(res.counts.reprint_rows) + ' reprint row' + (res.counts.reprint_rows === 1 ? '' : 's') + ' (' + fmtN(res.counts.rows) + ' spreadsheet rows)'
-      + (res.links.searched ? '; publisher’s own page found for ' + fmtN(nl) + ' of ' + fmtN(res.links.searched) : '') + (res.counts.left ? '; ' + fmtN(res.counts.left) + ' left out (listed below)' : '') + '. Download the update folder in step 3.';
+      + (res.links.searched ? '; publisher’s own page found for ' + fmtN(nl) + ' of ' + fmtN(res.links.searched) : '') + (res.counts.left ? '; ' + fmtN(res.counts.left) + ' left out (listed below)' : '') + (S.auto ? '. The update folder downloads by itself when everything has finished.' : '. Download the update folder in step 3.');
     res.left.forEach(x => wl.push('Left out: ' + x.hl + ' (' + x.outlet + ', ' + x.date + '): ' + x.why));
     if (!res.saved) wl.push('The run could not be kept in this tab: the rows are in the list but will not be in the update folder.');
     if (wl.length) { warn.innerHTML = wl.map(x => '<li>' + esc(x) + '</li>').join(''); warn.hidden = false; }

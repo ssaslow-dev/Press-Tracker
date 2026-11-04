@@ -38,6 +38,7 @@ const INIT = () => {
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1300, height: 1100 } });
   await ctx.addInitScript(INIT);
+  await ctx.addInitScript(() => { try { localStorage.setItem('ajg_station_auto', '0'); } catch (e) {} });   // AUTOSTATION-v1: these tests click each step themselves (the automatic mode has its own test)
   const page = await ctx.newPage(); const errors = []; page.on('pageerror', e => errors.push(e.message)); page.on('console', m => { if (m.type() === 'error') errors.push(m.text()); });
   await page.goto(base + '/index.html'); await page.waitForSelector('#pqDrop');
   await page.setInputFiles('#stFile', FILE); await page.waitForSelector('#stLoaded:not([hidden])', { timeout: 90000 });
