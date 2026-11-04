@@ -613,3 +613,5 @@ Sammy: "make sure you keep me on track with this as part of the final version of
 
 ## PREVIEW-v1 (2026-11-04, Sammy): read-only single-file preview keeps tone ratings
 The read-only HTML preview (work/localapp/preview/, make_preview.py) is shared with tone ratings included (Sammy, C2: "keep tone ratings"); --no-internal stays available but unused. Notes are never in it; no saved copies or full texts.
+
+DATAFIX-v1 follow-up 2 (2026-11-04, Sammy: "do what you recommend"): 01920 (Shuang Ma Chemical, Korean chemical-supplier page) is not coverage: move it to the Removed tab after switch-over through a save (not on the switch-over screen). 03486 (East Bay Express): Author / byline and Author 1 become Marisa Kendall (overwrite), via the one-line fixes file 06_author_03486.csv added on the switch-over screen.

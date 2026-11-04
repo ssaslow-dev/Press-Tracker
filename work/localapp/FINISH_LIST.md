@@ -11,7 +11,8 @@ One list for everything left. Claude keeps it current after every step and repor
 | A3 | Send IT the updated note (work/localapp/IT_NOTE_APP.md, with the new zip's fingerprint) | Sammy | after the final zip (B3) |
 | A4 | Dress rehearsal on the office PC with yesterday's copy (setup + Switch-over changes screen, on a spare folder) | Sammy | ready now (rehearsal zip sent; folder, copy and Mac fingerprint list prepared) |
 | A5 | Switch-over day (PLAN.md checklist): Mac fingerprint list, copy, unzip, keeper role, Set up from the Mac library, Switch-over changes screen | Sammy + Claude | after A3, A4 |
-| A6 | On that screen, decide 01920 (remove or split) and 03486 (author Marisa Kendall) | Sammy | on the day |
+| A6 | Decide 01920 and 03486 | Sammy | done: 01920 remove (after switch-over, A13); 03486 author fixed via 06_author_03486.csv on the screen |
+| A13 | Move 01920 to the Removed tab through a save | Claude + Sammy | after A5 |
 | A7 | Move the Update station to the office claude.ai account (station/MOVE_TO_OFFICE.md) | Sammy + Claude | on the day |
 | A8 | First real Update run with Claude and TinyFish: station -> update folder -> Bring in update -> Save | Sammy | on the day |
 | A9 | Refresh files for each colleague | Sammy | on the day |
