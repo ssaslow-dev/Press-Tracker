@@ -25,6 +25,7 @@ One list for everything left. Claude keeps it current after every step and repor
 | N5 | All tests and the end-to-end check; new Windows and Mac zips; IT note fingerprint | Claude | after N1-N4 (whole version: about 3-4 hours) |
 | N6 | Install version 2 over the switched-over tracker (data stays) | Sammy | when N5 arrives |
 | N7 | Station: check finds against each other within one session (web Update, NewsBank box, ProQuest box) so a story found by two sources is shown once; today only the PC save drops the second copy (listed under duplicates) | Claude | to do (station v12) |
+| N8 | Data > Reach and medium: the indented Medium sub-rows no longer spill 18 px past the card's right edge (PC page only, TIDY-v1 patch 15) | Claude | building (look check on #data and parity test before the zips) |
 
 ## F. First real use (after version 2 is installed)
 
