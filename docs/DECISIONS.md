@@ -607,3 +607,6 @@ Switch-over screen steps, in order: drop_unverified, **rename_files** (RENAME-v1
 
 ## MACAPP-v1 (2026-11-04, Sammy): start a Mac version of the PC tracker, as a separate task
 Sammy: "as a separate task, start doing the work to make a mac version of this." Same tracker, same look and behaviour, same save rules, same update folder and refresh files (a Mac copy and a Windows copy can exchange them), portable folder, nothing installed, 127.0.0.1 only. Built in work/localapp/macpack/ alongside the Windows pack; does not delay or change the Windows switch-over. Open choices (Python source for a Mac with no install, Gatekeeper handling, Intel vs Apple-silicon) are written up for Sammy before anything he must run.
+
+## FINISH-v1 (2026-11-04, Sammy): one finish list, no loose ends
+Sammy: "make sure you keep me on track with this as part of the final version of all of this I want everything to be organized and done with no loose ends." work/localapp/FINISH_LIST.md is the single list of everything left (Windows switch-over, Mac version, preview, after switch-over, open decisions), with who and status. Claude updates it after every step and reports from it; the project is finished when every row is ticked and the open decisions are answered or deliberately parked.
