@@ -6,7 +6,8 @@ const http = require('http'), fs = require('fs'), path = require('path');
 const ST = path.join(__dirname, '..', '..');
 exports.ST = ST;
 exports.makeChecker = () => { const c = { failed: 0, n: 0 }; c.check = (name, ok, extra) => { c.n++; if (!ok) c.failed++; console.log((ok ? 'PASS ' : 'FAIL ') + name + (!ok && extra !== undefined ? '  -> ' + extra : '')); }; return c; };
-exports.start = async function (pageFile, claudeStub) {
+exports.start = async function (pageFile, claudeStub, opts) {
+  opts = opts || {};
   const vd = path.join(ST, '..', 'vendor'), shellHead = fs.readFileSync(path.join(vd, fs.readdirSync(vd).filter(d => d.startsWith('live_')).sort().pop(), 'pipeline', 'shell.html'), 'utf8').split('<body>')[0] + '<body>';
   const wrapped = shellHead + fs.readFileSync(pageFile, 'utf8') + '</body></html>';
   const CSP = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; worker-src 'none'; connect-src 'none'";
@@ -14,7 +15,8 @@ exports.start = async function (pageFile, claudeStub) {
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   const base = 'http://127.0.0.1:' + server.address().port, browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1300, height: 1100 }, acceptDownloads: true });
-  const INIT = (stubSrc) => {
+  const INIT = (arg) => {
+    const stubSrc = arg.stubSrc, OPT = arg.opts || {};
     const st = window.setTimeout.bind(window); window.setTimeout = (f, d, ...a) => st(f, d >= 300 ? Math.max(1, d / 100) : d, ...a);
     const realNow = Date.now.bind(Date), t0 = realNow(); Date.now = () => t0 + (realNow() - t0) * 100;
     window.__calls = []; window.__dl = []; window.__prompts = [];
@@ -25,10 +27,12 @@ exports.start = async function (pageFile, claudeStub) {
     const mcp = { callTool: async (server, tool, input) => { window.__calls.push({ tool }); return { payload: { results: [] } }; } };
     const stub = new Function('return ' + stubSrc)();
     const sample = async () => ({ text: '', truncated: false });
-    sample.json = async prompt => { window.__prompts.push(String(prompt)); window.__calls.push({ tool: 'sample' }); return stub(String(prompt)); };
+    sample.json = async (prompt, o) => { window.__prompts.push(String(prompt)); window.__calls.push({ tool: 'sample', images: o && o.images ? (Array.isArray(o.images) ? o.images.length : 1) : 0, sizes: o && Array.isArray(o.images) ? o.images.map(b => b.size) : [] }); return stub(String(prompt), o); };
+    if (OPT.images) sample.limits = async () => ({ maxPromptBytes: 262144, images: { maxCount: OPT.images, maxInputBytes: 5e6, mediaTypes: ['image/jpeg', 'image/png'] } });   // the runtime reports `images` only when the page declares sample.images
+    Object.freeze(sample);
     window.claude = { use: async name => name === 'db' ? fakeDb : name === 'mcp' ? mcp : name === 'sample' ? sample : name === 'downloads' ? { save: async ({ filename, data }) => { const buf = new Uint8Array(await data.arrayBuffer()); window.__dl.push({ filename, size: buf.length }); window.__lastDl = buf; } } : null };
   };
-  await ctx.addInitScript(INIT, claudeStub.toString());
+  await ctx.addInitScript(INIT, { stubSrc: claudeStub.toString(), opts });
   const outside = []; await ctx.route(u => !/^(http:\/\/127\.0\.0\.1[:/]|data:|blob:|about:)/.test(u.href), r => { outside.push(r.request().url()); r.abort(); });
   const page = await ctx.newPage(); const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message)); page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });

@@ -51,14 +51,17 @@ const NBP_MAX_PAGES = 3, NBP_MAX_ARTICLES = 3, NBP_TIMEOUT = 180000;
 const nbpWords = t => (String(t || '').match(/\p{L}[\p{L}\p{N}'’-]*/gu) || []).length;
 const nbpBlob = (cv, q) => new Promise(res => cv.toBlob(b => res(b), 'image/jpeg', q));
 /* the page as pictures: the whole page, and (when the call may carry three) its upper and lower halves enlarged, so small print stays readable after the platform shrinks each to about 1.2 megapixels */
-async function nbPageImages(pg, maxCount, maxBytes) {
-  const v0 = pg.getViewport({ scale: 1 }), draw = async long => { const sc = Math.min(4, long / Math.max(v0.width, v0.height)), v = pg.getViewport({ scale: sc }), cv = document.createElement('canvas'); cv.width = Math.ceil(v.width); cv.height = Math.ceil(v.height); const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height); await pg.render({ canvasContext: cx, viewport: v }).promise; return cv; };
+async function nbPageImages(pgs, maxCount, maxBytes) {
+  // NewsBank cuts one tall page picture across several PDF pages (checked on the real batch: the same 900 x 1798 picture, split over two): the pieces are stacked back into one picture
+  const v0 = pgs.map(pg => pg.getViewport({ scale: 1 })), W0 = Math.max(...v0.map(v => v.width)), H0 = v0.reduce((a, v) => a + v.height, 0);
+  const draw = async long => { const sc = Math.min(4, long / Math.max(W0, H0)), cv = document.createElement('canvas'); cv.width = Math.ceil(W0 * sc); cv.height = Math.ceil(H0 * sc); const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, cv.width, cv.height);
+    let y = 0; for (let i = 0; i < pgs.length; i++) { await pgs[i].render({ canvasContext: cx, viewport: pgs[i].getViewport({ scale: sc }), transform: [1, 0, 0, 1, 0, y] }).promise; y += Math.ceil(v0[i].height * sc); } return cv; };
   const fit = async cv => { let b = null; for (const q of [0.85, 0.7, 0.5, 0.35]) { b = await nbpBlob(cv, q); if (b && b.size <= maxBytes) return b; } return b && b.size <= maxBytes ? b : null; };
   const out = [], whole = await draw(1700), b0 = await fit(whole); if (!b0) throw new Error('the page picture is too large to send');
   out.push(b0);
   if (maxCount >= 3) {
     const big = await draw(3400), h = Math.ceil(big.height * 0.56);
-    for (const [y, nm] of [[0, 'top'], [big.height - h, 'bottom']]) { const c2 = document.createElement('canvas'); c2.width = big.width; c2.height = h; c2.getContext('2d').drawImage(big, 0, y, big.width, h, 0, 0, big.width, h); const b = await fit(c2); if (b) out.push(b); }
+    for (const y of [0, big.height - h]) { const c2 = document.createElement('canvas'); c2.width = big.width; c2.height = h; c2.getContext('2d').drawImage(big, 0, y, big.width, h, 0, 0, big.width, h); const b = await fit(c2); if (b) out.push(b); }
   }
   return out;
 }
@@ -87,12 +90,14 @@ async function nbReadPrintOne(it, sample, lim) {
   const arts = [], whys = []; let seen = 0, readable = 0, tried = 0;
   try {
     const picks = [];
-    for (let n = 1; n <= doc.numPages; n++) { const tc = await (await doc.getPage(n)).getTextContent(); const chars = tc.items.reduce((a, x) => a + String(x.str || '').length, 0); if (doc.numPages === 1 || chars < 80) picks.push(n); }
+    const chars = []; for (let n = 1; n <= doc.numPages; n++) { const tc = await (await doc.getPage(n)).getTextContent(); chars.push(tc.items.reduce((a, x) => a + String(x.str || '').length, 0)); }   // the header page has a few lines of text, a picture page none
+    const lo = Math.max(10, Math.min(...chars)); chars.forEach((c, i) => { if (doc.numPages === 1 || c <= lo) picks.push(i + 1); });
     if (!picks.length) picks.push(Math.min(2, doc.numPages));
-    for (const n of picks.slice(0, NBP_MAX_PAGES)) {
-      const imgs = await nbPageImages(await doc.getPage(n), lim.images.maxCount || 1, lim.images.maxInputBytes || 4e6);
+    {
+      const pgs = []; for (const n of picks.slice(0, NBP_MAX_PAGES)) pgs.push(await doc.getPage(n));
+      const imgs = await nbPageImages(pgs, lim.images.maxCount || 1, lim.images.maxInputBytes || 4e6);
       const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), NBP_TIMEOUT); let res;
-      try { res = await sample.json(NBP_PROMPT(it, n, imgs.length), { images: imgs, signal: ctl.signal, modelTier: 'default' }); }
+      try { res = await sample.json(NBP_PROMPT(it, 1, imgs.length), { images: imgs, signal: ctl.signal, modelTier: 'default' }); }
       catch (e) { if (ctl.signal.aborted && !(e && e.code && e.code !== 'cancelled')) { const t = new Error('Claude took too long on this page'); t.code = 'timeout'; throw t; } throw e; }
       finally { clearTimeout(timer); }
       tried++; if (res && res.readable !== false) readable++;
