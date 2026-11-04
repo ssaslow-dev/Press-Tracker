@@ -188,3 +188,8 @@ If you edit the workbook in Excel yourself: close Excel, open **Repairs** in Tra
 **Readers.** When the keeper sends a refresh file, open the tracker, press Tracker files, and drop the zip into **Bring in refresh file**. Your workbook, article pages and page data are brought up to date, your old workbook is backed up first, and the page reloads. If it says the refresh is older than what you have, you already have it. If it says it skips a refresh you never got, ask the keeper for a FULL refresh. Readers cannot save updates; that is by design.
 
 **Setting up a keeper copy (once).** Put `{"role": "keeper"}` in `data\role.json` (a copy without that file is a reader). Put the current workbook and library in `data\`, open **Repairs** in Tracker files, press **Accept the workbook as it is now**, then **Rebuild the page**.
+
+## Version 2 additions (2026-11-04)
+- **Article data from the library (ARTICLEDATA-v1).** `station/article_copies.py` adds the copy of every story that has a saved copy in the keeper's library but no entry in `data\copies\articles` (setup, after every save, and Repairs "Rebuild saved copies"). Existing entries are never changed.
+- **Windows file locks (WINLOCK-v1).** `fs_retry.py` (copies in `app\saver`, `app\updatefolder`; `common.retry_busy` in the station code) waits about 10 s on PermissionError for every replace, rename and move. App code ships without .pyc.
+- **Install a new version (PROGRAMUPDATE-v1).** `Install update.cmd` / `.command` and `station/install_update.py`; see READ ME FIRST.

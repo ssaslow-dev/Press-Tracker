@@ -91,6 +91,8 @@ def check_source():
         if not ln.strip():
             continue
         h, _, rel = ln.partition('  ')
+        if rel.endswith('APP_FILES.sha256'):
+            continue
         p = SRC / rel
         if not p.is_file() or sha256(p) != h:
             bad.append(rel)
@@ -103,7 +105,8 @@ def app_manifest(root: Path) -> dict:
     for ln in (root / 'app' / 'APP_FILES.sha256').read_text(encoding='utf-8').splitlines():
         if ln.strip():
             h, _, rel = ln.partition('  ')
-            out[rel] = h
+            if not rel.endswith('APP_FILES.sha256'):
+                out[rel] = h
     return out
 
 
