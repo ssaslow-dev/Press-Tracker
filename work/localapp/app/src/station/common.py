@@ -243,7 +243,7 @@ def read_ledger(state: Path) -> list:
 
 
 # LASTUPDATED-v1: what counts as "the tracker was updated": a save (update, Save my edits) or a one-time switch-over change of the workbook.
-UPDATE_VERBS = {'save', 'drop_unverified', 'add_other_files_column', 'recolor_press_releases', 'press_release_judge', 'apply_datafix'}
+UPDATE_VERBS = {'save', 'drop_unverified', 'add_other_files_column', 'recolor_press_releases', 'press_release_judge', 'apply_datafix', 'rename_files', 'datafix_structural'}
 
 
 def _us_dst(u: datetime) -> bool:

@@ -149,10 +149,13 @@ def plan(lay) -> dict:
             if (tab, n) in dropped_rows:
                 continue
             for c in r:
-                if c in FILE_COLS or 'File name' in c or c == 'Transcript file':
+                if c in FILE_COLS or 'File name' in c or c == 'Other files':
                     v = _s(r.get(c))
                     if v:
                         held.setdefault(v, f'{tab} row {n}')
+                        for part in (v.split(';') if c == 'Other files' else ()):      # REVIEW_3 finding 7: "a.pdf; b.pdf"
+                            if part.strip():
+                                held.setdefault(part.strip(), f'{tab} row {n}')
     files = []
     for nm, why in sorted(wanted.items()):
         for p in lib_idx.get(nm, []):

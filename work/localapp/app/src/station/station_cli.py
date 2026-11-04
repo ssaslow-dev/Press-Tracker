@@ -389,16 +389,15 @@ def do_setup_run(lay, TU, a):
             code = TU.init_baseline(lay, note=note)['exit_code']
             if code != 0:
                 return out({'ok': False, 'written': True, 'line': 'The files were copied, but the tracker could not record the workbook as its starting point. Open Repairs and use "Accept the workbook as it is now".', **r}, 2)
-            page = {}
-            try:
-                page = rebuild_page(lay)
-            except Exception as e:          # noqa: BLE001
-                return out({'ok': False, 'written': True, 'line': 'The files were copied and the workbook is accepted, but the page could not be built: ' + str(e)[:200]
-                            + ' Open Repairs and use "Rebuild the page".', **r}, 2)
             summ = SM.summary(lay)
             log = {'at': C.utc_now().isoformat(timespec='seconds'), 'verb': 'setup', 'folder': str(a.folder), 'list': a.list, **{k: r[k] for k in ('workbook_sha256', 'files_copied', 'files_skipped_same', 'listed', 'extra', 'extra_names', 'backup')}, 'summary': summ}
             (lay.state / 'logs').mkdir(parents=True, exist_ok=True)
             (lay.state / 'logs' / f'setup-{C.stamp()}.json').write_text(json.dumps(log, indent=1), encoding='utf-8')
+            try:        # REVIEW_3 finding 5: the setup log (it opens the Switch-over changes screen) is written BEFORE the page build, so a failed build cannot hide the screen
+                rebuild_page(lay)
+            except Exception as e:          # noqa: BLE001
+                return out({'ok': False, 'written': True, 'line': 'The files were copied and the workbook is accepted, but the page could not be built: ' + str(e)[:200]
+                            + ' Open Repairs and use "Rebuild the page".', **r}, 2)
     except C.AppLockBusy as e:
         return out({'ok': False, 'locked': True, 'line': C.busy_line(e.info, e.age)})
     except SM.SetupRefused as e:
