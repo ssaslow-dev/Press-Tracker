@@ -11,9 +11,9 @@ module.exports = (T, H) => {
       TIMEKEY.test(k || '') && typeof v === 'number' && v > 1e11 ? 'TS' : TIMEKEY.test(k || '') && typeof v === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d/.test(v) ? 'ISO' : v;
     for (const c of cols) { const s = await db.collection(c).get(); out[c] = s.docs.map(d => [d.id, norm(d.data())]).sort((a, b) => a[0] < b[0] ? -1 : 1); }
     return out; }, cols);
-  const sheetFull = (p, strip) => p.evaluate(strip => { const s = document.querySelector('#sheet'); if (strip) s.querySelectorAll('[data-lk="po"]').forEach(a => (a.closest('.lkw') || a).remove()); const t = s.innerText; let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0;
+  const sheetFull = (p) => p.evaluate(strip => { const s = document.querySelector('#sheet'); if (strip) s.querySelectorAll('[data-lk="po"]').forEach(a => (a.closest('.lkw') || a).remove()); const t = s.innerText; let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0;
     return { open: !s.hidden, len: t.length, hash: h, h2: (s.querySelector('h2') || {}).textContent, links: [...s.querySelectorAll('a[href]')].map(a => a.textContent.trim().slice(0, 40) + '>' + a.getAttribute('href')).join('|'),
-      btns: [...s.querySelectorAll('button')].map(b => b.textContent.trim()).filter(Boolean).join('|'), imgs: s.querySelectorAll('img').length }; }, !!strip);
+      btns: [...s.querySelectorAll('button')].map(b => b.textContent.trim()).filter(Boolean).join('|'), imgs: s.querySelectorAll('img').length }; }, true);
   const openStory = async (p, n) => { await p.click('nav.tabs button[data-tab=db]'); await sleep(1200); await p.fill('#q', ''); await sleep(900);
     await p.locator('#tbody tr[data-id]').nth(n).locator('td').nth(1).click(); await sleep(2200); };
   const openById = async (p, id) => { const hl = await p.evaluate(id => JSON.parse(document.getElementById('data').textContent).find(r => r.id === id).hl, id);

@@ -94,7 +94,7 @@ T.saved_views = async (p, base, out) => { await p.click('nav.tabs button[data-ta
   const del = p.locator('[data-vdel]').first(); if (await del.count()) { await del.click(); await sleep(900); out.after_delete = await snapClips(p); } return out; };
 T.story_sheet = async (p, base, out) => { await p.click('nav.tabs button[data-tab=db]'); await sleep(1200);
   const sheet = () => p.evaluate(() => { const s = document.querySelector('#sheet'); return { open: !s.hidden, pos: (s.querySelector('.pos') || {}).textContent || '', kick: (s.querySelector('.kick') || {}).innerText || '', h2: (s.querySelector('h2') || {}).textContent || '',
-    links: [...s.querySelectorAll('.dlinks a')].map(a => a.textContent.trim().slice(0, 40) + '>' + a.getAttribute('href')).join('|'), badges: (s.querySelector('.sh-badges') || {}).innerText || '', factline: (s.querySelector('.factline') || {}).innerText || '',
+    links: [...s.querySelectorAll('.dlinks a:not([data-lk="po"])')].map(a => a.textContent.trim().slice(0, 40) + '>' + a.getAttribute('href')).join('|'), badges: (s.querySelector('.sh-badges') || {}).innerText || '', factline: (s.querySelector('.factline') || {}).innerText || '',
     tone: (s.querySelector('.tonebox') || {}).innerText || '', note: (document.querySelector('#tnote') || {}).value, hash: location.hash, wide: s.classList.contains('wide') }; });
   await p.locator('#tbody tr[data-id]').first().locator('td').nth(1).click(); await sleep(2500); out.first = await sheet();
   await p.click('[data-nav="1"]'); await sleep(2000); out.next = await sheet(); await p.click('[data-nav="1"]'); await sleep(1500); out.next2 = await sheet();
@@ -164,6 +164,8 @@ async function run(browser, target, base, name) {
 async function hashRoutes(browser, target, base, hashes) {
   const out = {};
   for (const h of hashes) { const { ctx, p } = await newPage(browser, target, base, { hash: h }); await sleep(1500);
+    // wait until the visible tab's text has stopped changing (a table that is still drawing would be compared half-finished)
+    for (let k = 0, last = -1; k < 8; k++) { const n = await p.evaluate(() => { const v = [...document.querySelectorAll('main > section')].find(s => !s.hidden); return v ? v.innerText.length : 0; }); if (n === last) break; last = n; await sleep(800); }
     out[h] = await p.evaluate(() => ({ hash: location.hash, tab: (document.querySelector('nav.tabs [aria-selected=true]') || {}).textContent, txt: (() => { const v = [...document.querySelectorAll('main > section')].find(s => !s.hidden); const s = v ? v.innerText : ''; let x = 0; for (let i = 0; i < s.length; i++) x = (x * 31 + s.charCodeAt(i)) | 0; return v ? v.id + ':' + s.length + ':' + x : ''; })() }));
     await ctx.close(); }
   return out;
