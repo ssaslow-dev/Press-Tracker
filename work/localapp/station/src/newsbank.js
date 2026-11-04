@@ -238,6 +238,7 @@ async function nbRun(items, opts){
       (it.r._reps || []).forEach(x => { x._doc = pageDoc(x._nb); }); }
     for (const it of orig) for (const x of (it.r._reps || [])) await setDoc('pages', x._pageKey, x._doc);
     for (const p of reps){ await setDoc('pages', p._pageKey, pageDoc(p._nb));
+      if (SRC.id === 'pp'){ res.reprints.push({ story: p.story, outlet: p.outlet }); continue; }   // N14: a newspaper page has no link of its own: the proposed row carries it; a reprints document would be written to the sheet as a second row
       const id = p._pageKey, doc = { story: p.story, outlet: p.outlet, link: p.link, date: p.date, added: TODAY }; await setDoc('reprints', id, doc); res.reprints.push({ story: p.story, outlet: p.outlet });
       if (!RPS.has(id)) RPS.set(id, cleanReprint(id, doc)); }
     // PRINTPAGES-v1: unconfirmed print pages: a pages document (the page's PDF, the print original) and a row for the "Unlinked print pages" tab
@@ -330,4 +331,57 @@ function nbReadHtml(p, row){
 /* NewsBank's source object (ProQuest's is in proquest.js) */
 const NBSRC = { nb: { id: 'nb', name: 'NewsBank', idName: 'NewsBank link', foundBy: 'newsbank-pdf', srcName: 'NewsBank', preface: NB_PREFACE, dateSrc: 'newsbank', print: p => !!p.page, runMode: 'newsbank', runMark: 'newsbank', metaKey: 'nb', runSource: 'NewsBank batch PDFs',
   known: () => nbDocrefs(), cand: nbCand, link: nbLink, plink: nbLink, html: (p, row) => p.readBy === 'claude' && p.paras ? nbReadHtml(p, row) : NBParse.storyHtml(p, row), meta: nbMeta, rowFill: nbRowFill } };
-window.__nb = { candidates: nbPrintCands, hasStory: nbHasStory, screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };
+/* ---------- N14 (PRINTANY-v1): a newspaper page from anywhere (an e-edition PDF, a scan, a photo), not NewsBank's ----------
+   The page layer (newsbank_ui.js) turns each page into a one-page PDF and an item with p.src = 'page'; Claude reads the masthead (paper, date, page) and the articles; this source object
+   files what is read exactly as a NewsBank print page read by Claude is filed (nbPrintApply), but with no NewsBank columns. The page has no link: a stand-in address keeps the tracker's own
+   code (which keys finds by link) working; it is never written to a row (rowFill blanks Publisher link) and no reprints document is made for it. */
+const ppLink = p => 'https://print-page.invalid/p/' + hash12(String(p.ppid || p.docref_key || ''));
+const PP_PREFACE = `These items are articles read by Claude from the picture of a newspaper page (an e-edition PDF, a scan or a photo), not from a database. The url is a stand-in, the text is Claude's reading of the printed page (it may contain [illegible] where the print could not be read). Three things differ from web results: (1) the text is printed newspaper text, so a story whose text does not show his name is still kept only if it is about him (keep false for another person named Jesse Gabriel, or a page that is not press: an advertisement, a release); (2) the date and the outlet were read from the page's masthead and are right: copy them; (3) the headline is the printed one: copy it.\n\n`;
+function ppRowFill(row, it){
+  nbRowFill(row, it);
+  ['NewsBank article link', 'Newsbank APA citation (article)', 'NewsBank print-page link', 'Newsbank APA citation (print page)'].forEach(c => { row[c] = ''; });
+  row['Data Source'] = 'Print page'; row['Date source'] = 'print edition'; row._date_src = 'printpage'; row['Edition'] = 'Print'; row['Format'] = 'Print'; row['Publisher link'] = it.pub ? it.pub.url : '';
+  row['Team note'] = String(row['Team note'] || '').replace('NewsBank PDF ', 'newspaper page file ');
+  return row;
+}
+const ppMeta = it => Object.assign(nbMeta(it), { url: '', docref: '', source: 'page' });
+NBSRC.pp = Object.assign({}, NBSRC.nb, { id: 'pp', name: 'the newspaper page', idName: 'page', foundBy: 'printpage', srcName: 'Print page', preface: PP_PREFACE, dateSrc: 'printpage', print: () => true, runMode: 'hand', runMark: 'printpage', metaKey: 'pp', runSource: 'newspaper page PDFs and pictures',
+  known: () => new Map(), link: ppLink, plink: () => '', meta: ppMeta, rowFill: ppRowFill });
+/* ---------- N7: the same story found by two sources in one session is offered once ----------
+   Works on the proposed rows of the runs this session wrote (the web Update, the NewsBank box, the ProQuest box, print pages), in either order. Only Originals of DIFFERENT sources are compared
+   (each source already checks its own finds). Same story = a shared link (publisher link, NewsBank docref, ProQuest id) or the same outlet with a near-identical headline within 2 days (the save's own
+   rule, PAYWALL-v1); another outlet's copy of it = a reprint of the story that ran first. station.js applies the plan. */
+const XD_FOLD = ['NewsBank article link', 'Newsbank APA citation (article)', 'NewsBank print-page link', 'Newsbank APA citation (print page)', 'ProQuest link', 'ProQuest via CA State Library', 'Publisher link', 'Section', 'Page', 'Word count', 'Author / byline'];
+const XD_RANK = { web: 0, nb: 1, pq: 2, pp: 3 };
+const xdSrc = row => /newsbank/i.test(row['Data Source'] || '') ? 'nb' : /proquest/i.test(row['Data Source'] || '') ? 'pq' : /^print page/i.test(row['Data Source'] || '') ? 'pp' : 'web';
+function xdKeys(row){
+  const ks = new Set(), u = String(row['Publisher link'] || '');
+  if (/^https?:/i.test(u) && !DUP_OFFSITE.test(u) && !/newsbank\.com|oclc\.org/i.test(u)) ks.add('u:' + normU(u));
+  ['NewsBank article link', 'NewsBank print-page link'].forEach(c => { const m = /docref=([^&\s#]+)/i.exec(String(row[c] || '')); if (m) ks.add('nb:' + NBParse.docrefKey(m[1])); });
+  { const m = /proquest\.com\/docview\/(\d{5,})/i.exec(String(row['ProQuest link'] || '')); if (m) ks.add('pq:' + m[1]); }
+  return ks;
+}
+const xdCand = row => ({ link: '', plink: '', hl: row['Headline'] || '', date: row['Date'] || '', outlet: row['Outlet'] || '', pub: row['Outlet'] || '' });
+function xdRel(a, b){
+  const ka = xdKeys(a), kb = xdKeys(b); for (const k of ka) if (kb.has(k)) return { kind: 'same', why: 'the same link' };
+  const ca = xdCand(a), cb = xdCand(b); if (!ca.hl || !cb.hl) return null;
+  const h = dupOf(ca, [cb]); if (!h) return null;
+  if (h.same){ const d = covDays(ca.date, cb.date); return !isNaN(d) && d > 2 ? null : { kind: 'same', why: 'the same outlet and a near-identical headline' }; }
+  return { kind: 'reprint', why: 'another outlet’s copy of the same story' };
+}
+/* runs: [{id, at, status, rows}] -> ops [{kind, why, p:{run, aid}, s:{run, aid}}]: p stays, s is folded into p (same) or becomes p's reprint. A run still going is left alone. */
+function xdPlan(runs){
+  const E = [];
+  runs.slice().sort((a, b) => String(a.at || '').localeCompare(String(b.at || ''))).forEach(r => { if (r.status === 'running') return; (r.rows || []).forEach(row => { if (!row || (row['Original or reprint'] || 'Original') !== 'Original' || row._release || !row['Article ID']) return; E.push({ run: r.id, aid: row['Article ID'], row, src: xdSrc(row) }); }); });
+  const gone = new Set(), ops = [];
+  for (let i = 0; i < E.length; i++) for (let j = i + 1; j < E.length; j++){
+    const a = E[i], b = E[j]; if (gone.has(a) || gone.has(b) || a.src === b.src) continue;
+    const rel = xdRel(a.row, b.row); if (!rel) continue;
+    let p = a, s = b;
+    if (rel.kind === 'same'){ if (XD_RANK[b.src] < XD_RANK[a.src]) { p = b; s = a; } }
+    else { const da = String(a.row['Date'] || ''), db = String(b.row['Date'] || ''); if (da && db && da !== db ? db < da : XD_RANK[b.src] < XD_RANK[a.src]) { p = b; s = a; } }
+    gone.add(s); ops.push({ kind: rel.kind, why: rel.why, p: { run: p.run, aid: p.aid }, s: { run: s.run, aid: s.aid } });
+  }
+  return ops;
+}
+window.__nb = { candidates: nbPrintCands, hasStory: nbHasStory, xdPlan, xdFold: XD_FOLD, spell: nbSpell, runPage: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pp })), screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };
