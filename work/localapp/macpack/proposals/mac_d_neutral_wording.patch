@@ -1,0 +1,103 @@
+diff -u -r a/work/localapp/app/src/station/launcher.py b/work/localapp/app/src/station/launcher.py
+--- a/work/localapp/app/src/station/launcher.py	2026-11-02 18:12:57.583296080 +0000
++++ b/work/localapp/app/src/station/launcher.py	2026-11-04 15:19:02.306126409 +0000
+@@ -82,7 +82,7 @@
+                 open_page()
+                 return 0
+             print('Another copy of the AJG Tracker is already running on this PC, from a different folder:\n  %s\n'
+-                  'Close that one first (close its black window), then start this one again.' % who.get('root'))
++                  'Close that one first (close its Terminal or command window), then start this one again.' % who.get('root'))
+             return 3
+         print('Port 8765 on this PC is used by another program, so the tracker cannot start.\n'
+               'Close that program (or restart the PC) and start the tracker again.')
+@@ -100,7 +100,7 @@
+     print('Keep this window open while you use the tracker. Close it to stop the tracker.\n')
+     how = open_page()
+     if how == 'default browser':
+-        print('(Edge was not found, so the page opened in your usual browser.)')
++        print('(The page opened in your usual browser.)')
+     try:
+         srv.serve_forever()
+     except KeyboardInterrupt:
+diff -u -r a/work/localapp/app/src/station/web/panel.js b/work/localapp/app/src/station/web/panel.js
+--- a/work/localapp/app/src/station/web/panel.js	2026-11-03 22:32:08.586985460 +0000
++++ b/work/localapp/app/src/station/web/panel.js	2026-11-04 15:19:02.305218654 +0000
+@@ -264,7 +264,7 @@
+         var go = el('button', { class: 'ajgf-b danger', type: 'button', id: again ? 'ajgf-setup-run2' : 'ajgf-setup-run', text: again ? 'Copy and replace the workbook' : 'Copy and set up', onclick: function () { doSetupRun(again); } });
+         if (busy) go.disabled = true;
+         box_.appendChild(go);
+-        box_.appendChild(el('p', {}, [el('small', { text: 'This copies about the size of the whole library and builds the page. It takes several minutes. Do not close the black window.' })]));
++        box_.appendChild(el('p', {}, [el('small', { text: 'This copies about the size of the whole library and builds the page. It takes several minutes. Do not close the Terminal or command window.' })]));
+       }
+     }
+   }
+@@ -290,9 +290,9 @@
+       .catch(function (e) { state.busy = false; sg.stage = 'form'; sg.check = { ok: false, line: String(e.message || e) }; render(); });
+   }
+   function doSetupRun(again) {
+-    sg.stage = 'working'; sg.msg = 'Copying and checking. This takes several minutes. Do not close the black window...'; state.busy = true; render();
++    sg.stage = 'working'; sg.msg = 'Copying and checking. This takes several minutes. Do not close the Terminal or command window...'; state.busy = true; render();
+     withList(setupBody(again)).then(function (b) {
+-      return runJob('setup_run', b, function (s) { sg.msg = 'Copying and checking... ' + s + ' s. Do not close the black window.'; render(); });
++      return runJob('setup_run', b, function (s) { sg.msg = 'Copying and checking... ' + s + ' s. Do not close the Terminal or command window.'; render(); });
+     }).then(function (r) { state.busy = false; sg.stage = 'done'; sg.res = r; sg.check = null; refresh().then(render); })
+       .catch(function (e) { state.busy = false; sg.stage = 'done'; sg.res = { ok: false, line: String(e.message || e) }; render(); });
+   }
+@@ -396,8 +396,8 @@
+   }
+   function doSwitchApply(ids) {
+     var dig = {}; sw.pv.steps.forEach(function (s) { dig[s.id] = s.digest || ''; });
+-    state.busy = true; sw.stage = 'working'; sw.msg = 'Making the backup, then the changes. Do not close the black window...'; render();
+-    runJob('switch_apply', { steps: ids, digests: dig, include_low: sw.low }, function (s) { sw.msg = 'Working... ' + s + ' s. Do not close the black window.'; render(); }).then(function (r) {
++    state.busy = true; sw.stage = 'working'; sw.msg = 'Making the backup, then the changes. Do not close the Terminal or command window...'; render();
++    runJob('switch_apply', { steps: ids, digests: dig, include_low: sw.low }, function (s) { sw.msg = 'Working... ' + s + ' s. Do not close the Terminal or command window.'; render(); }).then(function (r) {
+       state.busy = false; sw.stage = 'done'; sw.res = r; sw.pv = null; sw.ok = false; refresh().then(render);
+     });
+   }
+@@ -480,7 +480,7 @@
+         return runJob('inspect', { file: r.j.file }, function (s) { setUpdate({ working: 'Checking the update and working out what it would change... ' + s + ' s' }); }).then(function (res) {
+           state.busy = false; handleInspect(res);
+         });
+-      }).catch(function () { state.busy = false; setUpdate({ error: 'The file could not be sent to the tracker. Is the black tracker window still open?' }); });
++      }).catch(function () { state.busy = false; setUpdate({ error: 'The file could not be sent to the tracker. Is the tracker\'s Terminal or command window still open?' }); });
+   }
+   function handleInspect(res) {
+     if (!res.ok) return setUpdate({ error: res.line || 'The update was refused.' });
+@@ -502,8 +502,8 @@
+   }
+   function doSave() {
+     var u = state.update; state.busy = true; var keep = u;
+-    setUpdate({ working: 'Saving. The tracker backs up the workbook first, then writes. This can take a few minutes. Do not close the black window...' });
+-    runJob('save', { update_id: u.update_id, token: u.token, accept_mismatch: !!u.accepted }, function (s) { setUpdate({ working: 'Saving... ' + s + ' s. Do not close the black window.' }); }).then(function (res) {
++    setUpdate({ working: 'Saving. The tracker backs up the workbook first, then writes. This can take a few minutes. Do not close the Terminal or command window...' });
++    runJob('save', { update_id: u.update_id, token: u.token, accept_mismatch: !!u.accepted }, function (s) { setUpdate({ working: 'Saving... ' + s + ' s. Do not close the Terminal or command window.' }); }).then(function (res) {
+       state.busy = false; res.stage = 'saved'; setUpdate(res); refresh();
+       if (res.written) setTimeout(function () { location.reload(); }, 3500);
+     });
+@@ -555,8 +555,8 @@
+   }
+   function doEditsSave() {
+     var e = state.edits; state.busy = true;
+-    setEdits({ working: 'Saving. The tracker backs up the workbook first, then writes. This can take a few minutes. Do not close the black window...' });
+-    runJob('edits_save', { update_id: e.update_id, token: e.token }, function (s) { setEdits({ working: 'Saving... ' + s + ' s. Do not close the black window.' }); }).then(function (res) {
++    setEdits({ working: 'Saving. The tracker backs up the workbook first, then writes. This can take a few minutes. Do not close the Terminal or command window...' });
++    runJob('edits_save', { update_id: e.update_id, token: e.token }, function (s) { setEdits({ working: 'Saving... ' + s + ' s. Do not close the Terminal or command window.' }); }).then(function (res) {
+       state.busy = false; res.stage = 'saved'; setEdits(res); refresh();
+       if (res.written) setTimeout(function () { location.reload(); }, 3500);
+     });
+@@ -600,12 +600,12 @@
+       .then(function (r) { return r.json(); })
+       .then(function (j) {
+         if (!j || !j.ok) { state.busy = false; rtState = { result: { ok: false, line: (j && (j.error || j.line)) || 'The file could not be sent.' } }; return render(); }
+-        rtState = { working: 'Checking the refresh and bringing it in. A big one takes a few minutes. Do not close the black window...' }; render();
+-        return runJob('refresh_take', { file: j.file }, function (s, jb) { rtState = { working: 'Bringing in the refresh... ' + s + ' s' + (jb && jb.stalled ? '. Nothing has moved for ' + jb.stalled + ' s. If it stays stuck the tracker will stop it by itself and say so.' : '. Do not close the black window.') }; render(); }).then(function (res) {
++        rtState = { working: 'Checking the refresh and bringing it in. A big one takes a few minutes. Do not close the Terminal or command window...' }; render();
++        return runJob('refresh_take', { file: j.file }, function (s, jb) { rtState = { working: 'Bringing in the refresh... ' + s + ' s' + (jb && jb.stalled ? '. Nothing has moved for ' + jb.stalled + ' s. If it stays stuck the tracker will stop it by itself and say so.' : '. Do not close the Terminal or command window.') }; render(); }).then(function (res) {
+           state.busy = false; rtState = { result: res }; render(); refresh();
+           if (res.ok) setTimeout(function () { location.reload(); }, 3500);
+         });
+-      }).catch(function () { state.busy = false; rtState = { result: { ok: false, line: 'The file could not be sent to the tracker. Is the black tracker window still open?' } }; render(); });
++      }).catch(function () { state.busy = false; rtState = { result: { ok: false, line: 'The file could not be sent to the tracker. Is the tracker\'s Terminal or command window still open?' } }; render(); });
+   }
+ 
+   // ---- accept the workbook

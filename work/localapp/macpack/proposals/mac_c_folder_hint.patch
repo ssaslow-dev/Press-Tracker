@@ -1,0 +1,21 @@
+diff -u -r a/work/localapp/app/src/station/web/panel.js b/work/localapp/app/src/station/web/panel.js
+--- a/work/localapp/app/src/station/web/panel.js	2026-11-03 22:32:08.586985460 +0000
++++ b/work/localapp/app/src/station/web/panel.js	2026-11-04 15:19:02.296331227 +0000
+@@ -470,7 +470,7 @@
+   function setUpdate(u) { state.update = u; render(); }
+ 
+   function takeFile(file) {
+-    if (!/\.zip$/i.test(file.name)) { setUpdate({ error: 'That is not a .zip file. Drop the update zip from the Update station.' }); return; }
++    if (!/\.zip$/i.test(file.name)) { setUpdate({ error: 'That is not a .zip file. Drop the update zip from the Update station.' + (/\.[A-Za-z0-9]{1,5}$/.test(file.name) ? '' : ' If it is a folder, Safari may have unzipped it: use the .zip (turn off Safari > Settings > General > Open safe files after downloading).') }); return; }
+     state.busy = true; setUpdate({ working: 'Sending ' + file.name + ' (' + bytes(file.size) + ') to the tracker...' });
+     fetch('/_local/station/upload?name=' + encodeURIComponent(file.name), { method: 'POST', headers: { 'X-Local-Token': TOKEN }, body: file })
+       .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); })
+@@ -594,7 +594,7 @@
+     parent.appendChild(d);
+   }
+   function takeRefresh(file) {
+-    if (!/\.zip$/i.test(file.name)) { rtState = { result: { ok: false, line: 'That is not a .zip file. Drop the refresh zip the keeper gave you.' } }; render(); return; }
++    if (!/\.zip$/i.test(file.name)) { rtState = { result: { ok: false, line: 'That is not a .zip file. Drop the refresh zip the keeper gave you.' + (/\.[A-Za-z0-9]{1,5}$/.test(file.name) ? '' : ' If it is a folder, Safari may have unzipped it: use the .zip (turn off Safari > Settings > General > Open safe files after downloading).') } }; render(); return; }
+     state.busy = true; rtState = { working: 'Sending ' + file.name + ' (' + bytes(file.size) + ') to the tracker...' }; render();
+     fetch('/_local/station/upload?kind=refresh&name=' + encodeURIComponent(file.name), { method: 'POST', headers: { 'X-Local-Token': TOKEN }, body: file })
+       .then(function (r) { return r.json(); })

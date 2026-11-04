@@ -1,0 +1,49 @@
+diff -u -r a/work/localapp/app/src/station/refresh.py b/work/localapp/app/src/station/refresh.py
+--- a/work/localapp/app/src/station/refresh.py	2026-11-03 22:22:47.369203559 +0000
++++ b/work/localapp/app/src/station/refresh.py	2026-11-04 15:19:02.268305606 +0000
+@@ -20,6 +20,7 @@
+ import os
+ import re
+ import shutil
++import unicodedata
+ import zipfile
+ from pathlib import Path
+ 
+@@ -88,7 +89,7 @@
+         raise RefreshRefused('BAD_ENTRY', f'only the tracker page itself may be an .html file in site: {name[:60]!r}')
+     if kind == 'copies' and (len(parts) != 3 or parts[1] != 'articles'):
+         raise RefreshRefused('BAD_ENTRY', f'bad article shard name: {name[:60]!r}')
+-    return kind, '/'.join(parts[1:])
++    return kind, unicodedata.normalize('NFC', '/'.join(parts[1:]))       # MAC-NFC: a Mac may hand back decomposed accents; the workbook and Windows use composed ones
+ 
+ 
+ # ---------------------------------------------------------------- make (keeper)
+@@ -102,7 +103,7 @@
+         rel = p.relative_to(root)
+         if p.is_file() and not any(x in rel.parts for x in skip) and not any(s.startswith('.') for s in rel.parts) \
+                 and p.suffix != '.part' and '.part' not in p.name:
+-            yield rel.as_posix(), p
++            yield unicodedata.normalize('NFC', rel.as_posix()), p       # MAC-NFC: the name in the zip is always the composed form
+ 
+ 
+ def _needs_full(lay, st) -> str:
+diff -u -r a/work/localapp/app/src/station/rename_files.py b/work/localapp/app/src/station/rename_files.py
+--- a/work/localapp/app/src/station/rename_files.py	2026-11-04 15:17:20.622030883 +0000
++++ b/work/localapp/app/src/station/rename_files.py	2026-11-04 15:19:02.268843704 +0000
+@@ -21,6 +21,7 @@
+ import json
+ import os
+ import re
++import unicodedata
+ from pathlib import Path
+ 
+ COVERAGE, ORIGINALS = 'Coverage', 'Originals'
+@@ -67,7 +68,7 @@
+         with os.scandir(y) as it:
+             for e in it:
+                 if e.is_file():
+-                    idx.setdefault(e.name, []).append(y.name)
++                    idx.setdefault(unicodedata.normalize('NFC', e.name), []).append(y.name)       # MAC-NFC
+     return idx
+ 
+ 

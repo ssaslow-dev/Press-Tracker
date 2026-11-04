@@ -1,0 +1,25 @@
+diff -u -r a/work/localapp/app/src/station/refresh.py b/work/localapp/app/src/station/refresh.py
+--- a/work/localapp/app/src/station/refresh.py	2026-11-04 15:19:02.276979009 +0000
++++ b/work/localapp/app/src/station/refresh.py	2026-11-04 15:19:02.283221023 +0000
+@@ -257,7 +257,8 @@
+     except (zipfile.BadZipFile, OSError) as e:
+         raise RefreshRefused('BAD_ZIP', f'not a readable zip file: {e}')
+     with z:
+-        infos = [i for i in z.infolist() if not i.filename.endswith('/')]
++        # MAC-JUNK: a zip re-zipped in Finder carries __MACOSX/ and .DS_Store entries; they are not part of the refresh
++        infos = [i for i in z.infolist() if not i.filename.endswith('/') and not i.filename.startswith('__MACOSX/') and os.path.basename(i.filename) != '.DS_Store']
+         if len(infos) > CAP_ENTRIES:
+             raise RefreshRefused('TOO_MANY_FILES', 'the refresh holds more files than a refresh may have')
+         seen, total = set(), 0
+diff -u -r a/work/localapp/app/src/station/rename_files.py b/work/localapp/app/src/station/rename_files.py
+--- a/work/localapp/app/src/station/rename_files.py	2026-11-04 15:19:02.277835254 +0000
++++ b/work/localapp/app/src/station/rename_files.py	2026-11-04 15:19:02.283633280 +0000
+@@ -67,7 +67,7 @@
+             continue
+         with os.scandir(y) as it:
+             for e in it:
+-                if e.is_file():
++                if e.is_file() and not e.name.startswith('.'):       # MAC-JUNK: .DS_Store and ._ files
+                     idx.setdefault(unicodedata.normalize('NFC', e.name), []).append(y.name)       # MAC-NFC
+     return idx
+ 
