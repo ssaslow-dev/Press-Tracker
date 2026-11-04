@@ -1,0 +1,34 @@
+Article ID,current Story ID,decision,new group label,becomes Original,reason
+07129,s00044,keep,,no,full Chinese translation of the AP story (same facts and quotes); Sohu is an aggregator and never an Original
+07119,s00044,keep,,no,condensed Chinese rewrite of the same AP story; Sohu is an aggregator and never an Original
+00986,s00252,keep,,no,CE Noticias machine translation of the El Tiempo story, same day
+00991,s00252,keep,,no,CE Noticias Portuguese version of the same text, same day
+01317,s00353,keep,,no,AP's own Spanish translation ("traducida del ingles por un editor de AP"), AP byline, same day; byline match lost only to accents
+07806,s00353,keep,,no,"""Por Tran Nguyen, The Associated Press"", AP Spanish text, next day"
+07807,s00353,keep,,no,same AP Spanish text and byline as 07806, same day
+01531,s00430,keep,,no,CE Noticias Portuguese translation of the AP fire-money story, next day
+01532,s00430,keep,,no,second CE Noticias Portuguese translation of the same AP text (Sacramento dateline), next day
+08040,s00479,keep,,no,La Presse Canadienne is AP's Canadian distributor: same byline, same day, AP credit in the text
+01829,s00512,keep,,yes,Sammy decision 7: English becomes the Original; same-day tie among nine, lowest Article ID (the save program's originals order settles the tie)
+01830,s00512,keep,,no,Sammy decision 7: English copy stays in the story
+01831,s00512,keep,,no,Sammy decision 7: English copy stays in the story
+01832,s00512,keep,,no,Sammy decision 7: English copy stays in the story
+01833,s00512,keep,,no,Sammy decision 7: English copy stays in the story
+01834,s00512,keep,,no,Sammy decision 7: English copy stays in the story
+01835,s00512,keep,,no,Sammy decision 7: English copy stays in the story
+01836,s00512,keep,,no,Sammy decision 7: English copy stays in the story
+01837,s00512,keep,,no,Sammy decision 7: English copy stays in the story
+01846,s00519,keep,,no,CE Noticias machine translation of the El Pais story, same day
+01926,s00546,keep,,no,CE Noticias machine translation of the El Imparcial story, same day
+02885,s00827,keep,,no,CE Noticias machine translation of the Metro Puerto Rico story, same day
+02914,s00853,keep,,no,CE Noticias machine translation of the Expansion story, same day
+02960,s00853,keep,,no,CE Noticias Portuguese version of the same Expansion text, same day
+03482,s00985,keep,,yes,Sammy decision 7: earliest English row becomes the Original (06-16 tie with 03483, lowest Article ID)
+03483,s00985,keep,,no,Sammy decision 7: English copy stays in the story ("originally published by CalMatters")
+03484,s00985,keep,,no,Sammy decision 7: English copy stays in the story
+03485,s00985,keep,,no,Sammy decision 7: English copy stays in the story
+03486,s00985,keep,,no,the CalMatters text word for word with a "-CalMatters" sign-off; the byline cell (D. Scot Miller) is wrong, not the story
+01920,s00552,split,s00552/Korean,yes,a different article (Korean titanium-dioxide explainer on a chemical supplier's site) that mentions the bill once; not a translation of the USA Today story; Sammy to say whether it is coverage at all
+02117,s00610,keep,,no,CalMatters' own Spanish version in La Prensa Sonoma, same byline, 3 days later
+02118,s00610,keep,,no,same CalMatters Spanish text and byline in the Press Democrat, 3 days later
+04685,s01422,keep,,no,Sacramento Bee story translated in the same McClatchy house (Vida en el Valle), co-byline adds the translator, 8 days later
