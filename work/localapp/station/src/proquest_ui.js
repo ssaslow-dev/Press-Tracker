@@ -89,7 +89,7 @@ function pqDrawAll() {
   const rows = items.slice().sort((a, b) => rank(a) - rank(b));
   $('#pqBody').innerHTML = rows.slice(0, 600).map(it => {
     const st = PQS.added.has(it.key) ? (PQS.lastItems && PQS.lastItems[it.key] || { status: 'added' }).status : it.screen.status, p = it.p, can = (it.screen.status === 'new' || it.screen.status === 'reprint') && !PQS.added.has(it.key);
-    const note = (PQS.lastItems && PQS.lastItems[it.key] && PQS.lastItems[it.key].why) || it.screen.why, flags = (p.flags || []).length ? ' <span class="nb-flag" title="' + esc(p.flags.join('; ')) + '">check</span>' : '';
+    const note = ((PQS.lastItems && PQS.lastItems[it.key] && PQS.lastItems[it.key].why) || it.screen.why) + xdNoteOf(it), flags = (p.flags || []).length ? ' <span class="nb-flag" title="' + esc(p.flags.join('; ')) + '">check</span>' : '';
     const lk = PQS.lastItems && PQS.lastItems[it.key] && PQS.lastItems[it.key].link ? ' · <a href="' + esc(PQS.lastItems[it.key].link) + '" target="_blank" rel="noopener noreferrer">own page</a>' : '';
     return '<tr class="nb-r nb-' + esc(st) + '"><td>' + (can ? '<input type="checkbox" data-pqk="' + esc(it.key) + '"' + (it.include ? ' checked' : '') + ' aria-label="Include">' : '') + '</td><td>' + esc(PQ_LABEL[st] || st) + (it.screen.of ? ' <small>' + esc(it.screen.of) + '</small>' : '') + '</td><td>' + esc(p.date || '') + '</td><td>' + esc(p.outlet_clean || '') + '</td><td>' + esc(p.headline || '(' + it.batch.name + ')') + flags + lk + '</td><td class="nb-note">' + esc(note || '') + '</td></tr>';
   }).join('');

@@ -42,7 +42,7 @@ function makeMemDb() {
           return {
             id, path: name + '/' + id,
             async get() { const has = c.docs.has(id); return { id, exists: has, data: () => (has ? clone(c.docs.get(id)) : undefined) }; },
-            async set(data) { const d = clone(data); if (name === 'runs' && d && Array.isArray(d.rows)) prAnnotateRows(d.rows, pg => col('pages').docs.get(pg)); c.docs.set(id, d); track(name, id, d); notify(c); },
+            async set(data) { const d = clone(data); if (name === 'runs' && d && Array.isArray(d.rows)) prAnnotateRows(d.rows, pg => col('pages').docs.get(pg)); c.docs.set(id, d); track(name, id, d); notify(c); if (name === 'runs' && d && d.status === 'done' && S.loaded) xdSoon(); },
             async update(data) { const d = Object.assign({}, c.docs.get(id) || {}, clone(data)); c.docs.set(id, d); track(name, id, d); notify(c); },
             async delete() { c.docs.delete(id); track(name, id, null); notify(c); },
             onSnapshot(cb) { const f = c.subs.add(cb) && (() => c.subs.delete(cb)); queueMicrotask(() => { try { cb({ id, exists: c.docs.has(id), data: () => clone(c.docs.get(id)) }); } catch (e) {} }); return f; },
@@ -190,7 +190,7 @@ async function recover() {
     S.seq = Math.max(S.seq, ...items.map(g => g.seq));
     for (const g of items) { const c = mem.collection(g.coll); if (!sess[g.coll] && g.coll !== 'clips') continue; await c.doc(g.id).set(g.data); }
   } finally { S.recovering = false; }
-  S.recoverable = null; $('#stRecover').hidden = true; updatePackUi();
+  S.recoverable = null; $('#stRecover').hidden = true; updatePackUi(); xdSoon();
 }
 
 /* ---------- step 1: read the file ---------- */
@@ -379,6 +379,7 @@ function updatePackUi() {
 }
 async function pack() {
   if (S.busyPack) return null;
+  try { await xdReconcile(); } catch (e) { console.warn('cross-source check failed', e); }   // N7: a story two sources found is in the folder once
   const p = pending(); if (!p.runs.length) return null;
   S.busyPack = true; updatePackUi(); $('#stPackWarn').hidden = true; $('#stPackWarn').innerHTML = '';
   const warns = [];
@@ -466,6 +467,75 @@ async function saveFile(filename, bytes) {
   if (dl) { try { await dl.save({ filename, data: blob }); return; } catch (e) { if (e && e.code === 'declined') return; if (e && e.code === 'rate_limited') { toastMsg('A download is already waiting for you to confirm.'); return; } } }
   const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 5000);
 }
+/* ---------- N7: one story found by two sources in this session is offered once ----------
+   After any run is finished (and before the update folder is made) the session's proposed rows are compared across sources (the plan is made by src/newsbank.js, which has the tracker's own
+   duplicate tests). The web find's row stays and takes the other source's links and citation into its blank cells (a story from two PDF sources: the one added first); another outlet's copy
+   becomes a reprint row of the story that ran first. The folded row, its saved page and its tone/author/translation documents leave the update, and the reason is listed under "left out". */
+S.xdFolds = []; S.xdNotes = new Map(); S.xdLog = []; let xdTimer = 0, xdBusy = false;
+const SRC_LABEL = { nb: 'NewsBank', pq: 'ProQuest', pp: 'a newspaper page', web: 'the web search' };
+const xdSrcOf = row => /newsbank/i.test(row['Data Source'] || '') ? 'nb' : /proquest/i.test(row['Data Source'] || '') ? 'pq' : /^print page/i.test(row['Data Source'] || '') ? 'pp' : 'web';
+const xdBlank = v => v === undefined || v === null || String(v).trim() === '';
+function xdSoon() { if (S.recovering) return; clearTimeout(xdTimer); xdTimer = setTimeout(() => { xdReconcile().catch(e => console.warn('cross-source check failed', e)); }, 400); }
+const xdNoteOf = it => { const c = it && it.r && it.r.id; return c && S.xdNotes.has(c) ? ' ' + S.xdNotes.get(c) : ''; };
+const XD_RM = ['Topic', 'Tone', 'Tone note', 'Tone rated by', 'Bills', '# of reprints', 'Translated Headline', 'Story in English', 'Mentions "Gabriel" in text', 'File name', 'Saved Copy?'];
+async function xdReconcile() {
+  if (xdBusy || !S.loaded || !window.__nb || !window.__nb.xdPlan) return 0;
+  xdBusy = true;
+  try {
+    const work = new Map(), dirty = new Set();
+    const doc = id => { if (!work.has(id)) { const v = sess.runs.get(id); work.set(id, v ? clone(v.data) : null); } return work.get(id); };
+    for (const [id] of sess.runs) doc(id);
+    // a folded cell the web run's own later save wiped out is put back (blank cells only)
+    for (const f of S.xdFolds) { const d = work.get(f.run), row = d && (d.rows || []).find(r => r['Article ID'] === f.aid); if (!row) continue; for (const [c, v] of Object.entries(f.cells)) if (xdBlank(row[c])) { row[c] = v; dirty.add(f.run); } }
+    const ops = window.__nb.xdPlan([...work].filter(([, d]) => d && Array.isArray(d.rows)).map(([id, d]) => ({ id, at: d.at || '', status: d.status, rows: d.rows })));
+    const gone = { pages: new Set(), authors: new Set(), translations: new Set(), tones: new Set() };
+    let n = 0;
+    for (const op of ops) {
+      const pd = work.get(op.p.run), sd = work.get(op.s.run); if (!pd || !sd) continue;
+      const prow = pd.rows.find(r => r['Article ID'] === op.p.aid), srow = sd.rows.find(r => r['Article ID'] === op.s.aid); if (!prow || !srow) continue;
+      const sSid = srow['Story ID'] || '', sCode = String(srow['Tracker story code'] || ''), pSid = prow['Story ID'] || '', pCode = String(prow['Tracker story code'] || '');
+      const kids = sSid ? sd.rows.filter(r => r !== srow && r['Original or reprint'] === 'Reprint' && r['Story ID'] === sSid) : [];
+      const toP = String(pd.at || '') < String(sd.at || '');   // P's run comes first: its Original is placed before S's run is read, so S's rows can stay where they are
+      const hl = String(srow['Headline'] || '').slice(0, 120), sl = SRC_LABEL[xdSrcOf(srow)], pl = SRC_LABEL[xdSrcOf(prow)];
+      const place = rows => { rows.forEach(r => { r['Story ID'] = pSid; if (!toP) { sd.rows = sd.rows.filter(x => x !== r); pd.rows.push(r); } }); };
+      if (op.kind === 'same') {
+        const cells = {};
+        for (const c of window.__nb.xdFold) if (xdBlank(prow[c]) && !xdBlank(srow[c])) { prow[c] = srow[c]; cells[c] = srow[c]; }
+        if (cells['Publisher link'] && xdBlank(prow['Link status']) && srow['Link status']) { prow['Link status'] = srow['Link status']; cells['Link status'] = srow['Link status']; }
+        prow['Team note'] = [prow['Team note'], 'also found by ' + sl + ' (“' + hl.slice(0, 80) + '”, ' + (srow['Date'] || '') + '): that copy was merged into this row'].filter(Boolean).join('; ').slice(0, 900);
+        if (Object.keys(cells).length) S.xdFolds.push({ run: op.p.run, aid: op.p.aid, cells });
+        sd.rows = sd.rows.filter(r => r !== srow);
+        place(kids);
+        sd.left = (sd.left || []).concat([{ hl: hl.slice(0, 200), outlet: String(srow['Outlet'] || '').slice(0, 120), date: srow['Date'] || '', why: 'the same story as the one ' + pl + ' found (' + op.why + '): shown once, its links and citation were added to that row' }]).slice(0, 150);
+        [sCode, srow._page].filter(Boolean).forEach(k => { gone.pages.add(k); gone.authors.add(k); gone.translations.add(k); gone.tones.add(k); });
+        S.xdNotes.set(sCode, 'Same story as one ' + pl + ' found: shown once (' + op.why + ').');
+      } else {
+        // another outlet's copy: it becomes a Reprint row of the story that ran first
+        XD_RM.forEach(c => { delete srow[c]; });
+        Object.assign(srow, { 'Original or reprint': 'Reprint', 'Story ID': pSid, 'Tracker story code': '', _page: srow._page || sCode });
+        delete srow._origin; delete srow._found_by;
+        srow['Team note'] = [srow['Team note'], 'also found by ' + sl + ': filed as a reprint of the story ' + pl + ' found (' + op.why + ')'].filter(Boolean).join('; ').slice(0, 900);
+        if (!toP) { sd.rows = sd.rows.filter(r => r !== srow); pd.rows.push(srow); }
+        place(kids);
+        [sCode].filter(Boolean).forEach(k => { gone.authors.add(k); gone.translations.add(k); gone.tones.add(k); });
+        const rp = { story: pCode, outlet: String(srow['Outlet'] || '').slice(0, 120) };
+        pd.reprints = (pd.reprints || []).concat([rp].concat(kids.map(k => ({ story: pCode, outlet: String(k['Outlet'] || '').slice(0, 120) }))));
+        S.xdNotes.set(sCode, 'Another outlet’s copy of a story ' + pl + ' found: filed as its reprint.');
+      }
+      if (sCode) { sd.stories = (sd.stories || []).filter(x => x !== sCode); sd.reprints = (sd.reprints || []).filter(x => !(x && x.story === sCode)); }
+      if (op.kind === 'same' && kids.length) pd.reprints = (pd.reprints || []).concat(kids.map(k => ({ story: pCode, outlet: String(k['Outlet'] || '').slice(0, 120) })));
+      dirty.add(op.p.run); dirty.add(op.s.run); n++;
+      S.xdLog.push((op.kind === 'same' ? 'Shown once: ' : 'Filed as a reprint: ') + hl + ' (' + sl + ' and ' + pl + ')');
+    }
+    if (!dirty.size) return 0;
+    for (const id of dirty) { const d = work.get(id); if (d) await mem.collection('runs').doc(id).set(d); }
+    for (const [c, ids] of Object.entries(gone)) for (const id of ids) if (sess[c].has(id)) await mem.collection(c).doc(id).delete();
+    const el = $('#stDupNote'); if (el && S.xdLog.length) { el.innerHTML = S.xdLog.map(x => '<li>' + esc(x) + '</li>').join(''); el.hidden = false; }
+    if (n) toastMsg(n === 1 ? 'One story found by two sources is shown once.' : n + ' stories found by two sources are shown once.');
+    updatePackUi(); if (typeof nbDrawAll === 'function') { nbDrawAll(); if (typeof pqDrawAll === 'function') pqDrawAll(); }
+    return n;
+  } finally { xdBusy = false; }
+}
 /*NB_UI*/
 /*PQ_UI*/
 function toastMsg(t) { const el = document.getElementById('toast'); if (!el) return; el.textContent = t; el.hidden = false; setTimeout(() => { el.hidden = true; }, 4000); }
@@ -549,7 +619,7 @@ function init() {
   setInterval(updatePackUi, 1000);
   const au = $('#stAuto'); if (au) { au.checked = S.auto; au.addEventListener('change', () => { S.auto = au.checked; try { localStorage.setItem('ajg_station_auto', S.auto ? '1' : '0'); } catch (e) { /* no storage: the choice lasts for this page only */ } }); }
   setInterval(autoTick, 1000);
-  window.__station = { state: S, sess, pack, pending, zipStore, loadFile, mirrorBusy: () => mirroring || mirrorQ.size > 0, mirrorFail: () => mirrorFail };   // for the tests
+  window.__station = { state: S, sess, pack, pending, zipStore, loadFile, xdReconcile, mem, mirrorBusy: () => mirroring || mirrorQ.size > 0, mirrorFail: () => mirrorFail };   // for the tests
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

@@ -73,12 +73,12 @@ function plan(opts) {
       }
       const a = pad(aid++, 5);
       const doc = pageDocId(obj, pages), d = doc ? pages[doc] : null;
-      const fmt = d && d.nb ? 'nb' : d && d.pq ? 'pq' : 'ws', year = yearOf(obj, today);
+      const pageNew = !!(d && d.nb && d.nb.kind === 'print_page' && d.nb.as === 'new'), fmt = pageNew ? 'ws' : d && d.nb ? 'nb' : d && d.pq ? 'pq' : 'ws', year = yearOf(obj, today);
       const it = { run: run.id, row: ri, doc, aid: a, sid, kind: kind === 'Reprint' ? 'r' : 'o', fmt, year, copy: '', raw: '', pdf: '', pdf_for: '' };
       if (d) {
         const st = stem(fmt, a, kind, sid);
         if (fmt === 'nb') {
-          if (d.nb.file) { it.copy = libName('', year, st + '.pdf'); it.pdf_for = String(d.nb.file); files.push({ path: it.copy, kind: 'pdf', pdfFor: it.pdf_for, doc }); }
+          if (d.nb.file && d.nb.kind !== 'print_page') { it.copy = libName('', year, st + '.pdf'); it.pdf_for = String(d.nb.file); files.push({ path: it.copy, kind: 'pdf', pdfFor: it.pdf_for, doc }); }
         } else if (fmt === 'pq') {
           const t = String(d.clean || ''); if (t.trim()) { it.copy = libName('', year, st + '.html'); files.push({ path: it.copy, kind: 'html', text: t, doc }); }
           if (d.pq.file) { it.pdf = libName('_original_pdf', year, st + '.pdf'); it.pdf_for = String(d.pq.file); files.push({ path: it.pdf, kind: 'pdf', pdfFor: it.pdf_for, doc }); }
@@ -87,7 +87,7 @@ function plan(opts) {
           if (t.trim() && wordsIn(t) >= MIN_COPY_WORDS) {
             it.copy = libName('', year, st + '.html'); files.push({ path: it.copy, kind: 'html', text: t, doc });
             // the save keeps the page as fetched under _original_html whenever cleaning changed it, which is nearly always: the station names it too (the fullest page it holds)
-            it.raw = libName('_original_html', year, st + '.html'); files.push({ path: it.raw, kind: 'html', text: cl.trim() ? cl : sc, doc });
+            if (!pageNew) it.raw = libName('_original_html', year, st + '.html'); if (it.raw) files.push({ path: it.raw, kind: 'html', text: cl.trim() ? cl : sc, doc });
           }
         }
       }
