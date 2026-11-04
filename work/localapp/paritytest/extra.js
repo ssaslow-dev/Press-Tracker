@@ -6,13 +6,14 @@ module.exports = (T, H) => {
   // db contents through the page's own window.claude (the live side: in-memory stand-in; the PC side: its file store). Times are normalised.
   const dump = (p, cols) => p.evaluate(async cols => {
     const db = await window.claude.use('db'), out = {};
-    const norm = v => Array.isArray(v) ? v.map(norm) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).sort().map(([k, x]) => [k, norm(x)])) :
-      typeof v === 'number' && v > 1e11 ? 'TS' : typeof v === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d/.test(v) ? 'ISO' : v;
+    const TIMEKEY = /(^|_)(at|ts|time)$|updated|created|saved|stamp/i;   // only fields named like a time are normalised (the PC stamps with the real clock, the stand-in with the fixed one)
+    const norm = (v, k) => Array.isArray(v) ? v.map(x => norm(x, k)) : v && typeof v === 'object' ? Object.fromEntries(Object.entries(v).sort().map(([k2, x]) => [k2, norm(x, k2)])) :
+      TIMEKEY.test(k || '') && typeof v === 'number' && v > 1e11 ? 'TS' : TIMEKEY.test(k || '') && typeof v === 'string' && /^\d{4}-\d\d-\d\dT\d\d:\d\d/.test(v) ? 'ISO' : v;
     for (const c of cols) { const s = await db.collection(c).get(); out[c] = s.docs.map(d => [d.id, norm(d.data())]).sort((a, b) => a[0] < b[0] ? -1 : 1); }
     return out; }, cols);
-  const sheetFull = p => p.evaluate(() => { const s = document.querySelector('#sheet'); const t = s.innerText; let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0;
+  const sheetFull = (p, strip) => p.evaluate(strip => { const s = document.querySelector('#sheet'); if (strip) s.querySelectorAll('[data-lk="po"]').forEach(a => (a.closest('.lkw') || a).remove()); const t = s.innerText; let h = 0; for (let i = 0; i < t.length; i++) h = (h * 31 + t.charCodeAt(i)) | 0;
     return { open: !s.hidden, len: t.length, hash: h, h2: (s.querySelector('h2') || {}).textContent, links: [...s.querySelectorAll('a[href]')].map(a => a.textContent.trim().slice(0, 40) + '>' + a.getAttribute('href')).join('|'),
-      btns: [...s.querySelectorAll('button')].map(b => b.textContent.trim()).filter(Boolean).join('|'), imgs: s.querySelectorAll('img').length }; });
+      btns: [...s.querySelectorAll('button')].map(b => b.textContent.trim()).filter(Boolean).join('|'), imgs: s.querySelectorAll('img').length }; }, !!strip);
   const openStory = async (p, n) => { await p.click('nav.tabs button[data-tab=db]'); await sleep(1200); await p.fill('#q', ''); await sleep(900);
     await p.locator('#tbody tr[data-id]').nth(n).locator('td').nth(1).click(); await sleep(2200); };
   const openById = async (p, id) => { const hl = await p.evaluate(id => JSON.parse(document.getElementById('data').textContent).find(r => r.id === id).hl, id);
@@ -66,7 +67,17 @@ module.exports = (T, H) => {
 
   T.every_tab = async (p, base, out) => {
     out.tabs = await p.evaluate(() => [...document.querySelectorAll('nav.tabs button[data-tab]')].filter(b => !b.hidden).map(b => b.id + ':' + b.textContent.trim()));
-    out.masthead = await p.evaluate(() => (document.querySelector('header') || document.body).innerText.replace(/\s+/g, ' ').replace(/Update database |Refresh from files |Tracker files |Last updated [A-Z][a-z]+ \d+, \d{4} ?/g, '').slice(0, 400));   // recorded exceptions: hidden Update and Refresh buttons, the Tracker files button, LASTUPDATED-v1
+    // the PC's own additions are asserted on the PC (and must be absent on the reference), then taken out of the text; nothing else is stripped (ALLOWED_AUDIT.md item 2)
+    out.masthead = await p.evaluate(({ pc, exp }) => {
+      const h = document.querySelector('header') || document.body, tf = h.querySelector('#ajgf-btn'), lu = document.getElementById('ajg-lastupd');
+      if (pc) {
+        if (!tf || tf.textContent.trim() !== 'Tracker files' || tf.offsetParent === null) throw new Error('the Tracker files button is missing, hidden or reworded: ' + (tf && tf.textContent));
+        if (exp && !(lu && lu.textContent.trim().toLowerCase() === exp.toLowerCase())) throw new Error('Last updated shows ' + (lu && lu.textContent) + ', expected ' + exp);
+        if (!exp && lu) throw new Error('Last updated shows without a save: ' + lu.textContent);
+      } else if (tf || lu) throw new Error('the reference page has a PC-only element');
+      const c = h.cloneNode(true); c.querySelectorAll('#ajgf-btn,#ajg-lastupd').forEach(e => e.remove());
+      return c.textContent.replace(/\s+/g, ' ').trim().slice(0, 400);
+    }, { pc: p.__target === 'pc', exp: process.env.PT_LASTUPD || '' });
     out.home = await tabText(p);
     out.homeFacts = await p.evaluate(() => [...document.querySelectorAll('#view-ov .tile, #view-ov .card, #view-ov .stat')].slice(0, 40).map(e => e.innerText.replace(/\s+/g, ' ').slice(0, 80)).join('|'));
     for (const t of await p.evaluate(() => [...document.querySelectorAll('nav.tabs button[data-tab]')].filter(b => !b.hidden).map(b => b.id))) {
@@ -99,6 +110,26 @@ module.exports = (T, H) => {
     out.facet = await p.evaluate(() => [...document.querySelectorAll('#view-db input[data-f]')].filter(i => /reprint|repeat|also/i.test(i.dataset.f + ' ' + (i.closest('label') || {}).innerText)).map(i => i.dataset.f + ':' + i.value + ':' + (i.closest('label') || {}).innerText.replace(/\s+/g, ' ')).slice(0, 10));
     return out; };
   async function openRailSafe(p) { const open = await p.evaluate(() => document.querySelector('#view-db #rail').getBoundingClientRect().right > 20); if (!open) { await p.click('#openRail'); await sleep(500); } }
+
+  // VIEWORIG-v1: a row with a print original (PT_PO_AID) shows "View original" on the PC only; asserted there, then taken out before the sheets are compared
+  T.view_original = async (p, base, out) => {
+    const aid = process.env.PT_PO_AID; if (!aid) { out.skipped = 'no print original in this pass'; return out; }
+    const id = await p.evaluate(aid => { const r = JSON.parse(document.getElementById('data').textContent).find(r => r.aid === aid); return r && r.id; }, aid);
+    await openById(p, id);
+    const link = await p.evaluate(() => [...document.querySelectorAll('#sheet [data-lk="po"]')].map(a => a.getAttribute('href') + '|' + a.textContent.replace(/\s+/g, ' ').trim()));
+    if (p.__target === 'pc') { if (link.length !== 1 || !/^\/library\/_original_pdf\/2026\/\d{5}_p\d+\.pdf\|View original/.test(link[0])) throw new Error('View original: ' + JSON.stringify(link)); }
+    else if (link.length) throw new Error('the reference shows View original');
+    out.sheet = await sheetFull(p, true); out.id = id; return out; };
+
+  // PHOTOLINK-v1: a saved copy whose photos are links (the runner swapped one embedded photo of PT_PHOTO_ID for a web address on both sides): same frame, same sources
+  T.linked_photo = async (p, base, out) => {
+    const id = process.env.PT_PHOTO_ID; if (!id) { out.skipped = 'not prepared'; return out; }
+    await openById(p, id);
+    out.frame = await p.evaluate(async () => { const f = document.querySelector('#doc iframe'); if (!f) return { frame: false }; const d = f.contentDocument; await new Promise(r => setTimeout(r, 1500));
+      const src = i => { const s = i.getAttribute('src') || ''; return s.startsWith('data:') ? 'data' : s.replace(/^https?:\/\/127\.0\.0\.1:\d+/, ''); };
+      return { frame: true, n: d.images.length, srcs: [...d.images].map(src).join('|'), sandbox: f.getAttribute('sandbox'), h1: (d.querySelector('h1') || {}).textContent, remote: [...d.images].filter(i => /^https?:/.test(i.getAttribute('src') || '')).length }; });
+    if (!out.frame.remote) throw new Error('the prepared copy has no linked photo: ' + JSON.stringify(out.frame));
+    return out; };
 
   T.exports_more = async (p, base, out) => {   // the whole-file download (workbook), per-tab exports at default state, and a filtered export
     await p.click('nav.tabs button[data-tab=db]'); await sleep(1200);

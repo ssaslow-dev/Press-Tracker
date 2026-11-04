@@ -12,3 +12,4 @@ build/tests/tabs/srv/stub.html
 build/tests/tabs/srv/v18.html
 build/tests/tabs/srv/blocks/data.json
 work/tests_out/
+ref_patch_diff.NEW.txt

@@ -1,6 +1,6 @@
 --- a/tracker.js
 +++ b/tracker.js
-@@ -6382,2 +6382,38 @@
+@@ -6382,2 +6382,37 @@
    try { document.head.insertAdjacentHTML('beforeend', '<style id="stuckcorner-css">table.db.hdr-stuck thead th{border-top-left-radius:0!important;border-top-right-radius:0!important}</style>'); } catch(e){}
 +  /* TIDY-v1: layout fixes of the PC tracker (patch 15); one style block, last in the head */
 +  try { document.head.insertAdjacentHTML('beforeend', '<style id="tidy-css">' + `
@@ -14,7 +14,7 @@
 +:root .card>.tablewrap>table.db>thead>tr>th:last-child::before{right:-1px;border-top-right-radius:10px}
 +:root .card>.tablewrap>table.db.hdr-stuck>thead>tr>th::before{border-radius:0}
 +}
-+/* 2. a list tab never grows wider than the window; Outlets and Reporters drop their least needed columns instead */
++/* 2. a list tab never grows wider than the window; Outlets drops its least needed columns instead */
 +:root .tt>.tt-head,:root .tt>.grid-clips{min-width:0}
 +@media (min-width:761px) and (max-width:1299px){   /* Outlets: Publisher, Originals and Top reporters leave first; the last column left gets the header's rounded corner */
 +:root .tt[data-tt-id="outlets"] table.db :is(th,td):is(:nth-child(2),:nth-child(4),:nth-child(10)){display:none}
@@ -22,7 +22,6 @@
 +:root .tt[data-tt-id="outlets"] .card>.tablewrap>table.db>thead>tr>th:nth-child(9)::before{right:-1px;border-top-right-radius:10px}
 +:root .tt[data-tt-id="outlets"] .card>.tablewrap>table.db.hdr-stuck>thead>tr>th:nth-child(9)::before{border-radius:0}}
 +@media (min-width:761px) and (max-width:859px){:root .tt[data-tt-id="outlets"] table.db :is(th,td):is(:nth-child(5),:nth-child(6)){display:none}}
-+@media (min-width:761px) and (max-width:999px){:root .tt[data-tt-id="reporters"] table.db :is(th,td):nth-child(4){display:none}}
 +/* 3. Top issues cells: one issue per line, never split, the count on the same line */
 +:root .tiss-list{display:grid;gap:2px;justify-items:start}
 +:root .tiss{white-space:nowrap}

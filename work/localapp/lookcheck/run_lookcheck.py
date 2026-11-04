@@ -103,7 +103,7 @@ def main():
                 subprocess.run(cmd, check=False, env=env)
             for name, ref_dir in (('exception_applied', 'refhide'), ('raw', 'ref')):
                 cmd = [sys.executable, '-I', str(HERE / 'compare.py'), '--a', str(a.out / vp / ref_dir), '--b', str(a.out / vp / 'pc'), '--out', str(a.out / vp / ('diff_' + ref_dir)),
-                       '--json', str(a.out / f'results_{vp}_{name}.json')]
+                       '--json', str(a.out / f'results_{vp}_{name}.json')] + (['--reflow'] if name == 'raw' else [])
                 if a.only:
                     cmd += ['--only', a.only]
                 print('>>', name, vp, flush=True)

@@ -7,7 +7,7 @@ Sammy: "ensure that there's a final test that compares artifact functionality to
     export AJG_SCRATCH=<a scratch folder>          # holds the inputs below; any folder outside the repository
     python3 -I work/localapp/paritytest/run_paritytest.py [--vp 1440x900] [--only edits,every_tab] [--build "…/AJG Tracker"] [--live-site DIR]
 
-Takes about 25 minutes. Exit code 0 and the last line `PARITYTEST: PASS` mean no un-allowed difference. Results: `$AJG_SCRATCH/paritytest_out/parity/<vp>_<test>.{ref,pc}.json` (every outcome, both sides) and `<vp>_summary.json` (differences and the allowed ones, with reasons).
+Takes about 40 minutes. Exit code 0 and the last line `PARITYTEST: PASS` mean no un-allowed difference. Results: `$AJG_SCRATCH/paritytest_out/parity/<vp>_<test>.{ref,pc}.json` (every outcome, both sides) and `<vp>_summary.json` (differences and the allowed ones, with reasons).
 
 Inputs (both from the SAME workbook, sha256 `0bccc1fc`):
 - `--live-site` (default `$AJG_SCRATCH/live_v65`): the live tracker's published files (`index.html`, `articles/`, `copies/`, `img/`, `data/`), fetched read-only. The live artifact and its database are never touched. Served by a plain static server on 127.0.0.1.
@@ -32,9 +32,29 @@ The live page keeps notes, saved views, edits and runs in the artifact database 
 | `reprint_groups` | the stories that carry reprints and "also ran" outlets: their sheets and counts |
 | `exports_more` | CSV and spreadsheet exports under a date filter |
 
+## What the reference page gets (and the guard)
+
+The reference page is the live page plus exactly what the PC build also does to the page, because those are the recorded exceptions: the layout and wording patches 15, 16, 17, 27 and the wording lists 18 and 21 (`assemble_app.patch_index_tidy`: TIDY-v1, NOTE-v1, VIEWORIG-v1) and the rule that hides the Update, Refresh, tone, author and translation buttons (the same rule the PC's page server adds). A **guard** diffs the reference page before and after those patches and fails the run unless the changed lines are exactly the reviewed set (`ref_patch_diff.json`: line count and sha256). A new or edited patch therefore cannot slip into both sides unnoticed: review the lines (`ref_patch_diff.NEW.txt` is written), check them against the decisions, then update the file.
+
 ## Allowed differences
 
-`allowed.json` lists each one with its reason (path pattern and optional value patterns). Only the recorded exceptions are in it: SAMELOOK-v2 and its recorded follow-ups (the hidden Update, Refresh, tone, author and translation buttons; the Tracker files button and panel; TIDY-v1 layout and wording, which the reference page also receives from the same patch files; LASTUPDATED-v1; VIEWORIG-v1; the NOTE-v1 wording; purple press-release rows; the Other files column). Anything else that differs fails the run.
+None are suppressed. `allowed.json` is empty. The PC's three own additions are **asserted on the PC** and then taken out of the text before the two sides are compared (never regex-stripped on both sides):
+- the Tracker files button (`#ajgf-btn`, exactly the text "Tracker files", visible; absent on the reference);
+- "Last updated" (`#ajg-lastupd`, must equal the date of the ledger save the test copy carries, and be absent on a copy with no save);
+- "View original" (`[data-lk="po"]` on the story that has a print original: its link must point into `/library/_original_pdf/2026/`; absent on the reference).
+Everything else, including the wording and layout changes of the patches above, is the same on both sides by construction and any other difference fails.
+
+## Passes (1440x900 only)
+
+| pass | copy | interactions |
+|---|---|---|
+| light | keeper | all 21 (the 19 listed above plus `view_original` and `linked_photo`) |
+| dark (`prefers-color-scheme: dark`) | keeper | every tab, story sheet, tab tables, Manage, saved copy |
+| light | reader (MULTIPC-v2) | every tab, Manage, search, story sheet |
+
+Every interaction starts from a fresh hard-linked copy of the PC build with one save in its ledger and one print original in its library (the page is rebuilt so row 00056 carries it). `linked_photo` swaps one embedded photo of a saved copy for a web address on both sides and compares the opened copy (sources, count, sandbox; whether the picture loads depends on the network and is not compared). The clipboard is emptied before each Copy and a missing Copy button fails the test.
+
+Not covered here, by design: the Tracker files panel actions (Bring in update, Save my edits, Make refresh file, Accept the workbook) have no live counterpart; they rest on CHAINCHECK-v1 and the app tests. Widths other than 1440 are covered by the look check (`../lookcheck/`, 1440 and 960).
 
 ## Rerun rules
 

@@ -8,7 +8,7 @@ const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : d; };
 const REF = arg('ref'), PC = arg('pc'), OUT = arg('out'), VP = arg('vp', '1440x900'), ONLY = arg('only', '');
 const [VW, VH] = VP.split('x').map(Number);
-const EXTRA = arg('extra', ''), ALLOW = arg('allow', '');   // PARITYTEST-v1: more interactions (a module) and the list of allowed differences (JSON)
+const EXTRA = arg('extra', ''), ALLOW = arg('allow', ''), SCHEME = arg('scheme', 'light');   // SCHEME: light or dark (prefers-color-scheme)   // PARITYTEST-v1: more interactions (a module) and the list of allowed differences (JSON)
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const FIXED = new Date('2026-11-02T19:30:00-08:00');
 const STORY_OLD = process.env.LC_STORY_OLD || 's04743';
@@ -31,7 +31,7 @@ const MOCK = () => {   // the reference's stand-in for window.claude: in-memory 
 };
 
 async function newPage(browser, target, base, extra) {
-  const ctx = await browser.newContext({ viewport: { width: VW, height: VH }, deviceScaleFactor: 1, reducedMotion: 'reduce', locale: 'en-US', timezoneId: 'America/Los_Angeles', acceptDownloads: true });
+  const ctx = await browser.newContext({ viewport: { width: VW, height: VH }, deviceScaleFactor: 1, reducedMotion: 'reduce', colorScheme: SCHEME, locale: 'en-US', timezoneId: 'America/Los_Angeles', acceptDownloads: true });
   await ctx.clock.install({ time: FIXED });
   await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(base).origin }).catch(() => { });
   if (target === 'ref') {
@@ -45,7 +45,7 @@ async function newPage(browser, target, base, extra) {
       return route.continue();
     });
   }
-  const p = await ctx.newPage(); p.__base = base; p.__errors = [];
+  const p = await ctx.newPage(); p.__base = base; p.__target = target; p.__errors = [];
   p.on('pageerror', e => p.__errors.push(String(e).slice(0, 200)));
   await p.goto(base + ((extra && extra.hash) || ''), { waitUntil: 'load' });
   await p.waitForSelector('nav.tabs button[data-tab]', { timeout: 60000 });
@@ -138,8 +138,8 @@ T.downloads = async (p, base, out) => { await p.click('nav.tabs button[data-tab=
   await p.fill('#q', 'housing'); await sleep(1500);
   await exportMenu(p); out.csv = await download(p, () => p.click('[data-dl="csv"]'));
   await exportMenu(p); out.sheet = await download(p, () => p.click('[data-dl="sheet"]'));
-  await exportMenu(p); await p.click('#copyClips').catch(() => { }); await sleep(600); out.copyClips = await p.evaluate(() => navigator.clipboard.readText().then(t => ({ len: t.length, head: t.slice(0, 160) })).catch(e => 'noclip'));
-  await exportMenu(p); await p.click('#copySheet').catch(() => { }); await sleep(600); out.copySheet = await p.evaluate(() => navigator.clipboard.readText().then(t => ({ len: t.length, head: t.slice(0, 160) })).catch(e => 'noclip'));
+  await exportMenu(p); await p.evaluate(() => navigator.clipboard.writeText('')); await p.click('#copyClips'); await sleep(600);   // the clipboard is emptied first and a missing button fails the test (the two sides share one clipboard) out.copyClips = await p.evaluate(() => navigator.clipboard.readText().then(t => ({ len: t.length, head: t.slice(0, 160) })).catch(e => 'noclip'));
+  await exportMenu(p); await p.evaluate(() => navigator.clipboard.writeText('')); await p.click('#copySheet'); await sleep(600); out.copySheet = await p.evaluate(() => navigator.clipboard.readText().then(t => ({ len: t.length, head: t.slice(0, 160) })).catch(e => 'noclip'));
   // ticked stories: tick two rows, the bulk bar's CSV
   await p.fill('#q', ''); await sleep(1000); await p.locator('#tbody tr[data-id] input[type=checkbox]').nth(0).check().catch(() => { }); await p.locator('#tbody tr[data-id] input[type=checkbox]').nth(2).check().catch(() => { }); await sleep(500);
   out.bulk = await p.evaluate(() => (document.querySelector('#bulkN') || {}).textContent); if (await p.locator('#bkCsv').isVisible()) out.bulk_csv = await download(p, () => p.click('#bkCsv'));
@@ -185,13 +185,13 @@ function diff(a, b, pth, acc) {
     let extra = null;
     if (name === 'hash_routes') { const hs = [...new Set([...(a.hashes || []), ...(b.hashes || [])])]; const [ra, rb] = await Promise.all([hashRoutes(browser, 'ref', REF, hs), hashRoutes(browser, 'pc', PC, hs)]); extra = diff(ra, rb, 'route', []);
       a.routes = ra; b.routes = rb; }
-    fs.writeFileSync(path.join(OUT, 'parity', `${VP}_${name}.ref.json`), JSON.stringify(a, null, 1)); fs.writeFileSync(path.join(OUT, 'parity', `${VP}_${name}.pc.json`), JSON.stringify(b, null, 1));
+    fs.writeFileSync(path.join(OUT, 'parity', `${VP}${SCHEME === 'light' ? '' : '_' + SCHEME}_${name}.ref.json`), JSON.stringify(a, null, 1)); fs.writeFileSync(path.join(OUT, 'parity', `${VP}${SCHEME === 'light' ? '' : '_' + SCHEME}_${name}.pc.json`), JSON.stringify(b, null, 1));
     let d = diff(a, b, name, []); const ok = [];
     d = d.filter(x => { const r = allowedBy(name, x); if (r) { ok.push({ at: x.at, reason: r.reason }); return false; } return true; });
     summary[name] = { diffs: d.length, allowed: ok.length, allowed_list: ok, steps: Object.keys(a).length, crash: a.crash || b.crash || null, diff_list: d.map(x => ({ at: x.at, ref: x.ref, pc: x.pc })) };
     nd += d.length + ((a.crash || b.crash) ? 1 : 0); console.log(`${name}: ${d.length} differences (+${ok.length} allowed) in ${Object.keys(a).length} steps (${((Date.now() - t0) / 1000).toFixed(0)}s)${a.crash || b.crash ? ' CRASH ' + (a.crash || b.crash) : ''}`);
     d.slice(0, 8).forEach(x => console.log('   ', x.at, '\n      ref:', String(JSON.stringify(x.ref)).slice(0, 220), '\n      pc :', String(JSON.stringify(x.pc)).slice(0, 220)));
   }
-  { const sp = path.join(OUT, 'parity', `${VP}_summary.json`); let old = {}; try { old = JSON.parse(fs.readFileSync(sp, 'utf8')); } catch (e) { } fs.writeFileSync(sp, JSON.stringify(Object.assign(old, summary), null, 1)); }
+  { const sp = path.join(OUT, 'parity', `${VP}${SCHEME === 'light' ? '' : '_' + SCHEME}_summary.json`); let old = {}; try { old = JSON.parse(fs.readFileSync(sp, 'utf8')); } catch (e) { } fs.writeFileSync(sp, JSON.stringify(Object.assign(old, summary), null, 1)); }
   await browser.close(); process.exit(nd ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(2); });

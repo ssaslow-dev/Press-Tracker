@@ -1,0 +1,5 @@
+{
+ "sha256": "372822d03c8c5cebd5c2a5eb4a688e7912328a4749b3a96058f6fdb4a6906854",
+ "lines": 112,
+ "reviewed": "2026-11-04: patches 15 (TIDY-v1 1-4, 6), 16, 17 (TIDY-v1 3), 18 (TIDY-v1 6, PCEDITS-v1, MULTIPC-v2 wording), 21 (NOTE-v1), 27 (VIEWORIG-v1). The Reporters column hide of an earlier patch 15 was removed (not approved)."
+}

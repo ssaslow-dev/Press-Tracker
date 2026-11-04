@@ -34,7 +34,8 @@ def pixel_diff(a_png, b_png, masks, out_png):
     ca.paste(A, (0, 0)); cb.paste(B, (0, 0))
     a, b = np.array(ca), np.array(cb)
     for m in masks:
-        pad = 40 if m.get('fixed') else 1       # the Tracker files button casts a shadow around itself
+        # hidden buttons: 1 px. The Tracker files button sits in the masthead with no shadow (TIDY-v1): 2 px. Only the floating panel (#ajgf) keeps 40 px (its shadow).
+        pad = 40 if (m.get('fixed') and m.get('why') == 'added:ajgf') else 2 if m.get('fixed') else 1
         x0, y0 = max(0, int(m['x']) - pad), max(0, int(m['y']) - pad)
         x1, y1 = min(W, int(m['x'] + m['w']) + pad + 1), min(H, int(m['y'] + m['h']) + pad + 1)
         a[y0:y1, x0:x1] = 0
@@ -68,7 +69,7 @@ def pixel_diff(a_png, b_png, masks, out_png):
     return res
 
 
-def style_diff(a_json, b_json):
+def style_diff(a_json, b_json, reflow=False):
     A = {r['k']: r for r in json.loads(Path(a_json).read_text())}
     B = {r['k']: r for r in json.loads(Path(b_json).read_text())}
     res = {'n_a': len(A), 'n_b': len(B), 'only_a': [], 'only_b': [], 'props': Counter(), 'examples': defaultdict(list), 'elements_diff': 0, 'reflow': []}
@@ -91,7 +92,7 @@ def style_diff(a_json, b_json):
                 same = abs(va - vb) <= 0.02 if isinstance(vb, (int, float)) else False
             else:
                 same = va == vb
-            if not same and REFLOW.match(k) and p in REFLOW_PROPS:
+            if not same and reflow and REFLOW.match(k) and p in REFLOW_PROPS:   # only when the untouched reference is compared (hidden buttons make the spacer grow)
                 res['reflow'].append((k[-24:], p, va, vb))
                 continue
             if not same:
@@ -130,6 +131,7 @@ def main():
     ap.add_argument('--out', required=True)
     ap.add_argument('--only', default='')
     ap.add_argument('--json', default='')
+    ap.add_argument('--reflow', action='store_true', help='tolerate the masthead reflow the hidden buttons cause (only for the raw comparison against the untouched reference)')
     ap.add_argument('--nomask', action='store_true', help='noise-floor mode (reference against itself): no masks')
     o = ap.parse_args()
     A, B, OUT = Path(o.a), Path(o.b), Path(o.out)
@@ -152,7 +154,7 @@ def main():
             masks = [dict(m, y=m['y'] - ((ma if m in ma.get('masks', []) else mb).get('scroll') or [0, 0])[1]) if not m.get('fixed') else m for m in masks]
         r['masks'] = [(round(m['x']), round(m['y']), round(m['w']), round(m['h']), m['why']) for m in masks]
         r['pixels'] = pixel_diff(A / (n + '.png'), B / (n + '.png'), masks, OUT / (n + '.diff.png'))
-        r['styles'] = style_diff(A / (n + '.styles.json'), B / (n + '.styles.json'))
+        r['styles'] = style_diff(A / (n + '.styles.json'), B / (n + '.styles.json'), reflow=o.reflow)
         r['faces'] = face_diff(ma, mb)
         r['state_equal'] = ma['state'] == mb['state']
         r['state'] = (ma['state'], mb['state']) if not r['state_equal'] else None
