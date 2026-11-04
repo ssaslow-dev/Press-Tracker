@@ -543,8 +543,13 @@ def run_cell_step(lay, key: str, changes: list, init_fn, shared_backup=None, sum
             err = 'the tracker could not record the new workbook as its starting point'
     except OSError as e:
         err = f'ledger entry not written: {e!r}'[:200]
-    (lay.state / 'logs').mkdir(parents=True, exist_ok=True)
-    (lay.state / 'logs' / f'{key}-{stamp}.json').write_text(json.dumps({**rec, 'changes': changes}, indent=1, ensure_ascii=False), encoding='utf-8')
+    except Exception as e:      # noqa: BLE001  REVIEW_3 finding 2: the new workbook is in place; whatever fails now is reported, never raised (a caller must not undo file moves)
+        err = f'the tracker could not record the new workbook as its starting point: {e!r}'[:200]
+    try:
+        (lay.state / 'logs').mkdir(parents=True, exist_ok=True)
+        (lay.state / 'logs' / f'{key}-{stamp}.json').write_text(json.dumps({**rec, 'changes': changes}, indent=1, ensure_ascii=False), encoding='utf-8')
+    except OSError as e:
+        err = (err + '; ' if err else '') + f'the change log could not be written: {e!r}'[:150]
     return {'ok': True, 'workbook_sha256': after_sha, 'before_sha': before_sha, 'backup': bk.name, 'rows': rec['rows'], 'cells': rec['cells'], 'ledger_error': err}
 
 
@@ -559,14 +564,19 @@ def rename_step(lay, pl: dict, init_fn, shared_backup=None, why='') -> dict:
     try:
         r = run_cell_step(lay, key, pl['changes'], init_fn, shared_backup=shared_backup, summary=f'{pl["n"]} files renamed')
     except SwitchRefused as e:
-        if e.code != 'COMMIT_FAILED':
+        if e.code != 'COMMIT_FAILED':      # COMMIT_FAILED is raised after the swap: the workbook already holds the new names, so the files stay
             RF.undo(journal)
         raise
     except Exception:
+        # the point of no return is the swap inside run_cell_step; it reports every later problem in its result instead of raising, so an exception here came before it
         RF.undo(journal)
         raise
-    lst = RF.write_list(lay, pl, stamp, why)
-    r['list'] = lst.name
+    try:
+        lst = RF.write_list(lay, pl, stamp, why)
+        r['list'] = lst.name
+    except Exception as e:      # noqa: BLE001  the workbook and the files agree; only the old -> new list is missing
+        r['list'] = ''
+        r['ledger_error'] = ((r.get('ledger_error') or '') + '; ' if r.get('ledger_error') else '') + f'the old -> new list could not be written: {e!r}'[:150]
     return r
 
 
@@ -593,7 +603,8 @@ def _make_backup(lay) -> Path:
     wb = lay.workbook
     if st.get('backup'):
         p = lay.backups / st['backup']['name']
-        if p.is_file():
+        # REVIEW_3 finding 3: reuse only while the workbook is still the one the backup holds ; else a new backup
+        if p.is_file() and C.sha256_file(p) == C.sha256_file(wb):
             return p
     lay.backups.mkdir(parents=True, exist_ok=True)
     sha = C.sha256_file(wb)

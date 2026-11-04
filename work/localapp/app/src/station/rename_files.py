@@ -94,6 +94,7 @@ def correct_name(name: str, row: dict):
 
 def plan(lay, only_aids=None) -> dict:
     """only_aids: plan only for rows with these Article IDs (the save: rows whose story or role just changed). None = every row (switch-over)."""
+    recover_pending(lay)
     tabs = read_rows(lay.workbook)
     cov = tabs.get(COVERAGE)
     if not cov:
@@ -246,23 +247,57 @@ def move_files(lay, pl: dict, journal_path: Path) -> list:
     journal = [{'src': str(s), 'tmp': str(s.with_name(s.name + f'.rn{i}')), 'dst': str(d), 'state': 'planned'} for i, (s, d) in enumerate(moves)]
     journal_path.parent.mkdir(parents=True, exist_ok=True)
     _save(journal_path, journal)
+    every = 1 if len(journal) <= 400 else 20      # REVIEW_3 finding 4: the journal is saved as the moves happen (every move for a normal list); recover() also reads the disk itself
     try:
-        for j in journal:
-            if Path(j['tmp']).exists():
-                raise OSError(f'{j["tmp"]} exists')
-            os.rename(j['src'], j['tmp'])
-            j['state'] = 'tmp'
-        for j in journal:
-            if Path(j['dst']).exists():
-                raise OSError(f'{j["dst"]} exists')
-            os.rename(j['tmp'], j['dst'])
-            j['state'] = 'done'
+        k = 0
+        for ph, nxt in (('src', 'tmp'), ('tmp', 'dst')):
+            for j in journal:
+                if Path(j[nxt]).exists():
+                    raise OSError(f'{j[nxt]} exists')
+                os.rename(j[ph], j[nxt])
+                j['state'] = 'tmp' if nxt == 'tmp' else 'done'
+                k += 1
+                if k % every == 0:
+                    _save(journal_path, journal)
         _save(journal_path, journal)
     except Exception:
         undo(journal)
         _save(journal_path, journal)
         raise
     return journal
+
+
+def recover(journal_path: Path) -> int:
+    """after a crash in move_files (some files under temporary .rnN names): put every file of that journal back under its old name, judging by what is on the disk (the saved
+    journal may be a few moves behind). Does nothing when no temporary file is left. Returns the number of files put back."""
+    try:
+        journal = json.loads(Path(journal_path).read_text(encoding='utf-8'))
+    except (OSError, ValueError):
+        return 0
+    if not any(Path(j['tmp']).exists() for j in journal):
+        return 0       # finished (the workbook step comes after the last move) or never started
+    n = 0
+    for j in reversed(journal):
+        src, tmp, dst = Path(j['src']), Path(j['tmp']), Path(j['dst'])
+        if src.exists():
+            continue
+        if tmp.exists():
+            os.rename(tmp, src)
+        elif dst.exists():
+            os.rename(dst, src)
+        else:
+            continue
+        j['state'] = 'undone'
+        n += 1
+    _save(Path(journal_path), journal)
+    return n
+
+
+def recover_pending(lay) -> int:
+    n = 0
+    for jp in sorted(Path(lay.state).glob('rename_journal_*.json')):
+        n += recover(jp)
+    return n
 
 
 def undo(journal: list) -> None:

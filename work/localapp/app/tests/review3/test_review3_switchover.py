@@ -137,6 +137,34 @@ class Journal(unittest.TestCase):
                          f'while the library holds {stray}')
 
 
+class Recover(unittest.TestCase):
+    def test_a_crash_mid_way_is_put_right_before_the_next_plan(self):
+        RF, lay = S['RF'], S['lay']
+        T.fresh_data(S['root'], rows_two_stale(), files_two_stale())
+        self.assertEqual(init_fn('review3'), 0)
+        before = T.library_listing(lay.library)
+        pl = RF.plan(lay)
+        jpath = lay.state / 'rename_journal_review3b.json'
+        real = os.rename
+        calls = {'n': 0}
+
+        def cut_off(src, dst):
+            calls['n'] += 1
+            if calls['n'] == 5:
+                raise KeyboardInterrupt
+            return real(src, dst)
+        RF.os.rename = cut_off
+        try:
+            with self.assertRaises(KeyboardInterrupt):
+                RF.move_files(lay, pl, jpath)
+        finally:
+            RF.os.rename = real
+        self.assertNotEqual(T.library_listing(lay.library), before)
+        pl2 = RF.plan(lay)            # the plan first puts the library right
+        self.assertEqual(T.library_listing(lay.library), before)
+        self.assertEqual(pl2['n'], 2, pl2['lines'])
+
+
 class LastUpdated(unittest.TestCase):
     def test_every_switchover_step_counts_as_an_update(self):
         C = S['C']
