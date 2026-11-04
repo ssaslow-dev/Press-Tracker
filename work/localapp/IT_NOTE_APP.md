@@ -16,7 +16,11 @@
 **What it does:**
 - Listens on 127.0.0.1 port 8765 (this computer only) and opens the tracker page in Edge.
 - Reads and writes only inside its own folder, plus files the user picks: an update file or a refresh file, both plain data (JSON and saved article pages; it refuses any file that contains programs).
-- Once, at set-up, it reads (never writes, moves or deletes) a folder the user names: a copy of the office's article library and workbook, checked file by file against a fingerprint list, and copies it into its own folder. Later, one confirmed step deletes some of its own copied article files (listed first, backed up workbook); it never deletes anything outside its own folder.
+- Once, at set-up, it reads (never writes, moves or deletes) a folder the user names: a copy of the office's article library and workbook, checked file by file against a fingerprint list, and copies it into its own folder. Later, a one-time "Switch-over changes" screen, run by the person after set-up and shown once, previews and then applies fixes to the tracker's own copy of the workbook and library:
+  - It edits cells in the copied workbook, after first making a backup copy of the workbook in `data\backups\` and checking the result cell by cell.
+  - It renames some of the copied article files, inside `data\library\` only.
+  - It deletes a short, previewed list of copied article files (duplicate reprints), inside `data\library\` only; each deletion is written to a log in `data\state\logs\`.
+  - It deletes nothing outside its own folder.
 - Writes the workbook only after backing it up and checking it, one person at a time.
 
 **Network:**
@@ -33,3 +37,5 @@
 **To remove it:** close its window and delete the folder.
 
 **Source:** full source, build scripts and checksums are available on request.
+
+**Fingerprint:** SHA-256 of the delivered zip `AJG_Tracker_windows_final.zip` (132.6 MB): `c25228690bac2b81b0f2336a595573c0139d2c94d04f0d66d236d4cf11976f67`
