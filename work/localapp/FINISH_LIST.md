@@ -62,6 +62,7 @@ One list for everything left. Claude keeps it current after every step and repor
 |---|---|---|---|
 | C1 | Preview file built and checked | Claude | done |
 | C2 | Keep tone ratings in it | Sammy | done |
+| C3 | Refresh the read-only HTML preview from the final draft: version 2's page (layout fixes) plus current data; needs the current workbook from the PC (the preview's data is the Nov 3 master, before the switch-over changes) | Claude (+ Sammy: send the workbook) | when version 2 is final |
 
 ## D. After the switch-over is finished
 
