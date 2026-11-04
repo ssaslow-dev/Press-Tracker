@@ -10,7 +10,7 @@ One list for everything left. Claude keeps it current after every step and repor
 | A2 | Fix its findings, test, rebuild the zip | Claude | done |
 | A5a | Library copied to the PC in one piece; Set up from the Mac library (12,682 files checked) | Sammy | done |
 | A6 | Decide 01920 and 03486 | Sammy | done: 01920 removed later (A13); 03486 author fixed by 06_author_03486.csv |
-| A5b | Switch-over changes, one step at a time ("Do only this one", reload after each) | Sammy | in progress: remove unverified and rename done; press-release marks, purple rows, Other files, data fixes (+ 03486 file), row-changing fixes to go |
+| A5b | Switch-over changes, one step at a time | Sammy | done 2026-11-04: all steps applied |
 | A5c | Check the result (purple rows, renamed copies open, 03486 author, View original), then press Finished | Sammy | after A5b |
 | A10 | Old tracker: no more Update runs or saves; Mac library kept as a frozen backup | Sammy | from now on |
 
