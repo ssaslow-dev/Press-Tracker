@@ -239,6 +239,21 @@ def _groups(lay, r) -> list:
     return out
 
 
+
+def _retry(fn, *args):
+    """Windows: a file just written or renamed is often held for a moment (virus scanner, search indexer), and a rename then fails with
+    "Access is denied" (seen on the office PC, 2026-11-04). Try again for up to about 10 seconds before giving up."""
+    import time
+    delay = 0.05
+    for attempt in range(16):
+        try:
+            return fn(*args)
+        except PermissionError:
+            if attempt == 15:
+                raise
+            time.sleep(delay)
+            delay = min(delay * 2, 1.0)
+
 def move_files(lay, pl: dict, journal_path: Path) -> list:
     """Two phases (old -> temporary -> new) so a swap (A -> B while B -> C) cannot collide. The journal is written first; on any error everything done is undone."""
     moves = [m for r in pl['renames'] for m in _groups(lay, r)]
@@ -255,7 +270,7 @@ def move_files(lay, pl: dict, journal_path: Path) -> list:
             for j in journal:
                 if Path(j[nxt]).exists():
                     raise OSError(f'{j[nxt]} exists')
-                os.rename(j[ph], j[nxt])
+                _retry(os.rename, j[ph], j[nxt])
                 j['state'] = 'tmp' if nxt == 'tmp' else 'done'
                 k += 1
                 if k % every == 0:
@@ -283,9 +298,9 @@ def recover(journal_path: Path) -> int:
         if src.exists():
             continue
         if tmp.exists():
-            os.rename(tmp, src)
+            _retry(os.rename, tmp, src)
         elif dst.exists():
-            os.rename(dst, src)
+            _retry(os.rename, dst, src)
         else:
             continue
         j['state'] = 'undone'
@@ -304,17 +319,17 @@ def recover_pending(lay) -> int:
 def undo(journal: list) -> None:
     for j in reversed(journal):
         if j['state'] == 'done' and Path(j['dst']).exists() and not Path(j['src']).exists():
-            os.rename(j['dst'], j['src'])
+            _retry(os.rename, j['dst'], j['src'])
             j['state'] = 'undone'
         elif j['state'] == 'tmp' and Path(j['tmp']).exists() and not Path(j['src']).exists():
-            os.rename(j['tmp'], j['src'])
+            _retry(os.rename, j['tmp'], j['src'])
             j['state'] = 'undone'
 
 
 def _save(p: Path, obj) -> None:
     tmp = p.with_name(p.name + '.tmp')
     tmp.write_text(json.dumps(obj, indent=1), encoding='utf-8')
-    os.replace(tmp, p)
+    _retry(os.replace, tmp, p)
 
 
 def write_list(lay, pl: dict, stamp: str, why: str) -> Path:
