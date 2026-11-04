@@ -221,6 +221,19 @@ def preview_result(pv, uid, edits=None) -> dict:
             'warnings': warns, 'fingerprint': pv.get('fingerprint')}
 
 
+def renamed_lines(res) -> list:
+    """RENAME-v1: files renamed after the save because a story or role changed"""
+    r = res.get('renamed_files') or {}
+    if r.get('error'):
+        return ['Files could not be renamed after the save (' + str(r['error'])[:120] + '). The save itself is done; nothing was deleted.']
+    out = []
+    if r.get('renamed'):
+        out.append(f'{n(r["renamed"], "saved file")} renamed to match a changed story or role ({r.get("cells", 0)} cells updated); the old and new names are in the library, _renamed/{r.get("list", "")}')
+    if r.get('collisions'):
+        out.append(f'{n(len(r["collisions"]), "file")} could not be renamed because the new name is taken: {r["collisions"][0]["old"]}')
+    return out
+
+
 def save_result(res, edits=None) -> dict:
     code = res.get('exit_code')
     ref = res.get('refusal')
@@ -230,7 +243,7 @@ def save_result(res, edits=None) -> dict:
         if code == 3:
             out['lines'] = ['Nothing new to write.']
         return out
-    lines = edits_lines(edits, res) + _diff_lines(res) + names_lines(res)
+    lines = edits_lines(edits, res) + _diff_lines(res) + names_lines(res) + renamed_lines(res)
     ldb = res.get('local_db') or {}
     if ldb.get('edits_applied'):
         lines.append(f'{n(len(ldb["edits_applied"]), "edit")} saved and set aside in the tracker (db\\_applied\\edits, not deleted)')

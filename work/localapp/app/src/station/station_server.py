@@ -415,7 +415,7 @@ class StationHandler(S.Handler):
             payload = {'include_low': low, 'files': files}
             if rest == 'switch_apply':
                 steps, dig = d.get('steps'), d.get('digests')
-                if not isinstance(steps, list) or not steps or not all(x in ('drop_unverified', 'prjudge', 'prcolor', 'other_files', 'datafix') for x in steps) \
+                if not isinstance(steps, list) or not steps or not all(x in ('drop_unverified', 'rename_files', 'prjudge', 'prcolor', 'other_files', 'datafix') for x in steps) \
                         or not isinstance(dig, dict) or not all(isinstance(v, str) and re.match(r'^[0-9a-f]{0,16}$', v) for v in dig.values()):
                     return self._err(400, 'The steps must be looked at first.')
                 payload.update(steps=steps, digests=dig)

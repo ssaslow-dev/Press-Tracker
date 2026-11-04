@@ -83,7 +83,7 @@ class Screen(unittest.TestCase):
         pv = K.job('switch_preview', {}, timeout=900)
         self.assertTrue(pv['ok'], pv)
         st = {s['id']: s for s in pv['steps']}
-        self.assertEqual(list(st), ['drop_unverified', 'prjudge', 'prcolor', 'other_files', 'datafix'])
+        self.assertEqual(list(st), ['drop_unverified', 'rename_files', 'prjudge', 'prcolor', 'other_files', 'datafix'])   # RENAME-v1 step after the drop
         self.assertEqual(st['drop_unverified']['n'], 419)
         self.assertGreaterEqual(st['prjudge']['n'], 115)
         self.assertEqual(len(st['prjudge']['detail']['mark']), 3)
@@ -138,7 +138,9 @@ class Screen(unittest.TestCase):
         r = K.job('switch_apply', {'steps': [s['id'] for s in pv['steps'] if s['state'] == 'todo'], 'digests': dig}, timeout=3000)
         S['secs'] = time.time() - t0
         self.assertTrue(r['ok'], r)
-        self.assertEqual([x['id'] for x in r['results']], ['drop_unverified', 'prjudge', 'prcolor', 'other_files', 'datafix'])
+        S['todo'] = [s['id'] for s in pv['steps'] if s['state'] == 'todo']
+        self.assertEqual([x['id'] for x in r['results']], S['todo'])
+        self.assertIn('drop_unverified', S['todo'])
         new_backups = set(p.name for p in (K.root / 'data' / 'backups').glob('*.xlsx')) - backups0
         self.assertEqual(len(new_backups), 1, new_backups)
         self.assertIn('before switch-over changes', next(iter(new_backups)))
@@ -177,7 +179,7 @@ class Screen(unittest.TestCase):
             self.assertEqual(led.count(v), 1, v)
         st = K.call('GET', '/_local/station/status')[1]
         self.assertEqual(st['workbook']['baseline'], 'ok')
-        self.assertEqual(sorted(st['switchover']['done']), sorted(['drop_unverified', 'prjudge', 'prcolor', 'other_files', 'datafix']))
+        self.assertEqual(sorted(st['switchover']['done']), sorted(S['todo']))
         again = K.job('switch_apply', {'steps': ['prjudge'], 'digests': dig})
         self.assertFalse(again['ok'])
         pv = K.job('switch_preview', {}, timeout=900)

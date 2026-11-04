@@ -219,9 +219,20 @@ def do_save(lay, TU, a):
     try:
         with C.AppLock(lay.state, 'save'):
             summ = TU.edits_summary(lay)
+            try:
+                roles0 = SW.RF.story_roles(lay.workbook)           # RENAME-v1: who has which story and role before the save
+            except Exception:                                      # noqa: BLE001  (the rename pass is skipped, the save still runs)
+                roles0 = None
             res = TU.save(lay, a.update, a.token, accept_mismatch=a.accept_mismatch, rebuild=True, edits_only=edits_only)
             if res.get('written'):
                 res['sync'] = post_save.sync(lay, dict(res, update_id=a.update))
+                if roles0 is not None and not edits_only:
+                    try:                                           # RENAME-v1: files of rows whose story or role changed get the right name (nothing is deleted)
+                        res['renamed_files'] = SW.auto_rename(lay, lambda note: TU.init_baseline(lay, note=note)['exit_code'], roles0)
+                        if res['renamed_files'].get('renamed'):
+                            res['site_rebuilt'] = False        # the workbook changed again: build the page the plain way below
+                    except Exception as e:                     # noqa: BLE001  (reported, never hidden: the save itself is done)
+                        res['renamed_files'] = {'error': repr(e)[:300]}
                 if not res.get('site_rebuilt'):          # the saver's rebuild failed or was skipped: build the page the plain way
                     try:
                         res['page_rebuild'] = rebuild_page(lay)

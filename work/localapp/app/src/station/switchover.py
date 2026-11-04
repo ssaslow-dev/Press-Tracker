@@ -2,6 +2,7 @@
 shown only that once.
 
     1 drop_unverified  DROPUNVERIFIED-v1  the "Reprint (unverified)" rows and their files (drop_unverified.py)
+    1b rename_files    RENAME-v1          library files (with their raw page and OCR text) and the File name cells brought up to NAMING-v2 (rename_files.py)
     2 prjudge          PRJUDGE-v2         other issuers' releases reposted by news outlets become Press release = No (font black, Role filled on Originals that lack one);
                                           three missed wire releases become Yes. Every row is re-checked on the real workbook first (data/prjudge_v2.json is only the candidates)
     3 prcolor          PRCOLOR-v1         every row with Press release = Yes gets purple font (#7030A0) across the row; only the font colour changes
@@ -28,11 +29,12 @@ from pathlib import Path
 import common as C
 import drop_unverified as DR
 import other_files_column as OF
+import rename_files as RF
 
 PURPLE = '7030A0'
 COVERAGE, ORIGINALS = 'Coverage', 'Originals'
-ORDER = ('drop_unverified', 'prjudge', 'prcolor', 'other_files', 'datafix')
-TITLES = {'drop_unverified': 'Remove the unverified reprints', 'prjudge': 'Press release marks (PRJUDGE-v2)', 'prcolor': 'Purple rows for press releases (PRCOLOR-v1)',
+ORDER = ('drop_unverified', 'rename_files', 'prjudge', 'prcolor', 'other_files', 'datafix')
+TITLES = {'drop_unverified': 'Remove the unverified reprints', 'rename_files': 'Rename files to the naming rule (RENAME-v1)', 'prjudge': 'Press release marks (PRJUDGE-v2)', 'prcolor': 'Purple rows for press releases (PRCOLOR-v1)',
           'other_files': 'Add the "Other files" column', 'datafix': 'Apply the data-check fixes you approved'}
 DATA = Path(__file__).resolve().parent / 'data'
 CONF = {'high': 3, 'medium': 2, 'low': 1}
@@ -307,6 +309,7 @@ def preview_all(lay, only=None, include_low=False, datafix_files=None) -> dict:
     tabs = read_tabs(wb)
     steps = []
     pj = plan_prjudge(tabs) if 'prjudge' not in done else None
+    rf = RF.plan(lay) if 'rename_files' not in done else None
     pc = plan_prcolor(tabs, pj) if 'prcolor' not in done else None
     df = plan_datafix(lay, tabs, include_low, datafix_files) if 'datafix' not in done else None
     for sid in ORDER:
@@ -319,6 +322,9 @@ def preview_all(lay, only=None, include_low=False, datafix_files=None) -> dict:
                 s.update(n=len(p.get('rows') or []), lines=p['lines'], digest=_digest([r['aid'] for r in p.get('rows') or []]), can_apply=bool(p.get('can_drop')))
             except DR.DropRefused as e:
                 s.update(state='blocked', lines=[e.msg])
+        elif sid == 'rename_files':
+            s.update(n=rf['n'], lines=rf['lines'], digest=rf['digest'], can_apply=rf['n'] > 0,
+                     detail={'collisions': rf['collisions'][:50], 'missing': len(rf['missing']), 'unnamed': len(rf['unnamed']), 'shared': len(rf['shared'])})
         elif sid == 'prjudge':
             s.update(n=pj['n'], lines=pj['lines'], digest=pj['digest'], can_apply=pj['n'] > 0, detail={'unmark': pj['unmark'], 'mark': pj['mark'], 'skipped': pj['skipped'], 'org': pj['listed_org']})
         elif sid == 'prcolor':
@@ -518,6 +524,43 @@ def run_cell_step(lay, key: str, changes: list, init_fn, shared_backup=None, sum
     return {'ok': True, 'workbook_sha256': after_sha, 'before_sha': before_sha, 'backup': bk.name, 'rows': rec['rows'], 'cells': rec['cells'], 'ledger_error': err}
 
 
+# ---------------------------------------------------------------- RENAME-v1
+
+def rename_step(lay, pl: dict, init_fn, shared_backup=None, why='') -> dict:
+    """move the files (journalled), then change the cells with the usual staged, cell-by-cell checked step; if that step refuses before the swap the files are put back"""
+    key = 'rename_files'
+    stamp = C.stamp()
+    jpath = lay.state / f'rename_journal_{stamp}.json'
+    journal = RF.move_files(lay, pl, jpath)
+    try:
+        r = run_cell_step(lay, key, pl['changes'], init_fn, shared_backup=shared_backup, summary=f'{pl["n"]} files renamed')
+    except SwitchRefused as e:
+        if e.code != 'COMMIT_FAILED':
+            RF.undo(journal)
+        raise
+    except Exception:
+        RF.undo(journal)
+        raise
+    lst = RF.write_list(lay, pl, stamp, why)
+    r['list'] = lst.name
+    return r
+
+
+def auto_rename(lay, init_fn, before_roles: dict) -> dict:
+    """RENAME-v1, the save: rows whose Story ID or Original/Reprint role changed in this save get their files renamed to match (add-only: nothing is deleted).
+    before_roles = rename_files.story_roles(workbook) taken before the save. Returns {renamed, cells, list, collisions, ...}; {} when nothing changed."""
+    after = RF.story_roles(lay.workbook)
+    touched = {a for a, v in before_roles.items() if a in after and after[a] != v}
+    if not touched:
+        return {}
+    pl = RF.plan(lay, only_aids=touched)
+    if not pl['n']:
+        return {'renamed': 0, 'collisions': pl['collisions'], 'touched': len(touched)} if pl['collisions'] else {}
+    r = rename_step(lay, pl, init_fn, shared_backup=None, why='after a save: story or role changed')
+    return {'renamed': pl['n'], 'cells': pl['counts'].get('cells', 0), 'list': r['list'], 'collisions': pl['collisions'], 'touched': len(touched), 'workbook_sha256': r.get('workbook_sha256'),
+            'files': [(x['old'], x['new']) for x in pl['renames']][:20]}
+
+
 # ---------------------------------------------------------------- applying (the screen's Confirm)
 
 def _make_backup(lay) -> Path:
@@ -568,6 +611,14 @@ def apply_steps(lay, ids: list, digests: dict, init_fn, include_low=False, dataf
             r = DR.apply(lay, p['token'], init_fn, shared_backup=bk)
             summ = f'{r["n_rows"]} rows removed ({len(r["files_deleted"])} files deleted)'
             lines = [f'{r["n_rows"]} Coverage rows and {r["n_av_rows"]} Audio & video rows removed for good.', f'{len(r["files_deleted"])} saved files deleted from the library.']
+        elif sid == 'rename_files':
+            pl = RF.plan(lay)
+            if pl['digest'] != digests.get(sid):
+                raise SwitchRefused('CHANGED', 'The files or the workbook changed since you looked. Look again.')
+            r = rename_step(lay, pl, init_fn, shared_backup=bk, why='switch-over day (RENAME-v1)')
+            summ = f'{pl["n"]} files renamed, {pl["counts"].get("cells", 0)} cells updated'
+            lines = [f'{pl["n"]} saved files renamed (with their raw pages and OCR texts); {pl["counts"].get("cells", 0)} File name cells updated.',
+                     f'The old and new names are in the library: _renamed/{r["list"]}.'] + ([f'{len(pl["collisions"])} files were left as they are because the new name was taken (see the list).'] if pl['collisions'] else [])
         elif sid == 'other_files':
             p = OF.plan(lay)
             if _digest(p['todo']) != digests.get(sid):
