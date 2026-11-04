@@ -12,16 +12,16 @@
 ---
 
 # Part 2: the data test (with the test kit)
-You need: `AJG Tracker Mac.zip` (already unzipped, part 1) and `AJG_Mac_test_data.zip` (about 50 MB, a small made-up copy of the library: about 40 stories, 439 files, plus the real workbook copy). Nothing here touches your real workbook or library.
+You need: `AJG Tracker Mac.zip` (already unzipped, part 1) and `AJG_Mac_test_kit.zip` (about 50 MB, a small made-up copy of the library: about 40 stories, 439 files, plus the real workbook copy). Nothing here touches your real workbook or library.
 
 **1. Unzip the kit.** Open Terminal and type, one line at a time, pressing Return after each:
 
 ```
 cd ~/Desktop
-unzip ~/Downloads/AJG_Mac_test_data.zip
+unzip ~/Downloads/AJG_Mac_test_kit.zip
 ```
 
-A folder called `Tracker library` appears on the Desktop. Inside it is a file called `Tracker library manifest.sha256` (the fingerprint list).
+A folder called `AJG test library` appears on the Desktop (a different name from your real `Tracker library`, which is never touched). Inside it is a file called `Tracker library manifest.sha256` (the fingerprint list).
 
 **2. Make this copy the keeper copy.** (A keeper copy is the one that saves. The folder you unzipped is a reader copy until you do this.)
 1. In Finder, open the `AJG Tracker` folder, then `data`.
@@ -45,7 +45,7 @@ Safari opens the tracker. It should say "No workbook yet".
 **4. Set up from the Mac library.**
 1. Click **Tracker files** (top right).
 2. Open **Set up from the Mac library**.
-3. In the first box type the path of the kit folder. Quick way: in Finder, hold Option, right-click the `Tracker library` folder, choose "Copy "Tracker library" as Pathname", then paste into the box (Command-V). It looks like `/Users/you/Desktop/Tracker library`.
+3. In the first box type the path of the kit folder. Quick way: in Finder, hold Option, right-click the `AJG test library` folder, choose "Copy "AJG test library" as Pathname", then paste into the box (Command-V). It looks like `/Users/you/Desktop/AJG test library`.
 4. Leave the second box empty. Press **Check files**.
 5. Expect: "Everything checks out. Ready to copy." and "440 of them are here with the right fingerprint."
 6. Press **Copy and set up**. It takes about a minute. Do not close Terminal.
