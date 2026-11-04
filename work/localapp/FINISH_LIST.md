@@ -19,6 +19,7 @@ One list for everything left. Claude keeps it current after every step and repor
 | A10 | Old tracker: stop Update and saves (kept read-only) | Sammy | on the day |
 | A11 | 431 stories have a saved copy in the library that the shipped article data lacks (seen at setup 2026-11-04): build the article data from the keeper's own library on the PC so every saved copy opens | Claude | to do (not blocking) |
 | A12 | Switch-over screen wording: the fixes step says "Blanks only" although approved overwrites (pages, cleared authors, Edition) are included | Claude | with D1 |
+| A14 | Switch-over apply on the office PC stopped with PermissionError(13, 'Access is denied') before any step finished (2026-11-04); the error message must name the file and step (station_cli catch-all drops e.filename) | Claude | diagnosing with Sammy |
 
 ## B. Mac version (MACAPP-v1)
 
