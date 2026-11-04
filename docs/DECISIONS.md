@@ -618,4 +618,4 @@ DATAFIX-v1 follow-up 2 (2026-11-04, Sammy: "do what you recommend"): 01920 (Shua
 
 
 ## DATAINFOLDER-v1 (2026-11-04, Sammy): the data lives inside the program folder
-The tracker folder holds everything (data\\workbook, data\\library, data\\backups, data\\state). New versions replace only the program parts (app\\, python\\, start file) and never data\\; the next build gives a safe one-step way to do that (FINISH_LIST A16). The Desktop "Tracker library" copy used for setup is not needed after the switch-over.
+The tracker folder holds everything (data\workbook, data\library, data\backups, data\state). New versions replace only the program parts (app\, python\, start file) and never data\; the next build gives a safe one-step way to do that (FINISH_LIST A16). The Desktop "Tracker library" copy used for setup is not needed after the switch-over.
