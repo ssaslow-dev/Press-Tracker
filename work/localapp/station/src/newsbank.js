@@ -193,7 +193,7 @@ function nbPrintApply(items, all){
   const jumps = [];
   todo.forEach(it => {
     const a = it.readArt, words = a.words || String(a.text || '').split(/\s+/).length, by = nbByParts(a.byline), pg = nbPageNo(a.page), nbPg = nbPageNo(it.p.page);
-    const p2 = Object.assign({}, it.p, { headline: a.headline, author: by.author, section: a.section || it.p.section || '', page: a.page || it.p.page || '', text: a.text, paras: String(a.text).split(/\n\s*\n+/).map(x => x.replace(/\s+/g, ' ').trim()).filter(Boolean), words_nb: words, thin: false, how: 'read', readBy: 'claude',
+    const p2 = Object.assign({}, it.p, { headline: a.headline, author: String(a.byline || '').replace(/\S+@\S+\.\S+/g, '').replace(/\s+/g, ' ').trim(), section: a.section || it.p.section || '', page: a.page || it.p.page || '', text: a.text, paras: String(a.text).split(/\n\s*\n+/).map(x => x.replace(/\s+/g, ' ').trim()).filter(Boolean), words_nb: words, thin: false, how: 'read', readBy: 'claude',
       flags: (it.p.flags || []).concat(['headline, byline and text were read from the page picture by Claude: check them']) });
     it.p0 = it.p; it.p2 = p2; it.by = by;
     if (a.continued_from && nbPageNo(a.continued_from)) { jumps.push(it); return; }
@@ -209,7 +209,7 @@ function nbPrintApply(items, all){
         if (row && nbPageNo(a.page || it.p.page)){ it.printCopy = { aid: row.aid, pages: nbPageNo(a.page || it.p.page), story: m.sid }; it.screen = { status: 'known', why: 'Claude read the page: “' + String(a.headline).slice(0, 60) + '” is the story ' + m.sid + ' (' + m.how + '), and this outlet already has its row ' + row.aid + ': kept as that row’s print original, no new row', row: row.aid, sid: m.sid }; it.readWhy = it.screen.why; return; }
         attach(it, '', 'Claude read the page: it is the story ' + m.sid + ' (' + m.how + '), which this outlet already has: no row is added', 'attached'); return;
       }
-      it.p = Object.assign({}, it.p0, { author: by.author });
+      it.p = Object.assign({}, it.p0, { author: p2.author });
       it.confirm = st ? st.id : m.sid; it.readWhy = 'Claude read the page: “' + String(a.headline).slice(0, 70) + '” is the story ' + m.sid + ' (' + m.how + '); filed as its print edition'; it.readArt.matched = it.confirm; return;
     }
     it.p = p2; it.screen = { status: 'new', why: 'new story read from a print page by Claude (“' + String(a.headline).slice(0, 70) + '”): check its headline, byline and text' }; it.fromPage = true; it.readWhy = it.screen.why;   // 3.

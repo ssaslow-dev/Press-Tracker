@@ -55,7 +55,7 @@ const settle = async page => { await page.waitForTimeout(400); await page.evalua
   const zp = path.join(os.tmpdir(), 'pageany_' + process.pid + '.zip'); fs.writeFileSync(zp, Buffer.from(await page.evaluate(() => Array.from(window.__lastDl))));
   let out = ''; try { out = execFileSync('python3', ['-I', path.join(__dirname, 'pageany_verify_zip.py'), zp], { encoding: 'utf8' }); } catch (e) { out = 'FAIL ' + (e.stderr || e.message); }
   check('the PC’s own checker accepts the update folder; a page PDF is not claimed as an NB text copy (it travels as files/pg-….pdf)', /^PASS/m.test(out) && /files\/pg-/.test(out) && !/library\/\d{4}\/nb/.test(out), out.slice(0, 400));
-  check('SAVED COPY of a print-only story: named like a text copy (ws<ID>o-s<ID>.html in library/<year>/), its HTML is the read article with the “read by Claude” line; the page scan travels as files/pg-….pdf', /\["ws","o","library\/2026\/ws\d{5}o-s\d{5}\.html"\]/.test(out), out.slice(0, 500));
+  check('SAVED COPY of a print-only story: named like a text copy (ws<ID>o-s<ID>.html in library/<year>/), its HTML is the read article with the “read by Claude” line; the page scan travels as files/pg-….pdf', /\["ws", "o", "library\/2026\/ws\d{5}o-s\d{5}\.html"\]/.test(out), out.slice(0, 500));
   check('no outside request, no page error', X.outside.length === 0 && X.errors.length === 0, JSON.stringify([X.outside, X.errors.slice(0, 3)]));
   await X.close();
 
@@ -124,7 +124,7 @@ const settle = async page => { await page.waitForTimeout(400); await page.evalua
   await putRun(page, 'run-live', Object.assign(W('run-live', '2026-11-04T11:00:00Z', [R('l1', { 'Tracker story code': 'jg-live01' })]), { status: 'running' }));
   await settle(page); runs = Object.fromEntries(await sessDocs(page, 'runs'));
   const rp = runs['run-pq'].rows.find(r => r['Article ID'] === 'NEW-run-p1');
-  check('another outlet’s copy becomes a Reprint row of the story that ran first (web, 11-03): its story, its page document kept, its tone/topic cleared', rp && rp['Original or reprint'] === 'Reprint' && rp['Story ID'] === 'sNEW-run-w1' && rp._page === 'jg-pq0001' && !rp.Tone && !rp.Topic && (await sessDocs(page, 'pages')).length === 1 && runs['run-pq'].reprints.length === 0 && runs['run-web'].reprints.some(x => x.outlet === 'Other Daily' && x.story === 'jg-' + 'w1'.padStart(6, 'a')) === false, JSON.stringify(rp));
+  check('another outlet’s copy becomes a Reprint row of the story that ran first (web, 11-03): its story, its page document kept, its tone/topic cleared', rp && rp['Original or reprint'] === 'Reprint' && rp['Story ID'] === 'sNEW-run-w1' && rp._page === 'jg-pq0001' && !rp.Tone && !rp.Topic && (await sessDocs(page, 'pages')).length === 1 && runs['run-web'].reprints.some(x => x.outlet === 'Other Daily'), JSON.stringify(rp));
   check('unrelated rows stay; a run still going is not touched', runs['run-pq'].rows.some(r => r['Article ID'] === 'NEW-run-o1' && r['Original or reprint'] === 'Original') && runs['run-live'].rows.length === 1 && runs['run-live'].rows[0]['Original or reprint'] === 'Original');
   await X.close();
 

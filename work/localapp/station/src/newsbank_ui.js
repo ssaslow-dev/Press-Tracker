@@ -131,7 +131,7 @@ async function nbReadPrintOne(it, sample, lim) {
    a page Claude could not read are LISTED and nothing is added (a whole-paper PDF would otherwise fill the Unlinked print pages tab). */
 const PP_MAX_PAGES = 60, PP_TEXT_MIN = 200, PP_IMG_CAP = 40 * 1024 * 1024;
 const ppIsImage = b => (b[0] === 0xFF && b[1] === 0xD8 && b[2] === 0xFF) || (b[0] === 0x89 && b[1] === 0x50 && b[2] === 0x4E && b[3] === 0x47);
-const ppLooksNewsBank = pages => pages.some(pg => pg.lines.some(l => /newsbank|access world news|citation\s*\(\s*apa/i.test(l.text || '')));
+const ppLooksNewsBank = pages => pages.some(pg => pg.lines.some(l => /newsbank|access world news|proquest|citation\s*\(\s*apa/i.test(l.text || '')));
 async function ppImagePdf(bytes, title) {
   const bmp = await createImageBitmap(new Blob([bytes]), { imageOrientation: 'from-image' });   // a phone photo is turned upright, as it is shown
   const k = Math.min(1, 4200 / Math.max(bmp.width, bmp.height)), w = Math.max(1, Math.round(bmp.width * k)), h = Math.max(1, Math.round(bmp.height * k));
