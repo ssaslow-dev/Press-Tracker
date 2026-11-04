@@ -40,7 +40,7 @@ One list for everything left. Claude keeps it current after every step and repor
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| D1 | Small update removing the one-time Switch-over screen's code | Claude | after A5 |
+| D1 | Small update removing the one-time Switch-over screen's code (its "Add a fixes file" wording also misled: the approved fixes are built in) | Claude | after A5 |
 | D2 | Repo snapshot in data/ replaced by (or retired for) the switched-over data, per SWITCHOVER-v1 | Claude | after A5 |
 | D3 | Last cleanup: outdated code and decisions archived, CLAUDE.md and handoff brought up to date for any future Claude | Claude | last |
 
