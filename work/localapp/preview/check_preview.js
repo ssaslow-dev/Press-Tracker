@@ -20,7 +20,7 @@ async function run(url, tag, browser) {
     await p.screenshot({ path: path.join(OUT, tag + '_' + (r || 'home').replace(/[^a-z0-9]+/gi, '_') + '.png') });
   }
   // interactions on Clips
-  await p.evaluate(() => { location.hash = '#clips'; }); await sleep(1500);
+  await p.evaluate(() => { location.hash = '#clips'; }); await p.reload(); await sleep(3500);
   out.clipsCount = await p.evaluate(() => document.querySelectorAll('#tbody tr[data-id]').length);
   out.countText = await p.evaluate(() => { const e = document.querySelector('#count, #resCount, .count'); return e ? e.innerText : ''; });
   await p.fill('#q', 'housing'); await sleep(1500);
