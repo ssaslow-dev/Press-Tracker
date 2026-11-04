@@ -14,7 +14,7 @@ Three rows have no print-page link; they are different cases:
 - **03089 Herald-Standard, 03757 Express-Times** (and 01266, 02374 Jerusalem Post, 02410, 03933 New York Post): header "03", "007", "05", "017", "003" is the same page with NewsBank's zero-padding. Not a real conflict.
 - **05434 Orange County Register** (print-page clip, 2 pages): the article starts on page 1 and jumps to page 9; the saved clip holds both. The sheet says Page 9 and Team note "cont. p. 9", which contradict each other. The clipping convention (05441: Page 1, "cont. p. 7") puts the starting page in Page, so Page should be 1.
 
-No row is a different edition or a wrong header: every header date matches the row's print date and the article citation's "p." agrees with the header wherever the citation has one (84 of 123).
+No row is a different edition or a wrong header: every header date matches the row's print date, and in all 123 files the article's own APA citation ("p. B7") agrees with the `Page:` line.
 
 ## Verdict
 
