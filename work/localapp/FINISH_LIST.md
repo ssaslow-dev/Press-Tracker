@@ -18,12 +18,13 @@ One list for everything left. Claude keeps it current after every step and repor
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| N1 | Windows file locks (A14/A15): one shared "wait and try again" for every rename/replace (saves, refresh, library, state), a test that simulates a busy file; the rename step's one-file fix already sent and working | Claude | building |
-| N2 | One-file updates take effect (no unchecked precompiled copies of the app code) | Claude | building |
-| N3 | The 431 saved copies the tracker can't open yet (A11): article data built from your own library, at setup, under Repairs, and kept current by every save | Claude | building |
-| N4 | Safe "install a new version" that replaces only the program parts, never data\ (A16, DATAINFOLDER-v1), Windows and Mac | Claude | building |
+| N1 | Windows file locks (A14/A15): one shared "wait and try again" for every rename/replace (saves, refresh, library, state), a test that simulates a busy file; the rename step's one-file fix already sent and working | Claude | done (2026-11-04: WINLOCK-v1; fs_retry used everywhere, busy-file tests) |
+| N2 | One-file updates take effect (no unchecked precompiled copies of the app code) | Claude | done (app code ships with no .pyc; start time +0.1 s) |
+| N3 | The 431 saved copies the tracker can't open yet (A11): article data built from your own library, at setup, under Repairs, and kept current by every save | Claude | done (ARTICLEDATA-v1; setup, every save, Repairs button) |
+| N4 | Safe "install a new version" that replaces only the program parts, never data\ (A16, DATAINFOLDER-v1), Windows and Mac | Claude | done (PROGRAMUPDATE-v1; Install update.cmd / .command) |
 | N5 | All tests and the end-to-end check; new Windows and Mac zips; IT note fingerprint | Claude | after N1-N4 (whole version: about 3-4 hours) |
 | N6 | Install version 2 over the switched-over tracker (data stays) | Sammy | when N5 arrives |
+| N7 | Station: check finds against each other within one session (web Update, NewsBank box, ProQuest box) so a story found by two sources is shown once; today only the PC save drops the second copy (listed under duplicates) | Claude | to do (station v12) |
 
 ## F. First real use (after version 2 is installed)
 
