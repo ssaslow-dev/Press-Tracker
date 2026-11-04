@@ -13,3 +13,6 @@ build/tests/tabs/srv/v18.html
 build/tests/tabs/srv/blocks/data.json
 work/tests_out/
 ref_patch_diff.NEW.txt
+
+# builder worktrees (separate checkouts; never commit)
+.claude/worktrees/
