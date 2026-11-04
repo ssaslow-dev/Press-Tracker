@@ -448,12 +448,8 @@ Evidence: work/lang_capture/ (SPELLINGS.md, OUTLETS.md, ETHNIC_YT.md, SPANISH_LA
 
 <!-- Entries below were written in the new-project repository (Press-Tracker), 2026-10-31 to 2026-11-03; the entries above through APPLYALL-v1 and later were written in the old claude.ai workspace on 2026-11-02 and imported on 2026-11-03. -->
 
-## SAMELOOK-v1 (Sammy, 2026-10-31)
-The new project's tracker looks and feels the same as the current artifact tracker (code/tracker/NN_*.js), minus the Update button functionality (40_update_outlets.js, 41_update_search.js, 42_update_buttons.js, 43_update_log.js and what they drive). Still open: how new stories reach the new project after switch-over.
-
-## SAMELOOK-v1 amended, SAVERHOLD-v1, NOWATCH-v1 (Sammy, 2026-10-31)
-- SAMELOOK-v1: leaving the Update button out of the new tracker is temporary; it is to come back later.
-- SAVERHOLD-v1: the save program (work/saver/) is on hold after part 2 (save path built, 95 tests pass). No replays, Fable review or live save until Sammy lifts the hold.
+## SAMELOOK-v1, SAVERHOLD-v1 (archived), NOWATCH-v1 (Sammy, 2026-10-31)
+- SAMELOOK-v1 (same look and feel as the artifact tracker, Update button left out for now) is tightened by SAMELOOK-v2 below; SAVERHOLD-v1 (save program on hold) is lifted. Full texts in docs/DECISIONS_ARCHIVE.md.
 - NOWATCH-v1: no weekly watch and no monthly sweep. Closes that open decision.
 
 ## LOCALAPP-v1 (Sammy, 2026-10-31)
@@ -487,13 +483,12 @@ GOVIT-v1 probe result (Sammy, 2026-11-02): the second test zip (no internet chec
 Probe report details (2026-11-02): all four required checks OK from C:\Users\saslowsa\Desktop\AJG Tracker testNEW\... (a plain Desktop folder, not OneDrive); Edge at C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe, so the launcher can open the tracker in Edge app mode; ports 58300/58301 on 127.0.0.1 were usable.
 GOVIT-v1 (Sammy, 2026-11-02): IT has approved. New requirement: the PC tracker must be able to work on multiple PCs (how they share the workbook: see MULTIPC-v1 when settled). Design consequences already: the app folder is portable (relative paths only, nothing stored outside it), the launcher must work from mapped drives and UNC network paths, and the save's lock + checksum ledger enforce one writer at a time.
 
-## MULTIPC-v1 (Sammy, 2026-11-02)
-The tracker folder lives on one shared office network drive; several PCs open it, and several people save. Consequences: the save's lock file (exclusive create) and checksum ledger enforce one save at a time across PCs; notes, views and edits live in the shared folder's db (not per-PC browser storage) so everyone sees them; the launcher works from mapped drives and UNC paths (pushd); each PC runs its own 127.0.0.1 server pointed at the shared folder. Accepting a hand edit as the new baseline needs an explicit confirm, since another person may have made it. To check first: the test zip run from the network drive (portable Python from a network path, exclusive locking over the share).
+## MULTIPC-v1 (Sammy, 2026-11-02): replaced by MULTIPC-v2 below (shared network folder dropped); full text in docs/DECISIONS_ARCHIVE.md.
 
 ## MULTIPC-v2 (Sammy, 2026-11-02; replaces MULTIPC-v1)
 Running the tracker from the shared network folder failed in the test (probe v4 from the share), so each person keeps a local copy of the tracker folder. One keeper (Sammy) brings in updates; the keeper's tracker then makes a "refresh file" that the others drag into their copies, which replaces their workbook and adds the new article pages and site data, so all copies match the keeper's. Notes and saved views stay personal to each copy (never in the refresh file). Reader copies hide "Bring in update" and "Accept the workbook", so only the keeper saves. The shared drive (or email/Teams) is only used to pass files.
 UPDATESTATION-v1 (Sammy, 2026-11-02, follow-up 6, PORTABLE): the Update station must not depend on any chat's context and must move to another claude.ai account without losing function. So: everything it needs comes from its own published files plus the for-Update file loaded each use; its database is scratch only (nothing needed carries over between uses); no hard-coded links to other artifacts and no server-side file copies from them; no CDN or other outside code (everything inline or in its own files); the full source and a build script live in this repo (work/localapp/station/) so it can be republished on any account. The only outside needs are the declared capabilities (TinyFish connector, Claude sampling, downloads, db): on a new account the TinyFish connector must be connected there; the README says how.
-UPDATESTATION-v1 (Sammy, 2026-11-02, follow-up 7): (1) Photos: Sammy wants the Update station to download each new find's HTML with its photos included, so saved copies keep photos without the PC going online. Feasibility inside a claude.ai artifact (browser security rules, the artifact sandbox, TinyFish returning text only) is being checked before building; report back if it is impossible. (2) Wanted originals (CHAINORIG-v1 `origin_wanted`): the PC puts the list in the for-Update file and the next Update in the station searches for them along with everything else; they arrive in the next update folder.
+UPDATESTATION-v1 follow-up 7 (photos in the station; wanted originals): replaced by PHOTOLINK-v1 and NOQUEUE-v1; full text in docs/DECISIONS_ARCHIVE.md.
 
 ## PHOTOLINK-v1 (Sammy, 2026-11-02)
 New saved copies keep their photos as links to the news sites' own image addresses (remote <img>); Edge loads them when a saved copy is opened on the PC. Existing copies keep their embedded photos. Sammy chose this over a Claude Code photo step and over no photos, knowing: (1) it is the one exception to "nothing on the PC goes online" (GOVIT-v1): the browser fetches images from news sites when a saved copy is viewed; the program itself still makes no connections; (2) photos disappear when a site removes them; (3) IT's note must say so. Implementation: the PC save keeps remote images instead of stripping them (no offline photo step), the copy build must not reject them, the viewer loads them with no referrer, lazily.
@@ -543,7 +538,7 @@ Delete the "Reprint (unverified)" rows completely before the full handover (419 
 ## PRCOLOR-v1 and PRJUDGE-v1 (Sammy, 2026-11-03)
 - PRCOLOR-v1: rows with Press release = Yes get their own font colour in the spreadsheet, purple (#7030A0), across the whole row, distinct from the red (#C00000) used for the other rows the tracker hides. Going forward every save colours press-release rows purple; the existing ones are recoloured once at switch-over (backup first; only font colour changes). Hiding in the tracker still follows the Press release column, not the colour.
 - PRJUDGE-v1: whether a find is a press release is decided per item, not by a list of wire names: "create a process to determine if things are a press release wire on an individual basis". Each find (web, NewsBank, ProQuest) gets a per-item judgment in the Update station from its own text (signals such as "issued the following news release", a CONTACT: line, release category tags, a dateline + "--" release opening, a release reposted verbatim), with the reason recorded; the PC save honours it (fills Press release = Yes, fill-blanks). The outlet list (PR_OUTLETS/PR_HOSTS) becomes a hint that asks for the per-item check, not an automatic Yes; an article reposted by a wire stays coverage.
-PRJUDGE-v1 (Sammy, 2026-11-03, follow-up): only wires and official sites count as press releases; a community outlet running a release, even word for word, is coverage and stays shown. Applying the check (work/localapp/PRESS_RELEASE_CHECK.md), Sammy said "do what you think is best": Claude's call, consistent with that rule: at switch-over mark only the 4 missed wire releases (01759 US Fed News; 01190 and 01364 PR Newswire on Yahoo; 00290 GlobeNewswire on Yahoo; checked again on the real workbook first); the ~82 community-outlet posts stay coverage. Not changed: the ~261 existing Yes rows on non-wire outlets (some contradict the rule; listed for Sammy, never unmarked without his say).
+PRJUDGE-v1 follow-up (only wires and official sites count as press releases; Claude's call on the 4 missed wire releases): replaced by PRJUDGE-v2 above; full text in docs/DECISIONS_ARCHIVE.md.
 
 ## ORIGCOPIES-v1 (Sammy, 2026-11-03)
 "I want all original copies saved even if they are already in the tracker." NewsBank and ProQuest stories (and publisher print-page PDFs) that match a row already in the tracker are not dropped: the PDF is saved as an extra original copy of that row (library `_original_pdf/<year>/<nb|pq><Article ID><o|r>-s<Story ID>.pdf`, add-only, existing names skipped), and only blank cells are filled (e.g. ProQuest link and via-CSL link; print columns when the PDF is the print edition of the row's web story, per the one-row web+print rule). No new row, no change to filled cells. Publisher print-page PDFs without a ProQuest details block (e.g. Mother Jones Nov+Dec 2026 pp. 16-21, "In the Shadows" by Jane Black = print edition of row 00124) are recognised from their page footer (magazine, issue, page numbers), matched to a row by outlet + author + headline, and attached only after the intern confirms the match.
@@ -579,3 +574,20 @@ Claude's call: the feature list is frozen at what is requested now; new ideas ar
 
 ## PARITYTEST-v1 (2026-11-03, Sammy)
 Sammy: "ensure that there's a final test that compares artifact functionality to the new software." Before the final zip, a side-by-side functionality test runs the live tracker's own files (fetched read-only, run locally with a storage stand-in; the live artifact and its database are never touched) and the final PC tracker on the same workbook copy, through every feature. Results must match except the recorded SAMELOOK-v2 exceptions. It runs in consolidation step 5 and again after CLEANUP-v1; it must pass before the zip is sent. Builds on the look check (work/localapp/lookcheck/), which compares look; this compares behaviour.
+
+## DATAFIX-v1 (2026-11-04, Sammy): answers on the four data checks (work/localapp/datafix/)
+Applied only on switch-over day from the "Switch-over changes" screen, after the backup, re-checked on the real workbook.
+1. Print pages, 10 sure matches (A/high): yes, fill the blank print-page cells and retire the Unlinked rows.
+2. Print pages, A/medium and low (Sammy: "do what you think is best"): apply A/medium (22) including Edition "Web" -> "Web + Print" on those rows, since the filled print cells would otherwise contradict it; A/low (25) stays a list, not applied.
+3. 109 election-day pages: label "not coverage" only if they contain no commentary. No page text exists for them yet, so none are labelled now; a page is labelled only after it is clipped and shown to be results tables only.
+4. 277 sister-paper reprints (B): Fable audit decides.
+5. 33 failing translations: Fable audit decides.
+6. Fix the 3 Language cells (00169, 00170, 10618): yes.
+7. s00512 / s00985: the English version is the Original (earliest English row becomes the Original; the Spanish row becomes its translation reprint).
+8. Outlet-name authors: clear the 14 high-confidence cells (exception to fill-blanks, approved); keep the 9 blog/brand ones.
+9. Wire and partner credits (175): keep as is.
+10. NewsBank header fills, high and medium (630 rows): yes; low excluded.
+11. Group bylines ("<Outlet> Staff") fill Author 1: yes.
+12. 123 page-number conflicts: Fable audit decides.
+13. 05166 (s01614): leave it.
+14. 13 organisation-site posts: Fable audit decides, and its verdict is applied.
