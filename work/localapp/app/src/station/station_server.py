@@ -368,7 +368,7 @@ class StationHandler(S.Handler):
             return self._err(405, 'method not allowed', head)
         d = self._body_json()
         r_ = R.role(lay)
-        if rest in ('inspect', 'preview', 'save', 'reject', 'init', 'refresh_make', 'edits_preview', 'edits_save', 'setup_check', 'setup_run', 'drop_preview', 'drop_apply', 'switch_preview', 'switch_apply', 'switch_finish', 'switch_remove_file') and r_ != 'keeper':
+        if rest in ('inspect', 'preview', 'save', 'reject', 'init', 'refresh_make', 'edits_preview', 'edits_save', 'setup_check', 'setup_run', 'rebuild_copies', 'drop_preview', 'drop_apply', 'switch_preview', 'switch_apply', 'switch_finish', 'switch_remove_file') and r_ != 'keeper':
             return self._json({'ok': False, 'line': 'This copy of the tracker is a reader copy. Only the keeper copy takes in updates, saves edits, accepts the workbook, sets up from the Mac library, removes unverified reprints or makes refresh files. Edits made in a reader copy stay in that copy and are not saved anywhere else.'}, 403)
         if rest == 'refresh_take' and r_ == 'keeper':
             return self._json({'ok': False, 'line': 'This is the keeper copy. It makes refresh files; it does not take them in.'}, 403)
@@ -377,6 +377,8 @@ class StationHandler(S.Handler):
             verb = 'make'
         elif rest == 'rebuild':
             verb = 'rebuild'
+        elif rest == 'rebuild_copies':
+            verb = 'rebuild_copies'
         elif rest == 'refresh_make':
             verb, args = 'refresh_make', (['--full'] if d.get('full') is True else [])
         elif rest == 'refresh_take':

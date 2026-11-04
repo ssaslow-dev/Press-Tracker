@@ -35,6 +35,7 @@ import refresh as R         # noqa: E402
 import setup_mac as SM      # noqa: E402
 import drop_unverified as DR   # noqa: E402
 import switchover as SW   # noqa: E402
+import article_copies as AC   # noqa: E402
 
 PY_FLAGS = ['-B', '-X', 'utf8', '-I']
 _TMP = {'dir': None}       # set by boot(): data/tmp inside the app folder
@@ -233,6 +234,10 @@ def do_save(lay, TU, a):
                             res['site_rebuilt'] = False        # the workbook changed again: build the page the plain way below
                     except Exception as e:                     # noqa: BLE001  (reported, never hidden: the save itself is done)
                         res['renamed_files'] = {'error': repr(e)[:300]}
+                try:                                     # A11: any saved copy the save did not put in the article data is added from the library
+                    res['article_copies'] = {k: v for k, v in AC.rebuild(lay).items() if k in ('added', 'skipped', 'shards')}
+                except Exception as e:                   # noqa: BLE001  (reported, never hidden: the save itself is done)
+                    res['article_copies'] = {'error': repr(e)[:300]}
                 if not res.get('site_rebuilt'):          # the saver's rebuild failed or was skipped: build the page the plain way
                     try:
                         res['page_rebuild'] = rebuild_page(lay)
@@ -354,6 +359,19 @@ def do_refresh_take(lay, TU, a):
     return out(dict(r, ok=True, line=f'Refresh {r["seq"]} is in.', lines=lines))
 
 
+def do_rebuild_copies(lay, TU, a):
+    """Repairs: "Rebuild saved copies from the library" (A11)"""
+    try:
+        with C.AppLock(lay.state, 'rebuild_copies'):
+            res = AC.rebuild(lay, dry_run=bool(getattr(a, 'dry_run', False)))
+    except C.AppLockBusy as e:
+        return out({'ok': False, 'locked': True, 'line': C.busy_line(e.info, e.age)})
+    except Exception as e:                                # noqa: BLE001
+        return out({'ok': False, 'line': 'The saved copies could not be rebuilt: ' + str(e)[:300]}, 2)
+    res['skipped'] = [list(x) for x in res.get('skipped') or []]
+    return out({'ok': True, 'line': ' '.join(AC.lines(res)) if not res.get('dry_run') else f'{res.get("would_add", 0)} saved copies would be added.', 'lines': AC.lines(res), **res})
+
+
 def do_rebuild(lay, TU, a):
     try:
         with C.AppLock(lay.state, 'rebuild'):
@@ -389,7 +407,12 @@ def do_setup_run(lay, TU, a):
             code = TU.init_baseline(lay, note=note)['exit_code']
             if code != 0:
                 return out({'ok': False, 'written': True, 'line': 'The files were copied, but the tracker could not record the workbook as its starting point. Open Repairs and use "Accept the workbook as it is now".', **r}, 2)
+            try:        # A11: the article data from the keeper's own library, so every saved copy opens
+                ac = AC.rebuild(lay)
+            except Exception as e:                  # noqa: BLE001  (reported; Repairs has "Rebuild saved copies from the library")
+                ac = {'added': 0, 'skipped': [], 'error': repr(e)[:200]}
             summ = SM.summary(lay)
+            summ['article_copies'] = {k: ac.get(k) for k in ('added', 'error')} | {'skipped': len(ac.get('skipped') or [])}
             log = {'at': C.utc_now().isoformat(timespec='seconds'), 'verb': 'setup', 'folder': str(a.folder), 'list': a.list, **{k: r[k] for k in ('workbook_sha256', 'files_copied', 'files_skipped_same', 'listed', 'extra', 'extra_names', 'backup')}, 'summary': summ}
             (lay.state / 'logs').mkdir(parents=True, exist_ok=True)
             (lay.state / 'logs' / f'setup-{C.stamp()}.json').write_text(json.dumps(log, indent=1), encoding='utf-8')
@@ -407,8 +430,10 @@ def do_setup_run(lay, TU, a):
              f'Workbook fingerprint {r["workbook_sha256"][:8]} (all {r["listed"]} files checked against the list, and again after copying).']
     if r['extra']:
         lines.append(f'{r["extra"]} files in the Mac folder were not on the list and were not copied (first: {_show_list(r["extra_names"])}).')
-    if summ.get('saved_copy_stories_without_page_copy'):
-        lines.append(f'{summ["saved_copy_stories_without_page_copy"]} stories have a saved copy in the library that the tracker\'s article data does not hold yet (they were saved after this tracker\'s article data was made).')
+    if ac.get('error'):
+        lines.append('The saved copies could not be added to the article data (' + ac['error'] + '). Open Repairs and use "Rebuild saved copies from the library".')
+    else:
+        lines += AC.lines(ac)
     if r['backup']:
         lines.append(f'The workbook that was here before is backed up as {r["backup"]}.')
     return out({'ok': True, 'written': True, 'line': 'The tracker is set up.', 'lines': lines, 'summary': summ, **r})
@@ -512,7 +537,7 @@ def do_switch_remove_file(lay, TU, a):
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('verb', choices=['make', 'inspect', 'preview', 'save', 'reject', 'init', 'rebuild', 'refresh_make', 'refresh_take', 'edits_preview', 'edits_save',
-                                         'setup_check', 'setup_run', 'drop_preview', 'drop_apply', 'switch_preview', 'switch_apply', 'switch_finish', 'switch_remove_file'])
+                                         'setup_check', 'setup_run', 'rebuild_copies', 'drop_preview', 'drop_apply', 'switch_preview', 'switch_apply', 'switch_finish', 'switch_remove_file'])
     ap.add_argument('--root', required=True)
     ap.add_argument('--zip')
     ap.add_argument('--update')
@@ -539,7 +564,7 @@ def main(argv=None):
                 'save': lambda: do_save(lay, TU, a), 'edits_preview': lambda: do_edits_preview(lay, TU, a), 'edits_save': lambda: do_save(lay, TU, a), 'reject': lambda: do_reject(lay, TU, a), 'init': lambda: do_init(lay, TU, a),
                 'rebuild': lambda: do_rebuild(lay, TU, a), 'refresh_make': lambda: do_refresh_make(lay, TU, a),
                 'refresh_take': lambda: do_refresh_take(lay, TU, a), 'setup_check': lambda: do_setup_check(lay, TU, a),
-                'setup_run': lambda: do_setup_run(lay, TU, a), 'drop_preview': lambda: do_drop_preview(lay, TU, a), 'drop_apply': lambda: do_drop_apply(lay, TU, a),
+                'setup_run': lambda: do_setup_run(lay, TU, a), 'rebuild_copies': lambda: do_rebuild_copies(lay, TU, a), 'drop_preview': lambda: do_drop_preview(lay, TU, a), 'drop_apply': lambda: do_drop_apply(lay, TU, a),
                 'switch_preview': lambda: do_switch_preview(lay, TU, a), 'switch_apply': lambda: do_switch_apply(lay, TU, a), 'switch_finish': lambda: do_switch_finish(lay, TU, a),
                 'switch_remove_file': lambda: do_switch_remove_file(lay, TU, a)}[a.verb]()
     except Exception as e:                                # noqa: BLE001

@@ -215,6 +215,14 @@
     if (state.busy || locked()) rbd.disabled = true;
     rep.appendChild(rbd);
     if (state.rebuildMsg) rep.appendChild(state.rebuildMsg);
+    if (keeper) {
+      rep.appendChild(el('h3', { text: 'Rebuild saved copies from the library' }));
+      rep.appendChild(el('p', { text: 'Use this when a story shows a saved copy that will not open. It reads your own library, adds every saved copy the tracker\'s article data does not hold yet, and changes nothing that is already there. Setup and every save do this by themselves; this button is for a second try.' }));
+      var rcb = el('button', { class: 'ajgf-b alt', type: 'button', id: 'ajgf-rebuild-copies', text: 'Rebuild saved copies', onclick: doRebuildCopies });
+      if (state.busy || locked()) rcb.disabled = true;
+      rep.appendChild(rcb);
+      if (state.copiesMsg) rep.appendChild(state.copiesMsg);
+    }
     box.appendChild(el('hr'));
     box.appendChild(rep);
   }
@@ -625,6 +633,18 @@
       d.appendChild(b);
       if (state.initMsg) d.appendChild(state.initMsg);
     }
+  }
+  // ---- rebuild saved copies from the library (A11)
+  function doRebuildCopies() {
+    state.busy = true; state.copiesMsg = null; render();
+    var tk = busyNote(box); tk.textContent = 'Reading the library. This can take a few minutes...';
+    runJob('rebuild_copies', {}, function (s) { tk.textContent = 'Reading the library... ' + s + ' s'; }).then(function (r) {
+      state.busy = false;
+      var kids = (r.lines && r.lines.length ? r.lines : [r.line || '']).map(function (t) { return el('div', { text: t }); });
+      if (r.ok && r.added) kids.push(el('button', { class: 'ajgf-b', type: 'button', text: 'Reload the tracker', onclick: function () { location.reload(); } }));
+      state.copiesMsg = el('div', { class: r.ok ? 'ajgf-ok' : 'ajgf-bad' }, kids);
+      render();
+    });
   }
   // ---- rebuild
   function doRebuild() {
