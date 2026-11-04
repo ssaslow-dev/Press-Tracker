@@ -4,7 +4,9 @@ Reviewer: Fable, 2026-11-04, repository at commit e4c7e32 (everything since REVI
 (CLAUDE.md hard rules, work/saver/SAVE_RULES.md, work/localapp/updatefolder/FORMAT.md, and the DECISIONS entries SWITCHOVER-v1 and its plan,
 DROPUNVERIFIED-v1, PRJUDGE-v2, PRCOLOR-v1, OTHERFILES-v1 / ORIGCOPIES-v1, PRINTORIG-v1 option B, VIEWORIG-v1, RENAME-v1, DATAFIX-v1 with its
 follow-up and the "built into the screen" entry, LIBFILES-v1 / STATIONNAMES, NAMING-v2, LASTUPDATED-v1, PCEDITS-v1, MULTIPC-v2, PRINTTAB-v1).
-Builder notes, READMEs and commit messages were not used for conclusions.
+Builder notes, READMEs and commit messages were not used for conclusions. Commits that landed on the branch while this review ran (e929aee to
+c810e0a, MACAPP-v1: `work/localapp/macpack/` plan and test-list documents only) touch no code that writes the workbook or the library and are
+not part of this review.
 
 Read in full: `work/localapp/app/src/station/{switchover,rename_files,datafix_structural,drop_unverified,other_files_column,setup_mac,common,
 station_cli,station_server,refresh,post_save,plain}.py`, `web/panel.js` (the switch-over part), `data/datafix_structural.json`, `data/prjudge_v2.json`
