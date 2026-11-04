@@ -9,8 +9,8 @@ One list for everything left. Claude keeps it current after every step and repor
 | A1 | Fable review of the code that writes the workbook and library (work/saver/REVIEW_3.md) | Claude | done 2026-11-04 (7 findings) |
 | A2 | Fix its findings, rerun every test and the end-to-end check, rebuild the zip, resend | Claude | done 2026-11-04 (7 findings fixed, all suites and chain check green, zip rebuilt: sha256 e2fa191a) |
 | A3 | Send IT the updated note (work/localapp/IT_NOTE_APP.md, with the new zip's fingerprint) | Sammy | after the final zip (B3) |
-| A4 | Dress rehearsal on the office PC with yesterday's copy (setup + Switch-over changes screen, on a spare folder) | Sammy | ready now (rehearsal zip sent; folder, copy and Mac fingerprint list prepared) |
-| A5 | Switch-over day (PLAN.md checklist): Mac fingerprint list, copy, unzip, keeper role, Set up from the Mac library, Switch-over changes screen | Sammy + Claude | after A3, A4 |
+| A4 | Dress rehearsal on the office PC with yesterday's copy (setup + Switch-over changes screen, on a spare folder) | Sammy | skipped: the real run doubles as it (PC copy only) |
+| A5 | Switch-over day (PLAN.md checklist): Mac fingerprint list, copy, unzip, keeper role, Set up from the Mac library, Switch-over changes screen | Sammy + Claude | in progress: setup done (12,682 files checked), Switch-over changes applying |
 | A6 | Decide 01920 and 03486 | Sammy | done: 01920 remove (after switch-over, A13); 03486 author fixed via 06_author_03486.csv on the screen |
 | A13 | Move 01920 to the Removed tab through a save | Claude + Sammy | after A5 |
 | A7 | Move the Update station to the office claude.ai account (station/MOVE_TO_OFFICE.md) | Sammy + Claude | on the day |
