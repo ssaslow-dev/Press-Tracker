@@ -10,6 +10,7 @@ st = tmp / 'work' / 'localapp' / 'app' / 'src' / 'station'
 shutil.copytree(REPO / 'work/localapp/app/src/station', st, ignore=shutil.ignore_patterns('__pycache__'))
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(st))
+sys.path.insert(0, str(REPO / 'work/saver/src'))      # fs_retry (the built app has it in app/saver, which common.py puts on the path)
 import refresh as R, rename_files as RF
 fails = []
 def ok(c, m):

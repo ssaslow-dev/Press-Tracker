@@ -1,6 +1,6 @@
 --- a/tracker.js
 +++ b/tracker.js
-@@ -6382,2 +6382,37 @@
+@@ -6382,2 +6382,39 @@
    try { document.head.insertAdjacentHTML('beforeend', '<style id="stuckcorner-css">table.db.hdr-stuck thead th{border-top-left-radius:0!important;border-top-right-radius:0!important}</style>'); } catch(e){}
 +  /* TIDY-v1: layout fixes of the PC tracker (patch 15); one style block, last in the head */
 +  try { document.head.insertAdjacentHTML('beforeend', '<style id="tidy-css">' + `
@@ -34,6 +34,8 @@
 +:root .badge{padding-top:2px;padding-bottom:0}
 +:root button.tile{display:flex;flex-direction:column;justify-content:flex-start}   /* a button centres its content up and down; the first line now starts at the same height in every tile, and the tile keeps its height */
 +:root button.tile>.eyebrow{margin:5px 0 -.6px}
++/* 5. Data > Reach and medium: the indented sub-rows (margin-left:18px on a full-width button) spilled 18 px past the card's right edge (Sammy 2026-11-04) */
++:root .hb.hb-sub{width:calc(100% - 18px)}
 +/* 6. Manage: "Find & refresh" described the Update buttons, which are not in the PC tracker (Manage opens on the Update log) */
 +:root #mgTabs [data-mg="upd"]{display:none}
 +` + '</style>'); } catch(e){}
