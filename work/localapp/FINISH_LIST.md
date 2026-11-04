@@ -16,6 +16,8 @@ One list for everything left. Claude keeps it current after every step and repor
 | A8 | First real Update run with Claude and TinyFish: station -> update folder -> Bring in update -> Save | Sammy | on the day |
 | A9 | Refresh files for each colleague | Sammy | on the day |
 | A10 | Old tracker: stop Update and saves (kept read-only) | Sammy | on the day |
+| A11 | 431 stories have a saved copy in the library that the shipped article data lacks (seen at setup 2026-11-04): build the article data from the keeper's own library on the PC so every saved copy opens | Claude | to do (not blocking) |
+| A12 | Switch-over screen wording: the fixes step says "Blanks only" although approved overwrites (pages, cleared authors, Edition) are included | Claude | with D1 |
 
 ## B. Mac version (MACAPP-v1)
 
