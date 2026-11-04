@@ -300,11 +300,11 @@ def run(lay, folder, listfile=None, repairs=False, progress=None) -> dict:
             if is_wb:
                 continue
             dst.parent.mkdir(parents=True, exist_ok=True)
-            os.replace(tmp, dst)
+            C.replace_file(tmp, dst)
         for rel, tmp, dst, is_wb in copied:
             if is_wb:
                 wb_dst.parent.mkdir(parents=True, exist_ok=True)
-                os.replace(tmp, wb_dst)
+                C.replace_file(tmp, wb_dst)
     finally:
         shutil.rmtree(stage, ignore_errors=True)
     sha_wb = rep['_want'][_nfc(WB_NAME)]

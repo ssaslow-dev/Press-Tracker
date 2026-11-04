@@ -23,6 +23,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import formats as F          # noqa: E402
+import fs_retry as FR        # noqa: E402  (A15: wait and retry when Windows holds a file)
 from layout import PCLayout  # noqa: E402
 
 # per story: what the Update page reads (SURVEY 7e); everything else, and all long text, is left out
@@ -241,7 +242,7 @@ def make(workbook, db_dir, pipeline, out_file, *, legacy=None, sid_map=None, ins
         target = out_file.with_name(f'{out_file.stem} ({n}){out_file.suffix}')
     tmpf = target.with_name(target.name + f'.part{os.getpid()}')
     tmpf.write_bytes(blob)
-    os.replace(tmpf, target)
+    FR.replace(tmpf, target)
     return {'path': str(target), 'bytes': len(blob), 'workbook_sha256': sha, 'stories': len(data), 'notes': notes}
 
 

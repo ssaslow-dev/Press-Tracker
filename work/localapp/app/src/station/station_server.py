@@ -156,7 +156,7 @@ class Jobs:
             info = json.loads(lk.read_text(encoding='utf-8'))
             if info.get('pid') == pid:
                 (base / 'state' / 'logs').mkdir(parents=True, exist_ok=True)
-                os.replace(lk, base / 'state' / 'logs' / f'app.lock.stopped.{int(time.time())}')
+                C.replace_file(lk, base / 'state' / 'logs' / f'app.lock.stopped.{int(time.time())}')
         except (OSError, ValueError):
             pass
 
@@ -276,9 +276,9 @@ class StationHandler(S.Handler):
                     h.update(b)
                     left -= len(b)
             if left:
-                os.replace(part, dest.with_name(dest.name + '.incomplete'))
+                C.replace_file(part, dest.with_name(dest.name + '.incomplete'))
                 return self._err(400, 'The upload was cut off. Try again.')
-            os.replace(part, dest)
+            C.replace_file(part, dest)
         except OSError as e:
             return self._err(500, f'could not store the upload: {e}')
         return self._json({'ok': True, 'file': dest.name, 'bytes': n, 'sha256': h.hexdigest()})

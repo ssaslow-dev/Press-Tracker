@@ -66,7 +66,7 @@ def recover(lay) -> dict | None:
             note['rewrote_list'] = True
         (lay.state / 'logs').mkdir(parents=True, exist_ok=True)
         t = lay.state / 'logs' / f'{PENDING}.{C.stamp()}'
-        os.replace(marker, t)
+        C.replace_file(marker, t)
     except OSError as e:
         note['errors'].append(repr(e)[:200])
     return note
@@ -131,7 +131,7 @@ def sync(lay, res: dict) -> dict:
             done.append('pipeline/PIPELINE.sha256')
             if marker_written:
                 (lay.state / 'logs').mkdir(parents=True, exist_ok=True)
-                os.replace(marker, lay.state / 'logs' / f'{PENDING}.{stamp}')       # the window is closed
+                C.replace_file(marker, lay.state / 'logs' / f'{PENDING}.{stamp}')       # the window is closed
         except OSError as e:
             errors.append(f'PIPELINE.sha256: {e!r}'[:200])
     rep = {'at': C.utc_now().isoformat(timespec='seconds'), 'update_id': res.get('update_id'), 'copied': done, 'errors': errors}

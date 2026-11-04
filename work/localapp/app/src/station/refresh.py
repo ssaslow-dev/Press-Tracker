@@ -224,7 +224,7 @@ def make(lay, full=False, auto=True) -> dict:
             ct = zipfile.ZIP_STORED if os.path.splitext(n)[1].lower() in MEDIA | {'.pdf'} else zipfile.ZIP_DEFLATED
             z.write(p, n, compress_type=ct)
             C.beat()
-    os.replace(part, dest)
+    C.replace_file(part, dest)
     C.atomic_write(_state_file(lay, 'refresh_state.json'), json.dumps({'last_seq': seq, 'last_at': created, 'shards': new_map or st.get('shards') or {},
                                                                     'last_file': name}, indent=1).encode())
     return {'name': name, 'path': str(dest), 'bytes': dest.stat().st_size, 'kind': manifest['kind'], 'seq': seq, 'files': len(files),
@@ -337,7 +337,7 @@ def trim_refresh_backups(lay, wb: Path, keep: int = 3) -> list:
         while t.exists():
             t = dest / f'{f.stem} ({n}){f.suffix}'
             n += 1
-        shutil.move(str(f), str(t))
+        C.move_file(f, t)
         moved.append(t.name)
     return moved
 
@@ -389,7 +389,7 @@ def take(lay, zip_path, init_fn) -> dict:
             staged.unlink()
             raise RefreshRefused('EXCEL_OPEN', 'Excel opened the workbook meanwhile. Nothing was changed.')
         try:
-            os.replace(staged, wb)
+            C.replace_file(staged, wb)
         except PermissionError:
             try:
                 staged.unlink()
@@ -431,7 +431,7 @@ def take(lay, zip_path, init_fn) -> dict:
             res['library_delete_kept'].append(n[len('library/'):])
             continue
         try:
-            dst.unlink()
+            C.unlink_file(dst)
             res['library_deleted'] += 1
             gone.append(n[len('library/'):])
         except OSError:
@@ -462,7 +462,7 @@ def _extract(z, info, dst: Path, want_sha: str):
         if sha != want_sha:
             raise RefreshRefused('HASH_MISMATCH', f'{info.filename[:60]} changed while it was being read')
         if part != dst:
-            os.replace(part, dst)
+            C.replace_file(part, dst)
     except BaseException:
         try:
             if part.exists() and part != dst:

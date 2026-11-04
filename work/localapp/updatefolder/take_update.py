@@ -28,6 +28,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import formats as F          # noqa: E402
+import fs_retry as FR        # noqa: E402  (A15: wait and retry when Windows holds a file)
 from layout import PCLayout  # noqa: E402
 
 EXIT_ZIP_REFUSED, EXIT_MISMATCH = 7, 8
@@ -57,7 +58,7 @@ def move_unique(src: Path, dst_dir: Path, name: str | None = None) -> Path:
     while dst.exists():
         n += 1
         dst = dst_dir / f'{Path(name).stem} ({n}){Path(name).suffix}'
-    shutil.move(str(src), str(dst))
+    FR.move(src, dst)
     return dst
 
 

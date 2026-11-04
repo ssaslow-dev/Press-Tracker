@@ -505,7 +505,7 @@ def do_switch_remove_file(lay, TU, a):
     moved = lay.data / 'switchover' / 'datafix_removed'
     if f.is_file() and re.fullmatch(r'[A-Za-z0-9._ ()-]{1,120}\.csv', nm):
         moved.mkdir(parents=True, exist_ok=True)
-        os.replace(f, moved / f'{C.stamp()}-{nm}')
+        C.replace_file(f, moved / f'{C.stamp()}-{nm}')
     return out({'ok': True})
 
 

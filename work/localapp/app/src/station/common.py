@@ -17,6 +17,8 @@ for _d in ('updatefolder', 'saver', 'server'):
     if str(APP / _d) not in sys.path:
         sys.path.insert(0, str(APP / _d))
 
+from fs_retry import retry_busy, replace as replace_file, rename as rename_file, unlink as unlink_file, move as move_file   # noqa: E402,F401  (A15: one shared wait-and-retry for Windows file locks)
+
 STALE_MINUTES = 30
 WORKBOOK_NAME = 'AJG Coverage - NewsBank.xlsx'
 
@@ -91,7 +93,7 @@ def atomic_write(path: Path, data: bytes) -> None:
         f.write(data)
         f.flush()
         os.fsync(f.fileno())
-    os.replace(tmp, path)
+    replace_file(tmp, path)
 
 
 def atomic_copy(src: Path, dst: Path) -> None:
@@ -149,7 +151,7 @@ class AppLock:
                 logs = self.state / 'logs'
                 logs.mkdir(parents=True, exist_ok=True)
                 try:
-                    os.replace(self.path, logs / f'app.stale.{stamp()}.{self.token}')
+                    replace_file(self.path, logs / f'app.stale.{stamp()}.{self.token}')
                 except OSError:
                     pass
                 continue
@@ -168,7 +170,7 @@ class AppLock:
             logs = self.state / 'logs'
             logs.mkdir(parents=True, exist_ok=True)
             try:
-                os.replace(self.path, logs / f'app.lock.{self.what}.{stamp()}')
+                replace_file(self.path, logs / f'app.lock.{self.what}.{stamp()}')
             except OSError:
                 pass
 

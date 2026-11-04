@@ -185,13 +185,15 @@ class Commit(unittest.TestCase):
         self.assertEqual(list(self.lib.iterdir()), [])        # no library step after a failed swap
 
     def test_replace_error_leaves_master_alone(self):
-        real = os.replace
-        SV.os.replace = lambda s, d: (_ for _ in ()).throw(PermissionError('locked'))
+        real, calls, old_sleep = os.replace, [], SV.FR._sleep
+        SV.os.replace = lambda s, d: calls.append(1) or (_ for _ in ()).throw(PermissionError('locked'))
+        SV.FR._sleep = lambda s: None
         try:
             with self.assertRaises(SV.Refuse) as cm:
                 SV.commit(self.job(), self.lock)
         finally:
-            SV.os.replace = real
+            SV.os.replace, SV.FR._sleep = real, old_sleep
+        self.assertEqual(len(calls), SV.FR.TRIES)          # retried for the full time, then the clean refusal
         self.assertEqual(cm.exception.code, 'COMMIT_FAILED')
         self.assertEqual(sha(self.w), self.before)
         # lesser note 1: no staged copy is left beside the master; it was moved into --out as "rejected ..."
@@ -206,14 +208,24 @@ class Commit(unittest.TestCase):
             if len(calls) < 3:
                 raise PermissionError('scanner has it')
             return real(s, d)
-        SV.os.replace, old_wait = flaky, SV.REPLACE_WAIT
-        SV.REPLACE_WAIT = 0
+        SV.os.replace, old_sleep = flaky, SV.FR._sleep
+        SV.FR._sleep = lambda s: None
         try:
             SV.commit(self.job(), self.lock)
         finally:
-            SV.os.replace, SV.REPLACE_WAIT = real, old_wait
+            SV.os.replace, SV.FR._sleep = real, old_sleep
         self.assertEqual(len(calls), 3)
         self.assertEqual(sha(self.w), self.after)
+
+    def test_other_errors_are_not_retried(self):
+        real, calls = os.replace, []
+        SV.os.replace = lambda s, d: calls.append(1) or (_ for _ in ()).throw(OSError(5, 'disk error'))
+        try:
+            with self.assertRaises(SV.Refuse) as cm:
+                SV.commit(self.job(), self.lock)
+        finally:
+            SV.os.replace = real
+        self.assertEqual((cm.exception.code, len(calls)), ('COMMIT_FAILED', 1))
 
     def test_master_changed_before_backup_writes_nothing(self):
         with open(self.w, 'ab') as f:

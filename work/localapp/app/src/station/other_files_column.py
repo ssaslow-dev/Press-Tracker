@@ -308,7 +308,7 @@ def apply(lay, token: str, init_fn, shared_backup=None) -> dict:
         staged.unlink(missing_ok=True)
         raise OtherFilesRefused('CHANGED', 'The workbook changed or Excel opened it while the step was running. Nothing was changed.')
     try:
-        os.replace(staged, wb)
+        C.replace_file(staged, wb)
     except PermissionError:
         staged.unlink(missing_ok=True)
         raise OtherFilesRefused('EXCEL_OPEN', 'The workbook is in use (Excel or a virus scanner has it). Close Excel, wait a moment, then try again. Nothing was changed.')

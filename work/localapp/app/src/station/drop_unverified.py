@@ -355,7 +355,7 @@ def apply(lay, token: str, init_fn, shared_backup=None) -> dict:
         staged.unlink(missing_ok=True)
         raise DropRefused('CHANGED', 'The workbook changed or Excel opened it while the step was running. Nothing was changed.')
     try:
-        os.replace(staged, wb)
+        C.replace_file(staged, wb)
     except PermissionError:
         staged.unlink(missing_ok=True)
         raise DropRefused('EXCEL_OPEN', 'The workbook is in use (Excel or a virus scanner has it). Close Excel, wait a moment, then try again. Nothing was changed.')
@@ -396,7 +396,7 @@ def apply(lay, token: str, init_fn, shared_backup=None) -> dict:
             e['error'] = 'outside the library'
             continue
         try:
-            src.unlink()
+            C.unlink_file(src)
             e['deleted'] = True
         except FileNotFoundError:
             e['error'] = 'already gone'

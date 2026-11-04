@@ -33,6 +33,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 import saver_diff as D       # noqa: E402
 import saver_steps as S      # noqa: E402
+import fs_retry as FR        # noqa: E402  (A15: wait and retry when Windows holds a file)
 
 EXIT_OK, EXIT_REFUSED, EXIT_NOTHING, EXIT_BAD, EXIT_REBUILD, EXIT_POSTWRITE = 0, 2, 3, 4, 5, 6
 KEEP_BACKUPS = 3
@@ -233,7 +234,7 @@ class ProcessLock:
         logs = self.state / 'logs'
         logs.mkdir(parents=True, exist_ok=True)
         stamp = iso(utc_now()).replace(':', '')
-        shutil.move(str(self.path), str(logs / f'lock.{self.run or "none"}.{stamp}'))
+        FR.move(self.path, logs / f'lock.{self.run or "none"}.{stamp}')
 
     def owned_file(self) -> bool:
         info = self._info()
@@ -266,7 +267,7 @@ def unique_path(p: Path) -> Path:
 def move_unique(src: Path, dst: Path) -> Path:
     dst.parent.mkdir(parents=True, exist_ok=True)
     target = unique_path(dst)
-    shutil.move(str(src), str(target))
+    FR.move(src, target)
     return target
 
 
@@ -944,7 +945,7 @@ def trim_backups(w: Path, backups: Path, state: Path, keep: int = KEEP_BACKUPS) 
     return moved
 
 
-REPLACE_TRIES, REPLACE_WAIT = 4, 1.5      # os.replace on a file something else holds: 4 tries over about 5 seconds
+# os.replace of the master on a file something else holds: FR.retry_busy waits and retries about 10 seconds, PermissionError only (A15)
 
 
 def commit(job: dict, lock: ProcessLock) -> dict:
@@ -999,15 +1000,10 @@ def commit(job: dict, lock: ProcessLock) -> dict:
         raise Refuse('COMMIT_FAILED', f'the staged copy\'s checksum ({sha_short(tsha)}) is not the output\'s ({sha_short(after_sha)}). '
                      'The master was not touched.', {'backup': bpath.name})
     err = None
-    for attempt in range(REPLACE_TRIES):       # a virus scanner or Excel may hold the file for a moment: retry a few seconds, then refuse
-        try:
-            os.replace(tmp, w)
-            err = None
-            break
-        except OSError as e:
-            err = e
-            if attempt + 1 < REPLACE_TRIES:
-                time.sleep(REPLACE_WAIT)
+    try:       # a virus scanner or Excel may hold the file for a moment: retry about 10 seconds (PermissionError only), then refuse
+        FR.replace(tmp, w)
+    except OSError as e:
+        err = e
     if err is not None:
         staged = str(tmp)
         try:       # lesser note 1: do not leave the staged copy beside the master
@@ -1285,7 +1281,7 @@ def cmd_save(a) -> int:
         committed = True
         if reused:                     # the preview's passes belong to the workbook that was just replaced: never reusable again
             try:
-                os.replace(out / PREVIEW_STATE, out / PREVIEW_STATE_USED)
+                FR.replace(out / PREVIEW_STATE, out / PREVIEW_STATE_USED)
             except OSError:
                 pass
         at = iso(utc_now())
