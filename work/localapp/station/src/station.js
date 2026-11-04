@@ -106,11 +106,14 @@ function prAnnotateRows(rows, pageDoc) {
     if (j.v === 'yes') { r['Press release'] = 'Yes'; r['Team note'] = ('press release: ' + j.why + (r['Team note'] ? '; ' + r['Team note'] : '')).slice(0, 600); }
   });
 }
+/* A plain wrapper, not a Proxy: the runtime freezes the sample namespace, and a Proxy may not hand back a different value for a frozen property
+   (a JavaScript rule). The Proxy here made every Claude call fail on 2026-11-04, so the whole run's finds came back "Not reviewed by Claude". */
 function sampleWatch(f) {
-  return new Proxy(f, {
-    apply(t, th, a) { return Promise.resolve(t.apply(th, a)).catch(e => { sampleDenied(e); throw e; }); },
-    get(t, k) { const v = t[k]; if (k === 'json' && typeof v === 'function') return (...a) => prCall(v, t, a).catch(e => { sampleDenied(e); throw e; }); return typeof v === 'function' ? v.bind(t) : v; },
-  });
+  const w = (...a) => Promise.resolve(f(...a)).catch(e => { sampleDenied(e); throw e; });
+  w.json = (...a) => prCall(f.json, f, a).catch(e => { sampleDenied(e); throw e; });
+  for (const k of Object.keys(f)) if (k !== 'json' && !(k in w)) { const v = f[k]; w[k] = typeof v === 'function' ? (...a) => v.apply(f, a) : v; }
+  if (typeof f.limits === 'function' && !w.limits) w.limits = (...a) => f.limits(...a);
+  return w;
 }
 const claudeForTracker = {
   use: async name => {

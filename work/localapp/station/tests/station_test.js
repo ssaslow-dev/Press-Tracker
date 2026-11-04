@@ -82,6 +82,8 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
     }
     return [];
   };
+  // the runtime also freezes every namespace it hands out (sample, mcp, db): a wrapper that breaks on frozen objects must fail here, not in Sammy's run
+  Object.freeze(sample); Object.freeze(mcp); Object.freeze(fakeDb);
   // the real runtime defines window.claude read-only and non-configurable (2026-11-04: a proxy on window broke the Update button); the fake does the same
   const fakeClaude = { use: async name => name === 'db' ? (dbMode === 'none' ? null : fakeDb) : name === 'mcp' ? mcp : name === 'sample' ? sample
     : name === 'downloads' ? { save: async ({ filename, data }) => { const buf = new Uint8Array(await data.arrayBuffer()); window.__dl.push({ filename, size: buf.length }); window.__lastDl = buf; } } : null };
