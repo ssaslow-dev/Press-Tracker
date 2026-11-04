@@ -1,0 +1,183 @@
+{
+ "about": "DATAFIX-v1: fixes the cell CSVs cannot express. Made by work/localapp/datafix/make_approved.py.",
+ "retire_unlinked": [
+  {
+   "key": "05440",
+   "aid": "00094",
+   "confidence": "medium"
+  },
+  {
+   "key": "05476",
+   "aid": "10637",
+   "confidence": "medium"
+  },
+  {
+   "key": "05481",
+   "aid": "00206",
+   "confidence": "high"
+  },
+  {
+   "key": "05561",
+   "aid": "00470",
+   "confidence": "high"
+  },
+  {
+   "key": "05594",
+   "aid": "10073",
+   "confidence": "medium"
+  },
+  {
+   "key": "05602",
+   "aid": "00498",
+   "confidence": "high"
+  },
+  {
+   "key": "05693",
+   "aid": "00896",
+   "confidence": "high"
+  },
+  {
+   "key": "05698",
+   "aid": "00895",
+   "confidence": "medium"
+  },
+  {
+   "key": "05705",
+   "aid": "09768",
+   "confidence": "medium"
+  },
+  {
+   "key": "05757",
+   "aid": "01045",
+   "confidence": "medium"
+  },
+  {
+   "key": "05800",
+   "aid": "01146",
+   "confidence": "high"
+  },
+  {
+   "key": "05878",
+   "aid": "07836",
+   "confidence": "medium"
+  },
+  {
+   "key": "05902",
+   "aid": "01499",
+   "confidence": "high"
+  },
+  {
+   "key": "05917",
+   "aid": "01540",
+   "confidence": "medium"
+  },
+  {
+   "key": "06027",
+   "aid": "01722",
+   "confidence": "high"
+  },
+  {
+   "key": "06058",
+   "aid": "01783",
+   "confidence": "medium"
+  },
+  {
+   "key": "06097",
+   "aid": "01827",
+   "confidence": "high"
+  },
+  {
+   "key": "06136",
+   "aid": "02074",
+   "confidence": "high"
+  },
+  {
+   "key": "06144",
+   "aid": "02081",
+   "confidence": "high"
+  },
+  {
+   "key": "06235",
+   "aid": "02586",
+   "confidence": "medium"
+  },
+  {
+   "key": "06288",
+   "aid": "02782",
+   "confidence": "medium"
+  },
+  {
+   "key": "06297",
+   "aid": "02866",
+   "confidence": "medium"
+  },
+  {
+   "key": "06302",
+   "aid": "09830",
+   "confidence": "medium"
+  },
+  {
+   "key": "06309",
+   "aid": "03099",
+   "confidence": "medium"
+  },
+  {
+   "key": "06323",
+   "aid": "03097",
+   "confidence": "medium"
+  },
+  {
+   "key": "06443",
+   "aid": "03297",
+   "confidence": "medium"
+  },
+  {
+   "key": "06520",
+   "aid": "03649",
+   "confidence": "medium"
+  },
+  {
+   "key": "06570",
+   "aid": "09973",
+   "confidence": "medium"
+  },
+  {
+   "key": "06673",
+   "aid": "04145",
+   "confidence": "medium"
+  },
+  {
+   "key": "06674",
+   "aid": "04165",
+   "confidence": "medium"
+  },
+  {
+   "key": "06694",
+   "aid": "09241",
+   "confidence": "medium"
+  },
+  {
+   "key": "06862",
+   "aid": "09940",
+   "confidence": "medium"
+  }
+ ],
+ "english_original": [
+  {
+   "sid": "s00512",
+   "new_original": "01829",
+   "old_original": "08145"
+  },
+  {
+   "sid": "s00985",
+   "new_original": "03482",
+   "old_original": "03492"
+  }
+ ],
+ "decide": [
+  "01920 (Shuang Ma Chemical, Korean chemical-supplier page) is not a translation of its story: split it into a story of its own, or remove it if it is not coverage. Your call.",
+  "03486 (East Bay Express, s00985): the byline should be Marisa Kendall. Your call.",
+  "About 585 Page cells hold NewsBank scan positions, not printed page numbers (sheet-wide; not changed).",
+  "Sister-paper print pages (class B, 277) stay in Unlinked print pages as a clip-and-check list (print_pages/AUDIT_B.md); low-confidence print matches (25) and the 138 jump pages are not applied."
+ ]
+}

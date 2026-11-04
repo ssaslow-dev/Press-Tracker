@@ -1,959 +1,958 @@
 {
-"about": "Makes app/src/station/data/prjudge_v2.json (PRJUDGE-v2 existing rows) from work/localapp/PRESS_RELEASE_YES_REVIEW.csv and a copy of the real workbook.",
-"made_from_workbook_sha": null,
-"own_release_copies_kept_yes": 96,
-"unmark": [
-{
-"aid": "01528",
-"sid": "s00423",
-"outlet": "Armenian Mirror-Spectator, The",
-"headline": "California Armenian Legislative Caucus Requests Montebello G",
-"kind": "Reprint"
-},
-{
-"aid": "09649",
-"sid": "s04128",
-"outlet": "Asbarez",
-"headline": "1,000 Strong Capacity Crowd Celebrates the Armenian Cause an",
-"kind": "Original"
-},
-{
-"aid": "09636",
-"sid": "s04114",
-"outlet": "Asbarez",
-"headline": "Ferrahian, Manoogian Principals Thank Community for Support ",
-"kind": "Original"
-},
-{
-"aid": "09615",
-"sid": "s04093",
-"outlet": "Asbarez",
-"headline": "Divest Turkey Movement Gains New Momentum",
-"kind": "Original"
-},
-{
-"aid": "08696",
-"sid": "s03301",
-"outlet": "Asbarez",
-"headline": "California Legislators Call on President Joe Biden to Suppor",
-"kind": "Original"
-},
-{
-"aid": "07777",
-"sid": "s02515",
-"outlet": "Asbarez",
-"headline": "ANCA-WR Provides Update on Legislative Efforts in Sacramento",
-"kind": "Original"
-},
-{
-"aid": "02020",
-"sid": "s00578",
-"outlet": "Asian Journal",
-"headline": "Governor Newsom announces $76M in grants to bolster safety a",
-"kind": "Reprint"
-},
-{
-"aid": "01884",
-"sid": "s04917",
-"outlet": "Beverly Press",
-"headline": "Newsom signs legislation at Holocaust Museum LA",
-"kind": "Original"
-},
-{
-"aid": "05264",
-"sid": "s01662",
-"outlet": "California Courier, The",
-"headline": "SCAD Announces Endorsements for 2018 Election Cycle",
-"kind": "Original"
-},
-{
-"aid": "04844",
-"sid": "s01495",
-"outlet": "California Courier, The",
-"headline": "At CSUN, ANI Exhibit features YMCA achievements to save vict",
-"kind": "Original"
-},
-{
-"aid": "04516",
-"sid": "s01352",
-"outlet": "California Courier, The",
-"headline": "California Legislators Announce Essay and Visual Arts Schola",
-"kind": "Original"
-},
-{
-"aid": "04314",
-"sid": "s01266",
-"outlet": "California Courier, The",
-"headline": "California Establishes a Sister State Relationship with Syun",
-"kind": "Original"
-},
-{
-"aid": "02846",
-"sid": "s00816",
-"outlet": "California Courier, The",
-"headline": "CA Armenian Legislative Caucus Foundation Calls on Biden to ",
-"kind": "Original"
-},
-{
-"aid": "04068",
-"sid": "s04545",
-"outlet": "Contra Costa News",
-"headline": "Governor Newsom Signs California IDs For All Bill",
-"kind": "Original"
-},
-{
-"aid": "09070",
-"sid": "s03601",
-"outlet": "Contra Costa News",
-"headline": "Governor Newsom Takes Action to Strengthen California’s Gun ",
-"kind": "Original"
-},
-{
-"aid": "09037",
-"sid": "s03570",
-"outlet": "Contra Costa News",
-"headline": "Bill Would Ban the Sale of Processed Foods Containing Danger",
-"kind": "Original"
-},
-{
-"aid": "03578",
-"sid": "s04510",
-"outlet": "Contra Costa News",
-"headline": "Assembly Passes Legislation to Ban Use of Dangerous Chemical",
-"kind": "Original"
-},
-{
-"aid": "08851",
-"sid": "s04674",
-"outlet": "Contra Costa News",
-"headline": "State Superintendent Hosts Conversation on Ways to Counter R",
-"kind": "Original"
-},
-{
-"aid": "08784",
-"sid": "s03370",
-"outlet": "Contra Costa News",
-"headline": "California Senate Passes Legislation Banning Dangerous Food ",
-"kind": "Original"
-},
-{
-"aid": "03166",
-"sid": "s00887",
-"outlet": "Contra Costa News",
-"headline": "Governor Newsom Strengthens California's Nation-Leading Gun ",
-"kind": "Original"
-},
-{
-"aid": "08332",
-"sid": "s02987",
-"outlet": "Contra Costa News",
-"headline": "Committees Approve Restaurant Fees Bill",
-"kind": "Original"
-},
-{
-"aid": "01977",
-"sid": "s04402",
-"outlet": "Contra Costa News",
-"headline": "Newsom Signs New Laws to Help Address Homelessness",
-"kind": "Original"
-},
-{
-"aid": "01878",
-"sid": "s04395",
-"outlet": "Contra Costa News",
-"headline": "Governor Newsom Signs Housing Package",
-"kind": "Original"
-},
-{
-"aid": "01874",
-"sid": "s00530",
-"outlet": "Contra Costa News",
-"headline": "Governor Newsom Signs Legislation to Strengthen California's",
-"kind": "Original"
-},
-{
-"aid": "01032",
-"sid": "s00272",
-"outlet": "Contra Costa News",
-"headline": "Bills to Crack Down on Hate and Antisemitism in California S",
-"kind": "Original"
-},
-{
-"aid": "00981",
-"sid": "s00250",
-"outlet": "Contra Costa News",
-"headline": "New Laws Aim to Help Restaurant Owners Keep California Cooki",
-"kind": "Original"
-},
-{
-"aid": "00629",
-"sid": "s00164",
-"outlet": "Contra Costa News",
-"headline": "Governor Signs Legislation Authorizing $590 Million Emergenc",
-"kind": "Original"
-},
-{
-"aid": "01883",
-"sid": "s00534",
-"outlet": "Culver City Observer",
-"headline": "Governor Newsom signs legislation to help Holocaust survivor",
-"kind": "Original"
-},
-{
-"aid": "00287",
-"sid": "s00078",
-"outlet": "Daily Record, The",
-"headline": "Play Equity Fund Secures $4 Million in State Funding for the",
-"kind": "Original"
-},
-{
-"aid": "09344",
-"sid": "s03853",
-"outlet": "Davis Vanguard",
-"headline": "Legislation Would Create Statewide Eviction Defense Program ",
-"kind": "Original"
-},
-{
-"aid": "04372",
-"sid": "s01299",
-"outlet": "Del Norte Triplicate",
-"headline": "Newsom signs K-12, broadband bills",
-"kind": "Original"
-},
-{
-"aid": "04325",
-"sid": "s01275",
-"outlet": "Del Norte Triplicate",
-"headline": "Newsom highlights new laws taking effect",
-"kind": "Original"
-},
-{
-"aid": "02894",
-"sid": "s00833",
-"outlet": "Del Norte Triplicate",
-"headline": "Newsom signs tax on gun manufacturers",
-"kind": "Original"
-},
-{
-"aid": "04603",
-"sid": "s01392",
-"outlet": "East County Today",
-"headline": "State Superintendent Tony Thurmond, Senator Henry Stern, and",
-"kind": "Original"
-},
-{
-"aid": "09270",
-"sid": "s03783",
-"outlet": "East County Today",
-"headline": "Bill Seeks to Strengthen and Equalize Penalties For Using Sy",
-"kind": "Original"
-},
-{
-"aid": "09207",
-"sid": "s03730",
-"outlet": "East County Today",
-"headline": "Senate Approves Increase toRenters Tax Credit On Overwhelmin",
-"kind": "Original"
-},
-{
-"aid": "04070",
-"sid": "s04545",
-"outlet": "East County Today",
-"headline": "Governor Newsom Signs California IDs For All Bill",
-"kind": "Reprint"
-},
-{
-"aid": "00033",
-"sid": "s04297",
-"outlet": "Edhat",
-"headline": "California Awards $2.5 Million to Upgrade Goleta Community C",
-"kind": "Original"
-},
-{
-"aid": "08411",
-"sid": "s03045",
-"outlet": "Encino Enterprise",
-"headline": "Gabriel Applauds $6 Million in Security Grants for the Valle",
-"kind": "Original"
-},
-{
-"aid": "00103",
-"sid": "s04299",
-"outlet": "Encino Enterprise",
-"headline": "Official State Seal for Non-Ultraprocessed Foods",
-"kind": "Original"
-},
-{
-"aid": "07169",
-"sid": "s01996",
-"outlet": "Gethsemane, The",
-"headline": "California Passes 'Non-Ultra-Processed' Food Label Bill",
-"kind": "Original"
-},
-{
-"aid": "02913",
-"sid": "s00842",
-"outlet": "HeySoCal",
-"headline": "Newsom signs bill to regulate voluntary carbon offsets",
-"kind": "Reprint"
-},
-{
-"aid": "01978",
-"sid": "s04402",
-"outlet": "Highpoint Digest",
-"headline": "California Governor Signs New Laws to Help Communities Addre",
-"kind": "Reprint"
-},
-{
-"aid": "04869",
-"sid": "s01510",
-"outlet": "Lake County News",
-"headline": "Governor signs more than a dozen bills meant to protect agai",
-"kind": "Original"
-},
-{
-"aid": "04754",
-"sid": "s01451",
-"outlet": "Lake County News",
-"headline": "Governor signs 15 bills aimed at increasing housing producti",
-"kind": "Original"
-},
-{
-"aid": "04463",
-"sid": "s01334",
-"outlet": "Lake County News",
-"headline": "Governor signs legislation to address homelessness and menta",
-"kind": "Original"
-},
-{
-"aid": "04332",
-"sid": "s01280",
-"outlet": "Lake County News",
-"headline": "Governor's Office highlights new laws taking effect Jan. 1",
-"kind": "Original"
-},
-{
-"aid": "04109",
-"sid": "s01177",
-"outlet": "Lake County News",
-"headline": "Governor signs sweeping climate measures; package aims to cr",
-"kind": "Original"
-},
-{
-"aid": "01695",
-"sid": "s00470",
-"outlet": "Lake County News",
-"headline": "State Legislature holds special session to jumpstart effort ",
-"kind": "Original"
-},
-{
-"aid": "04509",
-"sid": "s01349",
-"outlet": "Lake County Record Bee",
-"headline": "News briefs",
-"kind": "Original"
-},
-{
-"aid": "04995",
-"sid": "s04611",
-"outlet": "Los Angeles Daily News",
-"headline": "News",
-"kind": "Original"
-},
-{
-"aid": "05099",
-"sid": "s01583",
-"outlet": "Noozhawk",
-"headline": "American Cancer Society Action Network Names Monique Limón L",
-"kind": "Original"
-},
-{
-"aid": "00032",
-"sid": "s00009",
-"outlet": "Noozhawk",
-"headline": "State Approves $2.5 Million for Goleta Community Center, Gol",
-"kind": "Original"
-},
-{
-"aid": "01424",
-"sid": "s00387",
-"outlet": "Oragark",
-"headline": "ANCA-WR and Northern California Chapter Advocate for Legisla",
-"kind": "Reprint"
-},
-{
-"aid": "01384",
-"sid": "s00373",
-"outlet": "Oragark",
-"headline": "California Armenian Legislative Caucus Foundation Announces ",
-"kind": "Original"
-},
-{
-"aid": "00692",
-"sid": "s00189",
-"outlet": "Oragark",
-"headline": "California Armenian Legislative Caucus Foundation New Member",
-"kind": "Reprint"
-},
-{
-"aid": "07351",
-"sid": "s02143",
-"outlet": "Oragark",
-"headline": "ANCA-WR Announces 2026 Primary Endorsements",
-"kind": "Reprint"
-},
-{
-"aid": "07653",
-"sid": "s02404",
-"outlet": "Organic & Non-GMO Report, The",
-"headline": "California lawmakers pass first-in-nation bill to protect ki",
-"kind": "Original"
-},
-{
-"aid": "04907",
-"sid": "s01521",
-"outlet": "PanARMENIAN.Net",
-"headline": "California Senate passes Turkish Divestment Bill",
-"kind": "Original"
-},
-{
-"aid": "02912",
-"sid": "s00842",
-"outlet": "Pasadena Independent",
-"headline": "Newsom signs first-in-the-nation bill to regulate voluntary ",
-"kind": "Original"
-},
-{
-"aid": "09927",
-"sid": "s04748",
-"outlet": "Press, The",
-"headline": "Newsom announces record $76 million to safeguard local faith",
-"kind": "Original"
-},
-{
-"aid": "02170",
-"sid": "s00616",
-"outlet": "Reporter, The",
-"headline": "LEGISLATION - Bill Dodd introduces Restaurant Fees Bill",
-"kind": "Original"
-},
-{
-"aid": "09643",
-"sid": "s04122",
-"outlet": "San Diego Jewish World",
-"headline": "Editor’s E-Mail Box: December 13, 2018 (3 items)",
-"kind": "Original"
-},
-{
-"aid": "09606",
-"sid": "s04088",
-"outlet": "San Diego Jewish World",
-"headline": "State allocates $15m to protect groups against hate",
-"kind": "Original"
-},
-{
-"aid": "09464",
-"sid": "s03966",
-"outlet": "San Diego Jewish World",
-"headline": "Jewish Legislator Says Progressive Group Anti-Semitic",
-"kind": "Original"
-},
-{
-"aid": "09408",
-"sid": "s03914",
-"outlet": "San Diego Jewish World",
-"headline": "Global Holocaust Remembrance Goes Virtual",
-"kind": "Original"
-},
-{
-"aid": "09206",
-"sid": "s03729",
-"outlet": "San Diego Jewish World",
-"headline": "California Legislature's Budget Agreement Includes $36 Milli",
-"kind": "Original"
-},
-{
-"aid": "09155",
-"sid": "s03681",
-"outlet": "San Diego Jewish World",
-"headline": "Gov. Newsom Signs Gabriel Bill to Fight Internet Hate",
-"kind": "Original"
-},
-{
-"aid": "08693",
-"sid": "s03298",
-"outlet": "San Diego Jewish World",
-"headline": "Newsom Directs State Funds to Jewish Federations, Other Grou",
-"kind": "Original"
-},
-{
-"aid": "08428",
-"sid": "s03058",
-"outlet": "San Diego Jewish World",
-"headline": "S.D. Jewish Institutions to Receive $1.39 Million in State G",
-"kind": "Original"
-},
-{
-"aid": "08164",
-"sid": "s02844",
-"outlet": "San Diego Jewish World",
-"headline": "Gov. Newsom Signs Three Education Bills Sought by Jewish Pub",
-"kind": "Original"
-},
-{
-"aid": "07822",
-"sid": "s02549",
-"outlet": "San Diego Jewish World",
-"headline": "Minority Caucuses Team to Fight Hatred in K-12 Schools",
-"kind": "Original"
-},
-{
-"aid": "07638",
-"sid": "s02394",
-"outlet": "San Diego Jewish World",
-"headline": "Newsom Signs Bill Protecting K-12 Students from Antisemitism",
-"kind": "Original"
-},
-{
-"aid": "07436",
-"sid": "s02219",
-"outlet": "San Diego Jewish World",
-"headline": "Jewish Public Affairs Committee renames itself 'Jewish Calif",
-"kind": "Original"
-},
-{
-"aid": "07418",
-"sid": "s02202",
-"outlet": "San Diego Jewish World",
-"headline": "Five bills to pass and one to defeat: Jewish California's pr",
-"kind": "Original"
-},
-{
-"aid": "07368",
-"sid": "s02158",
-"outlet": "San Diego Jewish World",
-"headline": "Legislative Jewish Caucus furious over candidate's antisemit",
-"kind": "Original"
-},
-{
-"aid": "07347",
-"sid": "s02140",
-"outlet": "San Diego Jewish World",
-"headline": "Rabbi Devorah Marcus, 13 others, honored at California Capit",
-"kind": "Original"
-},
-{
-"aid": "07282",
-"sid": "s02089",
-"outlet": "San Diego Jewish World",
-"headline": "Two bills directly impacting Jews advance in California Legi",
-"kind": "Original"
-},
-{
-"aid": "07248",
-"sid": "s02061",
-"outlet": "San Diego Jewish World",
-"headline": "State budget includes annual $80m for security of vulnerable",
-"kind": "Original"
-},
-{
-"aid": "07245",
-"sid": "s02058",
-"outlet": "San Diego Jewish World",
-"headline": "Policy committees approve 3 bills sponsored by Jewish Califo",
-"kind": "Original"
-},
-{
-"aid": "07213",
-"sid": "s02031",
-"outlet": "San Diego Jewish World",
-"headline": "Six Jewish California priority bills advance in Legislature",
-"kind": "Original"
-},
-{
-"aid": "07096",
-"sid": "s01937",
-"outlet": "San Diego Jewish World",
-"headline": "Newsom signs 2 bills to protect congregants and sites",
-"kind": "Original"
-},
-{
-"aid": "04377",
-"sid": "s01304",
-"outlet": "San Fernando Valley Sun, The",
-"headline": "Governor Signs New Law Addressing Student Mental Health Cris",
-"kind": "Original"
-},
-{
-"aid": "01014",
-"sid": "s00266",
-"outlet": "Santa Barbara Independent",
-"headline": "California Governor Newsom Signs First-in-the-Nation Bill Ba",
-"kind": "Original"
-},
-{
-"aid": "00034",
-"sid": "s04297",
-"outlet": "Santa Barbara Independent",
-"headline": "State Approves $2.5 Million for Goleta Community Center and ",
-"kind": "Reprint"
-},
-{
-"aid": "01175",
-"sid": "s00317",
-"outlet": "Shooting News Weekly",
-"headline": "Has Gavin Newsom Undergone a Miraculous Road to Damascus Gun",
-"kind": "Original"
-},
-{
-"aid": "04874",
-"sid": "s01512",
-"outlet": "Sierra Sun Times",
-"headline": "California Governor Gavin Newsom Signs Bills to Increase Fin",
-"kind": "Original"
-},
-{
-"aid": "09489",
-"sid": "s03989",
-"outlet": "Sierra Sun Times",
-"headline": "California Governor Gavin Newsom Signs Landmark Legislation ",
-"kind": "Original"
-},
-{
-"aid": "04762",
-"sid": "s01454",
-"outlet": "Sierra Sun Times",
-"headline": "Governor Gavin Newsom Takes Action on Legislation to Support",
-"kind": "Original"
-},
-{
-"aid": "04756",
-"sid": "s01451",
-"outlet": "Sierra Sun Times",
-"headline": "Governor Gavin Newsom Signs Legislation Boosting Housing Pro",
-"kind": "Reprint"
-},
-{
-"aid": "04471",
-"sid": "s01338",
-"outlet": "Sierra Sun Times",
-"headline": "California Governor Gavin Newsom Signs Legislation to Increa",
-"kind": "Original"
-},
-{
-"aid": "04080",
-"sid": "s04547",
-"outlet": "Sierra Sun Times",
-"headline": "California Governor Newsom Announces New State Sites Identif",
-"kind": "Original"
-},
-{
-"aid": "04069",
-"sid": "s01163",
-"outlet": "Sierra Sun Times",
-"headline": "Governor Gavin Newsom Announces California IDs For All - Und",
-"kind": "Original"
-},
-{
-"aid": "09120",
-"sid": "s03648",
-"outlet": "Sierra Sun Times",
-"headline": "California Is Making It Cheaper to Replace Your Lawn to Save",
-"kind": "Original"
-},
-{
-"aid": "09102",
-"sid": "s03630",
-"outlet": "Sierra Sun Times",
-"headline": "With California Governor’s Signature, Ryan’s Law Becomes Rea",
-"kind": "Original"
-},
-{
-"aid": "02909",
-"sid": "s00840",
-"outlet": "Sierra Sun Times",
-"headline": "Governor Gavin Newsom Signs Bills to Streamline Housing and ",
-"kind": "Original"
-},
-{
-"aid": "02850",
-"sid": "s00819",
-"outlet": "Sierra Sun Times",
-"headline": "California Governor Gavin Newsom Doubles Funding to Bolster ",
-"kind": "Original"
-},
-{
-"aid": "02323",
-"sid": "s04430",
-"outlet": "Sierra Sun Times",
-"headline": "California Attorney General Bonta Highlights Resources to Su",
-"kind": "Original"
-},
-{
-"aid": "02019",
-"sid": "s00578",
-"outlet": "Sierra Sun Times",
-"headline": "California Governor Gavin Newsom Announces $76 Million in Gr",
-"kind": "Original"
-},
-{
-"aid": "01885",
-"sid": "s04396",
-"outlet": "Sierra Sun Times",
-"headline": "California Governor Gavin Newsom Signs Legislation to Help H",
-"kind": "Original"
-},
-{
-"aid": "01879",
-"sid": "s00532",
-"outlet": "Sierra Sun Times",
-"headline": "California Governor Gavin Newsom Signs Bipartisan Housing Pa",
-"kind": "Original"
-},
-{
-"aid": "01875",
-"sid": "s00530",
-"outlet": "Sierra Sun Times",
-"headline": "Governor Gavin Newsom Signs Bipartisan Legislation to Streng",
-"kind": "Reprint"
-},
-{
-"aid": "01866",
-"sid": "s00525",
-"outlet": "Sierra Sun Times",
-"headline": "California Governor Gavin Newsom Signs Eight Bipartisan Bill",
-"kind": "Original"
-},
-{
-"aid": "01870",
-"sid": "s04394",
-"outlet": "Sierra Sun Times",
-"headline": "California Attorney General Bonta Issues Statement on Legisl",
-"kind": "Original"
-},
-{
-"aid": "01697",
-"sid": "s04379",
-"outlet": "Sierra Sun Times",
-"headline": "Governor Gavin Newsom Announces Special California Legislatu",
-"kind": "Original"
-},
-{
-"aid": "07938",
-"sid": "s02659",
-"outlet": "Sierra Sun Times",
-"headline": "Assembly Democrats Pass Legal Defense Fund to Protect Califo",
-"kind": "Original"
-},
-{
-"aid": "01144",
-"sid": "s00308",
-"outlet": "Sierra Sun Times",
-"headline": "California Jewish Leaders Support UCLA and the University of",
-"kind": "Original"
-},
-{
-"aid": "00982",
-"sid": "s00250",
-"outlet": "Sierra Sun Times",
-"headline": "California Governor Gavin Newsom Signs Legislation Cutting R",
-"kind": "Reprint"
-},
-{
-"aid": "07445",
-"sid": "s02228",
-"outlet": "Sierra Sun Times",
-"headline": "California State Democrats Fight Back Against President Trum",
-"kind": "Original"
-},
-{
-"aid": "00439",
-"sid": "s04310",
-"outlet": "Sierra Sun Times",
-"headline": "California Governor Gavin Newsom Says, “Putting Money Aside ",
-"kind": "Original"
-},
-{
-"aid": "00366",
-"sid": "s00088",
-"outlet": "Sierra Sun Times",
-"headline": "Governor Newsom Says, “Donald Trump Wants Taxpayers To Rewar",
-"kind": "Original"
-},
-{
-"aid": "00105",
-"sid": "s00034",
-"outlet": "Sierra Sun Times",
-"headline": "Governor Gavin Newsom Signs Comprehensive Package Of Bills T",
-"kind": "Original"
-},
-{
-"aid": "00039",
-"sid": "s00013",
-"outlet": "Sierra Sun Times",
-"headline": "California Legislative Central Coast Caucus on President Tru",
-"kind": "Original"
-},
-{
-"aid": "01869",
-"sid": "s00527",
-"outlet": "Southern California Record, The",
-"headline": "Attorney General Bonta Issues Statement on Legislation to In",
-"kind": "Original"
-},
-{
-"aid": "04582",
-"sid": "s01385",
-"outlet": "Times-Herald",
-"headline": "Criminal cases in CALIFORNIA - Assembly passes bill requirin",
-"kind": "Original"
-},
-{
-"aid": "02169",
-"sid": "s00616",
-"outlet": "Times-Herald",
-"headline": "LEGISLATION - Dodd introduces restaurant fees bill",
-"kind": "Reprint"
-},
-{
-"aid": "00288",
-"sid": "s00078",
-"outlet": "True North Radio Network",
-"headline": "Play Equity Fund Secures $4 Million in State Funding for the",
-"kind": "Reprint"
-},
-{
-"aid": "04510",
-"sid": "s01349",
-"outlet": "Ukiah Daily Journal",
-"headline": "News Briefs",
-"kind": "Reprint"
-}
-],
-"mark": [
-{
-"aid": "01190",
-"sid": "s00326",
-"outlet": "Yahoo News",
-"headline": "Reentry Orgs Secure $10M in CA Budget",
-"kind": "Reprint"
-},
-{
-"aid": "01364",
-"sid": "s00367",
-"outlet": "Yahoo News",
-"headline": "Public Health & Safety Advocates Condemn California Assembly",
-"kind": "Reprint"
-},
-{
-"aid": "00290",
-"sid": "s00078",
-"outlet": "Yahoo News",
-"headline": "Play Equity Fund Secures $4 Million in State Funding for the",
-"kind": "Reprint"
-}
-],
-"org_posts_listed": [
-{
-"aid": "09618",
-"sid": "s04096",
-"outlet": "California Apartment Association",
-"headline": "Bill would authorize tenants to shelter families facing home",
-"kind": "Original"
-},
-{
-"aid": "09527",
-"sid": "s04027",
-"outlet": "California Apartment Association",
-"headline": "Bill would create tax credit aimed at keeping housing afford",
-"kind": "Original"
-},
-{
-"aid": "09407",
-"sid": "s03913",
-"outlet": "California Apartment Association",
-"headline": "CAA objects to eviction",
-"kind": "Original"
-},
-{
-"aid": "09400",
-"sid": "s03907",
-"outlet": "California Apartment Association",
-"headline": "CAA-sponsored housing bills move unanimously out of committe",
-"kind": "Original"
-},
-{
-"aid": "09387",
-"sid": "s03894",
-"outlet": "California Apartment Association",
-"headline": "CAA-cosponsored housing bill wins approval in Assembly",
-"kind": "Original"
-},
-{
-"aid": "09370",
-"sid": "s03878",
-"outlet": "California Apartment Association",
-"headline": "CAA-cosponsored housing appeal bill advances in Senate",
-"kind": "Original"
-},
-{
-"aid": "09367",
-"sid": "s03876",
-"outlet": "California Apartment Association",
-"headline": "Eviction-defense bill on Senate floor, vote expected after s",
-"kind": "Original"
-},
-{
-"aid": "09353",
-"sid": "s03862",
-"outlet": "California Apartment Association",
-"headline": "CAA members urge lawmakers to reject eviction-delay legislat",
-"kind": "Original"
-},
-{
-"aid": "09316",
-"sid": "s03828",
-"outlet": "California Apartment Association",
-"headline": "Gov. Newsom vetoes eviction-delay legislation",
-"kind": "Original"
-},
-{
-"aid": "08624",
-"sid": "s03236",
-"outlet": "California Apartment Association",
-"headline": "Package of CAA-supported housing bills signed by Gov. Newsom",
-"kind": "Original"
-},
-{
-"aid": "09115",
-"sid": "s03643",
-"outlet": "Common Sense Media",
-"headline": "California Continues Its Leadership with Online Protections ",
-"kind": "Original"
-},
-{
-"aid": "08621",
-"sid": "s03233",
-"outlet": "Common Sense Media",
-"headline": "Five Major Legislative Wins for Kids in California",
-"kind": "Original"
-},
-{
-"aid": "09096",
-"sid": "s03624",
-"outlet": "Jewish World Watch",
-"headline": "JWW’s Serena Oberstein named Activist of the Year by Asm. Je",
-"kind": "Original"
-}
-],
-"left_alone": [
-{
-"aid": "05166",
-"sid": "s01614",
-"outlet": "East County Today",
-"headline": "Speaker Rendon Announces Assembly Leadership and Committee A",
-"kind": "Reprint",
-"why": "its Original 05165 stays Yes (a wire release), so the story would stay hidden; needs a decision (swap or split s01614)"
-}
-]
+ "about": "Makes app/src/station/data/prjudge_v2.json (PRJUDGE-v2 existing rows) from work/localapp/PRESS_RELEASE_YES_REVIEW.csv and a copy of the real workbook.",
+ "made_from_workbook_sha": null,
+ "own_release_copies_kept_yes": 96,
+ "unmark": [
+  {
+   "aid": "01528",
+   "sid": "s00423",
+   "outlet": "Armenian Mirror-Spectator, The",
+   "headline": "California Armenian Legislative Caucus Requests Montebello G",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "09649",
+   "sid": "s04128",
+   "outlet": "Asbarez",
+   "headline": "1,000 Strong Capacity Crowd Celebrates the Armenian Cause an",
+   "kind": "Original"
+  },
+  {
+   "aid": "09636",
+   "sid": "s04114",
+   "outlet": "Asbarez",
+   "headline": "Ferrahian, Manoogian Principals Thank Community for Support ",
+   "kind": "Original"
+  },
+  {
+   "aid": "09615",
+   "sid": "s04093",
+   "outlet": "Asbarez",
+   "headline": "Divest Turkey Movement Gains New Momentum",
+   "kind": "Original"
+  },
+  {
+   "aid": "08696",
+   "sid": "s03301",
+   "outlet": "Asbarez",
+   "headline": "California Legislators Call on President Joe Biden to Suppor",
+   "kind": "Original"
+  },
+  {
+   "aid": "07777",
+   "sid": "s02515",
+   "outlet": "Asbarez",
+   "headline": "ANCA-WR Provides Update on Legislative Efforts in Sacramento",
+   "kind": "Original"
+  },
+  {
+   "aid": "02020",
+   "sid": "s00578",
+   "outlet": "Asian Journal",
+   "headline": "Governor Newsom announces $76M in grants to bolster safety a",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "01884",
+   "sid": "s04917",
+   "outlet": "Beverly Press",
+   "headline": "Newsom signs legislation at Holocaust Museum LA",
+   "kind": "Original"
+  },
+  {
+   "aid": "05264",
+   "sid": "s01662",
+   "outlet": "California Courier, The",
+   "headline": "SCAD Announces Endorsements for 2018 Election Cycle",
+   "kind": "Original"
+  },
+  {
+   "aid": "04844",
+   "sid": "s01495",
+   "outlet": "California Courier, The",
+   "headline": "At CSUN, ANI Exhibit features YMCA achievements to save vict",
+   "kind": "Original"
+  },
+  {
+   "aid": "04516",
+   "sid": "s01352",
+   "outlet": "California Courier, The",
+   "headline": "California Legislators Announce Essay and Visual Arts Schola",
+   "kind": "Original"
+  },
+  {
+   "aid": "04314",
+   "sid": "s01266",
+   "outlet": "California Courier, The",
+   "headline": "California Establishes a Sister State Relationship with Syun",
+   "kind": "Original"
+  },
+  {
+   "aid": "02846",
+   "sid": "s00816",
+   "outlet": "California Courier, The",
+   "headline": "CA Armenian Legislative Caucus Foundation Calls on Biden to ",
+   "kind": "Original"
+  },
+  {
+   "aid": "04068",
+   "sid": "s04545",
+   "outlet": "Contra Costa News",
+   "headline": "Governor Newsom Signs California IDs For All Bill",
+   "kind": "Original"
+  },
+  {
+   "aid": "09070",
+   "sid": "s03601",
+   "outlet": "Contra Costa News",
+   "headline": "Governor Newsom Takes Action to Strengthen California’s Gun ",
+   "kind": "Original"
+  },
+  {
+   "aid": "09037",
+   "sid": "s03570",
+   "outlet": "Contra Costa News",
+   "headline": "Bill Would Ban the Sale of Processed Foods Containing Danger",
+   "kind": "Original"
+  },
+  {
+   "aid": "03578",
+   "sid": "s04510",
+   "outlet": "Contra Costa News",
+   "headline": "Assembly Passes Legislation to Ban Use of Dangerous Chemical",
+   "kind": "Original"
+  },
+  {
+   "aid": "08851",
+   "sid": "s04674",
+   "outlet": "Contra Costa News",
+   "headline": "State Superintendent Hosts Conversation on Ways to Counter R",
+   "kind": "Original"
+  },
+  {
+   "aid": "08784",
+   "sid": "s03370",
+   "outlet": "Contra Costa News",
+   "headline": "California Senate Passes Legislation Banning Dangerous Food ",
+   "kind": "Original"
+  },
+  {
+   "aid": "03166",
+   "sid": "s00887",
+   "outlet": "Contra Costa News",
+   "headline": "Governor Newsom Strengthens California's Nation-Leading Gun ",
+   "kind": "Original"
+  },
+  {
+   "aid": "08332",
+   "sid": "s02987",
+   "outlet": "Contra Costa News",
+   "headline": "Committees Approve Restaurant Fees Bill",
+   "kind": "Original"
+  },
+  {
+   "aid": "01977",
+   "sid": "s04402",
+   "outlet": "Contra Costa News",
+   "headline": "Newsom Signs New Laws to Help Address Homelessness",
+   "kind": "Original"
+  },
+  {
+   "aid": "01878",
+   "sid": "s04395",
+   "outlet": "Contra Costa News",
+   "headline": "Governor Newsom Signs Housing Package",
+   "kind": "Original"
+  },
+  {
+   "aid": "01874",
+   "sid": "s00530",
+   "outlet": "Contra Costa News",
+   "headline": "Governor Newsom Signs Legislation to Strengthen California's",
+   "kind": "Original"
+  },
+  {
+   "aid": "01032",
+   "sid": "s00272",
+   "outlet": "Contra Costa News",
+   "headline": "Bills to Crack Down on Hate and Antisemitism in California S",
+   "kind": "Original"
+  },
+  {
+   "aid": "00981",
+   "sid": "s00250",
+   "outlet": "Contra Costa News",
+   "headline": "New Laws Aim to Help Restaurant Owners Keep California Cooki",
+   "kind": "Original"
+  },
+  {
+   "aid": "00629",
+   "sid": "s00164",
+   "outlet": "Contra Costa News",
+   "headline": "Governor Signs Legislation Authorizing $590 Million Emergenc",
+   "kind": "Original"
+  },
+  {
+   "aid": "01883",
+   "sid": "s00534",
+   "outlet": "Culver City Observer",
+   "headline": "Governor Newsom signs legislation to help Holocaust survivor",
+   "kind": "Original"
+  },
+  {
+   "aid": "00287",
+   "sid": "s00078",
+   "outlet": "Daily Record, The",
+   "headline": "Play Equity Fund Secures $4 Million in State Funding for the",
+   "kind": "Original"
+  },
+  {
+   "aid": "09344",
+   "sid": "s03853",
+   "outlet": "Davis Vanguard",
+   "headline": "Legislation Would Create Statewide Eviction Defense Program ",
+   "kind": "Original"
+  },
+  {
+   "aid": "04372",
+   "sid": "s01299",
+   "outlet": "Del Norte Triplicate",
+   "headline": "Newsom signs K-12, broadband bills",
+   "kind": "Original"
+  },
+  {
+   "aid": "04325",
+   "sid": "s01275",
+   "outlet": "Del Norte Triplicate",
+   "headline": "Newsom highlights new laws taking effect",
+   "kind": "Original"
+  },
+  {
+   "aid": "02894",
+   "sid": "s00833",
+   "outlet": "Del Norte Triplicate",
+   "headline": "Newsom signs tax on gun manufacturers",
+   "kind": "Original"
+  },
+  {
+   "aid": "04603",
+   "sid": "s01392",
+   "outlet": "East County Today",
+   "headline": "State Superintendent Tony Thurmond, Senator Henry Stern, and",
+   "kind": "Original"
+  },
+  {
+   "aid": "09270",
+   "sid": "s03783",
+   "outlet": "East County Today",
+   "headline": "Bill Seeks to Strengthen and Equalize Penalties For Using Sy",
+   "kind": "Original"
+  },
+  {
+   "aid": "09207",
+   "sid": "s03730",
+   "outlet": "East County Today",
+   "headline": "Senate Approves Increase toRenters Tax Credit On Overwhelmin",
+   "kind": "Original"
+  },
+  {
+   "aid": "04070",
+   "sid": "s04545",
+   "outlet": "East County Today",
+   "headline": "Governor Newsom Signs California IDs For All Bill",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "00033",
+   "sid": "s04297",
+   "outlet": "Edhat",
+   "headline": "California Awards $2.5 Million to Upgrade Goleta Community C",
+   "kind": "Original"
+  },
+  {
+   "aid": "08411",
+   "sid": "s03045",
+   "outlet": "Encino Enterprise",
+   "headline": "Gabriel Applauds $6 Million in Security Grants for the Valle",
+   "kind": "Original"
+  },
+  {
+   "aid": "00103",
+   "sid": "s04299",
+   "outlet": "Encino Enterprise",
+   "headline": "Official State Seal for Non-Ultraprocessed Foods",
+   "kind": "Original"
+  },
+  {
+   "aid": "07169",
+   "sid": "s01996",
+   "outlet": "Gethsemane, The",
+   "headline": "California Passes 'Non-Ultra-Processed' Food Label Bill",
+   "kind": "Original"
+  },
+  {
+   "aid": "02913",
+   "sid": "s00842",
+   "outlet": "HeySoCal",
+   "headline": "Newsom signs bill to regulate voluntary carbon offsets",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "01978",
+   "sid": "s04402",
+   "outlet": "Highpoint Digest",
+   "headline": "California Governor Signs New Laws to Help Communities Addre",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "04869",
+   "sid": "s01510",
+   "outlet": "Lake County News",
+   "headline": "Governor signs more than a dozen bills meant to protect agai",
+   "kind": "Original"
+  },
+  {
+   "aid": "04754",
+   "sid": "s01451",
+   "outlet": "Lake County News",
+   "headline": "Governor signs 15 bills aimed at increasing housing producti",
+   "kind": "Original"
+  },
+  {
+   "aid": "04463",
+   "sid": "s01334",
+   "outlet": "Lake County News",
+   "headline": "Governor signs legislation to address homelessness and menta",
+   "kind": "Original"
+  },
+  {
+   "aid": "04332",
+   "sid": "s01280",
+   "outlet": "Lake County News",
+   "headline": "Governor's Office highlights new laws taking effect Jan. 1",
+   "kind": "Original"
+  },
+  {
+   "aid": "04109",
+   "sid": "s01177",
+   "outlet": "Lake County News",
+   "headline": "Governor signs sweeping climate measures; package aims to cr",
+   "kind": "Original"
+  },
+  {
+   "aid": "01695",
+   "sid": "s00470",
+   "outlet": "Lake County News",
+   "headline": "State Legislature holds special session to jumpstart effort ",
+   "kind": "Original"
+  },
+  {
+   "aid": "04509",
+   "sid": "s01349",
+   "outlet": "Lake County Record Bee",
+   "headline": "News briefs",
+   "kind": "Original"
+  },
+  {
+   "aid": "04995",
+   "sid": "s04611",
+   "outlet": "Los Angeles Daily News",
+   "headline": "News",
+   "kind": "Original"
+  },
+  {
+   "aid": "05099",
+   "sid": "s01583",
+   "outlet": "Noozhawk",
+   "headline": "American Cancer Society Action Network Names Monique Limón L",
+   "kind": "Original"
+  },
+  {
+   "aid": "00032",
+   "sid": "s00009",
+   "outlet": "Noozhawk",
+   "headline": "State Approves $2.5 Million for Goleta Community Center, Gol",
+   "kind": "Original"
+  },
+  {
+   "aid": "01424",
+   "sid": "s00387",
+   "outlet": "Oragark",
+   "headline": "ANCA-WR and Northern California Chapter Advocate for Legisla",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "01384",
+   "sid": "s00373",
+   "outlet": "Oragark",
+   "headline": "California Armenian Legislative Caucus Foundation Announces ",
+   "kind": "Original"
+  },
+  {
+   "aid": "00692",
+   "sid": "s00189",
+   "outlet": "Oragark",
+   "headline": "California Armenian Legislative Caucus Foundation New Member",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "07351",
+   "sid": "s02143",
+   "outlet": "Oragark",
+   "headline": "ANCA-WR Announces 2026 Primary Endorsements",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "07653",
+   "sid": "s02404",
+   "outlet": "Organic & Non-GMO Report, The",
+   "headline": "California lawmakers pass first-in-nation bill to protect ki",
+   "kind": "Original"
+  },
+  {
+   "aid": "04907",
+   "sid": "s01521",
+   "outlet": "PanARMENIAN.Net",
+   "headline": "California Senate passes Turkish Divestment Bill",
+   "kind": "Original"
+  },
+  {
+   "aid": "02912",
+   "sid": "s00842",
+   "outlet": "Pasadena Independent",
+   "headline": "Newsom signs first-in-the-nation bill to regulate voluntary ",
+   "kind": "Original"
+  },
+  {
+   "aid": "09927",
+   "sid": "s04748",
+   "outlet": "Press, The",
+   "headline": "Newsom announces record $76 million to safeguard local faith",
+   "kind": "Original"
+  },
+  {
+   "aid": "02170",
+   "sid": "s00616",
+   "outlet": "Reporter, The",
+   "headline": "LEGISLATION - Bill Dodd introduces Restaurant Fees Bill",
+   "kind": "Original"
+  },
+  {
+   "aid": "09643",
+   "sid": "s04122",
+   "outlet": "San Diego Jewish World",
+   "headline": "Editor’s E-Mail Box: December 13, 2018 (3 items)",
+   "kind": "Original"
+  },
+  {
+   "aid": "09606",
+   "sid": "s04088",
+   "outlet": "San Diego Jewish World",
+   "headline": "State allocates $15m to protect groups against hate",
+   "kind": "Original"
+  },
+  {
+   "aid": "09464",
+   "sid": "s03966",
+   "outlet": "San Diego Jewish World",
+   "headline": "Jewish Legislator Says Progressive Group Anti-Semitic",
+   "kind": "Original"
+  },
+  {
+   "aid": "09408",
+   "sid": "s03914",
+   "outlet": "San Diego Jewish World",
+   "headline": "Global Holocaust Remembrance Goes Virtual",
+   "kind": "Original"
+  },
+  {
+   "aid": "09206",
+   "sid": "s03729",
+   "outlet": "San Diego Jewish World",
+   "headline": "California Legislature's Budget Agreement Includes $36 Milli",
+   "kind": "Original"
+  },
+  {
+   "aid": "09155",
+   "sid": "s03681",
+   "outlet": "San Diego Jewish World",
+   "headline": "Gov. Newsom Signs Gabriel Bill to Fight Internet Hate",
+   "kind": "Original"
+  },
+  {
+   "aid": "08693",
+   "sid": "s03298",
+   "outlet": "San Diego Jewish World",
+   "headline": "Newsom Directs State Funds to Jewish Federations, Other Grou",
+   "kind": "Original"
+  },
+  {
+   "aid": "08428",
+   "sid": "s03058",
+   "outlet": "San Diego Jewish World",
+   "headline": "S.D. Jewish Institutions to Receive $1.39 Million in State G",
+   "kind": "Original"
+  },
+  {
+   "aid": "08164",
+   "sid": "s02844",
+   "outlet": "San Diego Jewish World",
+   "headline": "Gov. Newsom Signs Three Education Bills Sought by Jewish Pub",
+   "kind": "Original"
+  },
+  {
+   "aid": "07822",
+   "sid": "s02549",
+   "outlet": "San Diego Jewish World",
+   "headline": "Minority Caucuses Team to Fight Hatred in K-12 Schools",
+   "kind": "Original"
+  },
+  {
+   "aid": "07638",
+   "sid": "s02394",
+   "outlet": "San Diego Jewish World",
+   "headline": "Newsom Signs Bill Protecting K-12 Students from Antisemitism",
+   "kind": "Original"
+  },
+  {
+   "aid": "07436",
+   "sid": "s02219",
+   "outlet": "San Diego Jewish World",
+   "headline": "Jewish Public Affairs Committee renames itself 'Jewish Calif",
+   "kind": "Original"
+  },
+  {
+   "aid": "07418",
+   "sid": "s02202",
+   "outlet": "San Diego Jewish World",
+   "headline": "Five bills to pass and one to defeat: Jewish California's pr",
+   "kind": "Original"
+  },
+  {
+   "aid": "07368",
+   "sid": "s02158",
+   "outlet": "San Diego Jewish World",
+   "headline": "Legislative Jewish Caucus furious over candidate's antisemit",
+   "kind": "Original"
+  },
+  {
+   "aid": "07347",
+   "sid": "s02140",
+   "outlet": "San Diego Jewish World",
+   "headline": "Rabbi Devorah Marcus, 13 others, honored at California Capit",
+   "kind": "Original"
+  },
+  {
+   "aid": "07282",
+   "sid": "s02089",
+   "outlet": "San Diego Jewish World",
+   "headline": "Two bills directly impacting Jews advance in California Legi",
+   "kind": "Original"
+  },
+  {
+   "aid": "07248",
+   "sid": "s02061",
+   "outlet": "San Diego Jewish World",
+   "headline": "State budget includes annual $80m for security of vulnerable",
+   "kind": "Original"
+  },
+  {
+   "aid": "07245",
+   "sid": "s02058",
+   "outlet": "San Diego Jewish World",
+   "headline": "Policy committees approve 3 bills sponsored by Jewish Califo",
+   "kind": "Original"
+  },
+  {
+   "aid": "07213",
+   "sid": "s02031",
+   "outlet": "San Diego Jewish World",
+   "headline": "Six Jewish California priority bills advance in Legislature",
+   "kind": "Original"
+  },
+  {
+   "aid": "07096",
+   "sid": "s01937",
+   "outlet": "San Diego Jewish World",
+   "headline": "Newsom signs 2 bills to protect congregants and sites",
+   "kind": "Original"
+  },
+  {
+   "aid": "04377",
+   "sid": "s01304",
+   "outlet": "San Fernando Valley Sun, The",
+   "headline": "Governor Signs New Law Addressing Student Mental Health Cris",
+   "kind": "Original"
+  },
+  {
+   "aid": "01014",
+   "sid": "s00266",
+   "outlet": "Santa Barbara Independent",
+   "headline": "California Governor Newsom Signs First-in-the-Nation Bill Ba",
+   "kind": "Original"
+  },
+  {
+   "aid": "00034",
+   "sid": "s04297",
+   "outlet": "Santa Barbara Independent",
+   "headline": "State Approves $2.5 Million for Goleta Community Center and ",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "01175",
+   "sid": "s00317",
+   "outlet": "Shooting News Weekly",
+   "headline": "Has Gavin Newsom Undergone a Miraculous Road to Damascus Gun",
+   "kind": "Original"
+  },
+  {
+   "aid": "04874",
+   "sid": "s01512",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Governor Gavin Newsom Signs Bills to Increase Fin",
+   "kind": "Original"
+  },
+  {
+   "aid": "09489",
+   "sid": "s03989",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Governor Gavin Newsom Signs Landmark Legislation ",
+   "kind": "Original"
+  },
+  {
+   "aid": "04762",
+   "sid": "s01454",
+   "outlet": "Sierra Sun Times",
+   "headline": "Governor Gavin Newsom Takes Action on Legislation to Support",
+   "kind": "Original"
+  },
+  {
+   "aid": "04756",
+   "sid": "s01451",
+   "outlet": "Sierra Sun Times",
+   "headline": "Governor Gavin Newsom Signs Legislation Boosting Housing Pro",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "04471",
+   "sid": "s01338",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Governor Gavin Newsom Signs Legislation to Increa",
+   "kind": "Original"
+  },
+  {
+   "aid": "04080",
+   "sid": "s04547",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Governor Newsom Announces New State Sites Identif",
+   "kind": "Original"
+  },
+  {
+   "aid": "04069",
+   "sid": "s01163",
+   "outlet": "Sierra Sun Times",
+   "headline": "Governor Gavin Newsom Announces California IDs For All - Und",
+   "kind": "Original"
+  },
+  {
+   "aid": "09120",
+   "sid": "s03648",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Is Making It Cheaper to Replace Your Lawn to Save",
+   "kind": "Original"
+  },
+  {
+   "aid": "09102",
+   "sid": "s03630",
+   "outlet": "Sierra Sun Times",
+   "headline": "With California Governor’s Signature, Ryan’s Law Becomes Rea",
+   "kind": "Original"
+  },
+  {
+   "aid": "02909",
+   "sid": "s00840",
+   "outlet": "Sierra Sun Times",
+   "headline": "Governor Gavin Newsom Signs Bills to Streamline Housing and ",
+   "kind": "Original"
+  },
+  {
+   "aid": "02850",
+   "sid": "s00819",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Governor Gavin Newsom Doubles Funding to Bolster ",
+   "kind": "Original"
+  },
+  {
+   "aid": "02323",
+   "sid": "s04430",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Attorney General Bonta Highlights Resources to Su",
+   "kind": "Original"
+  },
+  {
+   "aid": "02019",
+   "sid": "s00578",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Governor Gavin Newsom Announces $76 Million in Gr",
+   "kind": "Original"
+  },
+  {
+   "aid": "01885",
+   "sid": "s04396",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Governor Gavin Newsom Signs Legislation to Help H",
+   "kind": "Original"
+  },
+  {
+   "aid": "01879",
+   "sid": "s00532",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Governor Gavin Newsom Signs Bipartisan Housing Pa",
+   "kind": "Original"
+  },
+  {
+   "aid": "01875",
+   "sid": "s00530",
+   "outlet": "Sierra Sun Times",
+   "headline": "Governor Gavin Newsom Signs Bipartisan Legislation to Streng",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "01866",
+   "sid": "s00525",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Governor Gavin Newsom Signs Eight Bipartisan Bill",
+   "kind": "Original"
+  },
+  {
+   "aid": "01870",
+   "sid": "s04394",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Attorney General Bonta Issues Statement on Legisl",
+   "kind": "Original"
+  },
+  {
+   "aid": "01697",
+   "sid": "s04379",
+   "outlet": "Sierra Sun Times",
+   "headline": "Governor Gavin Newsom Announces Special California Legislatu",
+   "kind": "Original"
+  },
+  {
+   "aid": "07938",
+   "sid": "s02659",
+   "outlet": "Sierra Sun Times",
+   "headline": "Assembly Democrats Pass Legal Defense Fund to Protect Califo",
+   "kind": "Original"
+  },
+  {
+   "aid": "01144",
+   "sid": "s00308",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Jewish Leaders Support UCLA and the University of",
+   "kind": "Original"
+  },
+  {
+   "aid": "00982",
+   "sid": "s00250",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Governor Gavin Newsom Signs Legislation Cutting R",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "07445",
+   "sid": "s02228",
+   "outlet": "Sierra Sun Times",
+   "headline": "California State Democrats Fight Back Against President Trum",
+   "kind": "Original"
+  },
+  {
+   "aid": "00439",
+   "sid": "s04310",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Governor Gavin Newsom Says, “Putting Money Aside ",
+   "kind": "Original"
+  },
+  {
+   "aid": "00366",
+   "sid": "s00088",
+   "outlet": "Sierra Sun Times",
+   "headline": "Governor Newsom Says, “Donald Trump Wants Taxpayers To Rewar",
+   "kind": "Original"
+  },
+  {
+   "aid": "00105",
+   "sid": "s00034",
+   "outlet": "Sierra Sun Times",
+   "headline": "Governor Gavin Newsom Signs Comprehensive Package Of Bills T",
+   "kind": "Original"
+  },
+  {
+   "aid": "00039",
+   "sid": "s00013",
+   "outlet": "Sierra Sun Times",
+   "headline": "California Legislative Central Coast Caucus on President Tru",
+   "kind": "Original"
+  },
+  {
+   "aid": "01869",
+   "sid": "s00527",
+   "outlet": "Southern California Record, The",
+   "headline": "Attorney General Bonta Issues Statement on Legislation to In",
+   "kind": "Original"
+  },
+  {
+   "aid": "04582",
+   "sid": "s01385",
+   "outlet": "Times-Herald",
+   "headline": "Criminal cases in CALIFORNIA - Assembly passes bill requirin",
+   "kind": "Original"
+  },
+  {
+   "aid": "02169",
+   "sid": "s00616",
+   "outlet": "Times-Herald",
+   "headline": "LEGISLATION - Dodd introduces restaurant fees bill",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "00288",
+   "sid": "s00078",
+   "outlet": "True North Radio Network",
+   "headline": "Play Equity Fund Secures $4 Million in State Funding for the",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "04510",
+   "sid": "s01349",
+   "outlet": "Ukiah Daily Journal",
+   "headline": "News Briefs",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "09618",
+   "sid": "s04096",
+   "outlet": "California Apartment Association",
+   "headline": "Bill would authorize tenants to shelter families facing home",
+   "kind": "Original"
+  },
+  {
+   "aid": "09527",
+   "sid": "s04027",
+   "outlet": "California Apartment Association",
+   "headline": "Bill would create tax credit aimed at keeping housing afford",
+   "kind": "Original"
+  },
+  {
+   "aid": "09407",
+   "sid": "s03913",
+   "outlet": "California Apartment Association",
+   "headline": "CAA objects to eviction",
+   "kind": "Original"
+  },
+  {
+   "aid": "09400",
+   "sid": "s03907",
+   "outlet": "California Apartment Association",
+   "headline": "CAA-sponsored housing bills move unanimously out of committe",
+   "kind": "Original"
+  },
+  {
+   "aid": "09387",
+   "sid": "s03894",
+   "outlet": "California Apartment Association",
+   "headline": "CAA-cosponsored housing bill wins approval in Assembly",
+   "kind": "Original"
+  },
+  {
+   "aid": "09370",
+   "sid": "s03878",
+   "outlet": "California Apartment Association",
+   "headline": "CAA-cosponsored housing appeal bill advances in Senate",
+   "kind": "Original"
+  },
+  {
+   "aid": "09367",
+   "sid": "s03876",
+   "outlet": "California Apartment Association",
+   "headline": "Eviction-defense bill on Senate floor, vote expected after s",
+   "kind": "Original"
+  },
+  {
+   "aid": "09353",
+   "sid": "s03862",
+   "outlet": "California Apartment Association",
+   "headline": "CAA members urge lawmakers to reject eviction-delay legislat",
+   "kind": "Original"
+  },
+  {
+   "aid": "09316",
+   "sid": "s03828",
+   "outlet": "California Apartment Association",
+   "headline": "Gov. Newsom vetoes eviction-delay legislation",
+   "kind": "Original"
+  },
+  {
+   "aid": "08624",
+   "sid": "s03236",
+   "outlet": "California Apartment Association",
+   "headline": "Package of CAA-supported housing bills signed by Gov. Newsom",
+   "kind": "Original"
+  },
+  {
+   "aid": "09115",
+   "sid": "s03643",
+   "outlet": "Common Sense Media",
+   "headline": "California Continues Its Leadership with Online Protections ",
+   "kind": "Original"
+  },
+  {
+   "aid": "08621",
+   "sid": "s03233",
+   "outlet": "Common Sense Media",
+   "headline": "Five Major Legislative Wins for Kids in California",
+   "kind": "Original"
+  },
+  {
+   "aid": "09096",
+   "sid": "s03624",
+   "outlet": "Jewish World Watch",
+   "headline": "JWW’s Serena Oberstein named Activist of the Year by Asm. Je",
+   "kind": "Original"
+  }
+ ],
+ "mark": [
+  {
+   "aid": "01190",
+   "sid": "s00326",
+   "outlet": "Yahoo News",
+   "headline": "Reentry Orgs Secure $10M in CA Budget",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "01364",
+   "sid": "s00367",
+   "outlet": "Yahoo News",
+   "headline": "Public Health & Safety Advocates Condemn California Assembly",
+   "kind": "Reprint"
+  },
+  {
+   "aid": "00290",
+   "sid": "s00078",
+   "outlet": "Yahoo News",
+   "headline": "Play Equity Fund Secures $4 Million in State Funding for the",
+   "kind": "Reprint"
+  }
+ ],
+ "org_posts_listed": [],
+ "left_alone": [
+  {
+   "aid": "05166",
+   "sid": "s01614",
+   "outlet": "East County Today",
+   "headline": "Speaker Rendon Announces Assembly Leadership and Committee A",
+   "kind": "Reprint",
+   "why": "its Original 05165 stays Yes (a wire release), so the story would stay hidden; needs a decision (swap or split s01614)"
+  }
+ ]
 }

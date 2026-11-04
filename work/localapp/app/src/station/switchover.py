@@ -27,15 +27,17 @@ import shutil
 from pathlib import Path
 
 import common as C
+import datafix_structural as DS
 import drop_unverified as DR
 import other_files_column as OF
 import rename_files as RF
 
 PURPLE = '7030A0'
 COVERAGE, ORIGINALS = 'Coverage', 'Originals'
-ORDER = ('drop_unverified', 'rename_files', 'prjudge', 'prcolor', 'other_files', 'datafix')
+ORDER = ('drop_unverified', 'rename_files', 'prjudge', 'prcolor', 'other_files', 'datafix', 'datafix_structural')
 TITLES = {'drop_unverified': 'Remove the unverified reprints', 'rename_files': 'Rename files to the naming rule (RENAME-v1)', 'prjudge': 'Press release marks (PRJUDGE-v2)', 'prcolor': 'Purple rows for press releases (PRCOLOR-v1)',
-          'other_files': 'Add the "Other files" column', 'datafix': 'Apply the data-check fixes you approved'}
+          'other_files': 'Add the "Other files" column', 'datafix': 'Apply the data-check fixes you approved',
+          'datafix_structural': 'Data-check fixes that change rows (English Originals, retired print pages)'}
 DATA = Path(__file__).resolve().parent / 'data'
 CONF = {'high': 3, 'medium': 2, 'low': 1}
 
@@ -48,6 +50,14 @@ class SwitchRefused(Exception):
 
 def _s(v) -> str:
     return '' if v is None else str(v).strip()
+
+
+def _today() -> str:
+    try:
+        from zoneinfo import ZoneInfo
+        return C.utc_now().astimezone(ZoneInfo('America/Los_Angeles')).strftime('%Y-%m-%d')
+    except Exception:                                   # noqa: BLE001  (no time zone data on this PC: the UTC date is a day early at worst)
+        return C.utc_now().strftime('%Y-%m-%d')
 
 
 def _digest(obj) -> str:
@@ -88,7 +98,7 @@ def finish(lay) -> dict:
 
 # ---------------------------------------------------------------- reading the workbook
 
-def read_tabs(wb_path: Path, tabs=(COVERAGE, ORIGINALS, 'Press releases')):
+def read_tabs(wb_path: Path, tabs=(COVERAGE, ORIGINALS, 'Press releases', 'Unlinked print pages')):
     import openpyxl
     wb = openpyxl.load_workbook(wb_path, read_only=True, data_only=True)
     try:
@@ -231,7 +241,8 @@ def _read_proposals(path: Path):
 
 def plan_datafix(lay, tabs: dict, include_low: bool = False, only: list | None = None) -> dict:
     d = lay.data / 'switchover' / 'datafix'
-    files = sorted(d.glob('*.csv')) if d.is_dir() else []
+    # the approved fixes shipped with the app (DATAFIX-v1: made by work/localapp/datafix/make_approved.py), then any file the person added
+    files = sorted((DATA / 'approved').glob('*.csv')) + (sorted(d.glob('*.csv')) if d.is_dir() else [])
     if only is not None:
         files = [f for f in files if f.name in only]
     if not files:
@@ -312,6 +323,8 @@ def preview_all(lay, only=None, include_low=False, datafix_files=None) -> dict:
     rf = RF.plan(lay) if 'rename_files' not in done else None
     pc = plan_prcolor(tabs, pj) if 'prcolor' not in done else None
     df = plan_datafix(lay, tabs, include_low, datafix_files) if 'datafix' not in done else None
+    pend = {c['aid'] for c in (df or {}).get('changes', []) if 'NewsBank print-page link' in (c.get('set') or {})}
+    ds = DS.plan(tabs, _today(), pending_links=pend) if 'datafix_structural' not in done else None
     for sid in ORDER:
         s = {'id': sid, 'title': TITLES[sid], 'done_at': (done.get(sid) or {}).get('at'), 'state': 'done' if sid in done else 'todo', 'n': 0, 'lines': [], 'digest': '', 'can_apply': False}
         if sid in done:
@@ -336,7 +349,9 @@ def preview_all(lay, only=None, include_low=False, datafix_files=None) -> dict:
             except OF.OtherFilesRefused as e:
                 s.update(state='blocked', lines=[e.msg])
         elif sid == 'datafix':
-            s.update(n=df['n'], lines=df['lines'], digest=df['digest'], can_apply=df['n'] > 0, files=df['files'])
+            s.update(n=df['n'], lines=df['lines'] + ['For you to decide, not changed: ' + d for d in DS.decide_lines()], digest=df['digest'], can_apply=df['n'] > 0, files=df['files'])
+        elif sid == 'datafix_structural':
+            s.update(n=ds['n'], lines=ds['lines'], digest=ds['digest'], can_apply=ds['n'] > 0)
         if s['state'] == 'todo' and not s['can_apply']:
             s['state'] = 'nothing'
         steps.append(s)
@@ -366,7 +381,7 @@ def _sig_nocolor(cell) -> tuple:
             a.horizontal, a.vertical, a.wrap_text, cell.number_format)
 
 
-def check_cells(before: Path, after: Path, changes: list, links: list) -> list:
+def check_cells(before: Path, after: Path, changes: list, links: list, skip_tabs=()) -> list:
     """the step's own independent check: the staged workbook equals the master except for the planned cells (values), the planned rows' font colour and the planned hyperlinks"""
     import openpyxl
     bk = openpyxl.load_workbook(before, read_only=False, data_only=False)
@@ -385,6 +400,8 @@ def check_cells(before: Path, after: Path, changes: list, links: list) -> list:
                 for k in range(1, bk[c['tab']].max_column + 1):
                     want_font[(c['tab'], c['row'], k)] = c['font'] or None
         for n in bk.sheetnames:
+            if n in skip_tabs:
+                continue
             x_, y_ = bk[n], ak[n]
             if OF._header_of(x_) != OF._header_of(y_) or (x_.max_row, x_.max_column) != (y_.max_row, y_.max_column):
                 bad.append(f'{n}: the header or the size changed')
@@ -446,7 +463,7 @@ def _font_with(cell, rgb):
     return f
 
 
-def run_cell_step(lay, key: str, changes: list, init_fn, shared_backup=None, summary='') -> dict:
+def run_cell_step(lay, key: str, changes: list, init_fn, shared_backup=None, summary='', transform=None, extra_check=None, skip_tabs=()) -> dict:
     """stage, check, swap, ledger, init for a list of cell changes. Nothing is replaced unless the independent check passes."""
     import openpyxl
     wb = lay.workbook
@@ -490,10 +507,14 @@ def run_cell_step(lay, key: str, changes: list, init_fn, shared_backup=None, sum
                 for k in range(1, ws.max_column + 1):
                     cl = ws.cell(c['row'], k)
                     cl.font = _font_with(cl, c['font'])
+        if transform:
+            transform(book)
         book.save(staged)
     finally:
         book.close()
-    bad = check_cells(wb, staged, changes, links)
+    bad = check_cells(wb, staged, changes, links, skip_tabs=skip_tabs)
+    if not bad and extra_check:
+        bad = extra_check(wb, staged)
     if bad:
         staged.unlink(missing_ok=True)
         raise SwitchRefused('VERIFY_FAILED', 'The staged workbook differs from the master in more than the plan, so nothing was changed. First difference: ' + bad[0])
@@ -546,7 +567,7 @@ def rename_step(lay, pl: dict, init_fn, shared_backup=None, why='') -> dict:
     return r
 
 
-def auto_rename(lay, init_fn, before_roles: dict) -> dict:
+def auto_rename(lay, init_fn, before_roles: dict, shared_backup=None) -> dict:
     """RENAME-v1, the save: rows whose Story ID or Original/Reprint role changed in this save get their files renamed to match (add-only: nothing is deleted).
     before_roles = rename_files.story_roles(workbook) taken before the save. Returns {renamed, cells, list, collisions, ...}; {} when nothing changed."""
     after = RF.story_roles(lay.workbook)
@@ -556,7 +577,7 @@ def auto_rename(lay, init_fn, before_roles: dict) -> dict:
     pl = RF.plan(lay, only_aids=touched)
     if not pl['n']:
         return {'renamed': 0, 'collisions': pl['collisions'], 'touched': len(touched)} if pl['collisions'] else {}
-    r = rename_step(lay, pl, init_fn, shared_backup=None, why='after a save: story or role changed')
+    r = rename_step(lay, pl, init_fn, shared_backup=shared_backup, why='after a save or a data fix: story or role changed')
     return {'renamed': pl['n'], 'cells': pl['counts'].get('cells', 0), 'list': r['list'], 'collisions': pl['collisions'], 'touched': len(touched), 'workbook_sha256': r.get('workbook_sha256'),
             'files': [(x['old'], x['new']) for x in pl['renames']][:20]}
 
@@ -619,6 +640,19 @@ def apply_steps(lay, ids: list, digests: dict, init_fn, include_low=False, dataf
             summ = f'{pl["n"]} files renamed, {pl["counts"].get("cells", 0)} cells updated'
             lines = [f'{pl["n"]} saved files renamed (with their raw pages and OCR texts); {pl["counts"].get("cells", 0)} File name cells updated.',
                      f'The old and new names are in the library: _renamed/{r["list"]}.'] + ([f'{len(pl["collisions"])} files were left as they are because the new name was taken (see the list).'] if pl['collisions'] else [])
+        elif sid == 'datafix_structural':
+            ds = DS.plan(tabs, _today())
+            if ds['digest'] != digests.get(sid):
+                raise SwitchRefused('CHANGED', 'The plan for the row-changing fixes changed (the cell fixes may not all have landed). Look again.')
+            roles0 = RF.story_roles(lay.workbook)
+            stamp = C.stamp()
+            r = run_cell_step(lay, 'datafix_structural', ds['changes'], init_fn, shared_backup=bk, summary=f'{len(ds["retire"])} print pages retired, {len(ds["swaps"])} English Originals',
+                              transform=DS.make_transform(ds, lay, stamp), extra_check=DS.make_check(ds), skip_tabs=('Originals', 'Unlinked print pages'))
+            summ = f'{len(ds["retire"])} Unlinked print pages retired, {len(ds["swaps"])} English Originals'
+            lines = ds['lines']
+            rn = auto_rename(lay, init_fn, roles0, shared_backup=bk)
+            if rn.get('renamed'):
+                lines = lines + [f'{rn["renamed"]} saved files renamed to match the new roles (list in the library, _renamed/{rn["list"]}).']
         elif sid == 'other_files':
             p = OF.plan(lay)
             if _digest(p['todo']) != digests.get(sid):

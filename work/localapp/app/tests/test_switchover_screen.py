@@ -83,13 +83,14 @@ class Screen(unittest.TestCase):
         pv = K.job('switch_preview', {}, timeout=900)
         self.assertTrue(pv['ok'], pv)
         st = {s['id']: s for s in pv['steps']}
-        self.assertEqual(list(st), ['drop_unverified', 'rename_files', 'prjudge', 'prcolor', 'other_files', 'datafix'])   # RENAME-v1 step after the drop
+        self.assertEqual(list(st), ['drop_unverified', 'rename_files', 'prjudge', 'prcolor', 'other_files', 'datafix', 'datafix_structural'])   # RENAME-v1 step after the drop; DATAFIX-v1 row-changing fixes last
         self.assertEqual(st['drop_unverified']['n'], 419)
         self.assertGreaterEqual(st['prjudge']['n'], 115)
         self.assertEqual(len(st['prjudge']['detail']['mark']), 3)
         self.assertTrue(any('left alone' in l.lower() or 'Not changed' in l for l in st['prjudge']['lines']))
         self.assertEqual(st['other_files']['n'], 2)
-        self.assertEqual(st['datafix']['state'], 'nothing')
+        self.assertEqual(st['datafix']['state'], 'todo', 'the approved data fixes ship with the app')
+        self.assertGreater(st['datafix']['n'], 500)
         self.assertGreater(st['prcolor']['n'], 380)
         self.assertEqual(pv['blocked'], '')
         self.assertEqual(T.sha(wb), S['sha0'], 'a preview writes nothing to the workbook')

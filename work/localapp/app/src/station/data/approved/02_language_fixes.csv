@@ -1,0 +1,4 @@
+Tab,Article ID,Column,Current,New value,Confidence,Overwrite,Evidence
+Coverage,00169,Language,English,Spanish,medium,yes,Language cell of the reprint says English but its headline is Spanish
+Coverage,00170,Language,English,Spanish,medium,yes,Language cell of the reprint says English but its headline is Spanish
+Coverage,10618,Language,English,Spanish,medium,yes,Language cell of the Original says English but its headline is Spanish
