@@ -1,0 +1,18 @@
+AJG TRACKER (on this Mac)
+
+FIRST TIME: in Terminal, unzip with the Mac's own unzip (this avoids most security questions), then start it:
+  cd ~/Desktop
+  unzip ~/Downloads/"AJG Tracker Mac.zip"
+  bash "AJG Tracker/Start Tracker.command"
+After that, double-click "Start Tracker.command" in the folder. If macOS says it cannot check the file, right-click it, choose Open, then Open.
+(On the newest macOS: System Settings > Privacy & Security > Open Anyway. Or use the Terminal line above; it always works.)
+
+A Terminal window opens and stays open while you use the tracker; the tracker appears in your usual browser (http://127.0.0.1:8765/).
+To stop: close the Terminal window. If the tracker is already running, double-clicking again just opens it again.
+
+Keep this folder on this Mac (for example on the Desktop). It installs nothing and needs no password.
+Everything else works as in the Windows version: the Tracker files button (top right, next to Manage), keeper and reader copies,
+"for Update" files, update zips and refresh files are the same files on both systems.
+Do not open the workbook in Excel while saving.
+The tracker makes no internet connections except that newer saved articles show their photos from the news site's own page.
+More detail: app/docs/ (README.md, IT_NOTE_APP.md; they describe the Windows folder, the rules are the same).
