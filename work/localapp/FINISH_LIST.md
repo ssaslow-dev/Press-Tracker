@@ -6,8 +6,8 @@ One list for everything left. Claude keeps it current after every step and repor
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| A1 | Fable review of the code that writes the workbook and library (work/saver/REVIEW_3.md) | Claude | running |
-| A2 | Fix its findings, rerun every test and the end-to-end check, rebuild the zip, resend | Claude | after A1 |
+| A1 | Fable review of the code that writes the workbook and library (work/saver/REVIEW_3.md) | Claude | done 2026-11-04 (7 findings) |
+| A2 | Fix its findings, rerun every test and the end-to-end check, rebuild the zip, resend | Claude | running: fixes done, tests and zip under an hour |
 | A3 | Send IT the updated note (work/localapp/IT_NOTE_APP.md, with the new zip's fingerprint) | Sammy | after A2 |
 | A4 | Dress rehearsal on the office PC with yesterday's copy (setup + Switch-over changes screen, on a spare folder) | Sammy | after A2 |
 | A5 | Switch-over day (PLAN.md checklist): Mac fingerprint list, copy, unzip, keeper role, Set up from the Mac library, Switch-over changes screen | Sammy + Claude | after A3, A4 |
