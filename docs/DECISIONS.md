@@ -645,3 +645,4 @@ PRINTNEW-v1 follow-up 3 (2026-11-04, Sammy): the skip-to-his-name control on pri
 
 ## PRINTANY-v1 (2026-11-04, Sammy): the station reads any newspaper page, not only NewsBank's
 An "Add print pages" path takes e-edition PDFs, scans and photos of pages; Claude reads the masthead, date and page as well as the articles that name Gabriel; then the PRINTNEW-v1 flow. A page whose paper or date can't be read clearly is listed, never guessed. Pictures become PDFs in the update folder so the PC accepts them.
+PRINTNEW-v1 follow-up 4 (2026-11-04, Sammy): the reprint text test for anything read from a full print page uses only that article's text as read (a continued page's text joins its own story), never the whole page.
