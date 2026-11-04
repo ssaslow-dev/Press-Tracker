@@ -82,7 +82,7 @@ def main(argv=None) -> int:
                 open_page()
                 return 0
             print('Another copy of the AJG Tracker is already running on this PC, from a different folder:\n  %s\n'
-                  'Close that one first (close its black window), then start this one again.' % who.get('root'))
+                  'Close that one first (close its Terminal or command window), then start this one again.' % who.get('root'))
             return 3
         print('Port 8765 on this PC is used by another program, so the tracker cannot start.\n'
               'Close that program (or restart the PC) and start the tracker again.')
@@ -100,7 +100,7 @@ def main(argv=None) -> int:
     print('Keep this window open while you use the tracker. Close it to stop the tracker.\n')
     how = open_page()
     if how == 'default browser':
-        print('(Edge was not found, so the page opened in your usual browser.)')
+        print('(The page opened in your usual browser.)')
     try:
         srv.serve_forever()
     except KeyboardInterrupt:

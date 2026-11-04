@@ -1,4 +1,6 @@
-# Proposed changes to shared code (none applied)
+# Mac changes to shared code: APPLIED 2026-11-04 (patches kept for the record; tests now at work/localapp/app/tests/test_mac_fixes.py)
+Original text follows.
+
 None are needed for the Mac build to work (assemble_mac.py wraps assemble_app.py without editing it). Four patch files, apply in this order from the repository root with `git apply work/localapp/macpack/proposals/<file>`; `python3 -I work/localapp/macpack/proposals/test_mac_proposals.py` applies them to a temporary copy and checks each (9 checks, all pass on Linux).
 
 | File | What and why |

@@ -1,5 +1,5 @@
-"""Tiny tests for the Mac proposals. Applies the four patches to a temporary copy of app/src/station (the repository is not touched) and checks each.
-    python3 -I work/localapp/macpack/proposals/test_mac_proposals.py"""
+"""Mac fixes (accent spelling, hidden Finder files, Safari folder hint, neutral wording), checked on app/src/station directly.
+    python3 -I work/localapp/app/tests/test_mac_fixes.py"""
 import hashlib, json, os, shutil, subprocess, sys, tempfile, unicodedata, zipfile
 from pathlib import Path
 
@@ -8,8 +8,6 @@ REPO = HERE.parents[3]
 tmp = Path(tempfile.mkdtemp())
 st = tmp / 'work' / 'localapp' / 'app' / 'src' / 'station'
 shutil.copytree(REPO / 'work/localapp/app/src/station', st, ignore=shutil.ignore_patterns('__pycache__'))
-for p in sorted(HERE.glob('mac_*.patch')):
-    subprocess.run(['patch', '-p1', '-s', '-d', str(tmp), '-i', str(p)], check=True)
 sys.dont_write_bytecode = True
 sys.path.insert(0, str(st))
 import refresh as R, rename_files as RF

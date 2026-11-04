@@ -20,6 +20,7 @@ import json
 import os
 import re
 import shutil
+import unicodedata
 import zipfile
 from pathlib import Path
 
@@ -88,7 +89,7 @@ def check_name(name: str):
         raise RefreshRefused('BAD_ENTRY', f'only the tracker page itself may be an .html file in site: {name[:60]!r}')
     if kind == 'copies' and (len(parts) != 3 or parts[1] != 'articles'):
         raise RefreshRefused('BAD_ENTRY', f'bad article shard name: {name[:60]!r}')
-    return kind, '/'.join(parts[1:])
+    return kind, unicodedata.normalize('NFC', '/'.join(parts[1:]))       # MAC-NFC: a Mac may hand back decomposed accents; the workbook and Windows use composed ones
 
 
 # ---------------------------------------------------------------- make (keeper)
@@ -102,7 +103,7 @@ def _tree(root: Path, skip=()):
         rel = p.relative_to(root)
         if p.is_file() and not any(x in rel.parts for x in skip) and not any(s.startswith('.') for s in rel.parts) \
                 and p.suffix != '.part' and '.part' not in p.name:
-            yield rel.as_posix(), p
+            yield unicodedata.normalize('NFC', rel.as_posix()), p       # MAC-NFC: the name in the zip is always the composed form
 
 
 def _needs_full(lay, st) -> str:
@@ -256,7 +257,8 @@ def verify(zip_path) -> dict:
     except (zipfile.BadZipFile, OSError) as e:
         raise RefreshRefused('BAD_ZIP', f'not a readable zip file: {e}')
     with z:
-        infos = [i for i in z.infolist() if not i.filename.endswith('/')]
+        # MAC-JUNK: a zip re-zipped in Finder carries __MACOSX/ and .DS_Store entries; they are not part of the refresh
+        infos = [i for i in z.infolist() if not i.filename.endswith('/') and not i.filename.startswith('__MACOSX/') and os.path.basename(i.filename) != '.DS_Store']
         if len(infos) > CAP_ENTRIES:
             raise RefreshRefused('TOO_MANY_FILES', 'the refresh holds more files than a refresh may have')
         seen, total = set(), 0

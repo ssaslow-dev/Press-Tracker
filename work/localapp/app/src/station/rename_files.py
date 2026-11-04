@@ -21,6 +21,7 @@ import hashlib
 import json
 import os
 import re
+import unicodedata
 from pathlib import Path
 
 COVERAGE, ORIGINALS = 'Coverage', 'Originals'
@@ -66,8 +67,8 @@ def library_index(lib: Path) -> dict:
             continue
         with os.scandir(y) as it:
             for e in it:
-                if e.is_file():
-                    idx.setdefault(e.name, []).append(y.name)
+                if e.is_file() and not e.name.startswith('.'):       # MAC-JUNK: .DS_Store and ._ files
+                    idx.setdefault(unicodedata.normalize('NFC', e.name), []).append(y.name)       # MAC-NFC
     return idx
 
 

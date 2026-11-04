@@ -264,7 +264,7 @@
         var go = el('button', { class: 'ajgf-b danger', type: 'button', id: again ? 'ajgf-setup-run2' : 'ajgf-setup-run', text: again ? 'Copy and replace the workbook' : 'Copy and set up', onclick: function () { doSetupRun(again); } });
         if (busy) go.disabled = true;
         box_.appendChild(go);
-        box_.appendChild(el('p', {}, [el('small', { text: 'This copies about the size of the whole library and builds the page. It takes several minutes. Do not close the black window.' })]));
+        box_.appendChild(el('p', {}, [el('small', { text: 'This copies about the size of the whole library and builds the page. It takes several minutes. Do not close the Terminal or command window.' })]));
       }
     }
   }
@@ -290,9 +290,9 @@
       .catch(function (e) { state.busy = false; sg.stage = 'form'; sg.check = { ok: false, line: String(e.message || e) }; render(); });
   }
   function doSetupRun(again) {
-    sg.stage = 'working'; sg.msg = 'Copying and checking. This takes several minutes. Do not close the black window...'; state.busy = true; render();
+    sg.stage = 'working'; sg.msg = 'Copying and checking. This takes several minutes. Do not close the Terminal or command window...'; state.busy = true; render();
     withList(setupBody(again)).then(function (b) {
-      return runJob('setup_run', b, function (s) { sg.msg = 'Copying and checking... ' + s + ' s. Do not close the black window.'; render(); });
+      return runJob('setup_run', b, function (s) { sg.msg = 'Copying and checking... ' + s + ' s. Do not close the Terminal or command window.'; render(); });
     }).then(function (r) { state.busy = false; sg.stage = 'done'; sg.res = r; sg.check = null; refresh().then(render); })
       .catch(function (e) { state.busy = false; sg.stage = 'done'; sg.res = { ok: false, line: String(e.message || e) }; render(); });
   }
@@ -396,8 +396,8 @@
   }
   function doSwitchApply(ids) {
     var dig = {}; sw.pv.steps.forEach(function (s) { dig[s.id] = s.digest || ''; });
-    state.busy = true; sw.stage = 'working'; sw.msg = 'Making the backup, then the changes. Do not close the black window...'; render();
-    runJob('switch_apply', { steps: ids, digests: dig, include_low: sw.low }, function (s) { sw.msg = 'Working... ' + s + ' s. Do not close the black window.'; render(); }).then(function (r) {
+    state.busy = true; sw.stage = 'working'; sw.msg = 'Making the backup, then the changes. Do not close the Terminal or command window...'; render();
+    runJob('switch_apply', { steps: ids, digests: dig, include_low: sw.low }, function (s) { sw.msg = 'Working... ' + s + ' s. Do not close the Terminal or command window.'; render(); }).then(function (r) {
       state.busy = false; sw.stage = 'done'; sw.res = r; sw.pv = null; sw.ok = false; refresh().then(render);
     });
   }
@@ -470,7 +470,7 @@
   function setUpdate(u) { state.update = u; render(); }
 
   function takeFile(file) {
-    if (!/\.zip$/i.test(file.name)) { setUpdate({ error: 'That is not a .zip file. Drop the update zip from the Update station.' }); return; }
+    if (!/\.zip$/i.test(file.name)) { setUpdate({ error: 'That is not a .zip file. Drop the update zip from the Update station.' + (/\.[A-Za-z0-9]{1,5}$/.test(file.name) ? '' : ' If it is a folder, Safari may have unzipped it: use the .zip (turn off Safari > Settings > General > Open safe files after downloading).') }); return; }
     state.busy = true; setUpdate({ working: 'Sending ' + file.name + ' (' + bytes(file.size) + ') to the tracker...' });
     fetch('/_local/station/upload?name=' + encodeURIComponent(file.name), { method: 'POST', headers: { 'X-Local-Token': TOKEN }, body: file })
       .then(function (r) { return r.json().then(function (j) { return { status: r.status, j: j }; }); })
@@ -480,7 +480,7 @@
         return runJob('inspect', { file: r.j.file }, function (s) { setUpdate({ working: 'Checking the update and working out what it would change... ' + s + ' s' }); }).then(function (res) {
           state.busy = false; handleInspect(res);
         });
-      }).catch(function () { state.busy = false; setUpdate({ error: 'The file could not be sent to the tracker. Is the black tracker window still open?' }); });
+      }).catch(function () { state.busy = false; setUpdate({ error: 'The file could not be sent to the tracker. Is the tracker\'s Terminal or command window still open?' }); });
   }
   function handleInspect(res) {
     if (!res.ok) return setUpdate({ error: res.line || 'The update was refused.' });
@@ -502,8 +502,8 @@
   }
   function doSave() {
     var u = state.update; state.busy = true; var keep = u;
-    setUpdate({ working: 'Saving. The tracker backs up the workbook first, then writes. This can take a few minutes. Do not close the black window...' });
-    runJob('save', { update_id: u.update_id, token: u.token, accept_mismatch: !!u.accepted }, function (s) { setUpdate({ working: 'Saving... ' + s + ' s. Do not close the black window.' }); }).then(function (res) {
+    setUpdate({ working: 'Saving. The tracker backs up the workbook first, then writes. This can take a few minutes. Do not close the Terminal or command window...' });
+    runJob('save', { update_id: u.update_id, token: u.token, accept_mismatch: !!u.accepted }, function (s) { setUpdate({ working: 'Saving... ' + s + ' s. Do not close the Terminal or command window.' }); }).then(function (res) {
       state.busy = false; res.stage = 'saved'; setUpdate(res); refresh();
       if (res.written) setTimeout(function () { location.reload(); }, 3500);
     });
@@ -555,8 +555,8 @@
   }
   function doEditsSave() {
     var e = state.edits; state.busy = true;
-    setEdits({ working: 'Saving. The tracker backs up the workbook first, then writes. This can take a few minutes. Do not close the black window...' });
-    runJob('edits_save', { update_id: e.update_id, token: e.token }, function (s) { setEdits({ working: 'Saving... ' + s + ' s. Do not close the black window.' }); }).then(function (res) {
+    setEdits({ working: 'Saving. The tracker backs up the workbook first, then writes. This can take a few minutes. Do not close the Terminal or command window...' });
+    runJob('edits_save', { update_id: e.update_id, token: e.token }, function (s) { setEdits({ working: 'Saving... ' + s + ' s. Do not close the Terminal or command window.' }); }).then(function (res) {
       state.busy = false; res.stage = 'saved'; setEdits(res); refresh();
       if (res.written) setTimeout(function () { location.reload(); }, 3500);
     });
@@ -594,18 +594,18 @@
     parent.appendChild(d);
   }
   function takeRefresh(file) {
-    if (!/\.zip$/i.test(file.name)) { rtState = { result: { ok: false, line: 'That is not a .zip file. Drop the refresh zip the keeper gave you.' } }; render(); return; }
+    if (!/\.zip$/i.test(file.name)) { rtState = { result: { ok: false, line: 'That is not a .zip file. Drop the refresh zip the keeper gave you.' + (/\.[A-Za-z0-9]{1,5}$/.test(file.name) ? '' : ' If it is a folder, Safari may have unzipped it: use the .zip (turn off Safari > Settings > General > Open safe files after downloading).') } }; render(); return; }
     state.busy = true; rtState = { working: 'Sending ' + file.name + ' (' + bytes(file.size) + ') to the tracker...' }; render();
     fetch('/_local/station/upload?kind=refresh&name=' + encodeURIComponent(file.name), { method: 'POST', headers: { 'X-Local-Token': TOKEN }, body: file })
       .then(function (r) { return r.json(); })
       .then(function (j) {
         if (!j || !j.ok) { state.busy = false; rtState = { result: { ok: false, line: (j && (j.error || j.line)) || 'The file could not be sent.' } }; return render(); }
-        rtState = { working: 'Checking the refresh and bringing it in. A big one takes a few minutes. Do not close the black window...' }; render();
-        return runJob('refresh_take', { file: j.file }, function (s, jb) { rtState = { working: 'Bringing in the refresh... ' + s + ' s' + (jb && jb.stalled ? '. Nothing has moved for ' + jb.stalled + ' s. If it stays stuck the tracker will stop it by itself and say so.' : '. Do not close the black window.') }; render(); }).then(function (res) {
+        rtState = { working: 'Checking the refresh and bringing it in. A big one takes a few minutes. Do not close the Terminal or command window...' }; render();
+        return runJob('refresh_take', { file: j.file }, function (s, jb) { rtState = { working: 'Bringing in the refresh... ' + s + ' s' + (jb && jb.stalled ? '. Nothing has moved for ' + jb.stalled + ' s. If it stays stuck the tracker will stop it by itself and say so.' : '. Do not close the Terminal or command window.') }; render(); }).then(function (res) {
           state.busy = false; rtState = { result: res }; render(); refresh();
           if (res.ok) setTimeout(function () { location.reload(); }, 3500);
         });
-      }).catch(function () { state.busy = false; rtState = { result: { ok: false, line: 'The file could not be sent to the tracker. Is the black tracker window still open?' } }; render(); });
+      }).catch(function () { state.busy = false; rtState = { result: { ok: false, line: 'The file could not be sent to the tracker. Is the tracker\'s Terminal or command window still open?' } }; render(); });
   }
 
   // ---- accept the workbook
