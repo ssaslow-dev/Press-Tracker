@@ -150,12 +150,32 @@ function nbPrintCands(date, outlet){
   return out.sort((a, b) => a.g - b.g).slice(0, 250);
 }
 const nbHasStory = id => byId.has(id);
+/* PRINTNEW-v1: a print page Claude read (it.readArt, set by the page layer) is filed WITHOUT a person's confirmation:
+   a story already in the tracker (the same checks nbScreen makes for any find: headline within the outlet's days, the headline index, headline words) -> that story's print copy
+   (the existing "confirmed print page" path: it.confirm); otherwise a NEW story built from Claude's reading. Never guessed: a page with no usable reading stays a print page. */
+function nbPrintApply(items){
+  items.forEach(it => {
+    if (it.screen.status !== 'print_page' || it.include === false || it.confirm || !it.readArt) return;
+    const a = it.readArt, words = a.words || String(a.text || '').split(/\s+/).length;
+    const p2 = Object.assign({}, it.p, { headline: a.headline, author: a.byline || '', section: a.section || it.p.section || '', page: a.page || it.p.page || '', text: a.text, paras: String(a.text).split(/\n\s*\n+/).map(x => x.replace(/\s+/g, ' ').trim()).filter(Boolean), words_nb: words, thin: false, how: 'read', readBy: 'claude',
+      flags: (it.p.flags || []).concat(['headline, byline and text were read from the page picture by Claude: check them']) });
+    const c = nbCand(Object.assign({}, p2, { kind: 'article' })), ch = covHit(c), old = ch ? null : dupOf(Object.assign({}, c, { link: '', plink: '' }), D);
+    const sid = ch ? ch.o.sid : old ? old.r.id : '', st = sid ? byId.get(sid) || byId.get(IDMAP_SID(sid)) : null;
+    it.p0 = it.p;
+    if (st){
+      it.confirm = st.id; it.readWhy = 'Claude read the page: “' + String(a.headline).slice(0, 70) + '” is the story ' + st.id + ' (' + (ch && ch.same ? 'same outlet' : 'another outlet') + '); filed as its print edition';
+      it.readArt.matched = st.id; return;
+    }
+    it.p = p2; it.screen = { status: 'new', why: 'new story read from a print page by Claude (“' + String(a.headline).slice(0, 70) + '”): check its headline, byline and text' }; it.fromPage = true; it.readWhy = it.screen.why;
+  });
+}
 async function nbRun(items, opts){
   const SRC = opts.src || NBSRC.nb, say = opts.say || (() => {}), mark = opts.mark || (() => {});
   const wasCtl = U.ctl; U.ctl = new AbortController(); U.busy = true; U.failed = 0; U.originPages = U.originPages || new Map();
   const run = newRunId(), at = new Date().toISOString();
   const res = { run, at, rows: [], stories: [], reprints: [], left: [], unconfirmed: [], counts: {}, links: { found: 0, searched: 0 }, errors: [] };
   try {
+    nbPrintApply(items);
     // PRINTPAGES-v1: a print page the intern matched to a tracker story is proposed as a print reprint of it; one not matched becomes an "Unlinked print pages" row
     items.forEach(it => { if (it.screen.status === 'print_page' && it.include !== false && it.confirm && byId.has(it.confirm)){ const st = byId.get(it.confirm); it.printAs = 'reprint'; it.screen = Object.assign({}, it.screen, { status: 'reprint', of: it.confirm, of_hl: st.hl, why: 'print page confirmed by the intern as a print copy of “' + String(st.hl).slice(0, 60) + '” (' + it.confirm + ')' }); } });
     const unl = items.filter(it => it.screen.status === 'print_page' && it.include !== false); unl.forEach(it => { it.printAs = 'unlinked'; });
@@ -225,7 +245,7 @@ async function nbRun(items, opts){
     for (const it of unl){ const key = 'pp-' + hash12(normU(nbLink(it.p) || it.key)), p = it.p;
       await setDoc('pages', key, pageDoc(it)); it.ppKey = key;
       printRows.push({ _page: key, 'Data Source': NB_DS, 'Saved Copy?': 'No', 'Date': p.date, 'Year': p.date ? +p.date.slice(0, 4) : '', 'Date source': 'print edition', 'Outlet': p.outlet_clean, 'Medium': 'Newspaper', 'Format': 'Print', 'Language': 'English', 'Edition': 'Print', 'Page': p.page || '',
-        'NewsBank print-page link': nbLink(p), 'Newsbank APA citation (print page)': VS(p.citation, 1500).replace(/\.\s*$/, '') + '.', 'Likely counterpart': '', 'Team note': 'NewsBank print page from ' + it.batch.name + ' #' + it.batch.index + ' (' + TODAY + '): not matched to a tracker story; the page PDF is kept as the print original' }); }
+        'NewsBank print-page link': nbLink(p), 'Newsbank APA citation (print page)': VS(p.citation, 1500).replace(/\.\s*$/, '') + '.', 'Likely counterpart': '', 'Team note': 'NewsBank print page from ' + it.batch.name + ' #' + it.batch.index + ' (' + TODAY + '): not matched to a tracker story; the page PDF is kept as the print original' + (it.readNote ? '; ' + it.readNote : '') }); }
     // ORIGCOPIES-v1: a story already in the tracker keeps its PDF as an extra original copy of the row it matched (the PC adds it only when that row does not hold this NewsBank record's PDF already, and fills only blank cells)
     const copies = [];
     for (const it of items.filter(x => x.screen.status === 'known' && x.include !== false && x.pdf && x.screen.row)){ const p = it.p;   // the run document names the PDF itself (updatefolder FORMAT: run.extra_copies {aid, fmt, file, pdf_sha256})
@@ -253,14 +273,23 @@ async function nbRun(items, opts){
     const saved = await saveRun(run, doc);
     res.rows = prop.rows; res.added = added; res.doc = doc; res.saved = saved;
     res.counts = { stories: stories.length, reprint_rows: reps.length + orig.reduce((a, it) => a + (it.r._reps || []).length, 0), rows: prop.rows.length, print_pages: res.print_pages.length, left: res.left.length };
-    res.items = items.map(it => ({ key: it.key, status: it.skipped ? 'skipped' : it.asRep ? 'reprint_in_batch' : it.screen.status, why: it.skipped || it.screen.why, link: it.pub ? it.pub.url : '', link_status: it.pub ? it.pub.status : '', link_note: it.linkNote || '' }));
+    res.items = items.map(it => ({ key: it.key, status: it.skipped ? 'skipped' : it.asRep ? 'reprint_in_batch' : it.screen.status, why: it.skipped || it.readWhy || it.readNote || it.screen.why, link: it.pub ? it.pub.url : '', link_status: it.pub ? it.pub.status : '', link_note: it.linkNote || '' }));
     return res;
   } finally { U.ctl = wasCtl; U.busy = false; }
+}
+/* PRINTNEW-v1: what Claude read from a print page, kept with the page's pages doc (nb.read) so the PC can run the reprint text test on it later:
+   { by, outcome: new|reprint|unlinked|none|unclear|error|unavailable, note, headline, byline, section, page, continues, continued_from, confidence, words, text, matched (story id) } or absent when the page was not read */
+function nbReadMeta(it){
+  const r = it.reading, a = it.readArt; if (!r && !a) return undefined;
+  const outcome = it.fromPage ? 'new' : it.confirm && a ? 'reprint' : r && r.state && r.state !== 'read' ? r.state : 'unlinked';
+  const o = { by: 'claude', outcome, note: VS(it.readWhy || it.readNote || (r && r.note) || '', 300) };
+  if (a) Object.assign(o, { headline: a.headline, byline: a.byline, section: a.section, page: a.page, continues: a.continues, continued_from: a.continued_from, confidence: a.confidence, words: a.words, text: a.text, matched: a.matched || '' });
+  return o;
 }
 function nbMeta(it){
   const p = it.p, b = it.batch;
   return { docref: p.docref, url: nbLink(p), file: it.pdf ? 'files/' + it.fileId + '.pdf' : '', pdf_sha256: it.pdf ? it.pdf.sha256 : '', pdf_bytes: it.pdf ? it.pdf.bytes : 0, thin: !!p.thin,
-    kind: p.kind, as: it.printAs || (it.copyKey ? 'known' : ''), batch: { name: b.name, sha256: b.sha256, index: b.index, pages: [b.firstPage, b.lastPage], shared_first: !!b.sharedFirst, shared_last: !!b.sharedLast, bands: b.bands || [] },
+    kind: p.kind, as: it.printAs || (it.fromPage ? 'new' : it.copyKey ? 'known' : ''), read: nbReadMeta(it), batch: { name: b.name, sha256: b.sha256, index: b.index, pages: [b.firstPage, b.lastPage], shared_first: !!b.sharedFirst, shared_last: !!b.sharedLast, bands: b.bands || [] },
     header: { headline: p.headline, date: p.date, source: p.outlet, author: p.author, section: p.section, page: p.page, words: p.words_nb }, citation: p.citation, flags: p.flags || [], how: p.how };
 }
 /* what NewsBank, not the web, gives a row (the sheet's own NewsBank conventions: Data Source "Newsbank", Date source "NewsBank" / "print edition",
@@ -277,7 +306,7 @@ function nbRowFill(row, it){
   row['Headline'] = p.headline; row['Date'] = p.date; row['Year'] = p.date ? +p.date.slice(0, 4) : '';
   if (isRep){ row['Author / byline'] = p.author || ''; row['Tracker story code'] = ''; }
   if (p.kind === 'print_page'){   // PRINTPAGES-v1: a confirmed print page is a print reprint of the story: the story's headline, the page's own link and citation in the print-page columns
-    row['Headline'] = it.screen.of_hl || row['Headline']; row['NewsBank print-page link'] = row['NewsBank article link']; row['NewsBank article link'] = '';
+    if (it.screen.of_hl) row['Headline'] = it.screen.of_hl; row['NewsBank print-page link'] = row['NewsBank article link']; row['NewsBank article link'] = '';
     row['Newsbank APA citation (print page)'] = row['Newsbank APA citation (article)']; row['Newsbank APA citation (article)'] = ''; row['Edition'] = 'Print'; row['Format'] = 'Print'; row['Date source'] = 'print edition'; row['Page'] = p.page || '';
   }
   if (it.tv){   // NBTV-v1: a broadcast transcript is handled as the Update button's TV finds are (Medium, Format, Pacific date, his role, an Audio & video row)
@@ -292,7 +321,13 @@ function nbRowFill(row, it){
   if (!isRep && !it.pdf) { row['Saved Copy?'] = 'No'; }
   return row;   // an Original finds its pages doc by its temporary code (Tracker story code), a reprint by _page (set by proposeRows)
 }
+function nbReadHtml(p, row){
+  const e = x => String(x == null ? '' : x).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  return '<html><head><title>' + e(row.headline) + '</title></head><body><article class="jg-pdf-text"><p class="pdf-cap">Text read from the newspaper page by Claude (not NewsBank’s text): check it against the page PDF</p><h1>' + e(row.headline) + '</h1>'
+    + (p.author ? '<p class="byline">By ' + e(p.author) + '</p>' : '') + '<p class="pdf-cap">' + e([row.outlet, row.date, p.section && 'Section: ' + p.section, p.page && 'Page ' + p.page].filter(Boolean).join(' · ')) + '</p>' + p.paras.map(x => '<p>' + e(x) + '</p>').join('')
+    + (p.citation ? '<p class="pdf-cap">' + e(p.citation) + '</p>' : '') + '</article></body></html>';
+}
 /* NewsBank's source object (ProQuest's is in proquest.js) */
 const NBSRC = { nb: { id: 'nb', name: 'NewsBank', idName: 'NewsBank link', foundBy: 'newsbank-pdf', srcName: 'NewsBank', preface: NB_PREFACE, dateSrc: 'newsbank', print: p => !!p.page, runMode: 'newsbank', runMark: 'newsbank', metaKey: 'nb', runSource: 'NewsBank batch PDFs',
-  known: () => nbDocrefs(), cand: nbCand, link: nbLink, plink: nbLink, html: (p, row) => NBParse.storyHtml(p, row), meta: nbMeta, rowFill: nbRowFill } };
+  known: () => nbDocrefs(), cand: nbCand, link: nbLink, plink: nbLink, html: (p, row) => p.readBy === 'claude' && p.paras ? nbReadHtml(p, row) : NBParse.storyHtml(p, row), meta: nbMeta, rowFill: nbRowFill } };
 window.__nb = { candidates: nbPrintCands, hasStory: nbHasStory, screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };
