@@ -123,8 +123,8 @@ const INIT = ({ hl }) => {
   check('a NewsBank PDF in this box is refused and sent to the NewsBank box', S1('newsbank_one') === 'refused' && /Add NewsBank PDFs/.test(I('newsbank_one').why), I('newsbank_one').why);
   check('refused and needs-a-look PDFs get no checkbox and no PDF copy', ['partialdate', 'nopubtitle', 'two_articles', 'scanned', 'unrelated', 'newsbank_one'].every(n => !I(n).include && !I(n).pdf));
   const tbl = await page.textContent('#pqBody'), sum = await page.textContent('#pqSummary');
-  check('the list shows labels a person can read', /Needs a look/.test(tbl) && /Not a ProQuest article PDF/.test(tbl) && /Already in the tracker/.test(tbl) && /Twice in these PDFs/.test(tbl) && /Reprint/.test(tbl), tbl.slice(0, 300));
-  check('the summary adds up', /23 PDFs: 8 new, 1 reprint, 7 already in the tracker, 1 repeated in these PDFs, 4 need a look, 2 not ProQuest article PDFs\./.test(sum.replace(/\s+/g, ' ')) || /\b23 PDFs\b/.test(sum), sum);
+  check('the list shows labels a person can read', /Not added \(cannot be confirmed\)/.test(tbl) && /Not a ProQuest article PDF/.test(tbl) && /Already in the tracker/.test(tbl) && /Twice in these PDFs/.test(tbl) && /Reprint/.test(tbl), tbl.slice(0, 300));
+  check('the summary adds up', /23 PDFs: 8 new, 1 reprint, 7 already in the tracker, 1 repeated in these PDFs, 4 not added (cannot be confirmed), 2 not ProQuest article PDFs\./.test(sum.replace(/\s+/g, ' ')) || /\b23 PDFs\b/.test(sum), sum);
   await page.evaluate(() => { const it = window.__station.state.pq.items.find(i => i.batch.name === 'new3page.pdf'); window.__texts.new3page = it.p.text; });
   await page.screenshot({ path: path.join(OUT, 'pq_1_list.png'), fullPage: true });
 

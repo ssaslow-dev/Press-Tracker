@@ -82,7 +82,7 @@ const filesOf = page => page.evaluate(() => window.__station.state.pq.files.map(
     await drop(page, ['exp_6_broken']); const it = await itemsOf(page);
     check('broken DETAILS in article 3: it needs a look on its own, says which article, and the other five are new', it.length === 6 && it[2].st === 'needs_look' && /^Article 3 of 6 in this PDF/.test(it[2].why) && it.filter(x => x.st === 'new').length === 5, JSON.stringify(it.map(x => x.st)));
     check('the broken one has no PDF copy and no checkbox; the others have their own PDF copy', !it[2].pdf && it.filter(x => x.st === 'new').every(x => x.pdf > 1000), JSON.stringify(it.map(x => x.pdf)));
-    check('the summary counts 5 new and 1 needs a look', /6 PDFs: 5 new, 1 needs a look/.test((await page.textContent('#pqSummary')).replace(/\s+/g, ' ')) || /5 new, 1 needs a look/.test(await page.textContent('#pqSummary')), await page.textContent('#pqSummary'));
+    check('the summary counts 5 new and 1 not added (cannot be confirmed)', /6 PDFs: 5 new, 1 not added (cannot be confirmed)/.test((await page.textContent('#pqSummary')).replace(/\s+/g, ' ')) || /5 new, 1 not added (cannot be confirmed)/.test(await page.textContent('#pqSummary')), await page.textContent('#pqSummary'));
     await ctx.close(); }
   /* 60 articles: works, with the one plain note; time and memory */
   { const { page, errors, ctx } = await open(browser);

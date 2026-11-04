@@ -283,7 +283,7 @@ function nbReadMeta(it){
   const r = it.reading, a = it.readArt; if (!r && !a) return undefined;
   const outcome = it.fromPage ? 'new' : it.confirm && a ? 'reprint' : r && r.state && r.state !== 'read' ? r.state : 'unlinked';
   const o = { by: 'claude', outcome, note: VS(it.readWhy || it.readNote || (r && r.note) || '', 300) };
-  if (a) Object.assign(o, { headline: a.headline, byline: a.byline, section: a.section, page: a.page, continues: a.continues, continued_from: a.continued_from, confidence: a.confidence, words: a.words, text: a.text, matched: a.matched || '' });
+  if (a) Object.assign(o, { headline: a.headline, byline: a.byline, section: a.section, page: a.page, continues: a.continues, continued_from: a.continued_from, confidence: a.confidence, words: a.words, regions: a.regions || [], name_sentences: a.name_sentences || [], text: a.text, matched: a.matched || '' });
   return o;
 }
 function nbMeta(it){
