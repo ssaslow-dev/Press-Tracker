@@ -18,7 +18,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 APPSRC = HERE.parent
 REPO = APPSRC.parents[2]
-SCRATCH = Path('/tmp/claude-0/-home-user-Press-Tracker/ec7aac73-d461-552b-aaac-9f8ebc5e7581/scratchpad')
+SCRATCH = Path(os.environ.get('AJG_SCRATCH') or os.path.join(tempfile.gettempdir(), 'ajg_scratch'))
 BUILD = Path(os.environ.get('AJG_TEST_BUILD') or SCRATCH / 'app_build' / 'linux' / 'AJG Tracker')
 EXAMPLE_DB = REPO / 'build' / 'tests' / 'sheet_task' / 'fixtures' / 'example_db.json'
 sys.path.insert(0, str(REPO / 'work' / 'localapp' / 'updatefolder'))

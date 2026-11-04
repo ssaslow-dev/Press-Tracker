@@ -1,8 +1,8 @@
-/* PROPOSAL test for the station side of proposals/for_update_printtab.patch: with kind-P rows (and a `files` column) in the for-Update file, a print page already listed on the Unlinked print pages tab
+/* Station side of the for-Update print tab (applied in the station and PC build; PRINTPAGES-v1): with kind-P rows (and a `files` column) in the for-Update file, a print page already listed on the Unlinked print pages tab
    is "already in the tracker as a print page", and a known story whose row already holds a NewsBank PDF gets no extra copy. Licensed text: AJG_REAL_NB2 (multi3.pdf, for_update_0bccc1fc.json).
-   AJG_REAL_NB2=DIR node proposals/print_known_test.js */
+   AJG_REAL_NB2=DIR node tests/print_known_test.js */
 const fs = require('fs'), path = require('path'), os = require('os');
-const H = require('../tests/nb/real_harness.js');
+const H = require('./nb/real_harness.js');
 const DIR = process.env.AJG_REAL_NB2, FU = DIR && path.join(DIR, 'for_update_0bccc1fc.json');
 if (!DIR || !fs.existsSync(path.join(DIR, 'multi3.pdf')) || !fs.existsSync(FU)) { console.log('SKIP print_known_test (AJG_REAL_NB2 not set or files absent)'); process.exit(0); }
 const C = H.makeChecker(), check = C.check;

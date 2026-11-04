@@ -6,7 +6,7 @@
 Reads (never writes): code/, build/, data/ (the snapshot workbook and library), work/localapp/{build,server,updatefolder,winpack,vendor},
 work/saver/src. Writes only into --out. Python 3.11+ on the build machine, internet for NuGet and PyPI (unless the caches are given).
 
---target windows   the product: NuGet CPython 3.13.16 (as probe/build_probe.py) + win_amd64 wheels (winpack/fetch_wheels.py, hash-pinned).
+--target windows   the product: NuGet CPython 3.13.16 (see winpack/README.md) + win_amd64 wheels (winpack/fetch_wheels.py, hash-pinned).
 --target linux     the test build: a venv stands in for python\\ (same layout, same pinned versions as Linux wheels); python313._pth is
                    replaced by a .pth file with the same effect. Used by app/tests.
 Layout (FORMAT.md section 3, code under app/ through layout.json):
@@ -25,6 +25,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 import urllib.request
 import zipfile
 from pathlib import Path
@@ -32,11 +33,11 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 LOCALAPP = HERE.parent
 REPO = HERE.parents[2]
-SCRATCH = Path('/tmp/claude-0/-home-user-Press-Tracker/ec7aac73-d461-552b-aaac-9f8ebc5e7581/scratchpad')
+SCRATCH = Path(os.environ.get('AJG_SCRATCH') or os.path.join(tempfile.gettempdir(), 'ajg_scratch'))
 APP_NAME = 'AJG Tracker'
 PYVER = '3.13.16'
 NUPKG_URL = f'https://api.nuget.org/v3-flatcontainer/python/{PYVER}/python.{PYVER}.nupkg'
-DROP_DIRS = {'__pycache__', 'test', 'tests', 'idlelib', 'tkinter', 'ensurepip', 'turtledemo', 'lib2to3', 'site-packages'}   # as build_probe.py
+DROP_DIRS = {'__pycache__', 'test', 'tests', 'idlelib', 'tkinter', 'ensurepip', 'turtledemo', 'lib2to3', 'site-packages'}   # the Windows folder keeps no test, docs or GUI parts of the standard library
 DROP_TOP = {'include', 'libs'}
 DROP_FILES = {'turtle.py'}
 DROP_DLL = {'_tkinter.pyd', 'tcl86t.dll', 'tk86t.dll'}

@@ -4,7 +4,7 @@ Date 2026-11-03. Asked for by Sammy: "clean up all of the headers and buttons, m
 
 Nothing was fixed. Every number below was measured in Chromium (what Edge is built on) with Playwright, at 1440x900 and 960x1040, light and dark.
 
-Where the pictures are: `S/layout_audit/` with `S=/tmp/claude-0/-home-user-Press-Tracker/ec7aac73-d461-552b-aaac-9f8ebc5e7581/scratchpad`. Crops are in `S/layout_audit/crops/` (zoomed 2x, some 4x). Full-page screenshots are in `S/layout_audit/shots/` (`pc_` = the PC build, `live_` = the live v65 files; `d` = 1440, `n` = 960). The measuring scripts are in `S/layout_audit/tools/`, the raw numbers in `S/layout_audit/scan.json`.
+Where the pictures are: `S/layout_audit/` with `S` the scratch folder the check ran in. Crops are in `S/layout_audit/crops/` (zoomed 2x, some 4x). Full-page screenshots are in `S/layout_audit/shots/` (`pc_` = the PC build, `live_` = the live v65 files; `d` = 1440, `n` = 960). The measuring scripts are in `S/layout_audit/tools/`, the raw numbers in `S/layout_audit/scan.json`.
 
 What was audited:
 - The PC test build `S/app_build_pcedits2/linux/AJG Tracker` (a working copy, started on port 8911).

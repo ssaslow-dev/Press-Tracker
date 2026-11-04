@@ -14,6 +14,7 @@ What it does (details in README.md)
   4. parity.js: the same clicks and typing on both, outcomes compared (counts, lists, URLs, downloaded bytes, notes, views, Back/Forward).
 Exit code 0 when everything is identical.
 """
+import tempfile
 import argparse
 import json
 import os
@@ -26,7 +27,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parents[2]
-SCRATCH = Path(os.environ.get('AJG_SCRATCH') or '/tmp/claude-0/-home-user-Press-Tracker/ec7aac73-d461-552b-aaac-9f8ebc5e7581/scratchpad')
+SCRATCH = Path(os.environ.get('AJG_SCRATCH') or os.path.join(tempfile.gettempdir(), 'ajg_scratch'))
 sys.path.insert(0, str(REPO / 'work' / 'localapp' / 'app' / 'tests'))
 
 

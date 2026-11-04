@@ -8,7 +8,7 @@ Assembled by `assemble_app.py` from the finished pieces (page build, server, upd
       Start Tracker.cmd         double-click to start (pushd, python -B -X utf8 -I, Edge app mode at http://127.0.0.1:8765/)
       READ ME FIRST.txt         one page of instructions for the person using it
       layout.json               {"pipeline": "app/pipeline", "saver": "app/saver/saver.py"}  (updatefolder/layout.py overrides)
-      python\                   NuGet CPython 3.13.16 (as probe/build_probe.py) + python313._pth (and python._pth): Lib, DLLs, ..\app\site-packages
+      python\                   NuGet CPython 3.13.16 (see winpack/README.md) + python313._pth (and python._pth): Lib, DLLs, ..\app\site-packages
       app\
         site-packages\          the 10 pinned wheels (winpack/requirements-win.txt), tests folders left out, precompiled
         server\                 server.py, claude_shim.js            (unchanged copies)
@@ -17,7 +17,7 @@ Assembled by `assemble_app.py` from the finished pieces (page build, server, upd
         pipeline\               code\ + vendor files from the page build, winpack patches 01 and 02 and app patches 04 to 06 (PHOTOLINK-v1) applied, pdftext_pypdf.py, photolink.py, PIPELINE.sha256 regenerated
         station\                the layer written for this folder: launcher.py, station_server.py, station_cli.py, refresh.py, post_save.py,
                                 plain.py, common.py, web\panel.js, selfcheck.py
-        docs\                   FORMAT.md, IT_NOTE.md, winpack README, this file
+        docs\                   FORMAT.md, IT_NOTE_APP.md, winpack README, this file
         APP_FILES.sha256        sha256 of every app\ file except site-packages;  BUILD_INFO.json  versions, nupkg and wheel hashes, source commit
       data\                     everything that changes (nothing outside this folder is ever written)
         role.json               {"role": "keeper"} or {"role": "reader"} (default reader)

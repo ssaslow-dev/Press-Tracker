@@ -3,7 +3,7 @@
 Steps: (1) pip download --require-hashes for win_amd64 / cp313 (pip itself refuses a wrong hash); (2) re-hash each file here against
 requirements-win.txt and refuse extra or missing files; (3) report every native file (.pyd/.dll/.exe) inside each wheel and refuse any
 wheel outside the allowlist (numpy, pandas); (4) with --extract, unzip into site-packages (path-checked), which is what the portable
-folder ships (same as probe/build_probe.py). Standard library + pip only."""
+folder ships (same see winpack/README.md). Standard library + pip only."""
 import argparse, hashlib, os, re, shutil, subprocess, sys, zipfile
 
 HERE = os.path.dirname(os.path.abspath(__file__))

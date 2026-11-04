@@ -33,7 +33,7 @@ REPO = HERE.parents[2]
 sys.path.insert(0, str(HERE))
 import pc  # noqa: E402
 
-DEFAULT_SCRATCH = Path('/tmp/claude-0/-home-user-Press-Tracker/ec7aac73-d461-552b-aaac-9f8ebc5e7581/scratchpad/chaincheck')
+DEFAULT_SCRATCH = Path(os.environ.get('AJG_SCRATCH') or os.path.join(tempfile.gettempdir(), 'ajg_scratch')) / 'chaincheck'
 PUBLISHED_URL = 'https://claude.ai/artifact/5uGsM8yQMphjAQbKhvc5SL'
 
 ROWS = []   # (step, check, ok, detail)

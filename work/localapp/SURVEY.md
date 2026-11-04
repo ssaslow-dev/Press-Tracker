@@ -1,7 +1,7 @@
 # LOCALAPP survey (read-only, 2026-11-02)
 
 Paths are relative to the repo. `T/` = `code/tracker/`. Line numbers are from the files as committed (HEAD 3582d42).
-Scratch build output: `/tmp/claude-0/-home-user-Press-Tracker/ec7aac73-d461-552b-aaac-9f8ebc5e7581/scratchpad/survey_build/` (nothing was written into code/ or build/).
+Scratch build output: a scratch folder outside the repository (nothing was written into code/ or build/).
 
 ## 1. Artifact runtime used by the page
 

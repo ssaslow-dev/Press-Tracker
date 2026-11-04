@@ -5,12 +5,11 @@ Press-coverage database for CA Assemblymember Jesse Gabriel (AD-46), kept by Sam
 ## Where things live
 
 **In this repository:**
-- `docs/`: START_HERE, HANDOFF (operations), HANDOFF_PC_APP (2026-11-02 handoff from the Claude that ran the old tracker: rules, quirks and lessons for the PC app and Update station; read sections 1, 6 and 10 before working on them), DECISIONS (the decision log; tags like `NOSCHED-v1`; newest at the end), CONTRACT (run-doc schema), AGENT_BRIEF, BOARD, TONE_GUIDE. Search DECISIONS by tag; don't read it whole.
+- `docs/`: START_HERE, HANDOFF (operations), HANDOFF_PC_APP (2026-11-02 handoff from the Claude that ran the old tracker: rules, quirks and lessons for the PC app and Update station; read sections 1, 6 and 10 before working on them), DECISIONS (the decision log; tags like `NOSCHED-v1`; newest at the end; superseded entries are in DECISIONS_ARCHIVE, with a pointer left behind), CONTRACT (run-doc schema), AGENT_BRIEF, BOARD, TONE_GUIDE. Search DECISIONS by tag; don't read it whole.
 - `code/`: tracker page sources (`code/tracker/NN_*.js`), the save pipeline (`sheet_task.py` plus rule modules), reference data (`outlets.json`, `reporters.json`, `reporter_employment.csv`, `outlet_rules.json`, `lookup_cache.json`), `make_viewer.py` (shared copy), and `sheet_task_prompt.md` (today's manual save procedure).
 - `build/`: build scripts (`apply_all_patches.py`, `build.sh`), tab sources (`build/tabs/`) and tests (`build/tests/run_all.sh`, about 5 min; TABS harness in `build/tests/tabs/`).
-- `work/saver/`: the save program in progress (see Current work).
-- `work/desktop_plan/`: Fable's Windows plan (PLAN.md, BUILD_NOTES.md). The closest existing plan for LOCALAPP-v1 (portable zip, embeddable Python, local page in the browser). Its Claude Desktop connector for saves does not fit LOCALAPP-v1.
-- `work/update_review/`: the Update-button review (REPORT.md) and its patches.
+- `work/saver/`: the save program (see Current work).
+- `work/update_review/`: the Update-button review (REPORT.md, FABLE_DIFF_REVIEW.md, REPLAY.md); the patches it made were applied to `code/` long ago.
 
 Docs written before the move refer to the old workspace root `L = /tmp/.../scratchpad/lib`. In this repository, that root is the repo itself (`L/code` = `code/`, `L/DECISIONS.md` = `docs/DECISIONS.md`).
 
@@ -21,7 +20,7 @@ Docs written before the move refer to the old workspace root `L = /tmp/.../scrat
 - Shared read-only copy: https://claude.ai/artifact/6vhKKcNXarhSKwnCMk3Bks. Rebuild it with `code/make_viewer.py` after every tracker publish.
 - Review queue artifact: https://claude.ai/artifact/8yp4a5q8A8PcrQFdYcXPuB.
 - claude.ai Project "AJG Mentions Database" holds copies of the docs under `library/`.
-- **New project's Update station** (private, UPDATESTATION-v1): https://claude.ai/artifact/5uGsM8yQMphjAQbKhvc5SL. Source and build: `work/localapp/station/`. Photo feasibility test page: https://claude.ai/artifact/3BtDeZmwfUwYwo4muRs8Bi.
+- **New project's Update station** (private, UPDATESTATION-v1): https://claude.ai/artifact/5uGsM8yQMphjAQbKhvc5SL. Source and build: `work/localapp/station/`.
 - Plan docs (Claude Docs): first draft https://claude.ai/artifact/1DoeTcpiPqYeXemdCk6Jfy; Fable's Windows plan https://claude.ai/artifact/TRc8DoNxDpByjKA5zNevvN.
 
 ## Hard rules (never break these; ask Sammy if one seems wrong)

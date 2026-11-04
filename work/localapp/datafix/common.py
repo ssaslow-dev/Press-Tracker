@@ -1,7 +1,7 @@
 """Shared helpers for the three datafix checks (read-only: nothing here writes to the workbook or library)."""
-import os, re, sys, pickle, collections, glob
+import os, re, sys, pickle, collections, glob, tempfile
 ROOT = '/home/user/Press-Tracker'
-S = '/tmp/claude-0/-home-user-Press-Tracker/ec7aac73-d461-552b-aaac-9f8ebc5e7581/scratchpad'
+S = os.environ.get('AJG_SCRATCH') or os.path.join(tempfile.gettempdir(), 'ajg_scratch')
 WB = S + '/wb_0bccc1fc.xlsx'
 LIB = ROOT + '/data/library'
 sys.path.insert(0, ROOT + '/code')

@@ -8,6 +8,7 @@ const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const arg = (k, d) => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : d; };
 const REF = arg('ref'), PC = arg('pc'), OUT = arg('out'), VP = arg('vp', '1440x900'), ONLY = arg('only', '');
 const [VW, VH] = VP.split('x').map(Number);
+const EXTRA = arg('extra', ''), ALLOW = arg('allow', '');   // PARITYTEST-v1: more interactions (a module) and the list of allowed differences (JSON)
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const FIXED = new Date('2026-11-02T19:30:00-08:00');
 const STORY_OLD = process.env.LC_STORY_OLD || 's04743';
@@ -15,11 +16,13 @@ const sha = b => crypto.createHash('sha256').update(b).digest('hex');
 const FONTCACHE = path.join(OUT, '_fontcache');
 
 const MOCK = () => {   // the reference's stand-in for window.claude: in-memory db + the same download call
-  const cols = {}, subs = {};
+  let cols = {}; const subs = {};
+  try { cols = JSON.parse(sessionStorage.getItem('__mockdb') || '{}'); } catch (e) { }   // survives a reload, like the live database does
+  const keep = () => { try { sessionStorage.setItem('__mockdb', JSON.stringify(cols)); } catch (e) { } };
   const snap = c => { const docs = Object.entries(cols[c] || {}).map(([id, data]) => ({ id, exists: true, data: () => data })); return { docs, size: docs.length, empty: !docs.length, forEach: f => docs.forEach(f) }; };
   const fire = c => (subs[c] || []).forEach(cb => { try { cb(snap(c)); } catch (e) { } });
-  const col = c => ({ id: c, doc: id => ({ id: String(id), set: o => { (cols[c] = cols[c] || {})[String(id)] = JSON.parse(JSON.stringify(o)); setTimeout(() => fire(c), 0); return Promise.resolve(); },
-    delete: () => { delete (cols[c] || {})[String(id)]; setTimeout(() => fire(c), 0); return Promise.resolve(); },
+  const col = c => ({ id: c, doc: id => ({ id: String(id), set: o => { (cols[c] = cols[c] || {})[String(id)] = JSON.parse(JSON.stringify(o)); keep(); setTimeout(() => fire(c), 0); return Promise.resolve(); },
+    delete: () => { delete (cols[c] || {})[String(id)]; keep(); setTimeout(() => fire(c), 0); return Promise.resolve(); },
     get: () => Promise.resolve(cols[c] && cols[c][String(id)] ? { id: String(id), exists: true, data: () => cols[c][String(id)] } : { id: String(id), exists: false, data: () => undefined }) }),
     get: () => Promise.resolve(snap(c)), onSnapshot: (cb) => { (subs[c] = subs[c] || []).push(cb); setTimeout(() => cb(snap(c)), 0); return () => { } } });
   const downloads = { save: o => new Promise(resolve => { const data = o && o.data, name = (o && o.filename) || 'download'; const blob = data instanceof Blob ? data : new Blob([data == null ? '' : data]);
@@ -33,6 +36,9 @@ async function newPage(browser, target, base, extra) {
   await ctx.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: new URL(base).origin }).catch(() => { });
   if (target === 'ref') {
     await ctx.addInitScript(MOCK);
+    // the recorded exception: the PC page server hides the Update, Refresh, tone, author and translation buttons (station_server.HIDE_CSS); the reference gets the same rule
+    await ctx.addInitScript(css => document.addEventListener('DOMContentLoaded', () => { const s = document.createElement('style'); s.textContent = css; document.head.appendChild(s); }),
+      '#runFind,#runRefresh,#raStrip,[data-runfind],#updGo,#updRefresh,#updSave,#updAdd,#updCopy,#updAgain,[data-trate],[data-afind],[data-trstory],[data-tstop],[data-astop]{display:none!important}');
     await ctx.route(/fonts\.(googleapis|gstatic)\.com/, async route => {   // the same Google answers the look check used (cached there)
       const url = route.request().url(), key = path.join(FONTCACHE, crypto.createHash('sha1').update(url).digest('hex'));
       if (fs.existsSync(key)) return route.fulfill({ status: 200, contentType: fs.readFileSync(key + '.type', 'utf8'), body: fs.readFileSync(key), headers: { 'access-control-allow-origin': '*' } });
@@ -146,6 +152,10 @@ T.tab_tables = async (p, base, out) => { for (const t of ['reporters', 'outlets'
   for (const sel of await p.evaluate(() => [...document.querySelectorAll('#view-an select')].filter(s => s.offsetParent && s.id).map(s => '#' + s.id))) { const vals = await p.evaluate(s => [...document.querySelector(s).options].map(o => o.value), sel); for (const v of vals.slice(0, 4)) { await p.evaluate(([s, v]) => { const e = document.querySelector(s); e.value = v; e.dispatchEvent(new Event('change', { bubbles: true })); }, [sel, v]); await sleep(900); out['data_' + sel + '=' + v] = await tabText(p); } }
   return out; };
 
+if (EXTRA) require(path.resolve(EXTRA))(T, { sleep, snapClips, openRail, closeRail, tabText, download, exportMenu, STORY_OLD, sha, fs, path, newPage });
+const ALLOWED = ALLOW ? JSON.parse(fs.readFileSync(ALLOW, 'utf8')) : [];
+const allowedBy = (name, x) => ALLOWED.find(r => (!r.test || r.test === name) && new RegExp(r.path || '.').test(x.at) && (!r.ref || new RegExp(r.ref).test(JSON.stringify(x.ref))) && (!r.pc || new RegExp(r.pc).test(JSON.stringify(x.pc))));
+
 async function run(browser, target, base, name) {
   const { ctx, p } = await newPage(browser, target, base);
   let res = {}; try { const r = await T[name](p, base, res); if (r && r !== res) Object.assign(res, r); } catch (e) { res.crash = String(e).slice(0, 300); }
@@ -165,19 +175,23 @@ function diff(a, b, pth, acc) {
   return acc;
 }
 (async () => {
+  if (process.argv.includes('--list')) { console.log(Object.keys(T).join(',')); return; }
   fs.mkdirSync(path.join(OUT, 'parity'), { recursive: true });
   const names = (ONLY ? ONLY.split(',') : Object.keys(T)), browser = await chromium.launch(); let nd = 0; const summary = {};
   for (const name of names) {
     const t0 = Date.now();
-    const [a, b] = await Promise.all([run(browser, 'ref', REF, name), run(browser, 'pc', PC, name)]);
+    let a, b;   // the clipboard is shared by every page of one browser: tests that use it run one side after the other
+    if (['downloads', 'exports_more'].includes(name)) { a = await run(browser, 'ref', REF, name); b = await run(browser, 'pc', PC, name); } else[a, b] = await Promise.all([run(browser, 'ref', REF, name), run(browser, 'pc', PC, name)]);
     let extra = null;
     if (name === 'hash_routes') { const hs = [...new Set([...(a.hashes || []), ...(b.hashes || [])])]; const [ra, rb] = await Promise.all([hashRoutes(browser, 'ref', REF, hs), hashRoutes(browser, 'pc', PC, hs)]); extra = diff(ra, rb, 'route', []);
       a.routes = ra; b.routes = rb; }
     fs.writeFileSync(path.join(OUT, 'parity', `${VP}_${name}.ref.json`), JSON.stringify(a, null, 1)); fs.writeFileSync(path.join(OUT, 'parity', `${VP}_${name}.pc.json`), JSON.stringify(b, null, 1));
-    const d = diff(a, b, name, []); summary[name] = { diffs: d.length, steps: Object.keys(a).length, crash: a.crash || b.crash || null };
-    nd += d.length; console.log(`${name}: ${d.length} differences in ${Object.keys(a).length} steps (${((Date.now() - t0) / 1000).toFixed(0)}s)${a.crash || b.crash ? ' CRASH ' + (a.crash || b.crash) : ''}`);
-    d.slice(0, 8).forEach(x => console.log('   ', x.at, '\n      ref:', JSON.stringify(x.ref).slice(0, 220), '\n      pc :', JSON.stringify(x.pc).slice(0, 220)));
+    let d = diff(a, b, name, []); const ok = [];
+    d = d.filter(x => { const r = allowedBy(name, x); if (r) { ok.push({ at: x.at, reason: r.reason }); return false; } return true; });
+    summary[name] = { diffs: d.length, allowed: ok.length, allowed_list: ok, steps: Object.keys(a).length, crash: a.crash || b.crash || null, diff_list: d.map(x => ({ at: x.at, ref: x.ref, pc: x.pc })) };
+    nd += d.length + ((a.crash || b.crash) ? 1 : 0); console.log(`${name}: ${d.length} differences (+${ok.length} allowed) in ${Object.keys(a).length} steps (${((Date.now() - t0) / 1000).toFixed(0)}s)${a.crash || b.crash ? ' CRASH ' + (a.crash || b.crash) : ''}`);
+    d.slice(0, 8).forEach(x => console.log('   ', x.at, '\n      ref:', String(JSON.stringify(x.ref)).slice(0, 220), '\n      pc :', String(JSON.stringify(x.pc)).slice(0, 220)));
   }
-  fs.writeFileSync(path.join(OUT, 'parity', `${VP}_summary.json`), JSON.stringify(summary, null, 1));
+  { const sp = path.join(OUT, 'parity', `${VP}_summary.json`); let old = {}; try { old = JSON.parse(fs.readFileSync(sp, 'utf8')); } catch (e) { } fs.writeFileSync(sp, JSON.stringify(Object.assign(old, summary), null, 1)); }
   await browser.close(); process.exit(nd ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(2); });
