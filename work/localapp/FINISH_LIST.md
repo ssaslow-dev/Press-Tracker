@@ -23,11 +23,11 @@ One list for everything left. Claude keeps it current after every step and repor
 |---|---|---|---|
 | B1 | Mac starts: unzip, self-check, Open Anyway, Safari | Sammy | done 2026-11-04 |
 | B2 | Test kit (small data copy) and checklist part 2; Mac fixes prepared (accented names, hidden files, Safari unzip message, wording) | Claude | done 2026-11-04 |
-| B3 | Mac fixes put into the shared code, then the final Windows and Mac zips | Claude | running: fixes in, tests and zips in 20-30 min |
+| B3 | Mac fixes put into the shared code, then the final Windows and Mac zips | Claude | done 2026-11-04: fixes a-d in the shared code; both final zips built (Windows sha256 e7655931, Mac sha256 2cabb2d5) |
 | B4 | Data test on the Mac with the kit (setup, View original, for-Update file, refresh file) | Sammy | done 2026-11-04: everything works |
 | B4b | Mac upload tests: bring in the test update zip and Save; load the for-Update file into the station | Sammy | ready now |
 | B5 | Mac and Windows swap a refresh file both ways | Sammy | with A4 (office PC rehearsal) |
-| B6 | Final Mac zip from the finished code | Claude | built with B3; final once B4b and B5 pass |
+| B6 | Final Mac zip from the finished code | Claude | built, pending Sammy's B4/B5 tests (AJG_Tracker_mac_final.zip, 165.5 MB, sha256 2cabb2d54954e2f1d29ccd5b7eb12a7e2a2bff423646182b0caad16450a81bbc) |
 
 ## C. Read-only HTML preview
 

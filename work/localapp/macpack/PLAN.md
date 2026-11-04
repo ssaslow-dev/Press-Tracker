@@ -26,3 +26,6 @@ A downloaded zip is marked "from the internet". Easiest, no password: unzip in T
 
 ## What cannot be proven here
 Everything that runs a Mac program (see TEST_ON_MAC.md). ETA to a testable zip: it is built and sitting ready; I can rebuild with the final code in about 10 minutes of build time once the Windows round freezes.
+
+## Final Mac zip (2026-11-04)
+Built by `assemble_mac.py --data-mode empty --role reader --zip` from the same code as the final Windows zip (Mac fixes a-d applied; see proposals_applied/). `AJG_Tracker_mac_final.zip`, 165.5 MB (includes the page and saved copies, which the earlier 77 MB test zip lacked), sha256 `2cabb2d54954e2f1d29ccd5b7eb12a7e2a2bff423646182b0caad16450a81bbc`. Windows twin: sha256 `e7655931258e68233bee698e0dd8a41de4e9c329e3a4745b02dcc2f56a2f3219`.
