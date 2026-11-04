@@ -199,7 +199,7 @@ class TidyPanel(unittest.TestCase):
         outside = [b['t'] for b in p['btns'] if not b['rep']]
         self.assertEqual([t for t in outside if 'refresh' in t.lower()], ['Make refresh file'], 'one refresh button outside Repairs')
         inside = [b['t'] for b in p['btns'] if b['rep'] and not b['t'].startswith(SW)]
-        self.assertEqual(inside, ['Accept the workbook as it is now', 'Make a FULL refresh file', 'Rebuild the page'])
+        self.assertEqual(inside, ['Accept the workbook as it is now', 'Make a FULL refresh file', 'Rebuild the page', 'Rebuild saved copies'])
         self.assertNotIn('5.', ' '.join(p['heads'])); self.assertNotIn('6.', ' '.join(p['heads']))
 
     def test_7b_reader_panel(self):
