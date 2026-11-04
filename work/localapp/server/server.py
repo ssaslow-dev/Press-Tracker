@@ -43,6 +43,20 @@ def valid_id(i):
     return isinstance(i, str) and bool(ID_RE.match(i)) and not i.endswith('.') and i.split('.')[0].lower() not in WIN_RESERVED
 
 
+def _busy_retry(fn, *args):
+    """Windows: a file just written is sometimes held for a moment (virus scanner), and replacing it fails with "Access is denied".
+    Wait and try again for about 10 seconds, PermissionError only (A15; same rule as fs_retry.py)."""
+    delay = 0.05
+    for attempt in range(16):
+        try:
+            return fn(*args)
+        except PermissionError:
+            if attempt == 15:
+                raise
+            time.sleep(delay)
+            delay = min(delay * 2, 1.0)
+
+
 class StoreError(Exception):
     def __init__(self, status, msg):
         super().__init__(msg)
@@ -134,7 +148,7 @@ class Store:
                     f.write(raw)
                     f.flush()
                     os.fsync(f.fileno())
-                os.replace(tmp, p)
+                _busy_retry(os.replace, tmp, p)
             finally:
                 if os.path.exists(tmp):
                     try:
@@ -152,7 +166,7 @@ class Store:
             dd = os.path.join(self.root, '_deleted', c)
             os.makedirs(dd, exist_ok=True)
             stamp = datetime.now().strftime('%Y%m%d-%H%M%S-%f')
-            os.replace(p, os.path.join(dd, '%s.%s.json' % (i, stamp)))
+            _busy_retry(os.replace, p, os.path.join(dd, '%s.%s.json' % (i, stamp)))
             self.bump[c] = self.bump.get(c, 0) + 1
             return True
 

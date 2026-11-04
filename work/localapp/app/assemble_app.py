@@ -244,11 +244,11 @@ def copy_app_code(root: Path, pb: Path, info: dict):
         shutil.copy2(LOCALAPP / 'server' / f, app / 'server' / f)
     # updatefolder (unchanged)
     (app / 'updatefolder').mkdir()
-    for f in ('formats.py', 'layout.py', 'make_for_update.py', 'take_update.py'):
+    for f in ('formats.py', 'layout.py', 'make_for_update.py', 'take_update.py', 'fs_retry.py'):
         shutil.copy2(LOCALAPP / 'updatefolder' / f, app / 'updatefolder' / f)
     # saver: saver.py, saver_diff.py unchanged; saver_steps.py = patch 03 applied to a copy; pipeline_sha.py (tool) for the sha list
     (app / 'saver').mkdir()
-    for f in ('saver.py', 'saver_diff.py'):
+    for f in ('saver.py', 'saver_diff.py', 'fs_retry.py'):
         shutil.copy2(REPO / 'work' / 'saver' / 'src' / f, app / 'saver' / f)
     patched_copy(REPO / 'work' / 'saver' / 'src' / 'saver_steps.py', app / 'saver' / 'saver_steps.py',
                  LOCALAPP / 'winpack' / 'patches' / '03_saver_steps_utf8_nonet.patch')
@@ -397,9 +397,12 @@ def app_manifest(root: Path):
 
 
 def precompile(root: Path):
-    if sys.version_info[:2] == (3, 13):
-        subprocess.run([sys.executable, '-m', 'compileall', '-q', '-j', '0', '--invalidation-mode', 'unchecked-hash', str(root / 'app' / 'server'),
-                        str(root / 'app' / 'station'), str(root / 'app' / 'updatefolder'), str(root / 'app' / 'saver')], capture_output=True)
+    """A15 (2026-11-04): the app's own code (server, station, updatefolder, saver) ships WITHOUT .pyc files. An unchecked-hash .pyc is trusted
+    without looking at the .py, so a replaced .py was silently ignored on the office PC. Compiling these few files at start costs about 0.1 second.
+    The standard library and the wheels stay precompiled (they never change)."""
+    for d in ('server', 'station', 'updatefolder', 'saver'):
+        for c in (root / 'app' / d).rglob('__pycache__'):
+            shutil.rmtree(c, ignore_errors=True)
 
 
 def stats(root: Path):

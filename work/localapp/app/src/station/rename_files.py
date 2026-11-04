@@ -24,6 +24,8 @@ import re
 import unicodedata
 from pathlib import Path
 
+import common as C
+
 COVERAGE, ORIGINALS = 'Coverage', 'Originals'
 FILE_COLS = ('File name', 'File name 2', 'Other files')
 NAME_RX = re.compile(r'^(?P<fmt>nb|pq|ws)(?P<aid>\d{5})(?P<oor>[or])?(?:-(?P<sid>s\d{5}))?(?P<suf>(?:-[A-Za-z0-9]+)*)\.(?P<ext>html|pdf)$')
@@ -240,19 +242,7 @@ def _groups(lay, r) -> list:
 
 
 
-def _retry(fn, *args):
-    """Windows: a file just written or renamed is often held for a moment (virus scanner, search indexer), and a rename then fails with
-    "Access is denied" (seen on the office PC, 2026-11-04). Try again for up to about 10 seconds before giving up."""
-    import time
-    delay = 0.05
-    for attempt in range(16):
-        try:
-            return fn(*args)
-        except PermissionError:
-            if attempt == 15:
-                raise
-            time.sleep(delay)
-            delay = min(delay * 2, 1.0)
+_retry = C.retry_busy       # A15: the one shared wait-and-retry for a file Windows briefly holds
 
 def move_files(lay, pl: dict, journal_path: Path) -> list:
     """Two phases (old -> temporary -> new) so a swap (A -> B while B -> C) cannot collide. The journal is written first; on any error everything done is undone."""
