@@ -1,5 +1,5 @@
 {
- "sha256": "372822d03c8c5cebd5c2a5eb4a688e7912328a4749b3a96058f6fdb4a6906854",
- "lines": 112,
- "reviewed": "2026-11-04: patches 15 (TIDY-v1 1-4, 6), 16, 17 (TIDY-v1 3), 18 (TIDY-v1 6, PCEDITS-v1, MULTIPC-v2 wording), 21 (NOTE-v1), 27 (VIEWORIG-v1). The Reporters column hide of an earlier patch 15 was removed (not approved)."
+ "sha256": "a93ed0f939cb3f6e67b91b3f445ab444d9c76825532718479221981b13d99d4f",
+ "lines": 121,
+ "reviewed": "2026-11-04: patches 15 (TIDY-v1 1-4, 6), 16, 17 (TIDY-v1 3), 18 (TIDY-v1 6, PCEDITS-v1, MULTIPC-v2 wording), 21 (NOTE-v1), 27 (VIEWORIG-v1). The Reporters column hide of an earlier patch 15 was removed (not approved). 2026-11-04 additions (Sammy-approved, TIDY-v1 N8/N9/N11): patch 15 items 5 and 5b (Medium sub-rows inside the card; centred count columns), patch 18 (Outlets header 'Top reporters', CSV header kept)."
 }
