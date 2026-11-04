@@ -25,6 +25,7 @@ One list for everything left. Claude keeps it current after every step and repor
 | N5 | All tests and the end-to-end check; new Windows and Mac zips; IT note fingerprint | Claude | after N1-N4 (whole version: about 3-4 hours) |
 | N6 | Install version 2 over the switched-over tracker (data stays) | Sammy | when N5 arrives |
 | N7 | Station: check finds against each other within one session (web Update, NewsBank box, ProQuest box) so a story found by two sources is shown once; today only the PC save drops the second copy (listed under duplicates) | Claude | to do (station v12) |
+| N12 | PRINTNEW-v1: the station reads full newspaper pages with Claude (they are pictures with no text), proposes the matching story or a NEW story, and the PC save tests the read text; print pages that are new stories become new stories | Claude | to do (station v12, after version 2) |
 | N8 | Data > Reach and medium: the indented Medium sub-rows no longer spill 18 px past the card's right edge (PC page only, TIDY-v1 patch 15) | Claude | building (look check on #data and parity test before the zips) |
 | N9 | List tables: count columns (numbers and headers) centred on Outlets, Reporters, Press releases, Bills, Story travel and embedded rows tables | Claude | building |
 | N10 | List tables' left and right edges line up with the controls above (pixel check at 4 window sizes: already exact, no change needed) | Claude | checked |
