@@ -8,8 +8,8 @@ One list for everything left. Claude keeps it current after every step and repor
 |---|---|---|---|
 | A1 | Fable review of the code that writes the workbook and library (work/saver/REVIEW_3.md) | Claude | done 2026-11-04 (7 findings) |
 | A2 | Fix its findings, rerun every test and the end-to-end check, rebuild the zip, resend | Claude | done 2026-11-04 (7 findings fixed, all suites and chain check green, zip rebuilt: sha256 e2fa191a) |
-| A3 | Send IT the updated note (work/localapp/IT_NOTE_APP.md, with the new zip's fingerprint) | Sammy | after A2 |
-| A4 | Dress rehearsal on the office PC with yesterday's copy (setup + Switch-over changes screen, on a spare folder) | Sammy | after A2 |
+| A3 | Send IT the updated note (work/localapp/IT_NOTE_APP.md, with the new zip's fingerprint) | Sammy | after the final zip (B3) |
+| A4 | Dress rehearsal on the office PC with yesterday's copy (setup + Switch-over changes screen, on a spare folder) | Sammy | ready now (rehearsal zip sent; folder, copy and Mac fingerprint list prepared) |
 | A5 | Switch-over day (PLAN.md checklist): Mac fingerprint list, copy, unzip, keeper role, Set up from the Mac library, Switch-over changes screen | Sammy + Claude | after A3, A4 |
 | A6 | On that screen, decide 01920 (remove or split) and 03486 (author Marisa Kendall) | Sammy | on the day |
 | A7 | Move the Update station to the office claude.ai account (station/MOVE_TO_OFFICE.md) | Sammy + Claude | on the day |
@@ -23,10 +23,11 @@ One list for everything left. Claude keeps it current after every step and repor
 |---|---|---|---|
 | B1 | Mac starts: unzip, self-check, Open Anyway, Safari | Sammy | done 2026-11-04 |
 | B2 | Test kit (small data copy) and checklist part 2; Mac fixes prepared (accented names, hidden files, Safari unzip message, wording) | Claude | done 2026-11-04 |
-| B3 | Mac fixes put into the shared code after A2 | Claude | after A2 |
+| B3 | Mac fixes put into the shared code, then the final Windows and Mac zips | Claude | running: fixes in, tests and zips in 20-30 min |
 | B4 | Data test on the Mac with the kit (setup, View original, for-Update file, refresh file) | Sammy | done 2026-11-04: everything works |
-| B5 | Mac and Windows swap a refresh file and an update folder both ways | Sammy | with A4 (office PC rehearsal) |
-| B6 | Final Mac zip from the finished code | Claude | after B3-B5 |
+| B4b | Mac upload tests: bring in the test update zip and Save; load the for-Update file into the station | Sammy | ready now |
+| B5 | Mac and Windows swap a refresh file both ways | Sammy | with A4 (office PC rehearsal) |
+| B6 | Final Mac zip from the finished code | Claude | built with B3; final once B4b and B5 pass |
 
 ## C. Read-only HTML preview
 
