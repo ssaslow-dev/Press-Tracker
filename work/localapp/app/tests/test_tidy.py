@@ -195,7 +195,7 @@ class TidyPanel(unittest.TestCase):
         self.assertFalse(p['repOpen'], 'Repairs is closed')
         SW = ('Check the files', 'Remove unverified reprints', 'Set up again from the Mac library', 'Set up from the Mac library', 'Switch-over changes')   # one-time switch-over items; they live in the Switch-over changes screen
         rh = [h for h in p['repHeads'] if not h.startswith(SW)]
-        self.assertEqual(rh, ['Accept the workbook as it is now', 'Make a full refresh file (for a new person)', 'Rebuild the tracker page'])
+        self.assertEqual(rh, ['Accept the workbook as it is now', 'Make a full refresh file (for a new person)', 'Rebuild the tracker page', 'Rebuild saved copies from the library'])
         outside = [b['t'] for b in p['btns'] if not b['rep']]
         self.assertEqual([t for t in outside if 'refresh' in t.lower()], ['Make refresh file'], 'one refresh button outside Repairs')
         inside = [b['t'] for b in p['btns'] if b['rep'] and not b['t'].startswith(SW)]

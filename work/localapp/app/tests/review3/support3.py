@@ -28,10 +28,10 @@ def make_root(base: Path) -> Path:
     app = root / 'app'
     shutil.copytree(APPSRC / 'src' / 'station', app / 'station', ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))
     (app / 'updatefolder').mkdir()
-    for f in ('formats.py', 'layout.py', 'make_for_update.py', 'take_update.py'):
+    for f in ('formats.py', 'layout.py', 'make_for_update.py', 'take_update.py', 'fs_retry.py'):
         shutil.copy2(LOCALAPP / 'updatefolder' / f, app / 'updatefolder' / f)
     (app / 'saver').mkdir()
-    for f in ('saver.py', 'saver_diff.py', 'saver_steps.py'):
+    for f in ('saver.py', 'saver_diff.py', 'saver_steps.py', 'fs_retry.py'):
         shutil.copy2(REPO / 'work' / 'saver' / 'src' / f, app / 'saver' / f)
     (app / 'pipeline').mkdir()
     shutil.copy2(REPO / 'code' / 'sheet_task.py', app / 'pipeline' / 'sheet_task.py')
