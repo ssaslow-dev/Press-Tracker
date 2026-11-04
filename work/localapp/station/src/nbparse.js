@@ -348,7 +348,7 @@ function parseStory(s) {
   } else {
     if (cit.date && hd.date && cit.date !== hd.date) flags.push('header date ' + hd.date + ' and citation date ' + cit.date + ' differ');
     if (!date) { date = cit.date; if (date) flags.push('date taken from the citation'); }
-    if (cit.title_cmp && headline && !sq(cit.title_cmp).startsWith(sq(headline).slice(0, 25))) flags.push('headline differs between header and citation');
+    if (cit.title_cmp && headline && sq(cit.title_cmp) !== sq(hd.author || '\u0000') && !sq(cit.title_cmp).startsWith(sq(headline).slice(0, 25))) flags.push('headline differs between header and citation');
     if (!outlet && cit.cit_outlet) { outlet = cit.cit_outlet; flags.push('source taken from the citation'); }
     else {
       const co = sq((cit.has_author ? cit.title_outlet : cit.cit_outlet) || ''), ho = sq(outlet);
@@ -361,7 +361,8 @@ function parseStory(s) {
   const words = text ? text.split(/\s+/).length : 0;
   const cjk = (text.match(/[㐀-鿿가-힯぀-ヿ]/g) || []).length;
   const thin = kind === 'article' && words < 15 && cjk < 30;
-  const author = hd.author || '';
+  let author = squash(String(hd.author || '').replace(/\S+@\S+\.\S+/g, ''));   // AUDIT 13: an email in the byline is not part of the name
+  if (/^[a-z][a-z0-9._-]*$/.test(author)) { flags.push('author “' + author + '” looks like a website user name, not a person: left blank'); author = ''; }   // a CMS user name ("nathan") would reach the Reporters tab
   return { kind, thin, flags, how, headline, date, outlet, outlet_clean: cleanOutlet(outlet), author, section: hd.section, page: hd.page, words_nb: hd.words, kicker: hd.kicker, edition: hd.edition || '',
     docref: cit.docref, docref_key: cit.docref_key, citation: cit.text_clean || cit.text, citation_author: cit.author, cit_host: cit.host, text, paras, body_words: words };
 }
