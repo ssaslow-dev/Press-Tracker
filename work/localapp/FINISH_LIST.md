@@ -33,7 +33,7 @@ One list for everything left. Claude keeps it current after every step and repor
 | # | Item | Who | Status |
 |---|---|---|---|
 | C1 | Build the preview file and check it against the tracker | Claude | done 2026-11-04 (Chromium checked; Safari/Firefox by Sammy) |
-| C2 | Decide who gets it (if colleagues: version without tone ratings and notes) | Sammy | after C1 |
+| C2 | Decide who gets it (if colleagues: version without tone ratings and notes) | Sammy | done 2026-11-04: keep tone ratings (the version already sent) |
 
 ## D. After switch-over
 

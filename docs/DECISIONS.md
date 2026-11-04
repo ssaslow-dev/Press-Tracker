@@ -610,3 +610,6 @@ Sammy: "as a separate task, start doing the work to make a mac version of this."
 
 ## FINISH-v1 (2026-11-04, Sammy): one finish list, no loose ends
 Sammy: "make sure you keep me on track with this as part of the final version of all of this I want everything to be organized and done with no loose ends." work/localapp/FINISH_LIST.md is the single list of everything left (Windows switch-over, Mac version, preview, after switch-over, open decisions), with who and status. Claude updates it after every step and reports from it; the project is finished when every row is ticked and the open decisions are answered or deliberately parked.
+
+## PREVIEW-v1 (2026-11-04, Sammy): read-only single-file preview keeps tone ratings
+The read-only HTML preview (work/localapp/preview/, make_preview.py) is shared with tone ratings included (Sammy, C2: "keep tone ratings"); --no-internal stays available but unused. Notes are never in it; no saved copies or full texts.
