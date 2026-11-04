@@ -95,6 +95,7 @@ class Screen(unittest.TestCase):
         self.assertEqual(pv['blocked'], '')
         self.assertEqual(T.sha(wb), S['sha0'], 'a preview writes nothing to the workbook')
         S['pv'] = pv
+        S['datafix_n0'] = next(x for x in pv['steps'] if x['id'] == 'datafix')['n']        # the approved fixes that ship with the app (DATAFIX-v1)
         S['unmarked'] = [u['aid'] for u in st['prjudge']['detail']['unmark']]
         S['marked'] = [u['aid'] for u in st['prjudge']['detail']['mark']]
         # Excel open: blocked
@@ -121,9 +122,9 @@ class Screen(unittest.TestCase):
         self.assertEqual(st, 400)
         pv = K.job('switch_preview', {}, timeout=900)
         df = next(s for s in pv['steps'] if s['id'] == 'datafix')
-        self.assertEqual(df['n'], 3, df['lines'])          # two Author title (high, medium) + the link; the low one is left out; the filled Outlet is not a blank fix
+        self.assertEqual(df['n'] - S['datafix_n0'], 3, df['lines'])          # on top of the shipped fixes: two Author title (high, medium) + the link; the low one is left out; the filled Outlet is not a blank fix
         pv2 = K.job('switch_preview', {'include_low': True}, timeout=900)
-        self.assertEqual(next(s for s in pv2['steps'] if s['id'] == 'datafix')['n'], 4)
+        self.assertEqual(next(s for s in pv2['steps'] if s['id'] == 'datafix')['n'] - S['datafix_n0'], 4)
         S['pv'] = pv
 
     def test_3_confirm_all(self):
