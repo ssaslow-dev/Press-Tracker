@@ -1,58 +1,75 @@
 # Finish list: every loose end until the project is done (FINISH-v1)
 
-One list for everything left. Claude keeps it current after every step and reports from it. "Sammy" = needs you; "Claude" = done for you. Nothing counts as done until it is ticked here.
+One list for everything left. Claude keeps it current after every step and reports from it. "Sammy" = needs you; "Claude" = done for you. Nothing counts as done until it is ticked here. Updated 2026-11-04 (afternoon).
 
-## A. Windows switch-over
+## A. Windows switch-over (today)
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| A1 | Fable review of the code that writes the workbook and library (work/saver/REVIEW_3.md) | Claude | done 2026-11-04 (7 findings) |
-| A2 | Fix its findings, rerun every test and the end-to-end check, rebuild the zip, resend | Claude | done 2026-11-04 (7 findings fixed, all suites and chain check green, zip rebuilt: sha256 e2fa191a) |
-| A3 | Send IT the updated note (work/localapp/IT_NOTE_APP.md, with the new zip's fingerprint) | Sammy | after the final zip (B3) |
-| A4 | Dress rehearsal on the office PC with yesterday's copy (setup + Switch-over changes screen, on a spare folder) | Sammy | skipped: the real run doubles as it (PC copy only) |
-| A5 | Switch-over day (PLAN.md checklist): Mac fingerprint list, copy, unzip, keeper role, Set up from the Mac library, Switch-over changes screen | Sammy + Claude | in progress: setup done (12,682 files checked), Switch-over changes applying |
-| A6 | Decide 01920 and 03486 | Sammy | done: 01920 remove (after switch-over, A13); 03486 author fixed via 06_author_03486.csv on the screen |
-| A13 | Move 01920 to the Removed tab through a save | Claude + Sammy | after A5 |
-| A7 | Move the Update station to the office claude.ai account (station/MOVE_TO_OFFICE.md) | Sammy + Claude | on the day |
-| A8 | First real Update run with Claude and TinyFish: station -> update folder -> Bring in update -> Save | Sammy | on the day |
-| A9 | Refresh files for each colleague | Sammy | on the day |
-| A10 | Old tracker: stop Update and saves (kept read-only) | Sammy | on the day |
-| A11 | 431 stories have a saved copy in the library that the shipped article data lacks (seen at setup 2026-11-04): build the article data from the keeper's own library on the PC so every saved copy opens | Claude | to do (not blocking) |
-| A12 | Switch-over screen wording: the fixes step says "Blanks only" although approved overwrites (pages, cleared authors, Edition) are included | Claude | with D1 |
-| A14 | Switch-over apply on the office PC failed with PermissionError(13, 'Access is denied') before any step finished. The one-file diagnostic update did not take effect at first because app\station is precompiled with unchecked-hash .pyc files (Python ignores a replaced .py). After deleting app\station\__pycache__ the drop step succeeded; root cause unconfirmed. To do: find the cause from the new error log if it recurs; stop shipping unchecked-hash .pyc for app code (or document deleting __pycache__ for one-file updates) | Claude | in progress |
-| A15 | Windows briefly holds just-written files (antivirus): the rename step failed on the journal rewrite (fixed in rename_files.py with wait-and-retry, sent to Sammy as a one-file update 2026-11-04). Put the same retry in one shared helper for every rename/replace (common.atomic_write, workbook swaps in switchover/drop/saver, refresh, setup, locks), add a test that simulates a busy file, rebuild both zips; ship app code without unchecked-hash .pyc so one-file updates take effect | Claude | to do (next build) |
-| A16 | Program updates keep data inside the folder (Sammy 2026-11-04: data lives inside the program folder): a safe way to install a new version that replaces app\, python\ and the start file but never data\ (one step or exact instructions), for Windows and Mac | Claude | to do (next build) |
+| A1 | Fable review of the code that writes the workbook and library (work/saver/REVIEW_3.md) | Claude | done (7 findings) |
+| A2 | Fix its findings, test, rebuild the zip | Claude | done |
+| A5a | Library copied to the PC in one piece; Set up from the Mac library (12,682 files checked) | Sammy | done |
+| A6 | Decide 01920 and 03486 | Sammy | done: 01920 removed later (A13); 03486 author fixed by 06_author_03486.csv |
+| A5b | Switch-over changes, one step at a time ("Do only this one", reload after each) | Sammy | in progress: remove unverified and rename done; press-release marks, purple rows, Other files, data fixes (+ 03486 file), row-changing fixes to go |
+| A5c | Check the result (purple rows, renamed copies open, 03486 author, View original), then press Finished | Sammy | after A5b |
+| A10 | Old tracker: no more Update runs or saves; Mac library kept as a frozen backup | Sammy | from now on |
+
+## N. New version (version 2, both zips): fixes found during the switch-over
+
+| # | Item | Who | Status |
+|---|---|---|---|
+| N1 | Windows file locks (A14/A15): one shared "wait and try again" for every rename/replace (saves, refresh, library, state), a test that simulates a busy file; the rename step's one-file fix already sent and working | Claude | building |
+| N2 | One-file updates take effect (no unchecked precompiled copies of the app code) | Claude | building |
+| N3 | The 431 saved copies the tracker can't open yet (A11): article data built from your own library, at setup, under Repairs, and kept current by every save | Claude | building |
+| N4 | Safe "install a new version" that replaces only the program parts, never data\ (A16, DATAINFOLDER-v1), Windows and Mac | Claude | building |
+| N5 | All tests and the end-to-end check; new Windows and Mac zips; IT note fingerprint | Claude | after N1-N4 (whole version: about 3-4 hours) |
+| N6 | Install version 2 over the switched-over tracker (data stays) | Sammy | when N5 arrives |
+
+## F. First real use (after version 2 is installed)
+
+| # | Item | Who | Status |
+|---|---|---|---|
+| A8 | First real Update run: Make "for Update" file -> station -> Update -> download -> Bring in update -> preview -> Save | Sammy + Claude | after N6 |
+| A13 | Move 01920 to the Removed tab, in that save | Sammy + Claude | with A8 |
+| A9 | Refresh files for colleagues (with the version 2 zip) | Sammy | after A8 |
+| A3 | Send IT the updated note with the version 2 fingerprint | Sammy | any time after N5 |
+| A7 | Move the Update station to the office claude.ai account (station/MOVE_TO_OFFICE.md) | Sammy + Claude | later, no rush |
 
 ## B. Mac version (MACAPP-v1)
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| B1 | Mac starts: unzip, self-check, Open Anyway, Safari | Sammy | done 2026-11-04 |
-| B2 | Test kit (small data copy) and checklist part 2; Mac fixes prepared (accented names, hidden files, Safari unzip message, wording) | Claude | done 2026-11-04 |
-| B3 | Mac fixes put into the shared code, then the final Windows and Mac zips | Claude | done 2026-11-04: fixes a-d in the shared code; both final zips built (Windows sha256 e7655931, Mac sha256 2cabb2d5) |
-| B4 | Data test on the Mac with the kit (setup, View original, for-Update file, refresh file) | Sammy | done 2026-11-04: everything works |
+| B1 | Mac starts: unzip, self-check, Open Anyway, Safari | Sammy | done |
+| B2 | Test kit and Mac fixes | Claude | done |
+| B3 | Mac fixes in the shared code; first final zips | Claude | done |
+| B4 | Data test on the Mac with the kit | Sammy | done: everything works |
 | B4b | Mac upload tests: bring in the test update zip and Save; load the for-Update file into the station | Sammy | ready now |
-| B5 | Mac and Windows swap a refresh file both ways | Sammy | with A4 (office PC rehearsal) |
-| B6 | Final Mac zip from the finished code | Claude | built, pending Sammy's B4/B5 tests (AJG_Tracker_mac_final.zip, 165.5 MB, sha256 2cabb2d54954e2f1d29ccd5b7eb12a7e2a2bff423646182b0caad16450a81bbc) |
+| B5 | Mac and PC swap a refresh file both ways | Sammy | after A8 |
+| B6 | Final Mac zip | Claude | comes with version 2 (N5); final once B4b and B5 pass |
 
 ## C. Read-only HTML preview
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| C1 | Build the preview file and check it against the tracker | Claude | done 2026-11-04 (Chromium checked; Safari/Firefox by Sammy) |
-| C2 | Decide who gets it (if colleagues: version without tone ratings and notes) | Sammy | done 2026-11-04: keep tone ratings (the version already sent) |
+| C1 | Preview file built and checked | Claude | done |
+| C2 | Keep tone ratings in it | Sammy | done |
 
-## D. After switch-over
+## D. After the switch-over is finished
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| D1 | Small update removing the one-time Switch-over screen's code (its "Add a fixes file" wording also misled: the approved fixes are built in) | Claude | after A5 |
-| D2 | Repo snapshot in data/ replaced by (or retired for) the switched-over data, per SWITCHOVER-v1 | Claude | after A5 |
-| D3 | Last cleanup: outdated code and decisions archived, CLAUDE.md and handoff brought up to date for any future Claude | Claude | last |
+| D1 | Remove the one-time Switch-over screen's code (also settles its misleading "Blanks only" wording, A12) | Claude | after A5c |
+| D2 | Retire the repo's old test copy of the data (data/), per SWITCHOVER-v1 | Claude | after A5c |
+| D3 | Last cleanup: outdated code and decisions archived; CLAUDE.md and handoff brought up to date for any future Claude | Claude | last |
+| D4 | Delete test leftovers: the Mac's "AJG Tracker" test copy and "Tracker library 2", the older PC test folders, test zips in Downloads; the Desktop "Tracker library" copy on the PC once you are happy | Sammy | after A8 |
 
-## E. Open decisions for Sammy (none block the switch-over)
+## E. Open decisions for Sammy (none block anything)
 
 - E1 Online read-only copy for colleagues (the preview, C, may cover this).
 - E2 ~585 Page cells hold NewsBank scan positions instead of printed page numbers; ~250 can't be checked automatically.
 - E3 Common Sense Media's two posts are kept as coverage; revisit only if organisation advocacy blogs should be excluded.
 - E4 Older items carried from the old tracker (CLAUDE.md "Open decisions"): A5 wire-blend pickups; 4 F7 rows (09721, 01734, 06948, 06949); 8 medium-confidence date fixes; 4 thin saved copies; Patch rows 00740 and 04889; Korea Daily Times; the 7 NOBLOGS rows; the Independent story's date; blank Tone/Topic on Newsroom America and Organiser.
+
+## Done and dropped
+- A4 dress rehearsal: skipped (the real run on the PC copy doubled as it).
+- A14 "Access is denied": cause found (Windows briefly holding files); fixed by N1.
