@@ -148,5 +148,10 @@
   "old": "Saved the view “${v.name}” for the team",
   "new": "Saved the view “${v.name}” in this copy of the tracker",
   "count": 1
+ },
+ {
+  "old": "label: 'Top reporters (own stories)', sortable: false",
+  "new": "label: 'Top reporters', csvLabel: 'Top reporters (own stories)', sortable: false",
+  "count": 1
  }
 ]

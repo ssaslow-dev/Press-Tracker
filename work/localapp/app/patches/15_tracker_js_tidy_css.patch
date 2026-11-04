@@ -1,6 +1,6 @@
 --- a/tracker.js
 +++ b/tracker.js
-@@ -6382,2 +6382,39 @@
+@@ -6382,2 +6382,44 @@
    try { document.head.insertAdjacentHTML('beforeend', '<style id="stuckcorner-css">table.db.hdr-stuck thead th{border-top-left-radius:0!important;border-top-right-radius:0!important}</style>'); } catch(e){}
 +  /* TIDY-v1: layout fixes of the PC tracker (patch 15); one style block, last in the head */
 +  try { document.head.insertAdjacentHTML('beforeend', '<style id="tidy-css">' + `
@@ -36,6 +36,11 @@
 +:root button.tile>.eyebrow{margin:5px 0 -.6px}
 +/* 5. Data > Reach and medium: the indented sub-rows (margin-left:18px on a full-width button) spilled 18 px past the card's right edge (Sammy 2026-11-04) */
 +:root .hb.hb-sub{width:calc(100% - 18px)}
++/* 5b. N9 (Sammy 2026-11-04): the count columns of the list tables (Outlets, Reporters, Press releases, Bills, Story travel and the rows tables embedded on other pages) are centred, numbers and headers; text columns stay left; Tone avg (a label) stays as it was */
++@media (min-width:761px){
++:root :is(.tt,.tbe) table.db td.num:not(.nw){text-align:center}
++:root :is(.tt,.tbe) table.db th.num button:not([data-ttsort="tone"]):not([data-tbmsort="tone"]){text-align:center;width:100%}
++}
 +/* 6. Manage: "Find & refresh" described the Update buttons, which are not in the PC tracker (Manage opens on the Update log) */
 +:root #mgTabs [data-mg="upd"]{display:none}
 +` + '</style>'); } catch(e){}
