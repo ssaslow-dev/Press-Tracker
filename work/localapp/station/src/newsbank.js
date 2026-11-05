@@ -209,7 +209,7 @@ function nbPrintApply(items, all){
   });
   todo.forEach(it => {
     const a = it.readArt, words = a.words || String(a.text || '').split(/\s+/).length, by = nbByParts(a.byline), pg = nbPageNo(a.page), nbPg = nbPageNo(it.p.page);
-    const p2 = Object.assign({}, it.p, { headline: a.headline, author: String(a.byline || '').replace(/\S+@\S+\.\S+/g, '').replace(/\s+/g, ' ').trim(), section: a.section || it.p.section || '', page: a.page || it.p.page || '', text: a.text, paras: String(a.text).split(/\n\s*\n+/).map(x => x.replace(/\s+/g, ' ').trim()).filter(Boolean), words_nb: words, thin: false, how: 'read', readBy: 'claude',
+    const p2 = Object.assign({}, it.p, { headline: a.headline, author: by.author || nbBy(a.byline), credit: by.credit || '', section: a.section || it.p.section || '', page: a.page || it.p.page || '', text: a.text, paras: String(a.text).split(/\n\s*\n+/).map(x => x.replace(/\s+/g, ' ').trim()).filter(Boolean), words_nb: words, thin: false, how: 'read', readBy: 'claude',
       flags: (it.p.flags || []).concat(['headline, byline and text were read from the page picture by Claude: check them']) });
     it.p0 = it.p; it.p2 = p2; it.by = by;
     if (a.continued_from && nbPageNo(a.continued_from)) { jumps.push(it); return; }
