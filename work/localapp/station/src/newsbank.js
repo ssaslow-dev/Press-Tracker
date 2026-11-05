@@ -192,6 +192,12 @@ function nbPageStory(p2, a, by){
     D.forEach(r => { const g = covDays(d, r.date); if (!isNaN(g) && g <= 90 && covOutlet(r.pub || r.outlet) === ck && ak && normH(r.author || '').includes(ak)) hits.set(r.id, r); });
     if (hits.size === 1) return { sid: [...hits.keys()][0], how: 'byline author and credit' };
   }
+  if (by.credit){   // the story's author column is often blank (the LA Times row of s01903): the credited outlet's own original within 90 days whose story has a copy sharing at least 2 headline words of 6+ letters
+    const ck = covOutlet(by.credit), C2 = covLoad(), w = x => new Set(normH(x).split(' ').filter(t => t.length >= 6)), pw = w(a.headline), sids = new Set();
+    C2.rows.forEach(o => { if (o.kind === 'O' && o.sid && o.on === ck && o.date && !isNaN(covDays(d, o.date)) && covDays(d, o.date) <= 90) sids.add(o.sid); });
+    const good = [...sids].filter(sid => C2.rows.some(o => o.sid === sid && o.kind !== 'X' && o.hl && [...w(o.hl)].filter(t => pw.has(t)).length >= 2));
+    if (good.length === 1) return { sid: good[0], how: 'credited outlet and headline words' };
+  }
   return null;
 }
 function nbPrintApply(items, all){

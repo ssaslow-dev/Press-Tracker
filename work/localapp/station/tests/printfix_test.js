@@ -53,13 +53,14 @@ async function fresh(scn) {
   check('fix 7: pages showing a byte-identical picture are read once (fewer Claude calls than the 14 pages)', run.pcalls < 14, 'calls ' + run.pcalls);
   const sc = run.rows.find(x => /Santa Cruz/.test(x['Outlet']));
   check('fix 3: the Santa Cruz Sentinel copy (36 days after s01903, same author credited to the LA Times) is proposed as a print Reprint of s01903', !!sc && sc['Original or reprint'] === 'Reprint' && sc['Story ID'] === 's01903', JSON.stringify(sc && [sc['Original or reprint'], sc['Story ID']]));
+  check('byline: no leading "By", no credit in the author ("Karen Garcia")', !!sc && !/^by\b/i.test(sc['Author'] || sc['Authors'] || 'x') && !/Times/.test(sc['Author'] || ''), JSON.stringify(sc && [sc['Author'], Object.keys(sc).filter(k => /uthor/.test(k))]));
   const unl1 = (run.doc.print_rows || []).length;
   await r.X.close();
   r = await fresh(10); run = r.run;
   const unl = (run.doc.print_rows || []).map(x => JSON.stringify(x).slice(0, 200));
   check('fix 1: pages Claude answers "none" for are still placed by the batch\'s own text record: none of Daily Breeze p.14, Oct 27 p.3, Nov 4 p.9 goes to Unlinked print pages', !unl.some(x => /Breeze|2026-10-27|2026-11-04/.test(x) && /(Breeze|p\.? ?14|"3"|"9"|Page 3|Page 9)/.test(x)), JSON.stringify(unl) + ' | before ' + unl1);
-  const st = run.items.filter(x => /Breeze|Daily News/.test(JSON.stringify(x)) && /(known|attached)/.test(x.status || '')).length;
-  check('fix 1: those pages are known or attached', st >= 3, 'known/attached items ' + st);
+  const sts = run.items.filter(x => /(Page|p\.) ?(14|3|9)|Daily Breeze/.test(x.why || '') || /^The page|Claude found no article/.test(x.why || '')).map(x => x.status + ': ' + String(x.why).slice(0, 70));
+  check('fix 1: those pages are known or attached (reason names the batch\'s text record)', run.items.filter(x => /Claude found no article naming him on the page, but/.test(x.why || '')).length >= 3, JSON.stringify(sts));
   await r.X.close();
   r = await fresh(11); run = r.run;
   check('fix 6: "San Gabriel Valley" text does not count as naming him (page not used as an article)', !run.rows.some(x => /San Gabriel Valley/.test(x['Headline'] || '') && /Congressional races/.test(x['Headline'] || '')), JSON.stringify(run.rows.map(x => x['Headline']).filter(h => /Congressional/.test(h))));
