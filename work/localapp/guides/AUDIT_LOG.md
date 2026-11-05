@@ -86,3 +86,40 @@ The coordinator ran a blind Fable audit of both PDFs; its findings are in `FABLE
 - A9.1's suggestion that a later refresh file is "small enough for email": the coordinator asked for the shared drive, OneDrive or USB only. Neither guide mentions email.
 - B7.1's idea of shrinking the Update guide's PC pages to "see the User Guide": kept stand-alone, because Sammy may print only the Update guide. The texts now match.
 - A8.1 "Data checks crop to five rows": it shows its four rows, which is all the test data has.
+
+## Round 3: Update station guide rebuilt, then Fable audit applied (FABLE_AUDIT_UPDATE_GUIDE.md, 2026-11-05)
+
+The guide was redone for the newest station (no date to pick, "Search all time", one-line reminders, full English translations, office-PC block). The blind Fable audit of that draft was then applied. The guide is now 18 pages (the audit's draft was 20). Station shots were retaken from a fresh `build_station.py` build, at deviceScaleFactor 2 and a 700 px window. Harness copy and shot script: `scratchpad/g3/harness2.js`, `shots_700.js`.
+
+**Applied**
+
+| # | Change |
+|---|---|
+| 1 | Keeps the current station link and adds the line "New link (if the station moves to another claude.ai account): ____". The sign-in wording is now "the claude.ai account that owns the station" (pages 2, 5, Problems). |
+| 2 | The "press again to start" shot is real. The harness copy exempts the 6-second timer from its 100x speed-up, so the label shows by itself. Step 2 now says "within about 6 seconds" and that the button reads "Searching all time…" during a run. The Problems row says the same. |
+| 3 | One line under the page-1 table says the screenshots come from several test runs, so codes and counts differ, and that the zip's code should match the "for Update" file's code. The p16 result shot has the fingerprint line and the "0 file name(s)" line cut out (the caption says two lines were cut). A running-number note was added to the refresh caption. The station and PC test data were not re-staged. |
+| 4 | The older-workbook warning now leads with the clean fix (Do not use it, make a new file, rerun). "Use it anyway" comes second, only when you cannot rerun and the only change was your own edit. The Problems row matches. |
+| 5 | Safari: Download step and Problems row now say to use Chrome, or turn off "Open 'safe' files after downloading", and to press "Download the last one again". |
+| 6 | "Load a different file" clears the page, and closing or reloading the tab does the same. Added to Step 1, the Problems row, and a note under "Before you start" ("download before you close the tab"). |
+| 7 | Left-out rules: a web find dated more than a month before the search start is left out (not in Search all time), and so is an undated reprint of an older story. The guide says the left-out rows are kept in the update folder's record of the run and are NOT listed in the PC preview. This is the coordinator's correction to the audit, which said they were listed. |
+| 8 | The "How it works" screenshot page is gone. A paragraph points to the button and says to trust the page if the guide and page differ, because the station text was rewritten after the draft. |
+| 9 | Page 5 now shows only the empty drop box, full width. The half-width orientation shot is dropped. |
+| 10 | Orange outlines are added on the station shots: drop box, "File made" line, Search all time, Stop, Download update folder, NewsBank drop box and Add to the update. |
+| 11 | Automatic mode: the shots are retaken with it on. Page 10 says it is on unless switched off and the station remembers the choice in that browser (checked in `station.js`, `S.auto` and `ajg_station_auto`). |
+| 13 | The preview bullet now uses the on-screen phrase "cells where the update disagrees with the workbook (the workbook keeps its value)". The bold-line bullet no longer claims "your own waiting edits". |
+| 15 | The tab wording is now "keep the station tab open and visible, don't minimise or switch tab, keep the computer awake; other programs beside it are fine". |
+| 16 | PDFs and a running search: they wait with Automatic mode on; with it off, press Add to the update again afterwards. |
+| 17 | The TinyFish row quotes the real red messages from `station.js` and gives the full fix. |
+| 18 | "0 file name(s)…" is cut from the p16 shot. Explained "full_0002" as a running number in the refresh caption. |
+| 19 | Words table and "Before you start" now share page 2. Problems and the cheat sheet share the last page. The How it works page is gone. The unused confirm-box picture was also dropped (described in text). Result: 18 pages. |
+| 20 | The "Move the file" row is folded into "Make the file". |
+| 21 | The file-name meaning (year, month, day, hour, minute) is stated. |
+| 22 | The PC window is now "the black command window (the one the tracker opened)". |
+| 23 | The red "File made" line (over 7 days or no date) is mentioned. |
+
+**Skipped or changed, and why**
+
+- **12 (Permissions menu pictures):** I cannot capture the artifact page's Permissions menu or the allow prompt outside claude.ai. I added the exact connector name "TinyFish", where the menu is, and that the station shows a red message if a permission is missing.
+- **10 (outlines on PC screenshots):** I cannot redraw the PC panel shots without rerunning the PC tracker, so only station shots got outlines. Zebra-striped table rows were not added.
+- **14 (where the "run notes" are):** I could not find where the PC puts them. The caption now ties the line to the "Items that need a person" list in the preview, and the text says the result lists them again after the save. It does not name a file.
+- **3 (re-stage):** I used the one-line disclaimer, not a full re-stage, because the PC shots need the PC tracker.
