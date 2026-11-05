@@ -7,7 +7,7 @@ For Sammy. About ten minutes, once. Nothing here touches the old tracker.
 Use `work/localapp/station/dist/index.html` (about 3.7 MB). Make it fresh first with
 `python3 -I work/localapp/station/build_station.py`. Check that it is the file you think it is:
 
-    sha256  db5628415ee5136aeb069d3b1e709307f708e7d4f023bd2a910fd513ea9112ef
+    sha256  ee89b7f13176d5f6a8686fa342beb698ef21d7f2fffe6f129dc193f69d4ba262
 
 (On the Mac: `shasum -a 256 index.html`. On Windows: `certutil -hashfile index.html SHA256`.)
 
