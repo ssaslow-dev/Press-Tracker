@@ -753,6 +753,7 @@ function fixTexts(root) {
   // buttons and paragraphs that point at parts the station does not have (Clips tab, Refresh from files, "Write them in now")
   root.querySelectorAll('[data-goclips], [data-logpush]').forEach(e => { e.hidden = true; });
   root.querySelectorAll('#upd p').forEach(p => { if (/^Refresh from files doesn’t search/.test(p.textContent)) p.hidden = true; });
+  root.querySelectorAll('#updBody > p').forEach(p => { if (/^(Update database runs|Each story is credited)/.test(p.textContent.trim())) p.hidden = true; });   // STREAMLINE-v1: the long explanations are in How it works
   /* STREAMLINE-v1: the NewsBank reminder is one short line, and only when a refresh is due (the details are in How it works) */
   root.querySelectorAll('#upd .upd-msg').forEach(m => { if (!/^NewsBank refresh/.test(m.textContent) || m.dataset.stShort) return;
     if (!m.classList.contains('err')) { m.hidden = true; return; }
