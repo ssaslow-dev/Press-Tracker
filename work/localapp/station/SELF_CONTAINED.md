@@ -64,3 +64,11 @@ The "How it works" dialog and the step captions cover: what the page does, makin
 
 - `work/localapp/station/src/station.html`, line 17: replaced "as the NewsBank Download Guide shows (State Library login, the saved search, Sort by: Oldest)" with "(log in to NewsBank through your library, run your saved search for Gabriel, choose Sort by: Oldest, download the results as PDFs)".
 - Rebuilt `work/localapp/station/dist/index.html` (git-ignored) with `python3 -I work/localapp/station/build_station.py`. Nothing published, nothing committed. Test scratch files are in the session scratchpad only.
+
+## Follow-up (2026-11-05, Sammy: implement the findings)
+- Finding 1: MOVE_TO_OFFICE.md checksum updated to the published build.
+- Finding 2: the How it works dialog now has "If something is blocked" (TinyFish connector name exactly "TinyFish", Claude with pictures, blocked work networks, State Library logins) and "Using this page on another claude.ai account".
+- Finding 4: the State Library login note is in the dialog.
+- The unreachable outside PDF.js loader (tracker code) is replaced in the station by its built-in PDF reader (newsbank.js), so no path can load anything from a public site.
+- How it works rewritten to match the current behaviour (two-week window, Search all time, tracker-duplicate and old-find rules, translation at download, PC preview). Published 1793915424-f020.
+

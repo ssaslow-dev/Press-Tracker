@@ -524,6 +524,8 @@ runAll = function (mode, since) {
   if (mode !== 'refresh' && !since && ds && !sinceError(ds)) since = ds;
   return runAllBase(mode, since);
 };
+/* SELF-CONTAINED: the tracker's own PDF reader would load PDF.js from a public site (only from a part of the page the station hides); the station uses its built-in copy instead */
+loadPdfJs = async function () { if (window.pdfjsLib) return window.pdfjsLib; throw new Error('The PDF reader did not start. Reload the page.'); };
 /* ALLTIME-v1 (Sammy 2026-11-05: "an 'all time' button that searches all time"): while an all-time run is going, every planned search is an all-years search
    (no date filter, results of any date kept); the tracker-duplicate check in the station leaves out what the tracker already has */
 const tfPlanBase = tfPlan;

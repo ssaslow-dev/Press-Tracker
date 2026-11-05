@@ -3,26 +3,30 @@
     <div class="st-how-h"><h2 id="stHowT">How it works</h2><button class="btn" type="button" id="stHowX" aria-label="Close">Close</button></div>
     <div class="st-how-b">
 <h3>What this page does</h3>
-<p>It finds new stories about Jesse Gabriel and packs them into one zip, the update folder. You bring that zip into the PC tracker (Tracker files, Bring in update). The PC tracker shows you everything before it saves. This page never changes your workbook.</p>
+<p>It finds new news stories about Assemblymember Jesse Gabriel and packs them into one zip, the update folder. You bring that zip into the PC tracker (Tracker files, Bring in update). The PC tracker shows you everything before it saves. This page never changes your workbook, and it keeps nothing after you close it.</p>
 <h3>Step 1: the “for Update” file</h3>
 <p>Make it on the PC (Tracker files, Make “for Update” file) and load it here. It lists the stories the tracker already has, so nothing is found twice. It holds no article text and is not stored online.</p>
-<p><b>Make a new one after every save.</b> A file made before a save does not know about the stories that save added, and finds them again.</p>
-<h3>Step 2: Update</h3>
-<p>Update searches the web from two weeks before the newest story in the tracker up to today. There is no date to pick. The two weeks of overlap catch stories that appear online late; stories the tracker already has are left out. It takes about 25 minutes; keep this tab open.</p>
-<p>Claude reads every result and keeps only real stories that name Assemblymember Gabriel. It leaves out press releases, social posts, YouTube, blogs, listing pages and other people named Gabriel. It fills in each story’s issue, bills, format, reach and tone.</p>
-<p>A story the tracker already has is left out, even when the tracker’s copy came from NewsBank and has no web link. A copy of a known story at another outlet is added as a reprint. A row with no date takes the date in its web address when it has one.</p>
-<p><b>Search all time</b> (below the Update button) runs the same searches with no date limit, back to the earliest coverage. Use it now and then to catch older stories the tracker never had. It takes longer and uses more searches; stories the tracker already has are left out as usual.</p>
-<p>Stories not in English get an English headline, and their whole story is translated into English when you download the folder.</p>
+<p>Step 1 then shows the newest story in the tracker and the date the search will start from. <b>Make a new file after every save:</b> a file made before a save does not know the stories that save added, and finds them again. The reminder under the file name says when the file was made.</p>
+<h3>Step 2: Update database</h3>
+<p>Update searches the web from two weeks before the newest story in the tracker up to today. There is no date to pick; the two weeks of overlap catch stories that appear online late. It takes about 25 minutes. Keep this tab open until it finishes. The Update button at the top of the page does the same, after asking you to confirm.</p>
+<p>Claude reads every result and keeps only real stories that name Assemblymember Gabriel. It leaves out press releases, social posts, YouTube, blogs, listing and archive pages, and other people named Gabriel. It fills in each story’s issue, bills, format, reach and tone.</p>
+<p>Before the folder is made, every find is checked against the tracker. A story the tracker already has is left out, even when the tracker’s copy came from NewsBank and has no web link, and even when the paper’s name is spelled differently. A copy of a known story at another outlet becomes a reprint of it. A story dated more than a month before the search start, or a reprint with no date of an older story, is left out. A row with no date takes the date in its web address when it has one. Each left-out row keeps its reason in the update folder’s record of the run.</p>
+<h3>Search all time</h3>
+<p>The second button in Step 2 runs the same searches with no date limit, back to the earliest coverage, to catch older stories the tracker never had. Press it twice to start (the first press asks you to confirm). It takes longer and uses more searches. Stories the tracker already has are still left out. The next normal Update uses the usual two-week window again.</p>
 <h3>NewsBank and ProQuest PDFs</h3>
-<p>About 1 in 6 stories (print, wires, paywalled papers) can’t be found on the web. About once a month, and soon after big events like the budget vote, download the new NewsBank PDFs (log in to NewsBank through your library, run your saved search for Gabriel, choose Sort by: Oldest, download the results as PDFs) and drop them in “Add NewsBank PDFs”. ProQuest PDFs work the same way in their own box.</p>
-<p>A NewsBank “Full Page” is a picture of a newspaper page. Claude reads it and adds the article about him to the right story, or as a new story. A page it can’t place goes to “Unlinked print pages” in the tracker.</p>
-<h3>Step 3: Download</h3>
-<p>Press Download the update folder when you are done. It holds everything found since you loaded the file. If you add more after downloading, download again: the new folder replaces the old one.</p>
-<p>The PC tracker makes the final call when it saves: it compares the article texts to decide what is a reprint.</p>
+<p>About 1 in 6 stories (print, wires, paywalled papers) can’t be found on the web. About once a month, and soon after big events like the budget vote, download the new NewsBank PDFs (log in to NewsBank through your library, run your saved search for Gabriel, choose Sort by: Oldest, download the results as PDFs) and drop them in “Add NewsBank PDFs”, then press Add to the update. A one-line reminder appears in Step 2 when a refresh is due. ProQuest PDFs work the same way in their own box.</p>
+<p>A NewsBank “Full Page” is a picture of a newspaper page. Claude reads it and adds the article about him to the right story, or as a new story. A page it can’t place goes to “Unlinked print pages” in the tracker. A story found both on the web and in a PDF is kept once.</p>
+<h3>Step 3: Download the update folder</h3>
+<p>Press Download the update folder when you are done. Stories not in English first get a full English translation (the status line shows “Translating story 1 of 3…”), then the zip downloads. It holds everything found since you loaded the file. If you add more after downloading, download again: the new folder replaces the old one. Bring only the newest folder into the PC tracker.</p>
+<p>On the PC, Bring in update shows a preview: the rows to be added and the items that need a person. If the workbook changed since the file was made, it warns first. The PC tracker makes the final call when it saves: it compares the article texts to decide what is a reprint.</p>
 <h3>Automatic mode</h3>
-<p>When it is on, PDFs you drop in are added by themselves. Update and Download are never automatic, and nothing runs on a schedule.</p>
+<p>When it is on, PDFs you drop in are added by themselves. Update, Search all time and Download are never automatic, and nothing runs on a schedule.</p>
 <h3>If something is blocked</h3>
-<p>Claude must be allowed for this page (the Permissions menu), including sending pictures, so it can read print pages. TinyFish must be connected in claude.ai (Settings, Connectors) and allowed for this page.</p>
+<p>Claude must be allowed for this page (the page’s Permissions menu), including sending pictures, so it can read print pages. TinyFish (the web search service) must be connected in claude.ai under Settings, Connectors, with the name exactly “TinyFish”, and allowed for this page. If either is missing the page says so in red; whatever was found can still be downloaded.</p>
+<p>If the page does not open at all on a work computer, that network is blocking claude.ai pages (addresses ending in claudeusercontent.com). Use another computer, or ask IT to allow it.</p>
+<p>Some links in the rows go through the California State Library; they need a library card login.</p>
+<h3>Using this page on another claude.ai account</h3>
+<p>The page is self-contained: it needs no data from any account. To use it on another account, publish the same page there as a private artifact with these permissions: Claude (with pictures), downloads, storage, and the TinyFish connector (search and fetch_content). Connect TinyFish under Settings, Connectors, open the page, load a “for Update” file, and allow TinyFish and Claude when asked.</p>
 </div>
   </dialog>
   <div class="card pad" id="st-step1">
