@@ -69,7 +69,7 @@ def main():
     ap.add_argument('--out', required=True)
     ap.add_argument('--workbook')
     ap.add_argument('--as-of')
-    ap.add_argument('--manifest', help='articles/manifest.json (which stories have saved copies; paths only). Default: next to --page')
+    ap.add_argument('--manifest', help='articles/manifest.json (which stories have saved copies; paths only). Default: found next to --page')
     ap.add_argument('--no-internal', action='store_true')
     a = ap.parse_args()
 
@@ -116,9 +116,12 @@ def main():
     s = re.sub(r'<title>AJG Press Coverage Tracker</title>', '<title>AJG Press Coverage Tracker (Preview)</title>', s, count=1)
     line = '<div class="prev-line" id="prevLine">Preview, read-only, data as of %s</div>' % as_of_txt
     s = one(s, '      </div>\n    </div>\n  </div>\n</header>', '      </div>\n    </div>\n' + line + '\n  </div>\n</header>', 'masthead')
-    manifest = a.manifest or os.path.join(site, 'articles', 'manifest.json')
+    manifest = a.manifest
+    if not manifest:      # the PC build keeps the article data in data/copies/articles (older builds: next to the page)
+        manifest = next((c for c in (os.path.join(site, 'articles', 'manifest.json'), os.path.join(site, '..', 'copies', 'articles', 'manifest.json'),
+                                     os.path.join(site, 'copies', 'articles', 'manifest.json')) if os.path.isfile(c)), '')
     man = {}
-    if os.path.isfile(manifest):
+    if manifest and os.path.isfile(manifest):
         man = json.load(open(manifest, encoding='utf-8')).get('articles', {})
     mj = {'articles': man}
     css = '<style id="prev-hide">' + HIDE + (NO_INTERNAL_HIDE if a.no_internal else '') + PREV_CSS + '</style>'
