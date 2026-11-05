@@ -87,7 +87,7 @@ The station depends on nothing but its own files, the for-Update file, Claude an
    ```
    db: {}
    downloads: true
-   sample: {}
+   sample: {images: true}
    mcp: {servers: [{server: "TinyFish", tools: ["search", "fetch_content"]}]}
    ```
    No `{artifact, path}` copies and no links to other artifacts are used or needed.
@@ -96,6 +96,7 @@ The station depends on nothing but its own files, the for-Update file, Claude an
 Account-neutrality checks:
 
 - The page reads nothing that differs per account or per artifact: no artifact id, no user id (the tracker code uses `window.claude.use` for `db`, `sample`, `mcp`, `downloads` only; the only URL state it reads is `location.hash`, `#about`, which the station never sets).
+- Open the page and check that `sample.limits()` reports `images` (the declaration is `sample: {images: true}`, not `sample: {}`); the run doc's `read_limits` records the real values after the first print-page run.
 - The artifact db is scratch. The station never reads it: the run history, waiting finds and removals come from the for-Update file every time. The only write is the `packed/<run id>` note. A fresh, empty db, a db full of leftovers and no db at all give the same result (tests below).
 - No CDN script, no JSZip, no web font. The zip writer is in `src/station.js`.
 

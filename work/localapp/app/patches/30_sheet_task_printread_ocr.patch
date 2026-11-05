@@ -1,0 +1,35 @@
+--- a/code/sheet_task.py
++++ b/code/sheet_task.py
+@@ -1970,12 +1970,29 @@
+                 self._shards[f] = {}
+         return self._shards[f].get(sid)
+ 
++    def read_page_row(self, row):
++        """PRINTREAD-v2 follow-up: True when the row's text came from Claude reading a newspaper page (its pages doc carries nb.read or nb.source 'page')"""
++        pages = self.db.get('pages') or {}
++        pid = str(row.get('_page') or '') or self.page_doc_id(row) or ''
++        nb = (pages.get(pid) or {}).get('nb') or {}
++        return bool(nb.get('read') or nb.get('source') == 'page')
++
+     def compare(self, find, ftext, orig, otext):
+         """the regroup's rule: text when both sides have it, else headline + author; None = cannot tell (stays Original)"""
+         if ftext and otext:
+-            v = RR.text_verdict([RR.version(*ftext)], [RR.version(*otext)])
+-            if v is not None:
+-                return v
++            if self.read_page_row(find) and hasattr(RR, 'text_verdict_ocr'):
++                # PRINTREAD-v2 follow-up: the find's text is Claude's reading of a newspaper page. Transcription noise (a misread word, a split
++                # or joined word) must not turn a true print edition / reprint into an Original: the OCR-tolerant verdict, then the near-miss
++                # link (headline + byline + date). Every other row keeps the exact REPRINT90 test below.
++                v = RR.text_verdict_ocr([RR.version(*ftext)], [RR.version(*otext)])
++                if v is not None and not v['ok'] and v.get('m') and RR.best_cov(v) >= RR.NEAR_LO and RR.ocr_near_miss_link(find, orig, v)[0]:
++                    v = dict(v, ok=True, conf='low', mode='ocr-near-miss')
++                if v is not None:
++                    return v
++            else:
++                v = RR.text_verdict([RR.version(*ftext)], [RR.version(*otext)])
++                if v is not None:
++                    return v
+         ha = RR.headline_author(find, orig)
+         if ha['verifiable']:
+             return {'ok': ha['ok'], 'conf': 'medium', 'mode': 'headline+author', 'm': None}

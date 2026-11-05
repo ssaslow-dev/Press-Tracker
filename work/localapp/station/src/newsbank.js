@@ -177,7 +177,7 @@ function nbByParts(s){
 }
 /* a tracker story this reading is a copy of: { sid, st, how } or null */
 function nbPageStory(p2, a, by){
-  const C = covLoad(), h = normH(a.headline), d = p2.date, near = o => { const g = covDays(d, o.date); return isNaN(g) || g <= 7; };
+  const C = covLoad(), h = normH(a.headline), d = p2.date, near = o => { const g = covDays(d, o.date); return isNaN(g) || g <= 7; };   // the byline+credit window below is 90 days (REPRINT90-v1)
   const c = nbCand(Object.assign({}, p2, { kind: 'article' })), ch = covHit(c);
   if (ch) return { sid: ch.o.sid, how: 'headline' };
   if (h.split(' ').length >= 4) for (const o of C.rows){
@@ -187,9 +187,9 @@ function nbPageStory(p2, a, by){
   }
   const old = dupOf(Object.assign({}, c, { link: '', plink: '' }), D);
   if (old) return { sid: old.r.id, how: 'headline words' };
-  if (by.credit && by.author){   // a differently headlined printed copy: the same author, credited to the story's own outlet, within a week
+  if (by.credit && by.author){   // a differently headlined printed copy: the same author, credited to the story's own outlet, within 90 days
     const ck = covOutlet(by.credit), ak = normH(by.author), hits = new Map();
-    D.forEach(r => { const g = covDays(d, r.date); if (!isNaN(g) && g <= 7 && covOutlet(r.pub || r.outlet) === ck && ak && normH(r.author || '').includes(ak)) hits.set(r.id, r); });
+    D.forEach(r => { const g = covDays(d, r.date); if (!isNaN(g) && g <= 90 && covOutlet(r.pub || r.outlet) === ck && ak && normH(r.author || '').includes(ak)) hits.set(r.id, r); });
     if (hits.size === 1) return { sid: [...hits.keys()][0], how: 'byline author and credit' };
   }
   return null;
@@ -200,10 +200,10 @@ function nbPrintApply(items, all){
   const attach = (it, to, why, as) => { it.screen = { status: 'attached', why }; it.attachTo = to; it.printAs = as; it.readWhy = why; it.include = true; };
   const todo = items.filter(it => it.screen.status === 'print_page' && it.include !== false && !it.confirm && it.readArt);
   const jumps = [];
-  /* STFIX 1 (kept as the fallback under PRINTREAD-v2): a page that could not be read (Claude could not make it out, or the reading failed) is still placed when it can be done without reading: the batch's own text record of the same outlet, date and page number */
-  items.filter(it => it.screen.status === 'print_page' && it.include !== false && !it.confirm && !it.readArt && it.reading && /^(unclear|unavailable|error)$/.test(it.reading.state) && !it.reading.seen).forEach(it => {
+  /* STFIX 1 (kept as the fallback under PRINTREAD-v2): a page with no usable reading (none, unclear, unavailable or error) is still placed when it can be done without reading, and a record is stronger evidence than a picture's "no": the batch's own text record of the same outlet, date and page number */
+  items.filter(it => it.screen.status === 'print_page' && it.include !== false && !it.confirm && !it.readArt && it.reading && it.p.src !== 'page').forEach(it => {
     const pg = nbPageNo(it.p.page), rec = pg ? recFor(it, it.p.outlet_clean, it.p.date, [pg]) : null; if (!rec) return;
-    const pre = 'The page could not be read; ';
+    const pre = it.reading.state === 'none' ? 'Claude found no article naming him on the page, but ' : 'The page could not be read; ';
     if (rec.screen.status === 'known' && rec.screen.row){ it.printCopy = { aid: rec.screen.row, pages: pg, story: rec.screen.sid || '' }; it.screen = { status: 'known', why: pre + 'it is the printed page of the text record already in the tracker as ' + rec.screen.row + ' (same outlet, date and page number): kept as that row’s print original', row: rec.screen.row, sid: rec.screen.sid || '' }; it.readWhy = it.screen.why; return; }
     attach(it, rec.key, pre + 'it is the printed page of the text record “' + String(rec.p.headline).slice(0, 60) + '” in these PDFs (same outlet, date and page number): kept with that record, no row of its own', 'attached');
   });
@@ -344,7 +344,7 @@ async function nbRun(items, opts){
     const batches = [...new Map(items.map(it => [it.batch.sha256, { name: it.batch.name, sha256: it.batch.sha256 }])).values()];
     const doc = { at, mode: SRC.runMode, [SRC.runMark]: TODAY, status: 'done', stories: stories.map(r => r.id).filter(id => byId.has(id)), reprints: res.reprints.concat(orig.flatMap(it => (it.r._reps || []).map(x => ({ story: it.r.id, outlet: x.outlet })))),
       rows: covCompact(prop.rows), print_pages: res.print_pages.slice(0, 100), print_rows: printRows, extra_copies: copies, found_by: { [SRC.runMark]: prop.rows.length }, searched_to: '', since: '', since_manual: false,
-      left: res.left.slice(0, 150), [SRC.metaKey]: { source: SRC.runSource, batches, pdfs: prop.rows.map((r, i) => order[i].fileId).filter(Boolean).length, links_found: res.links.found, links_searched: res.links.searched } };
+      left: res.left.slice(0, 150), [SRC.metaKey]: { source: SRC.runSource, batches, pdfs: prop.rows.map((r, i) => order[i].fileId).filter(Boolean).length, links_found: res.links.found, links_searched: res.links.searched, read_limits: opts.readLimits || null } };
     mark('runs', run);
     const saved = await saveRun(run, doc);
     res.rows = prop.rows; res.added = added; res.doc = doc; res.saved = saved;
@@ -498,4 +498,4 @@ function xdPlan(runs){
   xdSyndOps(E, gone, ops);
   return ops;
 }
-window.__nb = { tidy: xdTidy, xdDupes, respell: n => { const h = nbSpellHit(n); return h ? h.n : ''; }, webEnd: () => ({ err: String(U.err || ''), aborted: !!(U.ctl && U.ctl.signal && U.ctl.signal.aborted), phase: U.phase, step: U.step, done: U.done || 0, plan: U.plan || 0, failed: U.failed || 0, cands: U.nCands || 0, found: (U.found || []).length }), candidates: nbPrintCands, hasStory: nbHasStory, xdPlan, xdFold: XD_FOLD, spell: nbSpell, runPage: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pp })), screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };
+window.__nb = { namesHim: s => NAMES_HIM.test(s), tidy: xdTidy, xdDupes, respell: n => { const h = nbSpellHit(n); return h ? h.n : ''; }, webEnd: () => ({ err: String(U.err || ''), aborted: !!(U.ctl && U.ctl.signal && U.ctl.signal.aborted), phase: U.phase, step: U.step, done: U.done || 0, plan: U.plan || 0, failed: U.failed || 0, cands: U.nCands || 0, found: (U.found || []).length }), candidates: nbPrintCands, hasStory: nbHasStory, xdPlan, xdFold: XD_FOLD, spell: nbSpell, runPage: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pp })), screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };

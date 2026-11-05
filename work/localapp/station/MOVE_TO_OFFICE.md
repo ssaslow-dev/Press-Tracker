@@ -21,7 +21,7 @@ Sign in to claude.ai with the office account. Settings, then Connectors, then ad
 
 Open a new chat on the office account, attach `index.html`, and paste this sentence:
 
-> Publish the attached HTML file exactly as it is, without changing a character, as a private artifact titled "AJG Update Station" with the icon "search". Give it these capabilities and nothing else: db, downloads, sample, and mcp for the connector named "TinyFish" with the tools "search" and "fetch_content". Do not share it with anyone.
+> Publish the attached HTML file exactly as it is, without changing a character, as a private artifact titled "AJG Update Station" with the icon "search". Give it these capabilities and nothing else: db, downloads, sample (declared as {images: true}, so the page may send pictures to Claude), and mcp for the connector named "TinyFish" with the tools "search" and "fetch_content". Do not share it with anyone.
 
 Claude gives you a link. Keep it private: a page that uses a connector cannot be shared "anyone with the link" anyway.
 If the chat will not take a 3.7 MB attachment, do the same from Claude Code with the file in the folder and the same sentence.

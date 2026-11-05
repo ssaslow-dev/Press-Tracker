@@ -291,6 +291,7 @@ def copy_app_code(root: Path, pb: Path, info: dict):
     patched_copy(pipe / 'build_data.py', pipe / 'build_data.py', ap_ / '26_build_data_printorig.patch')            # PRINTORIG-v1 (option B): rec['po'] from the library's _original_pdf names
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '28_sheet_task_prcolor.patch')               # PRCOLOR-v1: Press release = Yes rows are purple (#7030A0)
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '29_sheet_task_printnew.patch')              # PRINTNEW-v1: a print-only new story's read text is its saved copy; page scans of new / attached pages are print originals
+    patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '30_sheet_task_printread_ocr.patch')         # PRINTREAD-v2 follow-up: a row whose text Claude read from a newspaper page is tested with the OCR-tolerant verdict
     shutil.copy2(LOCALAPP / 'station' / 'data' / 'proquest_outlets.json', pipe / 'proquest_outlets.json')    # PROQUESTPDF-v1 answer 2 (one source: the station's data)
     patched_copy(pipe / 'shell.html', pipe / 'shell.html', ap_ / '08_shell_localfonts.patch')
     patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '07_tracker_js_localfonts.patch')
