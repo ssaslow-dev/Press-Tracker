@@ -31,7 +31,7 @@ def load_modules(root: Path):
         sys.path.insert(0, str(root / 'app' / d))
     import common as C
     import rename_files as RF
-    import switchover as SW
+    import cell_steps as SW
     import take_update as TU
     return C, RF, SW, TU
 

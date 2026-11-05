@@ -26,7 +26,6 @@ from urllib.parse import parse_qs, unquote, urlsplit
 
 import common as C
 import refresh as R
-import switchover as SW
 import server as S
 
 HERE = Path(__file__).resolve().parent
@@ -248,8 +247,6 @@ class StationHandler(S.Handler):
         want = 'reader' if kind == 'refresh' else 'keeper'
         if kind == 'manifest':
             return self._upload_manifest(q)
-        if kind == 'datafix':
-            return self._upload_datafix(q)
         if R.role(self.server.lay) != want:
             return self._err(403, 'This copy of the tracker %s.' % ('is the keeper copy and does not take refresh files' if want == 'reader' else 'is a reader copy and does not take in updates'))
         name = re.sub(r'[^A-Za-z0-9._ -]', '_', os.path.basename((q.get('name') or ['update.zip'])[0]))[:80]
@@ -283,34 +280,6 @@ class StationHandler(S.Handler):
             return self._err(500, f'could not store the upload: {e}')
         return self._json({'ok': True, 'file': dest.name, 'bytes': n, 'sha256': h.hexdigest()})
 
-    def _upload_datafix(self, q):
-        """SWITCHOVER-v1: an approved data-check fixes file (CSV) for the Switch-over changes screen; kept in data/switchover/datafix/, never run by itself"""
-        lay = self.server.lay
-        if R.role(lay) != 'keeper':
-            return self._err(403, 'Only the keeper copy applies data-check fixes.')
-        name = re.sub(r'[^A-Za-z0-9._ -]', '_', os.path.basename((q.get('name') or ['fixes.csv'])[0]))[:80]
-        if not name.lower().endswith('.csv'):
-            return self._err(400, 'The approved fixes must be a .csv file.')
-        n = int(self.headers.get('Content-Length') or 0)
-        if n <= 0 or n > 20 * 2**20:
-            return self._err(413, 'That file is empty or larger than 20 MB.')
-        d = lay.data / 'switchover' / 'datafix'
-        d.mkdir(parents=True, exist_ok=True)
-        dest = d / name
-        k = 2
-        while dest.exists():
-            dest = d / f'{Path(name).stem} ({k}).csv'
-            k += 1
-        body = self.rfile.read(n)
-        if len(body) != n:
-            return self._err(400, 'The upload was cut off. Try again.')
-        try:
-            dest.write_bytes(body)
-        except OSError as e:
-            return self._err(500, f'could not store the upload: {e}')
-        return self._json({'ok': True, 'file': dest.name, 'bytes': n})
-
-    # -- /_local/
     def _local(self, method, path, query, head):
         if path == '/_local/station.js':
             return self._send(200, (WEB / 'panel.js').read_bytes(), S.TYPES['.js'], {'Cache-Control': 'no-cache'}, head)
@@ -368,8 +337,8 @@ class StationHandler(S.Handler):
             return self._err(405, 'method not allowed', head)
         d = self._body_json()
         r_ = R.role(lay)
-        if rest in ('inspect', 'preview', 'save', 'reject', 'init', 'refresh_make', 'edits_preview', 'edits_save', 'setup_check', 'setup_run', 'rebuild_copies', 'drop_preview', 'drop_apply', 'switch_preview', 'switch_apply', 'switch_finish', 'switch_remove_file') and r_ != 'keeper':
-            return self._json({'ok': False, 'line': 'This copy of the tracker is a reader copy. Only the keeper copy takes in updates, saves edits, accepts the workbook, sets up from the Mac library, removes unverified reprints or makes refresh files. Edits made in a reader copy stay in that copy and are not saved anywhere else.'}, 403)
+        if rest in ('inspect', 'preview', 'save', 'reject', 'init', 'refresh_make', 'edits_preview', 'edits_save', 'setup_check', 'setup_run', 'rebuild_copies') and r_ != 'keeper':
+            return self._json({'ok': False, 'line': 'This copy of the tracker is a reader copy. Only the keeper copy takes in updates, saves edits, accepts the workbook, sets up from the Mac library or makes refresh files. Edits made in a reader copy stay in that copy and are not saved anywhere else.'}, 403)
         if rest == 'refresh_take' and r_ == 'keeper':
             return self._json({'ok': False, 'line': 'This is the keeper copy. It makes refresh files; it does not take them in.'}, 403)
         verb, args = None, []
@@ -409,31 +378,6 @@ class StationHandler(S.Handler):
             if rest == 'setup_run' and d.get('repairs') is True:
                 args.append('--repairs')
             verb = rest
-        elif rest in ('switch_preview', 'switch_apply', 'switch_finish', 'switch_remove_file'):
-            low = d.get('include_low') is True
-            files = d.get('files')
-            if files is not None and (not isinstance(files, list) or len(files) > 50 or not all(isinstance(x, str) and re.match(r'^[A-Za-z0-9._ ()-]{1,120}\.csv$', x) for x in files)):
-                return self._err(400, 'bad list of fixes files')
-            payload = {'include_low': low, 'files': files}
-            if rest == 'switch_apply':
-                steps, dig = d.get('steps'), d.get('digests')
-                if not isinstance(steps, list) or not steps or not all(x in ('drop_unverified', 'rename_files', 'prjudge', 'prcolor', 'other_files', 'datafix', 'datafix_structural') for x in steps) \
-                        or not isinstance(dig, dict) or not all(isinstance(v, str) and re.match(r'^[0-9a-f]{0,16}$', v) for v in dig.values()):
-                    return self._err(400, 'The steps must be looked at first.')
-                payload.update(steps=steps, digests=dig)
-            if rest == 'switch_remove_file':
-                nm = str(d.get('name') or '')
-                if not re.match(r'^[A-Za-z0-9._ ()-]{1,120}\.csv$', nm):
-                    return self._err(400, 'bad file name')
-                payload['name'] = nm
-            verb, args = rest, ['--payload=' + json.dumps(payload)]
-        elif rest == 'drop_preview':
-            verb = 'drop_preview'
-        elif rest == 'drop_apply':
-            tok = str(d.get('token') or '')
-            if not re.match(r'^[0-9a-f]{16}$', tok):
-                return self._err(400, 'The list must be looked at first.')
-            verb, args = 'drop_apply', ['--token', tok]
         elif rest == 'edits_preview':
             verb = 'edits_preview'
         elif rest == 'edits_save':
@@ -505,7 +449,7 @@ class StationServer(S.TrackerServer):
                 'job': self.jobs.summary(self.jobs.current), 'page_built': (lay.data / 'site' / 'index.html').is_file(),
                 'pipeline_ok': (lay.pipeline / 'PIPELINE.sha256').is_file(),
                 'last_for_update': fu[-1].name if fu else None, 'edits_pending': self._edits_pending(), 'time': time.time(),
-                'last_updated': self._last_updated(), 'switchover': SW.screen_status(lay) if R.role(lay) == 'keeper' else None, 'setup_done': self._logs('setup-*.json') is not None, 'drop_done': self._logs('drop-unverified-*.json')}
+                'last_updated': self._last_updated(), 'setup_done': self._logs('setup-*.json') is not None}
 
     def _last_updated(self):
         """LASTUPDATED-v1: keeper = newest saving ledger entry; reader = the date its last refresh file carried"""

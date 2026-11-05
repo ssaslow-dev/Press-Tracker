@@ -146,9 +146,6 @@
       sbox.appendChild(el('button', { class: 'ajgf-b', type: 'button', text: 'Reload the tracker', onclick: function () { location.reload(); } }));
       box.appendChild(sbox); box.appendChild(el('hr'));
     }
-    // the one Switch-over changes screen (SWITCHOVER-v1): shown after the setup from the Mac library, until the keeper presses Finished
-    var swNext = !!(state.status && state.status.role === 'keeper' && state.status.setup_done && state.status.switchover && !state.status.switchover.finished);
-    if (swNext) { renderSwitchover(box); box.appendChild(el('hr')); }
     // 1. make for update
     box.appendChild(el('h3', { text: '1. Make "for Update" file' }));
     box.appendChild(el('p', { text: 'A small file listing the stories the tracker already has (no article text). Load it into the Update station before pressing Update.' }));
@@ -246,7 +243,6 @@
       var ul = el('ul'); (r.lines || []).forEach(function (l) { ul.appendChild(el('li', { text: l })); }); box_.appendChild(ul);
       if (r.ok) {
         box_.appendChild(el('button', { class: 'ajgf-b', type: 'button', text: 'Reload the tracker', onclick: function () { location.reload(); } }));
-        box_.appendChild(el('p', {}, [el('small', { text: 'Next: after the reload, the "Switch-over changes" screen at the top of this panel holds the one-time changes to the workbook.' })]));
       } else box_.appendChild(el('button', { class: 'ajgf-b alt', type: 'button', text: 'Close this', onclick: function () { sg.stage = 'form'; render(); } }));
       return;
     }
@@ -303,114 +299,6 @@
       return runJob('setup_run', b, function (s) { sg.msg = 'Copying and checking... ' + s + ' s. Do not close the Terminal or command window.'; render(); });
     }).then(function (r) { state.busy = false; sg.stage = 'done'; sg.res = r; sg.check = null; refresh().then(render); })
       .catch(function (e) { state.busy = false; sg.stage = 'done'; sg.res = { ok: false, line: String(e.message || e) }; render(); });
-  }
-
-  // ---- remove unverified reprints (DROPUNVERIFIED-v1)
-  // ---- the Switch-over changes screen (SWITCHOVER-v1): every one-time change to the workbook, previewed together, shown only once
-  var sw = { stage: 'idle', pv: null, res: null, msg: '', low: false, ok: false, again: false, uploadMsg: '' };
-  function swBusy() { return state.busy || locked(); }
-  function renderSwitchover(parent) {
-    var d = el('div', { id: 'ajgf-switch' }); parent.appendChild(d);
-    d.appendChild(el('h3', { text: 'Switch-over changes (once)' }));
-    d.appendChild(el('p', { text: 'These one-time changes to the workbook are made together, with ONE backup first. Look at what each one does. Then confirm all of them, or do them one at a time. Every change is checked cell by cell against the old workbook before it replaces it. This screen goes away when you are finished.' }));
-    var busy = swBusy();
-    if (sw.stage === 'working') { var tk = busyNote(d); tk.textContent = sw.msg; return; }
-    if (sw.stage === 'done' && sw.res) {
-      var r = sw.res;
-      d.appendChild(el('div', { class: r.ok ? 'ajgf-ok' : 'ajgf-bad' }, [el('b', { text: r.ok ? 'Done. Backup: ' + (r.backup || '') : (r.line || 'Not done') })]));
-      (r.results || []).forEach(function (x) { d.appendChild(el('h4', { text: x.title + ': ' + x.summary })); var u = el('ul'); (x.lines || []).forEach(function (l) { u.appendChild(el('li', { text: l })); }); d.appendChild(u); });
-      (r.warnings || []).forEach(function (w) { d.appendChild(el('div', { class: 'ajgf-warn', text: w })); });
-      d.appendChild(el('button', { class: 'ajgf-b', type: 'button', id: 'ajgf-sw-reload', text: r.ok ? 'Reload the tracker' : 'Close this', onclick: function () { if (r.ok) location.reload(); else { sw.stage = 'idle'; sw.res = null; render(); } } }));
-      return;
-    }
-    var pv = sw.pv;
-    if (!pv) {
-      var b = el('button', { class: 'ajgf-b', type: 'button', id: 'ajgf-sw-look', text: 'Look at the changes', onclick: doSwitchPreview });
-      if (busy) b.disabled = true;
-      d.appendChild(b);
-    } else {
-      if (pv.blocked) d.appendChild(el('div', { class: 'ajgf-bad', text: pv.blocked }));
-      if (pv.backup) d.appendChild(el('p', {}, [el('small', { text: 'The backup for this session is already made: ' + pv.backup + '.' })]));
-      var todo = [];
-      pv.steps.forEach(function (s) {
-        var h = el('h4', { text: s.title + (s.state === 'done' ? ' (done)' : s.state === 'nothing' ? ' (nothing to do)' : s.state === 'blocked' ? ' (cannot run)' : '') });
-        d.appendChild(h);
-        var u = el('ul'); (s.lines || []).forEach(function (l) { u.appendChild(el('li', { text: l })); }); d.appendChild(u);
-        if (s.detail && s.detail.unmark && s.detail.unmark.length) {
-          var det = el('details'); det.appendChild(el('summary', { text: 'Every row that becomes No (' + s.detail.unmark.length + ')' }));
-          var lst = el('div', { style: 'max-height:180px;overflow:auto;font-size:12px;border:1px solid #d5dbe2;border-radius:6px;padding:4px 6px' });
-          s.detail.unmark.forEach(function (x) { lst.appendChild(el('div', { text: x.aid + '  ' + x.outlet + ': ' + x.headline + (x.role ? '  [Role: ' + x.role + ']' : '') })); });
-          det.appendChild(lst); d.appendChild(det);
-        }
-        if (s.detail && s.detail.org && s.detail.org.length) {
-          var det2 = el('details'); det2.appendChild(el('summary', { text: 'Organisation-site posts for you to decide (' + s.detail.org.length + ')' }));
-          s.detail.org.forEach(function (x) { det2.appendChild(el('div', { style: 'font-size:12px', text: x.aid + '  ' + x.outlet + ': ' + x.headline })); });
-          d.appendChild(det2);
-        }
-        if (s.id === 'datafix' && s.state !== 'done') renderDatafixControls(d, s);
-        if (s.state === 'todo') {
-          todo.push(s);
-          var one = el('button', { class: 'ajgf-b alt', type: 'button', 'data-sw-one': s.id, text: 'Do only this one', onclick: function () { doSwitchApply([s.id]); } });
-          if (busy || pv.blocked || !sw.ok) one.disabled = true;
-          d.appendChild(one);
-        }
-      });
-      if (todo.length) {
-        var cb = el('input', { type: 'checkbox', id: 'ajgf-sw-ok' }); cb.checked = sw.ok; cb.addEventListener('change', function () { sw.ok = cb.checked; render(); });
-        d.appendChild(el('label', {}, [cb, ' I have read the changes above.']));
-        var go = el('button', { class: 'ajgf-b danger', type: 'button', id: 'ajgf-sw-all', text: 'Confirm all ' + todo.length + ' changes', onclick: function () { doSwitchApply(todo.map(function (x) { return x.id; })); } });
-        if (busy || pv.blocked || !sw.ok) go.disabled = true;
-        d.appendChild(go);
-      }
-      d.appendChild(el('button', { class: 'ajgf-b alt', type: 'button', text: 'Look again', onclick: doSwitchPreview }));
-      var fin = el('button', { class: 'ajgf-b alt', type: 'button', id: 'ajgf-sw-finish', text: 'Finished: hide this screen', onclick: doSwitchFinish });
-      if (!pv.all_done) { fin.disabled = true; fin.title = 'Available when every change is done or has nothing to do'; }
-      d.appendChild(fin);
-    }
-    var again = el('details', { id: 'ajgf-sw-again' });
-    again.appendChild(el('summary', { text: 'Set up again from the Mac library (only if the first setup went wrong)' }));
-    again.appendChild(el('div', { class: 'ajgf-warn', text: 'Warning: this replaces the workbook of this tracker with the Mac\'s. Anything saved here since the setup is lost from the workbook (it is backed up first).' }));
-    renderSetupSection(again, true);
-    d.appendChild(again);
-  }
-  function renderDatafixControls(d, s) {
-    var st = (state.status && state.status.switchover) || {};
-    var box_ = el('div', { class: 'ajgf-note', id: 'ajgf-sw-datafix' });
-    box_.appendChild(el('div', {}, [el('small', { text: 'Add a fixes file you approved (a CSV from the data checks). Only blank cells are filled; low-confidence lines are left out unless you tick the box.' })]));
-    var inp = el('input', { type: 'file', accept: '.csv', id: 'ajgf-sw-file' });
-    inp.addEventListener('change', function () {
-      var f = inp.files && inp.files[0]; if (!f) return;
-      fetch('/_local/station/upload?kind=datafix&name=' + encodeURIComponent(f.name), { method: 'POST', headers: { 'X-Local-Token': TOKEN }, body: f }).then(function (r) { return r.json(); }).then(function (j) {
-        sw.uploadMsg = j && j.ok ? 'Added ' + j.file + '.' : ((j && (j.error || j.line)) || 'The file was not accepted.'); refresh().then(function () { doSwitchPreview(); });
-      });
-    });
-    box_.appendChild(inp);
-    (st.datafix_files || []).forEach(function (n) {
-      box_.appendChild(el('div', { style: 'font-size:12px' }, [n + ' ', el('button', { class: 'ajgf-b alt', type: 'button', text: 'Remove', onclick: function () { api('switch_remove_file', { json: { name: n } }).then(function (r) { if (r.json && r.json.job) pollThen(r.json.job, function () { refresh().then(function () { doSwitchPreview(); }); }); }); } })]));
-    });
-    var lc = el('input', { type: 'checkbox', id: 'ajgf-sw-low' }); lc.checked = sw.low; lc.addEventListener('change', function () { sw.low = lc.checked; doSwitchPreview(); });
-    box_.appendChild(el('label', {}, [lc, ' Include low-confidence fixes']));
-    if (sw.uploadMsg) box_.appendChild(el('div', {}, [el('small', { text: sw.uploadMsg })]));
-    d.appendChild(box_);
-  }
-  function pollThen(job, fn) { (function p() { api('job/' + job).then(function (j) { if (j.json && j.json.state === 'done') fn(); else setTimeout(p, 500); }).catch(function () { setTimeout(p, 1000); }); })(); }
-  function doSwitchPreview() {
-    state.busy = true; sw.stage = 'working'; sw.msg = 'Reading the workbook and the library...'; sw.ok = false; render();
-    runJob('switch_preview', { include_low: sw.low }, function (s) { sw.msg = 'Reading the workbook and the library... ' + s + ' s'; render(); }).then(function (r) {
-      state.busy = false;
-      if (r.ok === false) { sw.stage = 'done'; sw.res = r; sw.pv = null; } else { sw.stage = 'idle'; sw.pv = r; }
-      render();
-    });
-  }
-  function doSwitchApply(ids) {
-    var dig = {}; sw.pv.steps.forEach(function (s) { dig[s.id] = s.digest || ''; });
-    state.busy = true; sw.stage = 'working'; sw.msg = 'Making the backup, then the changes. Do not close the Terminal or command window...'; render();
-    runJob('switch_apply', { steps: ids, digests: dig, include_low: sw.low }, function (s) { sw.msg = 'Working... ' + s + ' s. Do not close the Terminal or command window.'; render(); }).then(function (r) {
-      state.busy = false; sw.stage = 'done'; sw.res = r; sw.pv = null; sw.ok = false; refresh().then(render);
-    });
-  }
-  function doSwitchFinish() {
-    runJob('switch_finish', {}).then(function () { refresh().then(function () { sw = { stage: 'idle', pv: null, res: null, msg: '', low: false, ok: false, again: false, uploadMsg: '' }; render(); }); });
   }
 
   // ---- make

@@ -132,6 +132,153 @@ def inspect_update(zip_path, layout: PCLayout) -> dict:
             'runs': manifest.get('runs') or [], 'files': len(entries), 'zip_sha256': zsha}
 
 
+# ---------------------------------------------------------------- N16: a later, complete update folder whose earlier part was already saved
+
+
+def _ledger_saves(state: Path) -> list:
+    out = []
+    try:
+        for line in (Path(state) / 'ledger.jsonl').read_text(encoding='utf-8').splitlines():
+            try:
+                e = json.loads(line)
+            except ValueError:
+                continue
+            if isinstance(e, dict) and e.get('verb') == 'save' and e.get('before_sha') and e.get('after_sha'):
+                out.append(e)
+    except OSError:
+        pass
+    return out
+
+
+def chain_explains(layout: PCLayout, manifest_sha: str, folder_runs) -> list | None:
+    """N16: the workbook now is the one the update was made from plus saves of runs of THIS folder, nothing else. Walks the ledger back from the workbook's
+    checksum now: each step must be a save whose workbook-before/after checksums link up and whose run is one of the folder's runs, and the walk must
+    end exactly at the checksum the update was made from. Returns the ledger entries used, or None (a hand edit, another update or a "Save my edits"
+    in between, a workbook that does not match the ledger)."""
+    if not layout.workbook.is_file():
+        return None
+    cur = F.sha256_file(layout.workbook)
+    saves, used, runs = _ledger_saves(layout.state), [], set(folder_runs or [])
+    while cur != manifest_sha:
+        e = next((x for x in reversed(saves) if x['after_sha'] == cur and x not in used), None)
+        if e is None or e.get('run') not in runs or len(used) > 100:
+            return None
+        used.append(e)
+        cur = e['before_sha']
+    return used or None
+
+
+def _strings(o, out):
+    if isinstance(o, str):
+        out.add(o)
+    elif isinstance(o, dict):
+        for k, v in o.items():
+            _strings(k, out)
+            _strings(v, out)
+    elif isinstance(o, list):
+        for v in o:
+            _strings(v, out)
+
+
+def skip_saved_runs(layout: PCLayout, update_id: str, saved: dict, *, chain=None) -> dict:
+    """N16: the staged update is a later, complete folder (manifest `replaces` / `folder_number` > 1) and some of its runs were already saved. Takes the
+    runs not saved yet and leaves the saved ones out: their run documents and everything only they own (pages, reprints, authors, translations, tones, edits,
+    story PDFs, library/ files and their `names` items) are removed from the STAGED copy (the zip itself is untouched). A document that an unsaved run
+    also names stays. When `chain` (chain_explains) shows the workbook changed only by those earlier saves, the staged manifest's fingerprint becomes
+    the workbook's own, and the original is kept in source.earlier_workbook_sha256. Writes only inside staging/<id>/. Returns
+    {skipped: {run: when}, runs: [...], removed: {...}, fingerprint_rebased: bool}."""
+    stage = _stage(layout, update_id)
+    mpath = stage / 'manifest.json'
+    m = json.loads(mpath.read_text(encoding='utf-8'))
+    runs = list(m.get('runs') or [])
+    gone = [r for r in runs if r in saved]
+    keep = [r for r in runs if r not in saved]
+    if not gone or not keep:
+        raise ValueError('skip_saved_runs needs some runs saved and some not')
+    own = {}
+    for r in runs:
+        s = set()
+        _strings(json.loads((stage / 'db' / 'runs' / f'{r}.json').read_text(encoding='utf-8')), s)
+        own[r] = s
+    kept_s = set().union(*(own[r] for r in keep))
+    gone_s = set().union(*(own[r] for r in gone))
+    removed, gone_names = {}, set()
+
+    def drop(p: Path, what, zip_name=None):
+        if p.is_file():
+            p.unlink()
+            removed.setdefault(what, []).append(p.name)
+        if zip_name:
+            gone_names.add(zip_name)
+
+    def owned_by_gone(doc_id, doc):
+        if doc_id in kept_s:
+            return False
+        if doc_id in gone_s:
+            return True
+        nb = doc.get('nb') if isinstance(doc, dict) else None
+        pq = doc.get('pq') if isinstance(doc, dict) else None
+        f = str((nb or {}).get('file') or (pq or {}).get('file') or '')
+        return bool(f) and f not in kept_s and f in gone_s
+    for coll in ('pages', 'reprints', 'authors', 'translations', 'tones', 'edits'):
+        d = stage / 'db' / coll
+        for f in sorted(d.glob('*.json')) if d.is_dir() else []:
+            try:
+                doc = json.loads(f.read_text(encoding='utf-8'))
+            except (OSError, ValueError):
+                continue
+            if owned_by_gone(f.stem, doc):
+                drop(f, coll, f'db/{coll}/{f.name}')
+    for r in gone:
+        drop(stage / 'db' / 'runs' / f'{r}.json', 'runs', f'db/runs/{r}.json')
+    # story PDFs (db/files/<id>.pdf) no remaining document names
+    still = set()
+    for coll in ('pages',):
+        for f in (stage / 'db' / coll).glob('*.json') if (stage / 'db' / coll).is_dir() else []:
+            doc = json.loads(f.read_text(encoding='utf-8'))
+            for k in ('nb', 'pq'):
+                if isinstance(doc.get(k), dict) and doc[k].get('file'):
+                    still.add(Path(str(doc[k]['file'])).name)
+    for r in keep:
+        s = set()
+        _strings(json.loads((stage / 'db' / 'runs' / f'{r}.json').read_text(encoding='utf-8')), s)
+        still |= {Path(x).name for x in s if x.startswith('files/')}
+    for f in sorted((stage / 'db' / 'files').glob('*.pdf')) if (stage / 'db' / 'files').is_dir() else []:
+        if f.name not in still:
+            drop(f, 'files', f'files/{f.name}')
+    # names block: the items / releases of the saved runs and their library/ files
+    names = m.get('names')
+    lib_gone = []
+    if isinstance(names, dict):
+        items = names.get('items') or []
+        rels = names.get('releases') or []
+        for x in items + rels:
+            if x.get('run') in saved:
+                lib_gone += [x[k] for k in ('copy', 'raw', 'pdf') if x.get(k)]
+        names = dict(names, items=[x for x in items if x.get('run') not in saved], releases=[x for x in rels if x.get('run') not in saved])
+        for pf in {x.get('pdf_for') for x in items if x.get('run') in saved and x.get('pdf_for')}:
+            if Path(str(pf)).name not in still:
+                drop(stage / 'db' / str(pf), 'files')
+        for lp in lib_gone:
+            drop(stage / lp, 'library', lp)
+    files = {k: v for k, v in (m.get('files') or {}).items() if k not in gone_names}
+    m2 = dict(m, runs=keep, files=files)
+    if names is not None:
+        m2['names'] = names
+    part = {'skipped_runs': {r: saved[r] for r in gone}, 'taken_runs': keep, 'original_runs': runs}
+    rebased = False
+    if chain:
+        part['earlier_workbook_sha256'] = m['source']['workbook_sha256']
+        part['earlier_saves'] = [e.get('after_sha') for e in chain][::-1]
+        m2['source'] = dict(m['source'], workbook_sha256=F.sha256_file(layout.workbook))
+        rebased = True
+    m2['partial'] = part
+    tmp = mpath.with_name('manifest.json.new')
+    tmp.write_bytes(F.dumps_pretty(m2))
+    FR.replace(tmp, mpath)
+    return {'skipped': {r: saved[r] for r in gone}, 'runs': keep, 'removed': {k: len(v) for k, v in removed.items()}, 'fingerprint_rebased': rebased}
+
+
 def reject(layout: PCLayout, update_id: str) -> Path:
     """Move an unpacked update that the user turned down to updates/rejected/ (kept, never deleted)."""
     return move_unique(layout.updates / 'staging' / update_id, layout.updates / 'rejected')

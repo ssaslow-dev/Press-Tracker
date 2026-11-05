@@ -27,10 +27,8 @@ Tick each line as you go. Nothing here changes your Mac master or library; the P
 - [ ] **Copy and set up.** The page reloads with your tracker.
 - [ ] Look around: Home, Clips, a few stories, a saved copy, View original on a print story.
 
-## 3. Switch-over changes (one time only)
-- [ ] Open the Switch-over changes screen; read every preview.
-- [ ] Decide row 01920 (remove, or split into its own story) and row 03486 (author Marisa Kendall).
-- [ ] Wait for Claude's OK (last tests), then apply. Note anything it reports.
+## 3. Switch-over changes (done; the screen was removed in version 3, D1)
+- The one-time changes (unverified reprints, press-release marks, the Other files column, approved data-check fixes) were applied on switch-over day. A newly set-up keeper copy needs nothing here.
 
 ## 4. First real update, with Claude (A8)
 - [ ] Tracker files > Make "for Update" file.

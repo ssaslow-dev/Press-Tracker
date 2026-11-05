@@ -3,7 +3,7 @@
 NAMING-v2: a saved copy is `<nb|pq|ws><Article ID><o|r>-s<Story ID>[-suffix].<html|pdf>` (o = the row is an Original, r = a Reprint). A file belongs to the row whose
 Article ID (or, for a print file, Print Article ID) is in its name. After merges and swaps a row's Story ID or role changes and the old name goes stale.
 
-This module only PLANS (read only) and moves files; the workbook is changed by switchover.run_cell_step (backup, staged copy, cell-by-cell check, swap, ledger).
+This module only PLANS (read only) and moves files; the workbook is changed by cell_steps.run_cell_step (backup, staged copy, cell-by-cell check, swap, ledger).
 
   plan(lay, only_aids=None)  -> {renames: [...], changes: [cell changes], collisions, shared, missing, unnamed, counts, digest, lines}
   move_files(lay, plan)      -> the files (and their _original_html raw page and .ocr.txt partner) moved together; a journal makes it undoable

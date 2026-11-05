@@ -7,6 +7,7 @@ import importlib.util
 import json
 import os
 import shutil
+import subprocess
 import sys
 import unittest
 from pathlib import Path
@@ -137,6 +138,80 @@ class Install(unittest.TestCase):
         shutil.rmtree(self.src / 'python', ignore_errors=True) if False else None
         (self.tgt / 'python').rename(self.tgt / 'python-arm64')
         self.assertIn('different computers', str(self.run_iu(self.tgt)))
+
+
+class InstallOverVersion1Layout(unittest.TestCase):
+    """Version 3 installed straight over a version-1 tracker: no installer files in the old folder, a finished switch-over in data\\, two hand-replaced station files,
+    and precompiled .pyc files that do not check their source (unchecked-hash). The old app\\ and python\\ are moved away as a whole, so a stale .pyc cannot shadow
+    the new code, and the new app\\ ships no .pyc of its own for the program parts."""
+
+    def setUp(self):
+        shutil.rmtree(BASE, ignore_errors=True)
+        BASE.mkdir(parents=True)
+        self.src = make_source(BASE / 'new' / 'AJG Tracker', 'NEW-VERSION')
+        self.tgt = BASE / 'v1' / 'AJG Tracker'
+        self.tgt.parent.mkdir(parents=True)
+        shutil.copytree(T.BUILD, self.tgt, symlinks=True, copy_function=os.link)
+        for rel in ('Install update.cmd', 'Install update.command', 'app/station/install_update.py', 'app/APP_FILES.sha256', 'app/station/selfcheck.py'):
+            (self.tgt / rel).unlink(missing_ok=True)          # a version-1 folder has no installer
+        for d in ('workbook', 'state', 'db'):
+            (self.tgt / 'data' / d).mkdir(parents=True, exist_ok=True)
+        (self.tgt / 'data' / 'workbook' / 'AJG Coverage - NewsBank.xlsx').write_bytes(b'workbook-bytes' * 50)
+        (self.tgt / 'data' / 'state' / 'switchover.json').write_text(json.dumps({'finished_at': '2026-11-03T12:00:00'}))
+        (self.tgt / 'data' / 'state' / 'ledger.jsonl').write_text('{"verb": "init"}\n')
+        for rel in ('app/station/station_cli.py', 'app/station/rename_files.py'):      # the two hand-replaced files
+            p = self.tgt / rel
+            b = p.read_bytes()
+            p.unlink()
+            p.write_bytes(b + b'\n# HAND-REPLACED\n')
+        shutil.rmtree(self.tgt / 'app' / 'station' / '__pycache__', ignore_errors=True)       # deleted by hand, as on his PC
+        import py_compile
+        self.stale = []
+        for d in ('server', 'saver', 'updatefolder', 'station'):
+            folder = self.tgt / 'app' / d
+            src = folder / ('common.py' if d == 'station' else next(p.name for p in sorted(folder.glob('*.py'))))
+            tmp = BASE / f'stale_{d}.py'
+            tmp.write_text('STALE_PYC = True\n')
+            pyc = folder / '__pycache__' / (src.stem + '.cpython-%d%d.pyc' % sys.version_info[:2])
+            pyc.parent.mkdir(exist_ok=True)
+            py_compile.compile(str(tmp), cfile=str(pyc), doraise=True, invalidation_mode=py_compile.PycInvalidationMode.UNCHECKED_HASH)
+            self.stale.append((folder, src.stem))
+        self.iu = load_iu()
+        self.iu.SRC = self.src
+        self.iu.FR._sleep = lambda s: None
+        self.data0 = fingerprint(self.tgt / 'data')
+
+    def tearDown(self):
+        shutil.rmtree(BASE, ignore_errors=True)
+
+    def stale_wins(self, root, folder_rel, mod):
+        """True when importing `mod` from that folder picks the stale precompiled copy (a marker only the stale file has)"""
+        code = f"import sys; sys.path.insert(0, {str(root / folder_rel)!r}); import {mod}; print(hasattr({mod}, 'STALE_PYC'))"
+        r = subprocess.run([str(root / 'python' / 'bin' / 'python'), '-B', '-I', '-c', code], capture_output=True, text=True, cwd=root)
+        return r.stdout.strip() == 'True'
+
+    def test_stale_pyc_cannot_shadow_the_new_code(self):
+        for folder, mod in self.stale:                                  # the trap is real: before the install the stale copy wins
+            self.assertTrue(self.stale_wins(self.tgt, folder.relative_to(self.tgt), mod), str(folder))
+        r = self.iu.main([str(self.tgt)])
+        self.assertEqual(r, 0)
+        for folder, mod in self.stale:
+            self.assertFalse(self.stale_wins(self.tgt, folder.relative_to(self.tgt), mod), str(folder))
+        self.assertTrue((self.tgt / 'app/station/common.py').read_text().rstrip().endswith('# NEW-VERSION'))
+        self.assertNotIn('HAND-REPLACED', (self.tgt / 'app/station/station_cli.py').read_text())
+        self.assertNotIn('HAND-REPLACED', (self.tgt / 'app/station/rename_files.py').read_text())
+        for d in ('server', 'saver', 'updatefolder', 'station', 'pipeline'):
+            self.assertEqual(list((self.tgt / 'app' / d).rglob('*.pyc')), [], d + ' ships no precompiled copies of its own')
+        pv = next((self.tgt / '_previous_version').iterdir())
+        self.assertTrue(any((pv / 'app' / 'server' / '__pycache__').glob('*.pyc')), 'the old precompiled copies are kept with the old program, not deleted')
+        self.assertTrue((pv / 'app' / 'station' / 'station_cli.py').read_text().endswith('# HAND-REPLACED\n'))
+
+    def test_data_untouched_and_installer_files_arrive(self):
+        self.assertEqual(self.iu.main([str(self.tgt)]), 0)
+        self.assertEqual(fingerprint(self.tgt / 'data'), self.data0)
+        self.assertTrue((self.tgt / 'app/station/install_update.py').is_file())
+        self.assertTrue((self.tgt / 'app/APP_FILES.sha256').is_file())
+        self.assertEqual(json.loads((self.tgt / 'data/state/switchover.json').read_text())['finished_at'], '2026-11-03T12:00:00')
 
 
 if __name__ == '__main__':

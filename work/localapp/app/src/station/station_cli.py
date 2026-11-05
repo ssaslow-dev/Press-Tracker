@@ -5,7 +5,6 @@
 Verbs: make | inspect --zip F | preview --update ID | save --update ID --token T | reject --update ID | init --sha SHA | rebuild
        edits_preview | edits_save --update ID --token T   (PCEDITS-v1: only the tracker's own pending edits and removals, no update zip)
        setup_check --folder F [--list L] | setup_run --folder F [--list L] [--repairs]   (SWITCHOVER-v1: "Set up from the Mac library")
-       drop_preview | drop_apply --token T   (DROPUNVERIFIED-v1: "Remove unverified reprints")
 
 Wrapper around the finished pieces (APP-WRAP): updatefolder/make_for_update.py and take_update.py start their children with
 `python -I` only; here their `subprocess` is replaced by a shim that adds `-B -X utf8` (UTF-8 on Windows, no .pyc written on a
@@ -33,8 +32,8 @@ import plain                # noqa: E402
 import post_save            # noqa: E402
 import refresh as R         # noqa: E402
 import setup_mac as SM      # noqa: E402
-import drop_unverified as DR   # noqa: E402
-import switchover as SW   # noqa: E402
+import cell_steps as CS   # noqa: E402  (the save's rename hook)
+import rename_files as RF   # noqa: E402
 import article_copies as AC   # noqa: E402
 
 PY_FLAGS = ['-B', '-X', 'utf8', '-I']
@@ -75,7 +74,7 @@ def boot(lay):
     os.environ['AJG_NO_NETWORK'] = '1'
     os.environ['AJG_LINK_PHOTOS'] = '1'
     os.environ['AJG_PRINT_LIB'] = str(lay.library)      # PRINTORIG-v1 (patch 26): build_data lists print originals found by name in the library
-    os.environ['AJG_RESERVED_IDS'] = str(DR.reserved_path(lay))     # DROPUNVERIFIED-v1: patches 19 and 20 read it (a missing file changes nothing)
+    os.environ['AJG_RESERVED_IDS'] = str(lay.state / 'reserved_ids.json')     # DROPUNVERIFIED-v1: patches 19 and 20 read it (a missing file changes nothing)
     tmp = lay.data / 'tmp'
     tmp.mkdir(parents=True, exist_ok=True)
     tempfile.tempdir = str(tmp)
@@ -162,6 +161,17 @@ def refuse_saved_line(hit):
             'stories twice, so it was refused. Nothing was changed. Make a new "for Update" file and run the Update station again.')
 
 
+def skip_lines(sk):
+    """N16: plain sentences for the preview about a later, complete update folder whose earlier part was already saved"""
+    done = sorted(sk['skipped'])
+    lines = [f'This update folder replaces an earlier one that was already saved. Left out (already in the workbook, never added twice): '
+             + ', '.join(f'run {x} (saved {str(sk["skipped"][x] or "earlier")[:10]})' for x in done) + '.',
+             f'Taken now: {len(sk["runs"])} run(s) that were not saved yet ({", ".join(sk["runs"])}).']
+    if sk.get('rebased'):
+        lines.append('The workbook differs from the "for Update" file only by the earlier saves of this same update, so no fingerprint warning is needed.')
+    return lines
+
+
 def do_inspect(lay, TU, a):
     import formats as F
     try:
@@ -171,18 +181,41 @@ def do_inspect(lay, TU, a):
     except (OSError, ValueError) as e:
         return out({'ok': False, 'line': f'The update file could not be read: {e}'[:300]}, 4)
     hit = already_saved(lay, r['runs'])
+    skipped = None
     if hit:
-        try:
-            TU.reject(lay, r['update_id'])
-        except OSError:
-            pass
-        return out({'ok': False, 'refused': 'ALREADY_SAVED', 'line': refuse_saved_line(hit)}, 7)
+        mf = r['manifest']
+        later = bool(mf.get('replaces')) or int(mf.get('folder_number') or 1) > 1      # N16: a later, complete folder (its earlier part was saved)
+        if later and [x for x in r['runs'] if x not in hit]:
+            try:
+                chain = TU.chain_explains(lay, mf['source']['workbook_sha256'], r['runs'])
+                sk = TU.skip_saved_runs(lay, r['update_id'], hit, chain=chain)
+            except (OSError, ValueError, KeyError) as e:
+                try:
+                    TU.reject(lay, r['update_id'])
+                except OSError:
+                    pass
+                return out({'ok': False, 'refused': 'ALREADY_SAVED', 'line': refuse_saved_line(hit) + f' (The new runs could not be separated: {e!s})'[:200]}, 7)
+            mf = json.loads((Path(r['stage']) / 'manifest.json').read_text(encoding='utf-8'))
+            r.update(manifest=mf, runs=sk['runs'], fingerprint=TU.fingerprint_status(mf['source']['workbook_sha256'], lay.workbook))
+            r['proceed'] = r['fingerprint']['status'] == 'match'
+            skipped = dict(sk, rebased=sk['fingerprint_rebased'])
+        else:
+            try:
+                TU.reject(lay, r['update_id'])
+            except OSError:
+                pass
+            return out({'ok': False, 'refused': 'ALREADY_SAVED', 'line': refuse_saved_line(hit)}, 7)
     res = {'ok': True, 'update_id': r['update_id'], 'fingerprint': r['fingerprint'], 'runs': r['runs'], 'files': r['files'],
            'created_at': r['manifest'].get('created_at')}
+    if skipped:
+        res['skipped_runs'] = skipped['skipped']
+        res['skip_lines'] = skip_lines(skipped)
     if not r['proceed']:
-        res.update(stage='needs_confirm', line=plain.fingerprint_line(r['fingerprint']))
+        res.update(stage='needs_confirm', line=(' '.join(res.get('skip_lines') or []) + ' ' + plain.fingerprint_line(r['fingerprint'])).strip())
         return out(res)
     res.update(preview_job(lay, TU, r['update_id'], False))
+    if skipped and isinstance(res.get('lines'), list):
+        res['lines'] = res['skip_lines'] + res['lines']        # the preview says plainly what was left out
     res['stage'] = 'previewed' if res.get('ok') else 'refused'
     return out(res)
 
@@ -221,7 +254,7 @@ def do_save(lay, TU, a):
         with C.AppLock(lay.state, 'save'):
             summ = TU.edits_summary(lay)
             try:
-                roles0 = SW.RF.story_roles(lay.workbook)           # RENAME-v1: who has which story and role before the save
+                roles0 = RF.story_roles(lay.workbook)           # RENAME-v1: who has which story and role before the save
             except Exception:                                      # noqa: BLE001  (the rename pass is skipped, the save still runs)
                 roles0 = None
             res = TU.save(lay, a.update, a.token, accept_mismatch=a.accept_mismatch, rebuild=True, edits_only=edits_only)
@@ -229,7 +262,7 @@ def do_save(lay, TU, a):
                 res['sync'] = post_save.sync(lay, dict(res, update_id=a.update))
                 if roles0 is not None and not edits_only:
                     try:                                           # RENAME-v1: files of rows whose story or role changed get the right name (nothing is deleted)
-                        res['renamed_files'] = SW.auto_rename(lay, lambda note: TU.init_baseline(lay, note=note)['exit_code'], roles0)
+                        res['renamed_files'] = CS.auto_rename(lay, lambda note: TU.init_baseline(lay, note=note)['exit_code'], roles0)
                         if res['renamed_files'].get('renamed'):
                             res['site_rebuilt'] = False        # the workbook changed again: build the page the plain way below
                     except Exception as e:                     # noqa: BLE001  (reported, never hidden: the save itself is done)
@@ -416,7 +449,7 @@ def do_setup_run(lay, TU, a):
             log = {'at': C.utc_now().isoformat(timespec='seconds'), 'verb': 'setup', 'folder': str(a.folder), 'list': a.list, **{k: r[k] for k in ('workbook_sha256', 'files_copied', 'files_skipped_same', 'listed', 'extra', 'extra_names', 'backup')}, 'summary': summ}
             (lay.state / 'logs').mkdir(parents=True, exist_ok=True)
             (lay.state / 'logs' / f'setup-{C.stamp()}.json').write_text(json.dumps(log, indent=1), encoding='utf-8')
-            try:        # REVIEW_3 finding 5: the setup log (it opens the Switch-over changes screen) is written BEFORE the page build, so a failed build cannot hide the screen
+            try:        # REVIEW_3 finding 5: the setup log is written BEFORE the page build, so a failed build cannot hide the screen
                 rebuild_page(lay)
             except Exception as e:          # noqa: BLE001
                 return out({'ok': False, 'written': True, 'line': 'The files were copied and the workbook is accepted, but the page could not be built: ' + str(e)[:200]
@@ -439,105 +472,10 @@ def do_setup_run(lay, TU, a):
     return out({'ok': True, 'written': True, 'line': 'The tracker is set up.', 'lines': lines, 'summary': summ, **r})
 
 
-def drop_lines(p):
-    return p['lines']
-
-
-def do_drop_preview(lay, TU, a):
-    try:
-        p = DR.preview(lay)
-    except DR.DropRefused as e:
-        return out({'ok': False, 'line': e.msg}, 2)
-    ws = C.workbook_state(lay)
-    p['stage'] = 'previewed'
-    if p['can_drop'] and (ws.get('baseline') != 'ok' or ws.get('excel_open')):
-        p['can_drop'] = False
-        p['warnings'] = ['Excel has the workbook open. Close it first.' if ws.get('excel_open') else
-                         'The workbook is not the one the tracker last saved or accepted. Use "Accept the workbook as it is now" first.']
-    return out(p)
-
-
-def do_drop_apply(lay, TU, a):
-    def init_fn(note):
-        return TU.init_baseline(lay, note=note)['exit_code']
-    try:
-        with C.AppLock(lay.state, 'drop_unverified'):
-            r = DR.apply(lay, a.token or '', init_fn)
-            try:
-                r['page_rebuild'] = rebuild_page(lay)
-            except Exception as e:          # noqa: BLE001
-                r['page_rebuild'] = {'ok': False, 'error': repr(e)[:300]}
-    except C.AppLockBusy as e:
-        return out({'ok': False, 'locked': True, 'written': False, 'line': C.busy_line(e.info, e.age)})
-    except DR.DropRefused as e:
-        return out({'ok': False, 'written': e.code in ('COMMIT_FAILED',), 'line': e.msg}, 2)
-    lines = [f'{r["n_rows"]} Coverage rows and {r["n_av_rows"]} Audio & video rows removed for good.',
-             f'{len(r["files_deleted"])} saved files deleted from the library' + (f'; {len(r["files_failed"])} could not be deleted' if r['files_failed'] else '')
-             + (f'; {len(r["files_kept"])} kept (another row names them)' if r['files_kept'] else '') + '.',
-             f'Article IDs up to {r["article_floor"]:05d} and Story IDs up to s{r["story_floor"]:05d} stay reserved.',
-             f'Backup before the step: {r["backup"]}. The list of rows and files is in data\\state\\logs\\{r["log"]}.']
-    warn = []
-    if r.get('ledger_error'):
-        warn.append(r['ledger_error'] + '. Use "Accept the workbook as it is now" under Repairs.')
-    if not (r.get('page_rebuild') or {}).get('ok'):
-        warn.append('The page could not be rebuilt: use "Rebuild the page" under Repairs.')
-    return out({'ok': True, 'written': True, 'line': 'Done', 'headline': f'{r["n_rows"]} unverified reprints removed', 'lines': lines, 'warnings': warn, **r})
-
-
-def _payload(a):
-    try:
-        d = json.loads(a.payload or '{}')
-    except ValueError:
-        d = {}
-    return d if isinstance(d, dict) else {}
-
-
-def do_switch_preview(lay, TU, a):
-    d = _payload(a)
-    try:
-        return out(SW.preview_all(lay, include_low=bool(d.get('include_low')), datafix_files=d.get('files')))
-    except SW.SwitchRefused as e:
-        return out({'ok': False, 'line': e.msg}, 2)
-
-
-def do_switch_apply(lay, TU, a):
-    d = _payload(a)
-
-    def init_fn(note):
-        return TU.init_baseline(lay, note=note)['exit_code']
-    try:
-        with C.AppLock(lay.state, 'switchover'):
-            r = SW.apply_steps(lay, d.get('steps') or [], d.get('digests') or {}, init_fn, include_low=bool(d.get('include_low')), datafix_files=d.get('files'))
-            try:
-                r['page_rebuild'] = rebuild_page(lay)       # once, after the workbook has changed
-            except Exception as e:          # noqa: BLE001
-                r['page_rebuild'] = {'ok': False, 'error': repr(e)[:300]}
-    except C.AppLockBusy as e:
-        return out({'ok': False, 'locked': True, 'written': False, 'line': C.busy_line(e.info, e.age)})
-    except (SW.SwitchRefused, DR.DropRefused, SW.OF.OtherFilesRefused) as e:
-        return out({'ok': False, 'written': False, 'line': e.msg}, 2)
-    warn = [] if (r.get('page_rebuild') or {}).get('ok') else ['The page could not be rebuilt: use "Rebuild the page" under Repairs.']
-    return out({'ok': True, 'written': True, 'line': 'Done', 'warnings': warn, **r})
-
-
-def do_switch_finish(lay, TU, a):
-    return out(SW.finish(lay))
-
-
-def do_switch_remove_file(lay, TU, a):
-    nm = str(_payload(a).get('name') or '')
-    f = lay.data / 'switchover' / 'datafix' / nm
-    moved = lay.data / 'switchover' / 'datafix_removed'
-    if f.is_file() and re.fullmatch(r'[A-Za-z0-9._ ()-]{1,120}\.csv', nm):
-        moved.mkdir(parents=True, exist_ok=True)
-        C.replace_file(f, moved / f'{C.stamp()}-{nm}')
-    return out({'ok': True})
-
-
 def main(argv=None):
     ap = argparse.ArgumentParser()
     ap.add_argument('verb', choices=['make', 'inspect', 'preview', 'save', 'reject', 'init', 'rebuild', 'refresh_make', 'refresh_take', 'edits_preview', 'edits_save',
-                                         'setup_check', 'setup_run', 'rebuild_copies', 'drop_preview', 'drop_apply', 'switch_preview', 'switch_apply', 'switch_finish', 'switch_remove_file'])
+                                         'setup_check', 'setup_run', 'rebuild_copies'])
     ap.add_argument('--root', required=True)
     ap.add_argument('--zip')
     ap.add_argument('--update')
@@ -557,16 +495,14 @@ def main(argv=None):
         post_save.recover(lay)       # a crash inside the last post-save sync must not leave the pipeline list refusing every job (REVIEW_2 finding 5)
     except Exception:       # noqa: BLE001
         pass
-    if R.role(lay) != 'keeper' and a.verb in ('inspect', 'preview', 'save', 'reject', 'init', 'edits_preview', 'edits_save', 'setup_check', 'setup_run', 'drop_preview', 'drop_apply', 'switch_preview', 'switch_apply', 'switch_finish', 'switch_remove_file'):
+    if R.role(lay) != 'keeper' and a.verb in ('inspect', 'preview', 'save', 'reject', 'init', 'edits_preview', 'edits_save', 'setup_check', 'setup_run'):
         return out({'ok': False, 'written': False, 'line': _reader_only_line('take in updates, save edits, accept the workbook, set up from the Mac library or remove unverified reprints')}, 2)
     try:
         return {'make': lambda: do_make(lay, MFU, a), 'inspect': lambda: do_inspect(lay, TU, a), 'preview': lambda: do_preview(lay, TU, a),
                 'save': lambda: do_save(lay, TU, a), 'edits_preview': lambda: do_edits_preview(lay, TU, a), 'edits_save': lambda: do_save(lay, TU, a), 'reject': lambda: do_reject(lay, TU, a), 'init': lambda: do_init(lay, TU, a),
                 'rebuild': lambda: do_rebuild(lay, TU, a), 'refresh_make': lambda: do_refresh_make(lay, TU, a),
                 'refresh_take': lambda: do_refresh_take(lay, TU, a), 'setup_check': lambda: do_setup_check(lay, TU, a),
-                'setup_run': lambda: do_setup_run(lay, TU, a), 'rebuild_copies': lambda: do_rebuild_copies(lay, TU, a), 'drop_preview': lambda: do_drop_preview(lay, TU, a), 'drop_apply': lambda: do_drop_apply(lay, TU, a),
-                'switch_preview': lambda: do_switch_preview(lay, TU, a), 'switch_apply': lambda: do_switch_apply(lay, TU, a), 'switch_finish': lambda: do_switch_finish(lay, TU, a),
-                'switch_remove_file': lambda: do_switch_remove_file(lay, TU, a)}[a.verb]()
+                'setup_run': lambda: do_setup_run(lay, TU, a), 'rebuild_copies': lambda: do_rebuild_copies(lay, TU, a)}[a.verb]()
     except Exception as e:                                # noqa: BLE001
         import traceback
         where = ' | '.join(f'{Path(f.filename).name}:{f.lineno} {f.name}' for f in traceback.extract_tb(e.__traceback__)[-4:])
