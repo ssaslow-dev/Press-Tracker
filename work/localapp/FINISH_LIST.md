@@ -32,7 +32,7 @@ One list for everything left. Claude keeps it current after every step and repor
 | N16 | PC: a later, complete update folder whose earlier part was already saved is refused today (ALREADY_SAVED; person must rerun). Make the PC take the runs it has not saved yet and skip the saved ones | Claude | done in version 3 (2026-11-05): the saved runs are listed as left out in the preview; the fingerprint warning is dropped only when the ledger shows the earlier part of this same folder changed the workbook |
 | N17 | PC outlet_rules alias: "Daily News of Los Angeles" = "Los Angeles Daily News" (station already maps it) | Claude | done in version 3 (2026-11-05) |
 | N18 | Station fixes from the first real run (STFIX-v1): page size check, outlets from the source, early-ended web runs shown, attached pages keyed | Claude | done: station published 2026-11-05 (1793850747-e33f) |
-| N19 | For-Update file: add a page column so print pages can match existing tracker rows by outlet + date + page | Claude | next PC build (optional) |
+| N19 | For-Update file: page column so print pages can match existing tracker rows by outlet + date + page | Claude | optional: skipped for now (Sammy 2026-11-05); revisit if pages of known stories keep landing in Unlinked print pages |
 | N8 | Data > Reach and medium: the indented Medium sub-rows no longer spill 18 px past the card's right edge (PC page only, TIDY-v1 patch 15) | Claude | done |
 | N9 | List tables: count columns (numbers and headers) centred on Outlets, Reporters, Press releases, Bills, Story travel and embedded rows tables | Claude | done |
 | N10 | List tables' left and right edges line up with the controls above (pixel check at 4 window sizes: already exact, no change needed) | Claude | checked |
