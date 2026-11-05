@@ -1,0 +1,17 @@
+--- a/code/sheet_task.py
++++ b/code/sheet_task.py
+@@ -2040,6 +2040,9 @@
+             cands = (RR.candidates(o, self.originals(), credited=True) + RR.candidates(o, kept, credited=True)) if credited \
+                 else (RR.candidates(o, self.originals()) + RR.candidates(o, kept))
++            # OWNCREDIT-v1 (PC): pair_class's credit signal uses this find's own credits. `cred` pools every find of the run, so one find's
++            # credit (San Mateo -> CalMatters) made another (an AP story in the Newtown Bee) "credit" CalMatters with 0% shared text.
++            own_cred = RR.origin_credits([o], {id(o): tx(o)})[0] if hasattr(RR, 'origin_credits') else frozenset()
+             for c in cands:
+                 if '_text' in c:
+                     ot = c['_text']
+@@ -2048,5 +2051,5 @@
+                 v = self.compare(o, ft, c, ot)
+                 if v2:
+-                    pc = RR.pair_class(c, o, v, cred, self.home_of, {id(o): tx(o)})
++                    pc = RR.pair_class(c, o, v, own_cred, self.home_of, {id(o): tx(o)})
+                     if c.get('_nocopy') and c.get('_og_of') == (o.get('Article ID') or '') and pc['kind'] != 'never':
