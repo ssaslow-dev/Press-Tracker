@@ -34,8 +34,10 @@
 - Use PowerShell.
 - Send any data anywhere.
 
+**Installing a newer version:** the person unzips the new zip in another folder and runs `Install update.cmd` there. It uses only the new folder's own `python\python.exe` and copies files on the same computer into the existing tracker folder (replacing `app\`, `python\` and the start files, and keeping the old ones in `_previous_version\`); it never touches `data\`. It makes no network connection except a check that nothing is already listening on 127.0.0.1 port 8765. Nothing else is new for IT: the same folder, the same files, no installs.
+
 **To remove it:** close its window and delete the folder.
 
 **Source:** full source, build scripts and checksums are available on request.
 
-**Fingerprint:** SHA-256 of the delivered zip `AJG_Tracker_windows_final.zip` (132.6 MB): `e7655931258e68233bee698e0dd8a41de4e9c329e3a4745b02dcc2f56a2f3219`
+**Fingerprint:** SHA-256 of the delivered zip `AJG_Tracker_windows_v2.zip` (132.3 MB): `ff15b1c99efa19a0d98a7eb135d41cd419377ad1186181a1b75e3981911f1f47`
