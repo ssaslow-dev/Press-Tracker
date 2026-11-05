@@ -388,11 +388,7 @@ function autoTick() {
   const np = nbPickable(), pp = pqPickable();
   if (np.length) { const sg = np.map(x => x.key).join('|'); if (sg !== autoSig.nb) { autoSig.nb = sg; nbAdd(); } return; }
   if (pp.length) { const sg = pp.map(x => x.key).join('|'); if (sg !== autoSig.pq) { autoSig.pq = sg; pqAdd(); } return; }
-  const p = pending();
-  if (!p.fresh || p.running) { autoSig.pack = ''; return; }
-  const sg = p.runs.map(([id, v]) => id + ':' + v.seq).join('|');
-  if (sg !== autoSig.pack) { autoSig.pack = sg; autoSig.packAt = Date.now(); return; }
-  if (Date.now() - autoSig.packAt >= 6000 && sg !== autoSig.packed) { autoSig.packed = sg; pack(); }
+  /* Sammy 2026-11-05: the update folder is never downloaded by itself; the person presses "Download the update folder" (step 3). */
 }
 function updatePackUi() {
   if (!S.loaded) return;

@@ -462,7 +462,7 @@ async function nbAdd() {
     if (res.errors && res.errors.length) res.errors.forEach(e => wl.push(e));
     const nl = res.links.found;
     prog.textContent = 'Added: ' + fmtN(res.counts.stories) + ' new ' + (res.counts.stories === 1 ? 'story' : 'stories') + ', ' + fmtN(res.counts.reprint_rows) + ' reprint row' + (res.counts.reprint_rows === 1 ? '' : 's') + ' (' + fmtN(res.counts.rows) + ' spreadsheet rows)'
-      + (res.links.searched ? '; publisher’s own page found for ' + fmtN(nl) + ' of ' + fmtN(res.links.searched) : '') + (res.counts.left ? '; ' + fmtN(res.counts.left) + ' left out (listed below)' : '') + (S.auto ? '. The update folder downloads by itself when everything has finished.' : '. Download the update folder in step 3.');
+      + (res.links.searched ? '; publisher’s own page found for ' + fmtN(nl) + ' of ' + fmtN(res.links.searched) : '') + (res.counts.left ? '; ' + fmtN(res.counts.left) + ' left out (listed below)' : '') + '. Download the update folder in step 3 when everything has finished.';
     res.left.forEach(x => wl.push('Left out: ' + x.hl + ' (' + x.outlet + ', ' + x.date + '): ' + x.why));
     if (!res.saved) wl.push('The run could not be kept in this tab: the rows are in the list but will not be in the update folder.');
     if (wl.length) { warn.innerHTML = wl.map(x => '<li>' + esc(x) + '</li>').join(''); warn.hidden = false; }
