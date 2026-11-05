@@ -24,7 +24,8 @@ exports.start = async function (pageFile, claudeStub, opts) {
     const store = {};
     const fakeDb = { collection: n => ({ doc: id => ({ set: async d => { (store[n] = store[n] || {})[id] = JSON.parse(JSON.stringify(d)); }, delete: async () => {}, get: async () => { const d = (store[n] || {})[id]; return { exists: !!d, data: () => d }; } }),
       get: async () => ({ docs: Object.entries(store[n] || {}).map(([id, d]) => ({ id, data: () => d })) }), onSnapshot: cb => { cb({ docs: Object.entries(store[n] || {}).map(([id, d]) => ({ id, data: () => d })) }); return () => {}; } }) };
-    const mcp = { callTool: async (server, tool, input) => { window.__calls.push({ tool }); return { payload: { results: [] } }; } };
+    const mcpFn = OPT.mcpStub ? new Function('return ' + OPT.mcpStub)() : null;
+    const mcp = { callTool: async (server, tool, input) => { window.__calls.push({ tool }); if (mcpFn) return mcpFn(tool, input, window.__calls); return { payload: { results: [] } }; } };
     const stub = new Function('return ' + stubSrc)();
     const sample = async () => ({ text: '', truncated: false });
     sample.json = async (prompt, o) => { window.__prompts.push(String(prompt)); window.__calls.push({ tool: 'sample', images: o && o.images ? (Array.isArray(o.images) ? o.images.length : 1) : 0, sizes: o && Array.isArray(o.images) ? o.images.map(b => b.size) : [] }); return stub(String(prompt), o); };
@@ -38,6 +39,9 @@ exports.start = async function (pageFile, claudeStub, opts) {
   const page = await ctx.newPage(); const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message)); page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
   await page.goto(base + '/index.html'); await page.waitForSelector('#nbDrop');
+  /* STFIX 1: the station does not ask Claude about a page picture too small to read (NewsBank's real ones are 900 px wide). The tests that give Claude (a fake) a page to read switch that gate off, as if the picture were big enough;
+     the tests of the gate itself pass minLine: null. */
+  if (opts.minLine !== null) await page.evaluate(v => { window.__station.state.nb.minLinePx = v; }, opts.minLine === undefined ? 0 : opts.minLine);
   return { page, browser, server, outside, errors, close: async () => { await browser.close(); server.close(); } };
 };
 exports.loadFile = async (page, fuFile) => {

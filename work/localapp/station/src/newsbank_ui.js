@@ -96,9 +96,42 @@ function nbpAccept(res, layout) {
   }
   return { ok, seen: seen.length, why };
 }
+/* STFIX 1: is the page picture big enough to read? Measured from the picture inside the PDF (its pixels), never guessed. NewsBank's "Full Page" is the page as one picture of only about 900 x 1,780 pixels
+   (checked on Sammy's real batch: 14 pages, all the same size): on a broadsheet about 12.5 inches wide, 9-point body print has a line pitch of about 0.135 inch, so a line is width x 0.0108 pixels tall
+   (about 10 px at 900 px wide). Reading print needs lines of about 16 px or more (x-height of 6 px and up); enlarging a small picture adds no detail. So a picture under 1,500 px wide is not sent to Claude.
+   A page with no picture inside (an e-edition with a text layer) or a PDF that cannot be measured is not judged here: it is read as before. Phone photos and scans are 3,000+ px and pass. */
+const NBP_LINE_PER_PX = 0.0108, NBP_MIN_LINE_PX = 16;
+async function nbPicSize(bytes) {
+  try {
+    const { PDFDocument, PDFName, PDFDict, PDFNumber } = PDFLib, doc = await PDFDocument.load(bytes.slice(), { ignoreEncryption: true, updateMetadata: false, throwOnInvalidObject: false });
+    let best = null; const seen = new Set();
+    const walk = (res, depth) => {
+      if (!(res instanceof PDFDict) || depth > 2) return;
+      const xo = res.lookup(PDFName.of('XObject')); if (!(xo instanceof PDFDict)) return;
+      for (const [, ref] of xo.entries()) {
+        const o = xo.context.lookup(ref), d = o && o.dict; if (!d || seen.has(ref.toString())) continue; seen.add(ref.toString());
+        const sub = d.lookup(PDFName.of('Subtype'));
+        if (sub === PDFName.of('Form')) { walk(d.lookup(PDFName.of('Resources')), depth + 1); continue; }
+        if (sub !== PDFName.of('Image')) continue;
+        const w = d.lookup(PDFName.of('Width')), h = d.lookup(PDFName.of('Height'));
+        if (!(w instanceof PDFNumber) || !(h instanceof PDFNumber)) continue;
+        const W = w.asNumber(), H = h.asNumber(); if (!best || W * H > best.w * best.h) best = { w: W, h: H };
+      }
+    };
+    doc.getPages().forEach(pg => walk(pg.node.Resources(), 0));
+    return best;
+  } catch (e) { return null; }
+}
+function nbpTooSmall(pic) {
+  if (!pic) return null;
+  const px = Math.min(pic.w, pic.h) * NBP_LINE_PER_PX, min = NBS.minLinePx != null ? NBS.minLinePx : NBP_MIN_LINE_PX;
+  return px < min ? { w: pic.w, h: pic.h, line: Math.round(px * 10) / 10 } : null;
+}
 async function nbReadPrintOne(it, sample, lim) {
   const bytes = NBS.pdfs.get(it.fileId) && NBS.pdfs.get(it.fileId).bytes;
   if (!bytes) return { state: 'unavailable', note: 'the page’s PDF is not in this tab, so it could not be read', articles: [] };
+  const small = nbpTooSmall(await nbPicSize(bytes));
+  if (small) return { state: 'toosmall', articles: [], seen: 0, pic: small, note: 'NewsBank’s page picture is too small to read (' + small.w + ' x ' + small.h + ' pixels for a whole newspaper page, so a line of print is about ' + small.line + ' pixels tall; about ' + NBP_MIN_LINE_PX + ' are needed). Claude was not asked, and nothing is said about whether he is named on it' };
   const doc = await pdfjsLib.getDocument({ data: bytes.slice(), isEvalSupported: false, useSystemFonts: false, verbosity: 0, stopAtErrors: false, enableXfa: false, disableAutoFetch: true, disableStream: true }).promise;
   const arts = [], whys = []; let seen = 0, readable = 0, tried = 0, mast = null;
   try {
@@ -393,6 +426,7 @@ function nbDrawAll() {
 const nbPickable = () => NBS.items.filter(it => !NBS.added.has(it.key) && it.include && (it.screen.status === 'new' || it.screen.status === 'reprint' || it.screen.status === 'print_page' || (it.screen.status === 'known' && !!it.pdf)));
 async function nbAdd() {
   if (NBS.busy || (S.pq && S.pq.busy)) return;
+  if (trackerBusy()) { nbUiErr('The web search is running. The PDFs are added after it finishes (press the button again then, or leave automatic mode on).'); return; }   // STFIX 5
   const take = NBS.items.filter(it => !NBS.added.has(it.key) && (it.screen.status === 'new' || it.screen.status === 'reprint' || it.screen.status === 'print_page' || (it.screen.status === 'known' && !!it.pdf)));
   const chosen = take.filter(it => it.include);
   if (!chosen.length) return;

@@ -67,6 +67,7 @@ const SIX = ['Whittier Daily News', 'San Gabriel Valley Tribune', 'Pasadena Star
     const pr4 = (run.doc.print_rows || []).filter(r => r['Date'] === '2026-10-27' && r['Page'] === '4');
     check(tag + 'the Oct 27 p. 4 jump page ("From Page 3") is not an Unlinked print pages row', pr4.length === 0, pr4.map(r => r['Team note']).join(' / '));
     check(tag + 'the jump page is kept with the p. 3 story (print_pages entry with a story or a batch item, not "unlinked")', (run.doc.print_pages || []).some(p => p.date === '2026-10-27' && /Daily News/.test(p.outlet) && p.as !== 'unlinked' && (p.story || p.item)), JSON.stringify((run.doc.print_pages || []).filter(p => p.date === '2026-10-27')));
+    check(tag + 'every attached page (jump page, record page) names its item key and the row/story it belongs to', (run.doc.print_pages || []).filter(p => p.as === 'attached' || p.as === 'continuation').every(p => /^[0-9a-f]{8}#\d+$/.test(p.item) && p.aid && p.story), JSON.stringify((run.doc.print_pages || []).filter(p => p.as === 'attached' || p.as === 'continuation').map(p => [p.as, p.item, p.aid, p.story])));
     check(tag + 'no outside request, no page error', X.outside.length === 0 && X.errors.length === 0, JSON.stringify([X.outside, X.errors.slice(0, 3)]));
     await X.close();
   }

@@ -327,6 +327,19 @@ function parseStory(s) {
   // wrapped words in the citation ("DANGERO US", "New sBank") are put right from what the header says, then the citation is read
   let ctext = s.citation;
   if (hd.ok) { [hd.headline, hd.source, hd.author, 'Available from NewsBank', 'Historical and Current'].forEach(x => { if (x) ctext = fixLike(ctext, x); }); }
+  /* STFIX 3: a CMS user name as the author ("nathan") is not a person: it is left out of the citation too, the citation then reads as NewsBank writes one with no author ("Headline. (date). Source. Available from ...") */
+  let userName = '';
+  if (hd.ok && hd.author) {
+    const a0 = squash(String(hd.author).replace(/\S+@\S+\.\S+/g, ''));
+    if (/^[a-z][a-z0-9._-]*$/.test(a0)) {
+      userName = a0;
+      const t = squash(ctext), m = /^(\S+?)\.\s+(\(\s*\d{4},[^)]*\)\.)\s+(.*)$/.exec(t);
+      if (m && m[1].toLowerCase() === a0.toLowerCase()) {
+        const hl = squash(hd.headline || ''), rest = m[3];
+        ctext = hl && rest.startsWith(hl) ? hl.replace(/[.\s]+$/, '') + '. ' + m[2] + ' ' + rest.slice(hl.length).replace(/^[.\s]+/, '') : m[2] + ' ' + rest;
+      }
+    }
+  }
   const cit = parseCitation(ctext);
   let bodyLines = s.lines.slice(hd.ok ? hd.bodyStart : 0);
   for (let k = bodyLines.length - 1; k >= Math.max(0, bodyLines.length - 4); k--) if (COPY_RX.test(bodyLines[k].text.trim())) { bodyLines = bodyLines.slice(0, k); break; }

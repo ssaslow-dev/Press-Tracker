@@ -42,7 +42,7 @@ function makeMemDb() {
           return {
             id, path: name + '/' + id,
             async get() { const has = c.docs.has(id); return { id, exists: has, data: () => (has ? clone(c.docs.get(id)) : undefined) }; },
-            async set(data) { const d = clone(data); if (name === 'runs' && d && Array.isArray(d.rows)) prAnnotateRows(d.rows, pg => col('pages').docs.get(pg)); c.docs.set(id, d); track(name, id, d); notify(c); if (name === 'runs' && d && d.status === 'done' && S.loaded) xdSoon(); },
+            async set(data) { const d = clone(data); if (name === 'runs' && d && d.mode === 'find' && d.status === 'done' && S.loaded) markEnd(d); if (name === 'runs' && d && Array.isArray(d.rows)) prAnnotateRows(d.rows, pg => col('pages').docs.get(pg)); c.docs.set(id, d); track(name, id, d); notify(c); if (name === 'runs' && d && d.status === 'done' && S.loaded) xdSoon(); },
             async update(data) { const d = Object.assign({}, c.docs.get(id) || {}, clone(data)); c.docs.set(id, d); track(name, id, d); notify(c); },
             async delete() { c.docs.delete(id); track(name, id, null); notify(c); },
             onSnapshot(cb) { const f = c.subs.add(cb) && (() => c.subs.delete(cb)); queueMicrotask(() => { try { cb({ id, exists: c.docs.has(id), data: () => clone(c.docs.get(id)) }); } catch (e) {} }); return f; },
@@ -61,6 +61,30 @@ function makeMemDb() {
   return api;
 }
 const mem = makeMemDb();
+/* STFIX 5: a web run that did not finish its search cleanly must never look like "nothing new". The tracker's own code ends such a run with status "done", no stories and an empty "searched_to" and keeps the reason
+   (U.err) only on the page; the run document says nothing. At the moment the final run document is written, the reason is read from the tracker's state and written into the document (ended_early) and the page shows
+   a red note until a later web run finishes cleanly. A manual "since" date also leaves searched_to empty on purpose; that is not an early end. */
+S.endedEarly = new Map();   // run id -> { why, ... }
+function markEnd(d) {
+  const e = window.__nb && window.__nb.webEnd ? window.__nb.webEnd() : null;
+  if (d.searched_to) { S.endedLast = null; showEnd(); return; }   // a clean web run: the earlier warning no longer applies
+  if (d.since_manual) return;
+  const why = [];
+  if (e && e.err && !/^Added /.test(e.err)) why.push(String(e.err));
+  if (e && e.aborted) why.push('the search was stopped');
+  const m = /^(\d+) of (\d+)$/.exec(String(d.failed || ''));
+  if (m && +m[2] && +m[1] > +m[2] * 0.02) why.push(m[1] + ' of ' + m[2] + ' searches or page reads failed');
+  if (!why.length) why.push('the tracker did not mark the search as finished (its “searched to” date was not moved)');
+  d.ended_early = { why: why.join('; ').slice(0, 400), searches_planned: e ? e.plan : (m ? +m[2] : 0), searches_done: e ? e.done : 0, step: e ? String(e.step || '').slice(0, 120) : '', candidates: e ? e.cands : 0, found: d.stories ? d.stories.length : 0 };
+  S.endedEarly.set(d.at || String(Date.now()), d.ended_early);
+  S.endedLast = d.ended_early; showEnd();
+}
+function showEnd() {
+  const el = document.getElementById('stEndNote'); if (!el) return;
+  const e = S.endedLast;
+  el.hidden = !e;
+  if (e) el.textContent = 'The web search did NOT finish: ' + e.why + (e.searches_planned ? ' (' + e.searches_done + ' of ' + e.searches_planned + ' searches done, ' + e.found + ' stories found)' : '') + '. This is not the same as “nothing new”: stories may be missing, and the date the search reached was not moved. Press Update database again. What it did find is still in the update folder.';
+}
 
 /* ---------- the window the tracker code sees: the real one, except window.claude (its db is the in-memory one above) ---------- */
 const realClaude = window.claude;
@@ -345,6 +369,12 @@ function pending() {
   const running = runs.filter(([, v]) => v.data.status === 'running').length;
   return { runs, stories, reprints, rows, running, fresh };
 }
+/* STFIX 5: the tracker's Update button does nothing while a PDF add is running (its own busy flag is shared): say so, instead of a silent no-op. */
+document.addEventListener('click', ev => {
+  const b = ev.target && ev.target.closest ? ev.target.closest('#runFind, #rcYes') : null; if (!b || !S.loaded) return;
+  const adding = (S.nb && (S.nb.busy || S.nb.reading)) || (S.pq && (S.pq.busy || S.pq.reading));
+  if (adding) { ev.stopImmediatePropagation(); ev.preventDefault(); toastMsg('PDFs are being added or read. Press Update database again when that is done (the station adds PDFs and the web search one after the other).'); }
+}, true);
 function trackerBusy() { const f = $('#runFind'); return !!(f && (f.getAttribute('aria-busy') === 'true' || f.classList.contains('busy'))) || !!$('#updStop'); }
 /* AUTOSTATION-v1: the station does the next step itself. Nothing here runs on a schedule: it reacts to what the person did (dropped PDFs, pressed Update) while this page is open.
    1. PDFs read and waiting -> added to the update (after any run that is going finishes); 2. everything finished and quiet for 6 s -> the update folder downloads; 3. an earlier tab's unsaved runs are recovered on load.
@@ -374,6 +404,7 @@ function updatePackUi() {
   let msg = p.fresh ? 'Ready: ' + parts.join('') + '.' + (S.lastZip ? ' Something was added since the last download, so this folder is made again with everything in it; it replaces ' + S.lastZip.filename + '.' : '') : (S.lastZip ? 'The last update folder was downloaded. Nothing new since.' : 'Nothing to download yet. Press Update database in step 2.');
   if (busy) msg = 'A run is going. Download the update folder when it is done.';
   if (p.running && !busy) msg += ' One run was left unfinished; it is included as far as it got.';
+  if (S.endedLast && !busy) msg += ' The web search did not finish (see the red note in step 2).';
   const st = $('#stPackStatus'); if (st.textContent !== msg) st.textContent = msg;
   $('#stPack').disabled = busy || S.busyPack || !p.fresh;
   $('#stPackAgain').hidden = !S.lastZip;
@@ -435,6 +466,7 @@ async function pack() {
     S.packedInfo = { at: manifest.created_at, runs: runIds, zip: filename };
     await saveFile(filename, zip);
     await recordPacked(runIds, filename, zsha, blobs.length);
+    for (const [, v] of p.runs) if (v.data && v.data.ended_early) warns.push('A web search in this folder did not finish: ' + v.data.ended_early.why + '. The folder holds what it found; press Update database again for the rest.');
     const w = $('#stPackWarn'); if (warns.length) { w.innerHTML = warns.map(x => '<li>' + esc(x) + '</li>').join(''); w.hidden = false; }
     const n = $('#stPackNote'); n.hidden = false;
     n.textContent = filename + ' · ' + fmtN(Math.round(zip.length / 1024)) + ' KB · ' + blobs.length + ' files · made from workbook ' + shortSha(S.file.fingerprint.workbook_sha256) + '. If your browser asked, confirm the save.' + (replaces ? ' This folder holds everything found so far and replaces ' + replaces + ': bring in this one, not the earlier one. If the earlier one is already saved in the tracker, the tracker refuses this one (same runs, so nothing is added twice): make a new “for Update” file and run again.' : '');
@@ -483,6 +515,7 @@ const xdNoteOf = it => { const c = it && it.r && it.r.id; return c && S.xdNotes.
 const XD_RM = ['Topic', 'Tone', 'Tone note', 'Tone rated by', 'Bills', '# of reprints', 'Translated Headline', 'Story in English', 'Mentions "Gabriel" in text', 'File name', 'Saved Copy?'];
 async function xdReconcile() {
   if (xdBusy || !S.loaded || !window.__nb || !window.__nb.xdPlan) return 0;
+  if (trackerBusy()) { xdSoon(); return 0; }   // STFIX 5: never rewrite run documents while a web run is going; try again a moment later
   xdBusy = true;
   try {
     const work = new Map(), dirty = new Set();

@@ -105,6 +105,7 @@ function pqDrawAll() {
 const pqPickable = () => PQS.items.filter(it => !PQS.added.has(it.key) && (it.screen.status === 'new' || it.screen.status === 'reprint') && it.include);
 async function pqAdd() {
   if (PQS.busy || NBS.busy) return;
+  if (trackerBusy()) return;   // STFIX 5: the web search is running; the PDFs are added after it
   const chosen = PQS.items.filter(it => !PQS.added.has(it.key) && (it.screen.status === 'new' || it.screen.status === 'reprint') && it.include);
   if (!chosen.length) return;
   PQS.busy = true; pqDrawAll(); nbDrawAll(); const prog = $('#pqProg'), warn = $('#pqWarn'); prog.hidden = false; warn.hidden = true; warn.innerHTML = '';

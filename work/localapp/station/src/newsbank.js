@@ -43,6 +43,12 @@ function nbSpell(p){
   return p;
 }
 const nbLink = p => NBParse.canonLink(p.docref);
+/* STFIX 4: a wire story printed in a local paper ("LOS ANGELES (AP) — ...") has no byline in NewsBank: the wire is its credit (and the tracker's origin search then looks for the wire's own copy) */
+const NB_WIRE_RX = [[/\(\s*AP\s*\)\s*[—–-]/, 'Associated Press'], [/\(\s*Reuters\s*\)\s*[—–-]/i, 'Reuters'], [/\(\s*AFP\s*\)\s*[—–-]/, 'Agence France-Presse']];
+function nbWireCredit(p){
+  if (String(p.author || '').trim() || /^(the )?(associated press|reuters|agence france)/i.test(String(p.outlet_clean || ''))) return '';
+  const head = String(p.text || '').slice(0, 300), w = NB_WIRE_RX.find(([rx]) => rx.test(head)); return w ? w[1] : '';
+}
 const nbCand = p => ({ link: nbLink(p), hl: p.headline, date: ((window.NBTV && NBTV.detect(p)) || {}).date_pt || p.date, outlet: p.outlet_clean, pub: p.outlet_clean, plink: nbLink(p) });
 
 /* Is this story new? (the checks the Update button makes for a find, plus NewsBank's own id)
@@ -191,6 +197,13 @@ function nbPrintApply(items, all){
   const attach = (it, to, why, as) => { it.screen = { status: 'attached', why }; it.attachTo = to; it.printAs = as; it.readWhy = why; it.include = true; };
   const todo = items.filter(it => it.screen.status === 'print_page' && it.include !== false && !it.confirm && it.readArt);
   const jumps = [];
+  /* STFIX 1: a page whose picture is too small to read (Claude was not asked) is still placed when it can be done without reading: the batch's own text record of the same outlet, date and page number */
+  items.filter(it => it.screen.status === 'print_page' && it.include !== false && !it.confirm && !it.readArt && it.reading && it.reading.state === 'toosmall').forEach(it => {
+    const pg = nbPageNo(it.p.page), rec = pg ? recFor(it, it.p.outlet_clean, it.p.date, [pg]) : null; if (!rec) return;
+    const pre = 'NewsBank’s page picture is too small to read, so Claude was not asked; ';
+    if (rec.screen.status === 'known' && rec.screen.row){ it.printCopy = { aid: rec.screen.row, pages: pg, story: rec.screen.sid || '' }; it.screen = { status: 'known', why: pre + 'it is the printed page of the text record already in the tracker as ' + rec.screen.row + ' (same outlet, date and page number): kept as that row’s print original', row: rec.screen.row, sid: rec.screen.sid || '' }; it.readWhy = it.screen.why; return; }
+    attach(it, rec.key, pre + 'it is the printed page of the text record “' + String(rec.p.headline).slice(0, 60) + '” in these PDFs (same outlet, date and page number): kept with that record, no row of its own', 'attached');
+  });
   todo.forEach(it => {
     const a = it.readArt, words = a.words || String(a.text || '').split(/\s+/).length, by = nbByParts(a.byline), pg = nbPageNo(a.page), nbPg = nbPageNo(it.p.page);
     const p2 = Object.assign({}, it.p, { headline: a.headline, author: String(a.byline || '').replace(/\S+@\S+\.\S+/g, '').replace(/\s+/g, ' ').trim(), section: a.section || it.p.section || '', page: a.page || it.p.page || '', text: a.text, paras: String(a.text).split(/\n\s*\n+/).map(x => x.replace(/\s+/g, ' ').trim()).filter(Boolean), words_nb: words, thin: false, how: 'read', readBy: 'claude',
@@ -207,7 +220,7 @@ function nbPrintApply(items, all){
       const C = covLoad(), on = covOutlet(p2.outlet_clean), row = C.rows.find(o => o.sid === m.sid && o.kind !== 'X' && o.on === on && o.aid);
       if (row || (st && ranIn(st, p2.outlet_clean, ''))){
         if (row && nbPageNo(a.page || it.p.page)){ it.printCopy = { aid: row.aid, pages: nbPageNo(a.page || it.p.page), story: m.sid }; it.screen = { status: 'known', why: 'Claude read the page: “' + String(a.headline).slice(0, 60) + '” is the story ' + m.sid + ' (' + m.how + '), and this outlet already has its row ' + row.aid + ': kept as that row’s print original, no new row', row: row.aid, sid: m.sid }; it.readWhy = it.screen.why; return; }
-        attach(it, '', 'Claude read the page: it is the story ' + m.sid + ' (' + m.how + '), which this outlet already has: no row is added', 'attached'); return;
+        it.attachStory = m.sid; it.attachAid = row ? row.aid : ''; attach(it, '', 'Claude read the page: it is the story ' + m.sid + ' (' + m.how + '), which this outlet already has: no row is added', 'attached'); return;
       }
       it.p = Object.assign({}, it.p0, { author: p2.author });
       it.confirm = st ? st.id : m.sid; it.readWhy = 'Claude read the page: “' + String(a.headline).slice(0, 70) + '” is the story ' + m.sid + ' (' + m.how + '); filed as its print edition'; it.readArt.matched = it.confirm; return;
@@ -225,6 +238,7 @@ function nbPrintApply(items, all){
 }
 async function nbRun(items, opts){
   const SRC = opts.src || NBSRC.nb, say = opts.say || (() => {}), mark = opts.mark || (() => {});
+  if (U.busy) throw new Error('A web search is running: the PDFs are added after it finishes (the web run and this one share the tracker’s run state, and one would cut the other short).');   // STFIX 5
   const wasCtl = U.ctl; U.ctl = new AbortController(); U.busy = true; U.failed = 0; U.originPages = U.originPages || new Map();
   const run = newRunId(), at = new Date().toISOString();
   const res = { run, at, rows: [], stories: [], reprints: [], left: [], unconfirmed: [], counts: {}, links: { found: 0, searched: 0 }, errors: [] };
@@ -234,7 +248,7 @@ async function nbRun(items, opts){
     items.forEach(it => { if (it.screen.status === 'print_page' && it.include !== false && it.confirm && byId.has(it.confirm)){ const st = byId.get(it.confirm); it.printAs = 'reprint'; it.screen = Object.assign({}, it.screen, { status: 'reprint', of: it.confirm, of_hl: st.hl, why: 'print page confirmed by the intern as a print copy of “' + String(st.hl).slice(0, 60) + '” (' + it.confirm + ')' }); } });
     const unl = items.filter(it => it.screen.status === 'print_page' && it.include !== false); unl.forEach(it => { it.printAs = 'unlinked'; });
     const news = items.filter(it => it.screen.status === 'new' && it.include !== false), reps0 = items.filter(it => it.screen.status === 'reprint' && it.include !== false);
-    news.forEach(it => { it.c = { url: SRC.link(it.p), title: it.p.headline, published: it.p.date, dateSrc: 'tinyfish', author: it.p.author, text: (SRC.hint ? SRC.hint(it.p) : '') + String(it.p.text || '').slice(0, 20000), site: it.p.outlet_clean, found_by: SRC.foundBy };
+    news.forEach(it => { it.c = { url: SRC.link(it.p), title: it.p.headline, published: it.p.date, dateSrc: 'tinyfish', author: it.p.author || nbWireCredit(it.p), text: (SRC.hint ? SRC.hint(it.p) : '') + String(it.p.text || '').slice(0, 20000), site: it.p.outlet_clean, found_by: SRC.foundBy };
       it.c.gab = NAMES_HIM.test(it.c.title + ' ' + it.c.text) && TF_CONTEXT.test(gabrielContext(it.c.title + '\n' + it.c.text)); it.c.ctx = (it.c.title + '\n' + (it.c.gab ? gabrielContext(it.c.text) + '\n' : '') + it.c.text).slice(0, 1800); });
     // 1. Claude: topic, media, role, tone, language (and the English headline and summary of a non-English story)
     const cls = await nbClassify(news, opts.sample, say, SRC.preface);
@@ -247,7 +261,7 @@ async function nbRun(items, opts){
       const pj = prJudge(it, k, claude);
       if (k.keep === false && pj.v === 'yes') k = Object.assign({}, k, { keep: true, why: 'press release (kept in the sheet, Press release = Yes): ' + pj.why });
       if (k.keep === false){ res.left.push({ hl: VS(it.p.headline, 200), outlet: VS(it.p.outlet_clean, 120), date: it.p.date, why: VS(k.why, 200) || 'Not press coverage about him.' }); it.skipped = VS(k.why, 200) || 'Claude: not press coverage about him'; return; }
-      const kk = Object.assign({}, k, { date: it.p.date, outlet: it.p.outlet_clean, hl: it.p.headline, pub: VS(k.pub, 100) || it.p.outlet_clean });
+      const kk = Object.assign({}, k, { date: it.p.date, outlet: it.p.outlet_clean, hl: it.p.headline, pub: it.p.outlet_clean });   // STFIX 2/3/4: the outlet is the source's own (NewsBank / ProQuest / the masthead), never Claude's guess (it gave the publisher group, a headline and "Associated Press")
       const r = toRow(it.c, kk); r._on = true; r._claude = claude; r._text = String(it.p.text || '').slice(0, 6000); r._nb = it; r._found_by = SRC.foundBy + ': ' + it.batch.name;
       r.src = SRC.srcName; r.plink = SRC.plink(it.p); r.pq = SRC.pq ? SRC.pq(it.p) : ''; r.lstat = ''; r._pageKey = ''; r._dateSrc = SRC.dateSrc;   // sheet_task.dates_v1 (patch 03) reads 'newsbank' as Date source "NewsBank" ("print edition" for a print record)
       if (SRC.print(it.p)) r.fmt = 'Print';
@@ -283,6 +297,7 @@ async function nbRun(items, opts){
     const order = []; stories.forEach(r => { order.push(r._nb); (r._reps || []).forEach(x => order.push(x._nb)); }); reps.forEach(p => order.push(p._nb));
     if (order.length !== prop.rows.length) throw new Error('NewsBank rows do not line up with the proposed rows (' + order.length + ' vs ' + prop.rows.length + ')');
     prop.rows.forEach((row, i) => SRC.rowFill(row, order[i]));
+    const aidOfItem = new Map(), storyOfItem = new Map(); order.forEach((it, i) => { aidOfItem.set(it.key, prop.rows[i]['Article ID']); storyOfItem.set(it.key, prop.rows[i]['Story ID']); });   // the page's story / row for the PC: the run's own row of the record it is attached to (placeholder ids the PC turns into the real ones)
     // 6. documents: pages (the story's text as the library's NewsBank text copy, plus where its PDF is), reprints, authors, translations
     const pdb = window.claude && window.claude.use ? await window.claude.use('db').catch(() => null) : null;
     const col = n => pdb ? pdb.collection(n) : null, setDoc = async (n, id, data) => { const c = col(n); if (!c) return; mark(n, id); await c.doc(id).set(data); };
@@ -321,7 +336,7 @@ async function nbRun(items, opts){
     if (ptr.length && sampler){ say('Translating headlines', 0.9); try { await translateHeadlines(ptr); } catch(e){ res.errors.push('translation: ' + VS(String(e && e.message || e), 120)); } }
     // 7. the run doc: the same shape an Update run leaves; mode "newsbank" also marks the NewsBank refresh as done today (the reminder in the Update panel)
     orig.forEach(it => nbRemember(it.p, it.key)); reps0.forEach(it => nbRemember(it.p, it.key));
-    items.filter(it => it.printAs).forEach(it => (res.print_pages = res.print_pages || []).push({ as: it.printAs, story: it.confirm || (it.printCopy && it.printCopy.story) || '', item: it.attachTo || '', aid: it.printCopy ? it.printCopy.aid : '', file: it.pdf ? 'files/' + it.fileId + '.pdf' : '', url: nbLink(it.p) || '', outlet: VS(it.p.outlet_clean, 120), date: it.p.date || '', hl: VS(it.p.headline, 200), snippet: 'NewsBank print page from ' + it.batch.name }));
+    items.filter(it => it.printAs).forEach(it => (res.print_pages = res.print_pages || []).push({ as: it.printAs, story: it.confirm || (it.printCopy && it.printCopy.story) || it.attachStory || (it.attachTo && storyOfItem.get(it.attachTo)) || '', item: it.attachTo || '', aid: it.printCopy ? it.printCopy.aid : (it.attachAid || (it.attachTo && aidOfItem.get(it.attachTo)) || ''), file: it.pdf ? 'files/' + it.fileId + '.pdf' : '', url: nbLink(it.p) || '', outlet: VS(it.p.outlet_clean, 120), date: it.p.date || '', hl: VS(it.p.headline, 200), snippet: 'NewsBank print page from ' + it.batch.name }));
     res.print_pages = res.print_pages || [];
     const batches = [...new Map(items.map(it => [it.batch.sha256, { name: it.batch.name, sha256: it.batch.sha256 }])).values()];
     const doc = { at, mode: SRC.runMode, [SRC.runMark]: TODAY, status: 'done', stories: stories.map(r => r.id).filter(id => byId.has(id)), reprints: res.reprints.concat(orig.flatMap(it => (it.r._reps || []).map(x => ({ story: it.r.id, outlet: x.outlet })))),
@@ -442,4 +457,4 @@ function xdPlan(runs){
   }
   return ops;
 }
-window.__nb = { candidates: nbPrintCands, hasStory: nbHasStory, xdPlan, xdFold: XD_FOLD, spell: nbSpell, runPage: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pp })), screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };
+window.__nb = { webEnd: () => ({ err: String(U.err || ''), aborted: !!(U.ctl && U.ctl.signal && U.ctl.signal.aborted), phase: U.phase, step: U.step, done: U.done || 0, plan: U.plan || 0, failed: U.failed || 0, cands: U.nCands || 0, found: (U.found || []).length }), candidates: nbPrintCands, hasStory: nbHasStory, xdPlan, xdFold: XD_FOLD, spell: nbSpell, runPage: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pp })), screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };
