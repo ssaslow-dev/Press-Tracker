@@ -1,6 +1,6 @@
 /* STFIX: Sammy's first real Update run (2026-11-05), findings 1-4 on the REAL batch multi4.pdf (85 pages: 13 text stories, 14 "Full Page" print pages) and finding 5 (a web run that ends early).
    Claude is a FAKE: its classify answers repeat the wrong guesses the real one made (the publisher group as the outlet, a headline as the outlet, "Associated Press" for a local paper's print copy), and every
-   request to read a page picture is counted (it must be zero: NewsBank's page pictures are too small to read). Licensed text: AJG_REAL_NB4 names a folder with multi4.pdf and for_update_0bccc1fc.json (skipped without it).
+   request to read a page picture is counted (PRINTREAD-v2: all 14 are sent, as tiles; here Claude cannot make them out, so the pages are placed by outlet, date and page number). Licensed text: AJG_REAL_NB4 names a folder with multi4.pdf and for_update_0bccc1fc.json (skipped without it).
      AJG_REAL_NB4=DIR node tests/stfix/stfix_test.js
    Part B (finding 5) and part C (picture size) need no licensed file. */
 const fs = require('fs'), path = require('path'), os = require('os'), { execFileSync } = require('child_process');
@@ -13,7 +13,7 @@ const stub = (prompt, o) => {
     const t = m[3], pub = /Mayor Bass Announces \$22 Million/.test(t) ? t : /New Laws Trigger/.test(t) ? 'Associated Press' : /mail-in ballots|Sepulveda Basin|recibe 22 millones/.test(t) ? 'Southern California News Group' : '';
     return { n: +m[1], keep: true, why: 'x', press_release: /MAYOR BASS HIGHLIGHTS/.test(t) ? 'yes' : 'no', pr_why: 'x', date: '', outlet: '', pub, hl: '', topic: 'District / community', media: 'Newspaper', role: 'Mentioned in story', tone: 'Neutral', twhy: '', author: '', lang: /recibe 22 millones/.test(t) ? 'Spanish' : '', hl_en: /recibe 22 millones/.test(t) ? 'Sepulveda Basin receives $22 million' : '', text_en: '' };
   });
-  if (/^You are reading a scanned page/.test(prompt)) { window.__pageAsks = (window.__pageAsks || 0) + 1; return { readable: true, articles: [] }; }
+  if (/^You are reading a scanned page/.test(prompt)) { window.__pageAsks = (window.__pageAsks || 0) + 1; return { readable: false, articles: [] }; }   // PRINTREAD-v2: every page IS sent (as tiles); this Claude cannot make them out, so the fallback placement is what is tested
   return [];
 };
 const WEB_STUB = (tool, input, calls) => {   // a TinyFish that answers 25 searches and then loses its connection (a STOP code, as when a connector lapses)
@@ -28,7 +28,7 @@ async function runWeb(page) {
 const finalRuns = page => page.evaluate(() => [...window.__station.sess.runs].map(([id, v]) => ({ id, mode: v.data.mode, status: v.data.status, searched_to: v.data.searched_to, ended_early: v.data.ended_early || null })));
 (async () => {
   if (HAVE) {
-    const X = await H.start(PAGE, stub, { images: 3, minLine: null }), page = X.page;
+    const X = await H.start(PAGE, stub, { images: 8 }), page = X.page;
     await H.loadFile(page, FU); await H.dropPdf(page, path.join(DIR, 'multi4.pdf'));
     await page.uncheck('#nbLinks').catch(() => {});
     const items0 = await H.items(page);
@@ -37,11 +37,11 @@ const finalRuns = page => page.evaluate(() => [...window.__station.sess.runs].ma
     const run = await page.evaluate(() => { const r = window.__station.state.nb.lastRun; const its = window.__station.state.nb.items; return { rows: r.rows, doc: r.doc, items: r.items, pages: its.filter(i => i.p.kind === 'print_page').map(i => ({ key: i.key, outlet: i.p.outlet_clean, date: i.p.date, page: i.p.page, st: i.screen.status, why: i.screen.why, read: i.reading && i.reading.state, pic: i.reading && i.reading.pic, note: i.reading && i.reading.note, readNote: i.readNote, attachTo: i.attachTo, printAs: i.printAs })) }; });
     const asks = await page.evaluate(() => window.__pageAsks || 0);
     /* FINDING 1 */
-    check('1. Claude is NOT asked to read any of the 14 NewsBank page pictures (they are about 900 px wide)', asks === 0, asks);
-    check('1. every page is marked "too small to read" with its measured size (900 x 1780)', run.pages.length === 14 && run.pages.every(p => p.read === 'toosmall' && p.pic && p.pic.w === 900 && p.pic.h >= 1780 && p.pic.h <= 1800), JSON.stringify(run.pages.map(p => [p.read, p.pic])));
+    check('1. Claude is asked to read every one of the 14 NewsBank page pictures (PRINTREAD-v2: no size gate)', asks === 14, asks);
+    check('1. every page is marked unread (Claude could not make it out), none "too small"', run.pages.length === 14 && run.pages.every(p => p.read === 'unclear'), JSON.stringify(run.pages.map(p => p.read)));
     const blob = JSON.stringify([run.doc, run.items, run.pages]);
-    check('1. nothing says "no article that names Jesse Gabriel" (that is not known for a page nobody read)', !/no article that names Jesse Gabriel/i.test(blob), (blob.match(/.{60}no article that names.{20}/i) || [''])[0]);
-    check('1. the note says why: too small to read, with the numbers', run.pages.every(p => /too small to read/.test(p.note || '') && /900 x 17\d\d/.test(p.note || '')), run.pages[0] && run.pages[0].note);
+    check('1. nothing says "no article that names Jesse Gabriel" (the page was not read)', !/no article that names Jesse Gabriel/i.test(blob), (blob.match(/.{60}no article that names.{20}/i) || [''])[0]);
+    check('1. the note says why: Claude could not read the page', run.pages.every(p => /could not read the page/.test(p.note || '')), run.pages[0] && run.pages[0].note);
     const byPage = (d, pg) => run.pages.filter(p => p.date === d && String(p.page) === String(pg));
     const nov4 = byPage('2026-11-04', '9').filter(p => /Los Angeles Daily News/.test(p.outlet)), oct3 = byPage('2026-10-27', '3').filter(p => /Los Angeles Daily News/.test(p.outlet)), oct4 = byPage('2026-10-27', '4');
     check('1a. Daily News Nov 4 p.9 is linked to the batch\'s own text record (same outlet, date, page): kept with it, no row of its own', nov4.length === 1 && nov4[0].st === 'attached' && !!nov4[0].attachTo, JSON.stringify(nov4));
@@ -74,7 +74,7 @@ const finalRuns = page => page.evaluate(() => [...window.__station.sess.runs].ma
     await X.close();
   } else console.log('SKIP parts A (AJG_REAL_NB4 not set or files absent)');
 
-  /* C. the size gate on pictures made here: 900 px wide = too small, 2400 px wide = read */
+  /* C. no size gate (PRINTREAD-v2): a 900 px and a 2400 px picture made here are both sent, as tiles at their own size */
   if (FU_ANY) {
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'stfixc-'));
     const mk = (n, w, h) => { const f = path.join(tmp, n); execFileSync('python3', ['-I', '-c', 'import sys\nfrom PIL import Image, ImageDraw\nw,h=int(sys.argv[2]),int(sys.argv[3])\nim=Image.new("RGB",(w,h),"white")\nd=ImageDraw.Draw(im)\nfor y in range(0,h,max(8,h//90)): d.rectangle([w//10,y,w*9//10,y+max(2,h//300)],fill=(20,20,20))\nim.save(sys.argv[1])', f, String(w), String(h)]); return f; };
@@ -83,7 +83,7 @@ const finalRuns = page => page.evaluate(() => [...window.__station.sess.runs].ma
       if (/^You are reading a scanned page/.test(prompt)) { window.__pageAsks = (window.__pageAsks || 0) + 1; return { readable: true, masthead: { paper: 'Valley Courier Test', date: '2026-11-02', page: 'A3', confidence: 'high' }, articles: [{ headline: 'Valley schools: Assemblymember Jesse Gabriel visits a classroom', byline: 'By A. Reporter', section: 'Local', page: 'A3', text: 'Assemblymember Jesse Gabriel, D-Northridge, visited a Valley classroom on Monday to talk about school lunch menus and what parents want their children to eat each day, and he said the state would keep funding the program. ' .repeat(2), continues: '', continued_from: '', names_gabriel: true, confidence: 'high' }] }; }
       return [];
     };
-    const X = await H.start(PAGE, stubC, { images: 3, minLine: null }), page = X.page;
+    const X = await H.start(PAGE, stubC, { images: 8 }), page = X.page;
     await H.loadFile(page, FU_ANY);
     const have = await page.evaluate(() => window.__station.state.nb.files.length);
     await page.setInputFiles('#nbFile', [small, big]);
@@ -93,14 +93,15 @@ const finalRuns = page => page.evaluate(() => [...window.__station.sess.runs].ma
     await page.waitForTimeout(1500);
     const rd = await page.evaluate(() => window.__station.state.nb.items.map(i => ({ st: i.screen.status, read: i.reading && i.reading.state, pic: i.reading && i.reading.pic, why: i.screen.why })));
     const asks = await page.evaluate(() => window.__pageAsks || 0);
-    check('C. a 900 px picture is not sent to Claude (toosmall, with its size); a 2400 px picture is (one request in all)', rd.length === 2 && rd.filter(r => r.read === 'toosmall').length === 1 && rd.some(r => r.read === 'toosmall' && r.pic.w === 900) && asks === 1, JSON.stringify([rd, asks]));
+    const tl = await page.evaluate(() => window.__calls.filter(c => c.images).map(c => c.images));
+    check('C. both pictures are sent to Claude, each as several tiles in one call (no size gate)', rd.length === 2 && rd.every(r => r.read !== 'toosmall') && asks === 2 && tl.length === 2 && tl.every(n => n >= 6), JSON.stringify([rd, asks, tl]));
     await X.close();
   }
 
   /* B. finding 5: a web run that loses TinyFish part way must say so; a clean run must not */
   if (FU_ANY) {
     for (const scn of ['lapse', 'clean']) {
-      const X = await H.start(PAGE, stub, { images: 3, mcpStub: WEB_STUB.toString() }), page = X.page;
+      const X = await H.start(PAGE, stub, { images: 8, mcpStub: WEB_STUB.toString() }), page = X.page;
       await H.loadFile(page, FU_ANY);
       await page.evaluate(s => { window.__failAfter = s === 'lapse' ? 25 : 0; }, scn);
       await runWeb(page);
@@ -126,7 +127,7 @@ const finalRuns = page => page.evaluate(() => [...window.__station.sess.runs].ma
       await X.close();
     }
     /* the web run and a PDF add never run at the same time: the Update button during an add says so */
-    const X = await H.start(PAGE, stub, { images: 3 }), page = X.page;
+    const X = await H.start(PAGE, stub, { images: 8 }), page = X.page;
     await H.loadFile(page, FU_ANY);
     await page.evaluate(() => { window.__station.state.nb.busy = true; });
     await page.click('#runFind').catch(() => {});

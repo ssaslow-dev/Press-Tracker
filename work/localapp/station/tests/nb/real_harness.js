@@ -39,9 +39,6 @@ exports.start = async function (pageFile, claudeStub, opts) {
   const page = await ctx.newPage(); const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message)); page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
   await page.goto(base + '/index.html'); await page.waitForSelector('#nbDrop');
-  /* STFIX 1: the station does not ask Claude about a page picture too small to read (NewsBank's real ones are 900 px wide). The tests that give Claude (a fake) a page to read switch that gate off, as if the picture were big enough;
-     the tests of the gate itself pass minLine: null. */
-  if (opts.minLine !== null) await page.evaluate(v => { window.__station.state.nb.minLinePx = v; }, opts.minLine === undefined ? 0 : opts.minLine);
   return { page, browser, server, outside, errors, close: async () => { await browser.close(); server.close(); } };
 };
 exports.loadFile = async (page, fuFile) => {

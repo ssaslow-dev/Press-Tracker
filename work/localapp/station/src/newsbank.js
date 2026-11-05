@@ -197,10 +197,10 @@ function nbPrintApply(items, all){
   const attach = (it, to, why, as) => { it.screen = { status: 'attached', why }; it.attachTo = to; it.printAs = as; it.readWhy = why; it.include = true; };
   const todo = items.filter(it => it.screen.status === 'print_page' && it.include !== false && !it.confirm && it.readArt);
   const jumps = [];
-  /* STFIX 1: a page whose picture is too small to read (Claude was not asked) is still placed when it can be done without reading: the batch's own text record of the same outlet, date and page number */
-  items.filter(it => it.screen.status === 'print_page' && it.include !== false && !it.confirm && !it.readArt && it.reading && it.reading.state === 'toosmall').forEach(it => {
+  /* STFIX 1 (kept as the fallback under PRINTREAD-v2): a page that could not be read (Claude could not make it out, or the reading failed) is still placed when it can be done without reading: the batch's own text record of the same outlet, date and page number */
+  items.filter(it => it.screen.status === 'print_page' && it.include !== false && !it.confirm && !it.readArt && it.reading && /^(unclear|unavailable|error)$/.test(it.reading.state) && !it.reading.seen).forEach(it => {
     const pg = nbPageNo(it.p.page), rec = pg ? recFor(it, it.p.outlet_clean, it.p.date, [pg]) : null; if (!rec) return;
-    const pre = 'NewsBank’s page picture is too small to read, so Claude was not asked; ';
+    const pre = 'The page could not be read; ';
     if (rec.screen.status === 'known' && rec.screen.row){ it.printCopy = { aid: rec.screen.row, pages: pg, story: rec.screen.sid || '' }; it.screen = { status: 'known', why: pre + 'it is the printed page of the text record already in the tracker as ' + rec.screen.row + ' (same outlet, date and page number): kept as that row’s print original', row: rec.screen.row, sid: rec.screen.sid || '' }; it.readWhy = it.screen.why; return; }
     attach(it, rec.key, pre + 'it is the printed page of the text record “' + String(rec.p.headline).slice(0, 60) + '” in these PDFs (same outlet, date and page number): kept with that record, no row of its own', 'attached');
   });

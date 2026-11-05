@@ -29,7 +29,7 @@ const stub = (prompt, o) => {
   return { readable: true, articles: [] };
 };
 async function fresh(scn) {
-  const X = await H.start(PAGE, stub, { images: 3 }), page = X.page;
+  const X = await H.start(PAGE, stub, { images: 8 }), page = X.page;
   await H.loadFile(page, FU); await H.dropPdf(page, path.join(DIR, 'multi4.pdf'));
   await page.evaluate(s => {   // the true article texts, from the batch's own text records (NewsBank's text of the same printed stories)
     const its = window.__station.state.nb.items, byDoc = d => (its.find(x => x.p.docref === 'news/' + d) || { p: {} }).p.text || '';
@@ -43,7 +43,7 @@ async function fresh(scn) {
 }
 const SIX = ['Whittier Daily News', 'San Gabriel Valley Tribune', 'Pasadena Star-News', 'Long Beach Press-Telegram', 'Los Angeles Daily News', 'Daily News of Los Angeles', 'Daily Breeze'];
 (async () => {
-  const items0 = await (async () => { const X = await H.start(PAGE, stub, { images: 3 }); await H.loadFile(X.page, FU); await H.dropPdf(X.page, path.join(DIR, 'multi4.pdf')); const it = await H.items(X.page); await X.close(); return it; })();
+  const items0 = await (async () => { const X = await H.start(PAGE, stub, { images: 8 }); await H.loadFile(X.page, FU); await H.dropPdf(X.page, path.join(DIR, 'multi4.pdf')); const it = await H.items(X.page); await X.close(); return it; })();
   check('the batch is read: 27 records = 13 text stories + 14 print pages; 2 text stories already in the tracker (00001, 00003)', items0.length === 27 && items0.filter(i => i.kind === 'print_page').length === 14 && items0.filter(i => i.st === 'known').length === 2, JSON.stringify(items0.map(i => i.st)));
   /* FINDING 1: the six Oct 25 p.14 pages carry "Term limits shake up runs for Senate, Assembly", the print story the tracker already holds as s00001 with a row for
      EVERY one of these six outlets (00001 Original Pasadena Star-News web; 00003-00007 Reprints, NewsBank print records, p. 14). Nothing new may be proposed: the pages

@@ -29,10 +29,10 @@ const lastRun = async page => { await page.click('#nbAdd'); await page.waitForFu
 const pageDocs = page => page.evaluate(() => { const o = {}; for (const [id, v] of window.__station.sess.pages) if (v.data && v.data.nb && v.data.nb.kind === 'print_page') o[id] = v.data; return o; });
 (async () => {
   /* 1. both pages read */
-  let X = await fresh({ images: 3 }, 1), page = X.page;
+  let X = await fresh({ images: 8 }, 1), page = X.page;
   let run = await lastRun(page);
   const calls = await page.evaluate(() => window.__calls.filter(c => c.tool === 'sample' && c.images));
-  check('Claude was asked once per print page, with 3 pictures each (whole page + upper + lower), each a non-trivial JPEG under the limit', calls.length === 2 && calls.every(c => c.images === 3 && c.sizes.every(z => z > 2000 && z < 5e6)), JSON.stringify(calls));
+  check('Claude was asked once per print page, with the page cut into overlapping tiles (6-8 pictures, one call), each a non-trivial JPEG under the limit', calls.length === 2 && calls.every(c => c.images >= 6 && c.images <= 8 && c.sizes.every(z => z > 500 && z < 5e6)), JSON.stringify(calls));
   const ebt = run.rows.find(r => r['Outlet'] === 'East Bay Times'), mn = run.rows.find(r => /Mercury News/.test(r['Outlet']));
   check('East Bay Times: read as the tracker story s01903 -> a print Reprint row of it, no confirmation asked', !!ebt && ebt['Original or reprint'] === 'Reprint' && ebt['Story ID'] === 's01903' && ebt['Edition'] === 'Print' && ebt['Format'] === 'Print' && ebt['Page'] === '18' && ebt['Date'] === '2026-11-01' && /image\/v2/.test(ebt['NewsBank print-page link'] || ''), ebt && JSON.stringify([ebt['Original or reprint'], ebt['Story ID'], ebt['Edition'], ebt['Page']]));
   check('Mercury News: no match -> a NEW story row: Original, Edition Print, Format Print, Page 11, Date 2026-11-03, Claude’s headline/byline/section, print-page link, Date source print edition', !!mn && mn['Original or reprint'] === 'Original' && mn['Headline'] === 'Bay Area lawmaker pushes new rule on school lunch menus' && mn['Edition'] === 'Print' && mn['Format'] === 'Print' && mn['Page'] === '11' && mn['Date'] === '2026-11-03' && mn['Author / byline'] === 'By A. Reporter' && mn['Section'] === 'Business' && /image\/v2/.test(mn['NewsBank print-page link'] || '') && !mn['NewsBank article link'] && mn['Date source'] === 'print edition' && mn['Data Source'] === 'Newsbank', mn && JSON.stringify([mn['Original or reprint'], mn['Headline'], mn['Page'], mn['Date'], mn['Author / byline'], mn['Date source'], mn['NewsBank print-page link']]).slice(0, 400));
@@ -45,12 +45,12 @@ const pageDocs = page => page.evaluate(() => { const o = {}; for (const [id, v] 
   check('no outside request, no page error', X.outside.length === 0 && X.errors.length === 0, JSON.stringify([X.outside, X.errors.slice(0, 3)]));
   await X.close();
   /* 2. no Gabriel article -> Unlinked print pages, with the reason in the team note */
-  X = await fresh({ images: 3 }, 2); page = X.page; run = await lastRun(page);
+  X = await fresh({ images: 8 }, 2); page = X.page; run = await lastRun(page);
   check('no article names him -> both pages are Unlinked print pages rows with the reason, no story rows, nothing guessed', run.doc.print_rows.length === 2 && !run.rows.some(r => /East Bay|Mercury/.test(r['Outlet'])) && run.doc.print_rows.every(r => /no article that names Jesse Gabriel/.test(r['Team note'])), JSON.stringify([run.rows.length, run.doc.print_rows.length]));
   const d2 = Object.values(await pageDocs(page)); check('their pages docs say outcome none and carry no text', d2.length === 2 && d2.every(d => d.nb.read && d.nb.read.outcome === 'none' && !d.nb.read.text && d.nb.as === 'unlinked'), JSON.stringify(d2.map(d => d.nb.read)));
   await X.close();
   /* 3. low confidence / too short / no Gabriel in the text */
-  X = await fresh({ images: 3 }, 3); page = X.page; run = await lastRun(page);
+  X = await fresh({ images: 8 }, 3); page = X.page; run = await lastRun(page);
   check('low confidence, too little text, or no name in the text -> Unlinked, never guessed', run.doc.print_rows.length === 2 && !run.rows.some(r => /East Bay|Mercury/.test(r['Outlet'])) && run.doc.print_rows.every(r => /not clearly/.test(r['Team note'])), JSON.stringify([run.rows.length, run.doc.print_rows.length]));
   await X.close();
   /* 4. the page declares no images (limits has none) -> today's behaviour + a note */
@@ -58,18 +58,18 @@ const pageDocs = page => page.evaluate(() => { const o = {}; for (const [id, v] 
   check('without the images permission: no picture is sent, the pages are Unlinked print pages as before, and the warning says why', run.doc.print_rows.length === 2 && (await page.evaluate(() => window.__calls.filter(c => c.images).length)) === 0 && run.warn.some(w => /images/.test(w)), JSON.stringify(run.warn));
   await X.close();
   /* 5. rate limited -> the run still completes */
-  X = await fresh({ images: 3 }, 5); page = X.page; run = await lastRun(page);
+  X = await fresh({ images: 8 }, 5); page = X.page; run = await lastRun(page);
   const n5 = await page.evaluate(() => window.__calls.filter(c => c.images).length);
   check('rate limited on the first page: the second is not tried, both are Unlinked print pages, the run completes with a note', n5 === 1 && run.doc.print_rows.length === 2 && run.warn.some(w => /busy|usage limit/.test(w)), JSON.stringify([n5, run.warn]));
   await X.close();
   /* 6. a manual pick is an override: that page is not read */
-  X = await fresh({ images: 3 }, 1); page = X.page;
+  X = await fresh({ images: 8 }, 1); page = X.page;
   const inputs = await page.$$('#nbBody input[data-nbp]'); await inputs[0].fill('s01903 · Los Angeles Times'); await inputs[0].dispatchEvent('change');
   run = await lastRun(page);
   check('the person’s own pick is kept: only the other page is read (1 picture call)', (await page.evaluate(() => window.__calls.filter(c => c.images).length)) === 1 && run.rows.some(r => r['Story ID'] === 's01903'), '');
   await X.close();
   /* 7. AUTOSTATION-v1: automatic mode: the PDF is dropped and nothing else is clicked: pages are read, added, and nothing downloads until the button is pressed */
-  X = await H.start(PAGE, stub, { images: 3, auto: true }); page = X.page; await page.evaluate(() => { window.__scn = 1; });
+  X = await H.start(PAGE, stub, { images: 8, auto: true }); page = X.page; await page.evaluate(() => { window.__scn = 1; });
   await H.loadFile(page, FU); await page.uncheck('#nbLinks').catch(() => {});
   await page.setInputFiles('#nbFile', path.join(DIR, 'multi3.pdf'));
   await page.waitForFunction(() => window.__station.state.nb.lastRun && window.__station.state.nb.items.length && window.__station.state.nb.items.every(x => !x.include || window.__station.state.nb.added.has(x.key)), null, { timeout: 240000 });
