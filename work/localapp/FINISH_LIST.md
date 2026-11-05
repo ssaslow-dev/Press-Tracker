@@ -91,3 +91,4 @@ One list for everything left. Claude keeps it current after every step and repor
 
 ## Notes from the real runs (2026-11-05)
 - Fifth station run (folder ajg_update_20261105-1530): all rows right, 12 of 14 pages placed; 2 Oct 25 p.14 pages (Long Beach, Daily News) went to Unlinked print pages because Claude's transcription of the long candidate list left out his paragraph. An outlet+date fallback was offered; Sammy declined ("that's fine"). The folder is cleared for the first real save (A8).
+- Installer bug (2026-11-05, office PC): a folder dragged into Install update.cmd arrives in quote marks and a path with a space split in two ("Give the folder..."). Fixed in Install update.cmd and install_update.py (test added); Sammy used the workaround (type the path without quotes). The fix ships in the next zip.

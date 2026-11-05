@@ -23,6 +23,8 @@ if not defined TARGET (
   echo Nothing was typed. Nothing was changed.
   goto :end
 )
+rem a dragged-in folder arrives in quote marks; take them off so a path with spaces stays one piece
+set "TARGET=%TARGET:"=%"
 python\python.exe -B -X utf8 -I app\station\install_update.py "%TARGET%"
 :end
 echo.

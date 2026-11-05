@@ -121,9 +121,10 @@ def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     check_only = '--check' in argv
     argv = [a for a in argv if a != '--check']
-    if len(argv) != 1:
+    if not argv:
         raise Stop('Give the folder of the tracker you use now.')
-    t = Path(argv[0].strip().strip('"').strip("'")).expanduser().resolve()
+    # a path with spaces can arrive split into pieces (quote marks from a drag): join them back
+    t = Path(' '.join(argv).strip().strip('"').strip("'").strip()).expanduser().resolve()
     stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
     say(f'New version:   {SRC}')
     say(f'Your tracker:  {t}')

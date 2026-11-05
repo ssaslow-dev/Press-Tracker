@@ -94,6 +94,17 @@ class Install(unittest.TestCase):
         self.assertEqual([p.name for p in self.tgt.iterdir() if '.new-' in p.name or '.failed-' in p.name], [])
         self.assertTrue((self.tgt / 'data' / 'role.json').is_file())
 
+    def test_path_with_spaces_split_into_pieces(self):
+        """A dragged-in folder whose path has a space can reach the installer split in two (seen on the office PC, 2026-11-05)."""
+        spaced = self.tgt.parent.parent / 'old dir' / 'AJG Tracker'
+        spaced.parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(self.tgt), str(spaced))
+        a, b = str(spaced).split(' ', 1)
+        out = self.run_iu(a, b, '--check')
+        self.assertNotIn('Give the folder', str(out or ''), out)
+        out = self.run_iu('"' + str(spaced) + '"', '--check')
+        self.assertNotIn('Give the folder', str(out or ''), out)
+
     def test_tampered_source_refused(self):
         (self.src / 'app/station/plain.py').unlink()
         (self.src / 'app/station/plain.py').write_text('x = 1\n')
