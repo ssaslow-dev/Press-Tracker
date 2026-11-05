@@ -175,3 +175,10 @@ If you edit the workbook in Excel yourself: close Excel, open **Repairs** in Tra
 - **Article data from the library (ARTICLEDATA-v1).** `station/article_copies.py` adds the copy of every story that has a saved copy in the keeper's library but no entry in `data\copies\articles` (setup, after every save, and Repairs "Rebuild saved copies"). Existing entries are never changed.
 - **Windows file locks (WINLOCK-v1).** `fs_retry.py` (copies in `app\saver`, `app\updatefolder`; `common.retry_busy` in the station code) waits about 10 s on PermissionError for every replace, rename and move. App code ships without .pyc.
 - **Install a new version (PROGRAMUPDATE-v1).** `Install update.cmd` / `.command` and `station/install_update.py`; see READ ME FIRST.
+
+## Version 3 additions (2026-11-05)
+- **Print pages that carry a new story (N12 PC part, PRINTNEW-v1 follow-up 7).** Patch `29_sheet_task_printnew.patch`: a print-only NEW story's read text is its saved copy (`ws<ID>o-s<ID>.html`, File type HTML), the page scan is its print original (`_original_pdf/<year>/<Article ID>_p<page number>.pdf`), and the scan of an attached or jump page goes to its record's row, also when this save adds that row. The reprint text test reads only that article's text. Test: `tests/test_printnew_partial.py`.
+- **A later, complete update folder (N16).** `station_cli inspect` takes the runs not saved yet and lists the saved ones as left out (`take_update.chain_explains`, `skip_saved_runs`); see `updatefolder/FORMAT.md` 2d-bis. Test: `updatefolder/tests/test_partial.py` and `tests/test_printnew_partial.py`.
+- **"Daily News of Los Angeles"** is one outlet with "Los Angeles Daily News" (N17, `code/outlet_rules.json`).
+- **The Switch-over changes screen is gone (D1).** See "Switch-over day".
+- **Installing over a version-1 folder** (no installer there, unchecked-hash .pyc, hand-replaced files) is tested: `tests/test_install_update.py` class `InstallOverVersion1Layout`. The old `app\` and `python\` move away as a whole, so a stale .pyc cannot shadow new code.
