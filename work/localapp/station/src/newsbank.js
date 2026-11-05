@@ -30,15 +30,18 @@ function nbDocrefs(){
 let NBX_SPELL = null;
 /* AUDIT 13 finding 2: one paper that NewsBank names two ways (covOutlet key -> the key of the tracker's spelling). The station's own alias map: the PC's outlet_rules aliases are keyed for its own norm_outlet. Add a pair here when a new variant turns up (LEARN-v1). */
 const NB_OUT_ALIAS = { dailynewsoflosangeles: 'losangelesdailynews' };
-function nbSpell(p){
-  if (p._ol) return p; p._ol = true;
+function nbSpellHit(name){
   if (!NBX_SPELL){
     const cnt = new Map(), add = n => { n = String(n || '').trim(); if (n) cnt.set(n, (cnt.get(n) || 0) + 1); };
     covLoad().rows.forEach(o => add(o.outlet)); D.forEach(r => add(String(r.outlet || '').replace(/\s*\([^)]*\)\s*$/, '')));
     const best = new Map(); cnt.forEach((c, n) => { const k = covOutlet(n); const o = best.get(k); if (k && (!o || c > o.c || (c === o.c && n < o.n))) best.set(k, { n, c }); });
     NBX_SPELL = best;
   }
-  const hit = NBX_SPELL.get(covOutlet(p.outlet_clean)) || NBX_SPELL.get(NB_OUT_ALIAS[covOutlet(p.outlet_clean)] || '');
+  return NBX_SPELL.get(covOutlet(name)) || NBX_SPELL.get(NB_OUT_ALIAS[covOutlet(name)] || '') || null;
+}
+function nbSpell(p){
+  if (p._ol) return p; p._ol = true;
+  const hit = nbSpellHit(p.outlet_clean);
   if (hit && hit.n !== p.outlet_clean){ p.outlet_note = 'outlet “' + p.outlet + '” (NewsBank) filed as “' + hit.n + '” (the tracker’s spelling)'; p.outlet_clean = hit.n; }
   return p;
 }
@@ -442,6 +445,43 @@ function xdRel(a, b){
   if (h.same){ const d = covDays(ca.date, cb.date); return !isNaN(d) && d > 2 ? null : { kind: 'same', why: 'the same outlet and a near-identical headline' }; }
   return { kind: 'reprint', why: 'another outlet’s copy of the same story' };
 }
+/* FINDINGS 3-5 (2026-11-05): tidy a proposed row: the tracker's own spelling of the outlet (LEARN-v1: from the tracker's rows), an outlet name or "..." junk is not an author. Returns true when it changed the row. */
+function xdTidy(row){
+  let ch = false; const set = (c, v) => { if (String(row[c] || '') !== v){ row[c] = v; ch = true; } };
+  const out = String(row['Outlet'] || '');
+  if (out){ const hit = nbSpellHit(out); if (hit && hit.n !== out){ set('Outlet', hit.n); row['Team note'] = [row['Team note'], 'outlet “' + out + '” filed as “' + hit.n + '” (the tracker’s spelling)'].filter(Boolean).join('; ').slice(0, 900); } }
+  let au = String(row['Author / byline'] || '');
+  if (au.includes('|')){ au = au.split('|')[0].trim(); set('Author / byline', au); }
+  if (au){ const k = covOutlet(au); if (k && (k === covOutlet(row['Outlet']) || NBX_SPELL && (NBX_SPELL.has(k) || NBX_SPELL.has(NB_OUT_ALIAS[k] || '')))){ set('Author / byline', ''); } }
+  return ch;
+}
+/* FINDING 1: rows with the same link are never in one folder twice. Keeps an Original before a Reprint, then the earliest run. -> [{ run, aid, keep: {run, aid} }] */
+function xdDupes(runs){
+  const E = []; runs.slice().sort((a, b) => String(a.at || '').localeCompare(String(b.at || ''))).forEach(r => { if (r.status === 'running') return; (r.rows || []).forEach(row => { if (row && row['Article ID']) E.push({ run: r.id, aid: row['Article ID'], row, orig: (row['Original or reprint'] || 'Original') === 'Original' }); }); });
+  const owner = new Map(), gone = new Set(), out = [];
+  const keysOf = e => { const ks = xdKeys(e.row); const y = String(e.row['YouTube link'] || ''); if (/^https?:/i.test(y)) ks.add('y:' + normU(y)); return ks; };
+  [E.filter(e => e.orig), E.filter(e => !e.orig)].forEach(list => list.forEach(e => {
+    for (const k of keysOf(e)){ const o = owner.get(k); if (o && o !== e && !gone.has(o)){ gone.add(e); out.push({ run: e.run, aid: e.aid, keep: { run: o.run, aid: o.aid } }); return; } }
+    keysOf(e).forEach(k => { if (!owner.has(k)) owner.set(k, e); });
+  }));
+  return out;
+}
+/* FINDING 5: a CalMatters story printed by another outlet ("Calmatters:" headline prefix, or a CalMatters credit in the byline) */
+const XD_SW = new Set('about after again against among being between could first from have into more most over said says than that their them then there these they this those through under were what when where which while with would your will year years california state'.split(' '));
+const xdWords = h => new Set(String(h || '').toLowerCase().replace(/^\s*cal\s?matters\s*[:|-]\s*/, '').split(/[^a-z0-9]+/).filter(w => w.length >= 4 && !XD_SW.has(w)));
+const xdIsSynd = row => covOutlet(row['Outlet']) !== 'calmatters' && (/^\s*cal\s?matters\s*[:|]/i.test(row['Headline'] || '') || /\bcal\s?matters\b/i.test(row['Author / byline'] || ''));
+const xdAuthKey = a => String(a || '').toLowerCase().replace(/cal\s?matters/g, '').replace(/[^a-z]+/g, '');
+function xdSyndOps(E, gone, ops){
+  E.forEach(e => {
+    if (gone.has(e) || !xdIsSynd(e.row)) return;
+    const w = xdWords(e.row['Headline']), ak = xdAuthKey(e.row['Author / byline']);
+    const score = (hl, au, date) => { const d = covDays(e.row['Date'], date); if (!isNaN(d) && d > 7) return -1; let n = 0; xdWords(hl).forEach(x => { if (w.has(x)) n++; }); const bk = xdAuthKey(au); if (ak.length >= 6 && bk.length >= 6 && (ak.includes(bk) || bk.includes(ak))) n += 3; return n; };
+    const cands = E.filter(c => c !== e && !gone.has(c) && covOutlet(c.row['Outlet']) === 'calmatters').map(c => ({ c, n: score(c.row['Headline'], c.row['Author / byline'], c.row['Date']) })).filter(x => x.n >= 2).sort((a, b) => b.n - a.n);
+    if (cands.length && (cands.length === 1 || cands[0].n > cands[1].n)){ const p = cands[0].c; gone.add(e); ops.push({ kind: 'reprint', why: 'syndicated from CalMatters (the headline prefix or the byline credit)', p: { run: p.run, aid: p.aid }, s: { run: e.run, aid: e.aid } }); return; }
+    const tr = covLoad().rows.filter(o => o.on === 'calmatters' && o.kind !== 'X' && !isNaN(covDays(e.row['Date'], o.date)) && covDays(e.row['Date'], o.date) <= 7 && [...xdWords(o.hl)].filter(x => w.has(x)).length >= 2);
+    ops.push({ kind: 'note', s: { run: e.run, aid: e.aid }, why: 'syndicated from CalMatters (headline prefix or byline credit); ' + (tr.length ? 'the tracker already has CalMatters story ' + tr[0].sid + ' (' + tr[0].date + '): check whether this is its reprint' : 'no CalMatters story to file it under was found: the story that ran first is CalMatters') });
+  });
+}
 /* runs: [{id, at, status, rows}] -> ops [{kind, why, p:{run, aid}, s:{run, aid}}]: p stays, s is folded into p (same) or becomes p's reprint. A run still going is left alone. */
 function xdPlan(runs){
   const E = [];
@@ -455,6 +495,7 @@ function xdPlan(runs){
     else { const da = String(a.row['Date'] || ''), db = String(b.row['Date'] || ''); if (da && db && da !== db ? db < da : XD_RANK[b.src] < XD_RANK[a.src]) { p = b; s = a; } }
     gone.add(s); ops.push({ kind: rel.kind, why: rel.why, p: { run: p.run, aid: p.aid }, s: { run: s.run, aid: s.aid } });
   }
+  xdSyndOps(E, gone, ops);
   return ops;
 }
-window.__nb = { webEnd: () => ({ err: String(U.err || ''), aborted: !!(U.ctl && U.ctl.signal && U.ctl.signal.aborted), phase: U.phase, step: U.step, done: U.done || 0, plan: U.plan || 0, failed: U.failed || 0, cands: U.nCands || 0, found: (U.found || []).length }), candidates: nbPrintCands, hasStory: nbHasStory, xdPlan, xdFold: XD_FOLD, spell: nbSpell, runPage: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pp })), screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };
+window.__nb = { tidy: xdTidy, xdDupes, respell: n => { const h = nbSpellHit(n); return h ? h.n : ''; }, webEnd: () => ({ err: String(U.err || ''), aborted: !!(U.ctl && U.ctl.signal && U.ctl.signal.aborted), phase: U.phase, step: U.step, done: U.done || 0, plan: U.plan || 0, failed: U.failed || 0, cands: U.nCands || 0, found: (U.found || []).length }), candidates: nbPrintCands, hasStory: nbHasStory, xdPlan, xdFold: XD_FOLD, spell: nbSpell, runPage: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pp })), screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };

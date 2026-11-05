@@ -471,7 +471,19 @@ async function xdReconcile() {
     const ops = window.__nb.xdPlan([...work].filter(([, d]) => d && Array.isArray(d.rows)).map(([id, d]) => ({ id, at: d.at || '', status: d.status, rows: d.rows })));
     const gone = { pages: new Set(), authors: new Set(), translations: new Set(), tones: new Set() };
     let n = 0;
+    /* FINDING 2: every reprint (in any run) that points at a story being folded away is pointed at the kept story instead */
+    const repoint = (fromSid, fromCode, toSid, toCode, except) => {
+      for (const [id, d] of work) { if (!d || !Array.isArray(d.rows)) continue; let ch = false;
+        if (fromSid) d.rows.forEach(r => { if (r !== except && r['Original or reprint'] === 'Reprint' && r['Story ID'] === fromSid) { r['Story ID'] = toSid; ch = true; } });
+        if (fromCode && Array.isArray(d.reprints)) d.reprints.forEach(x => { if (x && x.story === fromCode) { x.story = toCode; ch = true; } });
+        if (ch) dirty.add(id); }
+    };
     for (const op of ops) {
+      if (op.kind === 'note') {   // FINDING 5: syndicated copy with no CalMatters story to file it under: say where it comes from (once)
+        const nd = work.get(op.s.run), nr = nd && (nd.rows || []).find(r => r['Article ID'] === op.s.aid);
+        if (nr && !String(nr['Team note'] || '').includes(op.why.slice(0, 60))) { nr['Team note'] = [nr['Team note'], op.why].filter(Boolean).join('; ').slice(0, 900); dirty.add(op.s.run); }
+        continue;
+      }
       const pd = work.get(op.p.run), sd = work.get(op.s.run); if (!pd || !sd) continue;
       const prow = pd.rows.find(r => r['Article ID'] === op.p.aid), srow = sd.rows.find(r => r['Article ID'] === op.s.aid); if (!prow || !srow) continue;
       const sSid = srow['Story ID'] || '', sCode = String(srow['Tracker story code'] || ''), pSid = prow['Story ID'] || '', pCode = String(prow['Tracker story code'] || '');
@@ -505,9 +517,25 @@ async function xdReconcile() {
       }
       if (sCode) { sd.stories = (sd.stories || []).filter(x => x !== sCode); sd.reprints = (sd.reprints || []).filter(x => !(x && x.story === sCode)); }
       if (op.kind === 'same' && kids.length) pd.reprints = (pd.reprints || []).concat(kids.map(k => ({ story: pCode, outlet: String(k['Outlet'] || '').slice(0, 120) })));
+      repoint(sSid, sCode, pSid, pCode, srow);   // reprints of the folded story that sit in other runs
       dirty.add(op.p.run); dirty.add(op.s.run); n++;
       S.xdLog.push((op.kind === 'same' ? 'Shown once: ' : 'Filed as a reprint: ') + hl + ' (' + sl + ' and ' + pl + ')');
     }
+    /* FINDING 1: rows with the same link never appear twice in one folder */
+    for (const du of window.__nb.xdDupes([...work].filter(([, d]) => d && Array.isArray(d.rows)).map(([id, d]) => ({ id, at: d.at || '', status: d.status, rows: d.rows })))) {
+      const dd = work.get(du.run), kd = work.get(du.keep.run); if (!dd || !kd) continue;
+      const row = dd.rows.find(r => r['Article ID'] === du.aid), kr = kd.rows.find(r => r['Article ID'] === du.keep.aid); if (!row || !kr) continue;
+      const code = String(row['Tracker story code'] || ''), isOrig = (row['Original or reprint'] || 'Original') === 'Original', key = isOrig ? code : (row._page || '');
+      if (isOrig) repoint(row['Story ID'] || '', code, kr['Story ID'] || '', String(kr['Tracker story code'] || ''), row);
+      dd.rows = dd.rows.filter(r => r !== row);
+      if (code) { dd.stories = (dd.stories || []).filter(x => x !== code); dd.reprints = (dd.reprints || []).filter(x => !(x && x.story === code)); }
+      if (!isOrig) { const i = (dd.reprints || []).findIndex(x => x && x.outlet === String(row['Outlet'] || '').slice(0, 120)); if (i >= 0) dd.reprints.splice(i, 1); }
+      dd.left = (dd.left || []).concat([{ hl: String(row['Headline'] || '').slice(0, 200), outlet: String(row['Outlet'] || '').slice(0, 120), date: row['Date'] || '', why: 'the same link as another row in this update: shown once' }]).slice(0, 150);
+      if (key) { gone.pages.add(key); if (isOrig) { gone.authors.add(key); gone.translations.add(key); gone.tones.add(key); } }
+      dirty.add(du.run); S.xdLog.push('Shown once (same link): ' + String(row['Headline'] || '').slice(0, 120));
+    }
+    /* FINDINGS 3-4: the tracker's spelling of the outlet; no outlet name or trailing junk as an author */
+    for (const [id, d] of work) { if (!d || !Array.isArray(d.rows) || d.status === 'running') continue; for (const r of d.rows) if (window.__nb.tidy(r)) dirty.add(id); }
     if (!dirty.size) return 0;
     for (const id of dirty) { const d = work.get(id); if (d) await mem.collection('runs').doc(id).set(d); }
     for (const [c, ids] of Object.entries(gone)) for (const id of ids) if (sess[c].has(id)) await mem.collection(c).doc(id).delete();
