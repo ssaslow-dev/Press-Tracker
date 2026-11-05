@@ -50,8 +50,8 @@ async function nbThumb(pdfBytes) {
 const NBP_MAX_PAGES = 3, NBP_MAX_ARTICLES = 3, NBP_TIMEOUT = 180000;
 const nbpWords = t => (String(t || '').match(/\p{L}[\p{L}\p{N}'’-]*/gu) || []).length;
 const nbpBlob = (cv, q) => new Promise(res => cv.toBlob(b => res(b), 'image/jpeg', q));
-/* PRINTREAD-v2: the page as overlapping tiles at the picture's own resolution (never shrunk). The stacked page picture is drawn at its native pixel size (NewsBank cuts one tall picture across
-   several PDF pages: the pieces are stacked back), then cut into 2 columns x 3-4 rows with 15% overlap. Every tile is a JPEG within the platform's byte limit; the number of tiles follows maxCount. */
+/* PRINTREAD-v2: the page as overlapping tiles at the picture's own resolution (never shrunk). The page picture is taken at its native pixel size (NewsBank shows one tall picture through
+   several PDF pages), then cut into 2 columns x 3-4 rows with 15% overlap. Every tile is a JPEG within the platform's byte limit; the number of tiles follows maxCount. */
 const NBP_OVERLAP = 0.15;
 function nbpGrid(W, H, maxCount) {
   let cols = 2, rows = H / W > 1.7 ? 4 : 3;   // a tall newspaper picture gets 4 rows, a shorter one 3
@@ -60,21 +60,60 @@ function nbpGrid(W, H, maxCount) {
   for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) tiles.push({ c, r, x: cols === 1 ? 0 : Math.min(W - tw, Math.round(c * tw * (1 - NBP_OVERLAP))), y: rows === 1 ? 0 : Math.min(H - th, Math.round(r * th * (1 - NBP_OVERLAP))), w: tw, h: th });
   return { cols, rows, tiles };
 }
-async function nbPageImages(pgs, maxCount, maxBytes, pic) {
-  const v0 = pgs.map(pg => pg.getViewport({ scale: 1 })), W0 = Math.max(...v0.map(v => v.width)), H0 = v0.reduce((a, v) => a + v.height, 0);
-  const sc = pic && pic.w ? pic.w / W0 : Math.max(1, Math.min(4, 2400 / W0));   // native pixels of the picture inside the PDF; a PDF with live text is drawn sharply at about 2,400 px wide
-  const W = Math.ceil(W0 * sc), H = Math.ceil(H0 * sc), cv = document.createElement('canvas'); cv.width = W; cv.height = H;
-  const cx = cv.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, W, H);
-  let y = 0; for (let i = 0; i < pgs.length; i++) { await pgs[i].render({ canvasContext: cx, viewport: pgs[i].getViewport({ scale: sc }), transform: [1, 0, 0, 1, 0, y] }).promise; y += Math.ceil(v0[i].height * sc); }
+/* PRINTREAD-v2 (fix): the page picture itself is cut, not a drawing of the PDF pages. NewsBank puts ONE JPEG of the whole newspaper page in the PDF and shows it through two PDF pages (the same
+   picture, placed twice at different heights); drawing the pieces back together left most tiles blank. So: find the picture the picked pages draw (one big JPEG, used once however many pages show it),
+   decode it at its own pixel size and cut that. A PDF with no single JPEG picture (a scan in another encoding, an e-edition page, a photo turned into a PDF) is drawn with pdf.js instead, never
+   smaller than the source (at least 1 px per PDF point, about 2,400 px wide for a page with live text) and cut the same way. */
+async function nbPagePicture(bytes, pageNos) {
+  try {
+    const { PDFDocument, PDFName, PDFDict, PDFNumber, PDFRawStream, PDFArray } = PDFLib, doc = await PDFDocument.load(bytes.slice(), { ignoreEncryption: true, updateMetadata: false, throwOnInvalidObject: false });
+    const found = new Map(); let problem = false;
+    const walk = (res, depth) => {
+      if (!(res instanceof PDFDict) || depth > 2) return;
+      const xo = res.lookup(PDFName.of('XObject')); if (!(xo instanceof PDFDict)) return;
+      for (const [, ref] of xo.entries()) {
+        const o = xo.context.lookup(ref), d = o && o.dict; if (!d) continue;
+        const sub = d.lookup(PDFName.of('Subtype'));
+        if (sub === PDFName.of('Form')) { walk(d.lookup(PDFName.of('Resources')), depth + 1); continue; }
+        if (sub !== PDFName.of('Image')) continue;
+        const w = d.lookup(PDFName.of('Width')), h = d.lookup(PDFName.of('Height'));
+        if (!(w instanceof PDFNumber) || !(h instanceof PDFNumber)) continue;
+        found.set(ref.toString(), { o, d, w: w.asNumber(), h: h.asNumber() });
+      }
+    };
+    const pgs = doc.getPages(); for (const n of pageNos) if (pgs[n - 1]) walk(pgs[n - 1].node.Resources(), 0);
+    const all = [...found.values()], big = all.filter(x => x.w >= 400 && x.h >= 400);
+    if (big.length !== 1 || all.some(x => x !== big[0] && x.w * x.h > big[0].w * big[0].h * 0.05)) return null;   // exactly one page picture (small logos are fine)
+    const x = big[0]; let f = x.d.lookup(PDFName.of('Filter')); if (f instanceof PDFArray) f = f.size() === 1 ? f.lookup(0) : null;
+    if (f !== PDFName.of('DCTDecode') || !(x.o instanceof PDFRawStream)) return null;
+    const cs = x.d.lookup(PDFName.of('ColorSpace')); if (cs instanceof PDFArray && cs.lookup(0) === PDFName.of('Indexed')) return null;
+    if (x.d.lookup(PDFName.of('SMask')) || x.d.lookup(PDFName.of('Mask')) || x.d.lookup(PDFName.of('Decode'))) return null;
+    const jpeg = x.o.contents; if (!(jpeg && jpeg.length > 1000 && jpeg[0] === 0xFF && jpeg[1] === 0xD8)) return null;
+    return { jpeg: new Uint8Array(jpeg), w: x.w, h: x.h };
+  } catch (e) { return null; }
+}
+async function nbPageImages(bytes, pgs, maxCount, maxBytes) {
+  const pic = await nbPagePicture(bytes, pgs.map(pg => pg.pageNumber)), v0 = pgs.map(pg => pg.getViewport({ scale: 1 })), H0 = v0.reduce((a, v) => a + v.height, 0);
+  let src, W, H;
+  if (pic) {   // the picture, decoded at its own size (the EXIF turn is ignored, as a PDF viewer ignores it)
+    const bmp = await createImageBitmap(new Blob([pic.jpeg], { type: 'image/jpeg' }), { imageOrientation: 'none' }); src = bmp; W = bmp.width; H = bmp.height;
+  } else {
+    const W0 = Math.max(...v0.map(v => v.width)), sc = Math.max(1, Math.min(4, 2400 / W0));
+    W = Math.ceil(W0 * sc); H = Math.ceil(H0 * sc); src = document.createElement('canvas'); src.width = W; src.height = H;
+    const cx = src.getContext('2d'); cx.fillStyle = '#fff'; cx.fillRect(0, 0, W, H);
+    let y = 0; for (let i = 0; i < pgs.length; i++) { await pgs[i].render({ canvasContext: cx, viewport: pgs[i].getViewport({ scale: sc }), transform: [1, 0, 0, 1, 0, y] }).promise; y += Math.ceil(v0[i].height * sc); }
+  }
   const g = nbpGrid(W, H, Math.max(1, maxCount | 0)), out = [];
   for (const t of g.tiles) {
-    const c2 = document.createElement('canvas'); c2.width = t.w; c2.height = t.h; c2.getContext('2d').drawImage(cv, t.x, t.y, t.w, t.h, 0, 0, t.w, t.h);
-    let b = null; for (const q of [0.9, 0.8, 0.7, 0.55, 0.4]) { b = await nbpBlob(c2, q); if (b && b.size <= maxBytes) break; b = null; }
+    const c2 = document.createElement('canvas'); c2.width = t.w; c2.height = t.h; const x2 = c2.getContext('2d'); x2.fillStyle = '#fff'; x2.fillRect(0, 0, t.w, t.h); x2.drawImage(src, t.x, t.y, t.w, t.h, 0, 0, t.w, t.h);
+    let b = null; for (const q of [0.92, 0.8, 0.7, 0.55, 0.4]) { b = await nbpBlob(c2, q); if (b && b.size <= maxBytes) break; b = null; }
     if (!b) throw new Error('a page tile is too large to send');
     out.push(b);
   }
-  out.grid = { cols: g.cols, rows: g.rows, w: W, h: H, tile_w: g.tiles[0].w, tile_h: g.tiles[0].h };
-  out.layout = []; { let yy = 0; v0.forEach((v, i) => { out.layout.push({ pdf_page: pgs[i].pageNumber, y0: yy / H0, y1: (yy + v.height) / H0 }); yy += v.height; }); }   // where each PDF page sits in the stacked picture (fractions of its height)
+  if (src.close) src.close();
+  out.grid = { cols: g.cols, rows: g.rows, w: W, h: H, tile_w: g.tiles[0].w, tile_h: g.tiles[0].h, from: pic ? 'picture' : 'drawn' };
+  out.tiles = g.tiles;
+  out.layout = []; { let yy = 0; v0.forEach((v, i) => { out.layout.push({ pdf_page: pgs[i].pageNumber, y0: yy / H0, y1: (yy + v.height) / H0 }); yy += v.height; }); }
   return out;
 }
 const NBP_PROMPT = (it, n, tiles, g) => 'You are reading a scanned page of a newspaper. ' + (it.p.src === 'page' ? 'Nothing is known about it yet: you read the paper, the date and the page label from the page itself.' : 'Outlet: ' + (it.p.outlet_clean || it.p.outlet || '?') + '. Date: ' + (it.p.date || '?') + '. Page: ' + (it.p.page || '?') + '.') + '\n'
@@ -107,32 +146,9 @@ function nbpAccept(res, layout) {
   }
   return { ok, seen: seen.length, why };
 }
-/* the size of the picture inside the PDF (its pixels), used to draw it at its own resolution */
-async function nbPicSize(bytes) {
-  try {
-    const { PDFDocument, PDFName, PDFDict, PDFNumber } = PDFLib, doc = await PDFDocument.load(bytes.slice(), { ignoreEncryption: true, updateMetadata: false, throwOnInvalidObject: false });
-    let best = null; const seen = new Set();
-    const walk = (res, depth) => {
-      if (!(res instanceof PDFDict) || depth > 2) return;
-      const xo = res.lookup(PDFName.of('XObject')); if (!(xo instanceof PDFDict)) return;
-      for (const [, ref] of xo.entries()) {
-        const o = xo.context.lookup(ref), d = o && o.dict; if (!d || seen.has(ref.toString())) continue; seen.add(ref.toString());
-        const sub = d.lookup(PDFName.of('Subtype'));
-        if (sub === PDFName.of('Form')) { walk(d.lookup(PDFName.of('Resources')), depth + 1); continue; }
-        if (sub !== PDFName.of('Image')) continue;
-        const w = d.lookup(PDFName.of('Width')), h = d.lookup(PDFName.of('Height'));
-        if (!(w instanceof PDFNumber) || !(h instanceof PDFNumber)) continue;
-        const W = w.asNumber(), H = h.asNumber(); if (!best || W * H > best.w * best.h) best = { w: W, h: H };
-      }
-    };
-    doc.getPages().forEach(pg => walk(pg.node.Resources(), 0));
-    return best;
-  } catch (e) { return null; }
-}
 async function nbReadPrintOne(it, sample, lim) {
   const bytes = NBS.pdfs.get(it.fileId) && NBS.pdfs.get(it.fileId).bytes;
   if (!bytes) return { state: 'unavailable', note: 'the page’s PDF is not in this tab, so it could not be read', articles: [] };
-  const pic = await nbPicSize(bytes);
   const doc = await pdfjsLib.getDocument({ data: bytes.slice(), isEvalSupported: false, useSystemFonts: false, verbosity: 0, stopAtErrors: false, enableXfa: false, disableAutoFetch: true, disableStream: true }).promise;
   const arts = [], whys = []; let seen = 0, readable = 0, tried = 0, mast = null;
   try {
@@ -142,7 +158,7 @@ async function nbReadPrintOne(it, sample, lim) {
     if (!picks.length) picks.push(Math.min(2, doc.numPages));
     {
       const pgs = []; for (const n of picks.slice(0, NBP_MAX_PAGES)) pgs.push(await doc.getPage(n));
-      const imgs = await nbPageImages(pgs, lim.images.maxCount || 1, lim.images.maxInputBytes || 4e6, pic);
+      const imgs = await nbPageImages(bytes, pgs, lim.images.maxCount || 1, lim.images.maxInputBytes || 4e6);
       const ctl = new AbortController(), timer = setTimeout(() => ctl.abort(), NBP_TIMEOUT); let res;
       try { res = await sample.json(NBP_PROMPT(it, 1, imgs.length, imgs.grid), { images: imgs, signal: ctl.signal, modelTier: 'default' }); }
       catch (e) { if (ctl.signal.aborted && !(e && e.code && e.code !== 'cancelled')) { const t = new Error('Claude took too long on this page'); t.code = 'timeout'; throw t; } throw e; }
