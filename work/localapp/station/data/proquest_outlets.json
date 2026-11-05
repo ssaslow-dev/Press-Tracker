@@ -3,7 +3,7 @@
  "version": 1,
  "about": "Built by tools/build_pq_aliases.py from data/proquest_outlets_curated.json (rules and hand-kept pairs), code/outlet_rules.json (the tracker's own folding) and the workbook's ProQuest rows. How a ProQuest PDF's outlet is named: (1) clean_rules turn the Publication title into a name (text before ';', edition and '(Online)' suffixes off); (2) the name gets a key: key_steps then the PC's feeds and aliases then key_post (exact = before the PC aliases, fold = after); (3) a pair (below) wins; a generic name (generic_needs_city) with no pair for its place is never matched; else the tracker's own spelling for the same exact key, then the same fold key; else the cleaned name is kept and the row's Team note says 'outlet name from ProQuest; check'. Nothing is guessed.",
  "inputs": {
-  "outlet_rules_sha256": "f9a151f6152387ad1f29611f9e4afb62550e24c1dd1851dfbd40da6447e6d7bc",
+  "outlet_rules_sha256": "0b3a6850c62aa1b76ae8d93f105f6da8c3f20ede08c58e09c70bf3e10ded6cb1",
   "curated_sha256": "707293416701ff628bd33ec30e3206b3bce62fc30b9b52d4819b48f4b1462bca",
   "workbook_rows": 8193,
   "proquest_rows": 336,
@@ -180,7 +180,8 @@
   "noticias telemundo": "telemundo",
   "kpcc 89 3 fm": "laist",
   "laist 89 3 fm airtalk audio": "laist",
-  "laist 89 3": "laist"
+  "laist 89 3": "laist",
+  "daily news of los angeles": "los angeles daily news"
  },
  "generic_needs_city": [
   "times",
@@ -552,8 +553,8 @@
   "pairs": 3,
   "clean_rules": 5,
   "key_steps": 7,
-  "outlet_rules_aliases": 78,
-  "outlet_rules_aliases_with_a_tracker_outlet": 72,
+  "outlet_rules_aliases": 79,
+  "outlet_rules_aliases_with_a_tracker_outlet": 73,
   "outlet_rules_feeds": 2,
   "generic_names": 22,
   "tracker_outlets": 1321,
