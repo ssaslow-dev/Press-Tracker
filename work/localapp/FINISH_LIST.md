@@ -43,7 +43,7 @@ One list for everything left. Claude keeps it current after every step and repor
 
 | # | Item | Who | Status |
 |---|---|---|---|
-| A8 | First real Update run: Make "for Update" file -> station -> Update -> download -> Bring in update -> preview -> Save | Sammy + Claude | after N6 |
+| A8 | First real Update run: Make "for Update" file -> station -> Update -> download -> Bring in update -> preview -> Save | Sammy + Claude | done 2026-11-05: saved (21 rows, 10 new stories, 5 reprints, San Mateo a CalMatters reprint, 2 Unlinked print pages); checked in the page after reload. The US Fed News row (Mayor Bass release) is Press release = Yes, so the page hides it and the Update log shows it as "Story removed" (wording only) |
 | A13 | Move 01920 to the Removed tab, in that save | Sammy + Claude | with A8 |
 | A9 | Refresh files for colleagues (with the version 2 zip) | Sammy | after A8 |
 | A3 | Send IT the updated note with the version 2 fingerprint | Sammy | any time after N5 |
