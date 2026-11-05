@@ -671,3 +671,6 @@ PRINTREAD-v2 follow-up (2026-11-05, Fable review fix 3, PC patch 30): when a row
 
 ## CLEANUI-v1 (2026-11-05, Sammy): the Update station is a clean interface
 Sammy: "eliminate all non-essential info from the page and create a button that gives technical info when pressed in the header about how every part of it works." The page keeps only what a person needs to act (steps, controls, one short line each, progress, results, short warnings); every explanation moves into one "How it works" button in the header.
+
+## ORIGLINKS-v1 (2026-11-05): rebuilding Originals keeps its hyperlinks
+The first real save on the office PC refused ("Originals: hyperlinks dropped 43 -> 0"): the switch-over's data fixes had put 43 hyperlinks on the Originals tab, and every save rebuilds that tab from Coverage copying values and looks only. PC patch 31 (`31_sheet_task_originals_links.patch`) copies each cell's hyperlink too: the Coverage cell's own, else the one the Originals cell had (same Article ID and column) if its value is unchanged. So Originals can gain links (those on Coverage rows that are Originals), never lose them. The save's own check that refused is unchanged. Test: `app/tests/test_originals_links.py` (the unpatched code reproduces 43 -> 0). Shipped to the office PC as a drop-in of the changed files over version 4.

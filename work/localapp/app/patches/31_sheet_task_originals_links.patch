@@ -1,0 +1,38 @@
+--- a/code/sheet_task.py
++++ b/code/sheet_task.py
+@@ -4288,14 +4288,33 @@
+ def rebuild_originals(sheet):
+     wb, ws = sheet.wb, sheet.ws
++    old_links = {}      # ORIGLINKS-v1 (PC): (Article ID, column) -> (cell value, hyperlink) of the Originals tab before the rebuild
+     if 'Originals' in wb.sheetnames:
+         old = wb['Originals']
+         idx = wb.sheetnames.index('Originals')
+         widths = {k: v.width for k, v in old.column_dimensions.items()}
++        oh = [c.value for c in old[1]]
++        if 'Article ID' in oh:
++            oa = oh.index('Article ID')
++            for orow in old.iter_rows(min_row=2):
++                for cell in orow:
++                    if cell.hyperlink is not None and cell.column - 1 < len(oh) and oa < len(orow):
++                        old_links[(str(orow[oa].value), oh[cell.column - 1])] = (cell.value, copy.copy(cell.hyperlink))
+         wb.remove(old)
+     else:
+         idx, widths = 1, {}
+     o = wb.create_sheet('Originals', idx)
+     cols = [i + 1 for i, h in enumerate(sheet.hdr) if h and h not in SKIP_IN_ORIGINALS]
+     rows = [1] + [r for r in range(2, sheet.last_row + 1) if sheet.get(r, 'Original or reprint') == 'Original']
++    aid_c = sheet.hdr.index('Article ID') + 1 if 'Article ID' in sheet.hdr else None
+     for oi, r in enumerate(rows, start=1):
+         for oc, c in enumerate(cols, start=1):
+             s = ws.cell(r, c)
+             d = o.cell(oi, oc)
+             d.value = s.value
+             d._style = copy.copy(s._style)
++            # ORIGLINKS-v1 (PC): a cell's hyperlink comes along (the Coverage cell's own, else the one the Originals cell had, if its value is unchanged)
++            if s.hyperlink is not None:
++                d.hyperlink = copy.copy(s.hyperlink)
++            elif oi > 1 and aid_c and old_links:
++                ol = old_links.get((str(ws.cell(r, aid_c).value), sheet.hdr[c - 1]))
++                if ol is not None and ol[0] == s.value:
++                    d.hyperlink = copy.copy(ol[1])
+     from openpyxl.utils import get_column_letter
