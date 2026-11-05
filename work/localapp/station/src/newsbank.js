@@ -170,10 +170,17 @@ const nbHasStory = id => byId.has(id);
    3. nothing matches -> a NEW story built from Claude's reading */
 const nbPageNo = s => { const m = /(\d+)/.exec(String(s || '')); return m ? String(+m[1]) : ''; };
 const nbBy = s => String(s || '').replace(/\S+@\S+\.\S+/g, '').replace(/^\s*by\s+/i, '').replace(/\s+/g, ' ').trim();
+const NB_CREDIT_WORD = /\b(times|news|press|post|journal|tribune|herald|chronicle|bee|register|examiner|reuters|bloomberg|calmatters|observer|sun|star|gazette|associated)\b/i;
+const nbTitleCase = t => /[a-z]/.test(t) || !/[A-Z]/.test(t) ? t : t.toLowerCase().replace(/(^|[\s'’-])([a-z])/g, (m, a, b) => a + b.toUpperCase()).replace(/\bMc([a-z])/g, (m, c) => 'Mc' + c.toUpperCase());
 function nbByParts(s){
-  const t = nbBy(s), i = t.lastIndexOf(','); if (i < 0) return { author: t, credit: '' };
-  const cr = t.slice(i + 1).trim();
-  return /\b(times|news|press|post|journal|tribune|herald|chronicle|bee|register|examiner|reuters|bloomberg|calmatters|observer|sun|star|gazette|associated)\b/i.test(cr) ? { author: t.slice(0, i).trim(), credit: cr } : { author: t, credit: '' };
+  let t = nbBy(s), cr = '';
+  const dash = /\s+[\u2014\u2013-]+\s+|\s*[\u2014\u2013]\s*/.exec(t);   // "TERESA LIU — STAFF": what follows the dash is a role or a credit, not the name
+  if (dash){ const tail = t.slice(dash.index + dash[0].length).trim(); t = t.slice(0, dash.index).trim(); if (NB_CREDIT_WORD.test(tail) && !/^staff\b/i.test(tail)) cr = tail; }
+  const i = t.lastIndexOf(',');
+  if (i >= 0){ const c = t.slice(i + 1).trim(); if (NB_CREDIT_WORD.test(c)){ cr = cr || c; t = t.slice(0, i).trim(); } }
+  else { const m = /^(.*?\S)\s+((?:[A-Z][A-Z&.'’-]*\s+)*[A-Z][A-Z&.'’-]*)$/.exec(t);   // "Karen Garcia LOS ANGELES TIMES": a credit in capitals with no comma
+    if (m && NB_CREDIT_WORD.test(m[2]) && /[a-z]/.test(m[1])){ cr = cr || m[2]; t = m[1].trim(); } }
+  return { author: nbTitleCase(t.replace(/[\s,]+(staff( writer)?|special to .*)$/i, '').trim()), credit: cr };
 }
 /* a tracker story this reading is a copy of: { sid, st, how } or null */
 function nbPageStory(p2, a, by){
@@ -504,4 +511,4 @@ function xdPlan(runs){
   xdSyndOps(E, gone, ops);
   return ops;
 }
-window.__nb = { namesHim: s => NAMES_HIM.test(s), tidy: xdTidy, xdDupes, respell: n => { const h = nbSpellHit(n); return h ? h.n : ''; }, webEnd: () => ({ err: String(U.err || ''), aborted: !!(U.ctl && U.ctl.signal && U.ctl.signal.aborted), phase: U.phase, step: U.step, done: U.done || 0, plan: U.plan || 0, failed: U.failed || 0, cands: U.nCands || 0, found: (U.found || []).length }), candidates: nbPrintCands, hasStory: nbHasStory, xdPlan, xdFold: XD_FOLD, spell: nbSpell, runPage: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pp })), screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };
+window.__nb = { byParts: nbByParts, namesHim: s => NAMES_HIM.test(s), tidy: xdTidy, xdDupes, respell: n => { const h = nbSpellHit(n); return h ? h.n : ''; }, webEnd: () => ({ err: String(U.err || ''), aborted: !!(U.ctl && U.ctl.signal && U.ctl.signal.aborted), phase: U.phase, step: U.step, done: U.done || 0, plan: U.plan || 0, failed: U.failed || 0, cands: U.nCands || 0, found: (U.found || []).length }), candidates: nbPrintCands, hasStory: nbHasStory, xdPlan, xdFold: XD_FOLD, spell: nbSpell, runPage: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pp })), screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };
