@@ -658,3 +658,11 @@ SWITCHOVER-v1 follow-up (2026-11-05, PC version 3, D1): the one-time Switch-over
 
 ## STFIX-v1 (2026-11-05): station fixes from Sammy's first real run (details: work/localapp/station/NEWSBANK.md, STFIX-v1 section)
 NewsBank's full-page pictures (about 900 x 1,780 px) are too small to read: the station measures the picture and does not ask Claude below a readable size, says so plainly, and places such pages without reading (same outlet, date and page as a text record in the batch; else Unlinked print pages). Bigger pictures (scans, photos, e-editions) are still read. The Outlet is always the source's own name (never Claude's guess): Los Angeles Daily News, Los Angeles Sentinel, Newtown Bee; CMS user names are dropped from bylines and citations; a wire dateline with no byline credits the wire. A web run that ends early now says so (ended_early, red note) and can no longer be mistaken for "nothing new"; PDF adds wait for a running web run. Every attached print page carries its item key and row. The ProQuest outlet aliases were rebuilt for the new Daily News alias. Open: a page column in the for-Update file would let pages match existing rows by page number.
+
+AUTOSTATION-v1 follow-up 2 (2026-11-05, Sammy): the update folder downloads only when the person presses the button; nothing is exported by itself.
+
+## NORECOVER-v1 (2026-11-05, Sammy): the station has no recovery feature
+Sammy: "eliminate recovery as a feature altogether from the station." A stale, failed run from an earlier tab was pulled into a new update folder. The station no longer keeps runs for recovery or offers or performs recovery; a closed tab means running Update again.
+
+## PRINTREAD-v2 (2026-11-05, Sammy): NewsBank pages must be read; the "too small" rule is withdrawn
+Sammy: "I need them read. Why did you make that a rule?" The size rule (STFIX-v1) rested on an untested estimate. Checked on his real East Bay Times page: at full size, cut into pieces, the print is legible ("Jesse Gabriel (D-Encino), author of Assembly Bill 2244"). The first run failed because each whole page was sent as one picture and shrunk before reading. From now on each page is cut into overlapping pieces at full resolution and Claude reads them together; tests use a real page with a human-checked answer, not canned readings alone.
