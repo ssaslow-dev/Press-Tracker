@@ -68,7 +68,7 @@ const stub = (prompt, o) => {
   const ebt = res.find(r => /East Bay Times\|2026-11-01\|p18/.test(r.label));
   check('(3) East Bay Times p.18 was read', !!ebt, res.map(r => r.label).join('; '));
   if (ebt && ebt.best) { const t0 = ebt.best.tstat[0]; check('(3) East Bay Times p.18: the top-left tile holds dark print (stddev ' + t0.tile.sd.toFixed(1) + ' > 30)', t0.tile.sd > 30 && t0.src.sd > 30, JSON.stringify(t0)); }
-  check('14 print pages were cut', res.length === 14, String(res.length));
+  check('11 distinct page pictures were cut (14 pages; byte-identical pictures read once, PRINTFIX 7)', res.length === 11, String(res.length));
   console.log('tiles written to ' + OUT);
   check('no page error, no outside request', X.errors.length === 0 && X.outside.length === 0, JSON.stringify([X.errors.slice(0, 3), X.outside]));
   await X.close(); console.log(C.failed ? C.failed + ' FAILED' : 'all ' + C.n + ' passed'); process.exit(C.failed ? 1 : 0);

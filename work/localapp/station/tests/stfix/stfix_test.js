@@ -37,7 +37,7 @@ const finalRuns = page => page.evaluate(() => [...window.__station.sess.runs].ma
     const run = await page.evaluate(() => { const r = window.__station.state.nb.lastRun; const its = window.__station.state.nb.items; return { rows: r.rows, doc: r.doc, items: r.items, pages: its.filter(i => i.p.kind === 'print_page').map(i => ({ key: i.key, outlet: i.p.outlet_clean, date: i.p.date, page: i.p.page, st: i.screen.status, why: i.screen.why, read: i.reading && i.reading.state, pic: i.reading && i.reading.pic, note: i.reading && i.reading.note, readNote: i.readNote, attachTo: i.attachTo, printAs: i.printAs })) }; });
     const asks = await page.evaluate(() => window.__pageAsks || 0);
     /* FINDING 1 */
-    check('1. Claude is asked to read every one of the 14 NewsBank page pictures (PRINTREAD-v2: no size gate)', asks === 14, asks);
+    check('1. Claude is asked to read every one of the 14 NewsBank page pictures (PRINTREAD-v2: no size gate; PRINTFIX 7: byte-identical pictures are read once, 11 distinct pictures)', asks === 11, asks);
     check('1. every page is marked unread (Claude could not make it out), none "too small"', run.pages.length === 14 && run.pages.every(p => p.read === 'unclear'), JSON.stringify(run.pages.map(p => p.read)));
     const blob = JSON.stringify([run.doc, run.items, run.pages]);
     check('1. nothing says "no article that names Jesse Gabriel" (the page was not read)', !/no article that names Jesse Gabriel/i.test(blob), (blob.match(/.{60}no article that names.{20}/i) || [''])[0]);
