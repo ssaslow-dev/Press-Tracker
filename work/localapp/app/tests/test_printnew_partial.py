@@ -95,6 +95,11 @@ def mkwork(name):
     shutil.rmtree(BASE / name, ignore_errors=True)
     root.parent.mkdir(parents=True)
     shutil.copytree(T.BUILD, root, symlinks=True, copy_function=os.link)
+    led = root / 'data' / 'state' / 'ledger.jsonl'      # a hard link to the build's ledger: the save appends in place, so break the link first
+    if led.exists():
+        b = led.read_bytes()
+        led.unlink()
+        led.write_bytes(b)
     wbd = root / 'data' / 'workbook'
     shutil.rmtree(wbd, ignore_errors=True)
     wbd.mkdir(parents=True)
