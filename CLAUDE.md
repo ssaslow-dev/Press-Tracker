@@ -59,7 +59,7 @@ Next steps:
 2. Fable checkpoint 3 done (work/saver/REVIEW_2.md); findings fixed. PCEDITS-v1 built (Manage edits saved with updates or via "Save my edits").
 3. Station final checks after Sammy's additions; publish it on the office claude.ai account.
 4. Switch-over with Sammy (SWITCHOVER-v1): replace the snapshot with the current Mac master and library, then the Switch-over changes screen (file renames, PRJUDGE-v2, data-check fixes), first real save, full refresh files for readers.
-5. Final Windows zip: built after Sammy's go-ahead (not yet built from this round's code).
+5. PC tracker version 3 (last planned PC build: print-page saving, later update folders, Daily News alias, switch-over screen removed) built 2026-11-05: install over the current tracker with Install update; then the first real update with the fixed station.
 
 Importing the old workspace's change bundles: docs/CHANGES_*.md. Copy code/ and build/ files as they come, keep the repo-only changes listed in docs/REPO_LOCAL_CHANGES.md, place new DECISIONS entries before the marker line, never commit bundle workbooks (SWITCHOVER-v1 follow-up), then rebuild js_merged.js, re-apply PC patches, rebuild and republish the station.
 
