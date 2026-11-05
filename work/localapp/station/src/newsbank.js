@@ -523,4 +523,8 @@ runAll = function (mode, since) {
   if (mode !== 'refresh' && !since && ds && !sinceError(ds)) since = ds;
   return runAllBase(mode, since);
 };
+/* STREAMLINE-v1 (guide writer's finding): the Update panel is redrawn many times a second during a run, so the station's text clean-up (debounced) never caught up;
+   it now runs right after every redraw */
+const drawUpdBase = drawUpd;
+drawUpd = function () { drawUpdBase.apply(this, arguments); try { const el = document.getElementById('upd'); if (el && window.__stFix) window.__stFix(el); } catch (e) {} };
 window.__nb = { byParts: nbByParts, namesHim: s => NAMES_HIM.test(s), tidy: xdTidy, xdDupes, respell: n => { const h = nbSpellHit(n); return h ? h.n : ''; }, webEnd: () => ({ err: String(U.err || ''), aborted: !!(U.ctl && U.ctl.signal && U.ctl.signal.aborted), phase: U.phase, step: U.step, done: U.done || 0, plan: U.plan || 0, failed: U.failed || 0, cands: U.nCands || 0, found: (U.found || []).length }), candidates: nbPrintCands, hasStory: nbHasStory, xdPlan, xdFold: XD_FOLD, spell: nbSpell, runPage: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pp })), screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };

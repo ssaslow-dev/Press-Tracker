@@ -809,6 +809,7 @@ function init() {
   setInterval(updatePackUi, 1000);
   const au = $('#stAuto'); if (au) { au.checked = S.auto; au.addEventListener('change', () => { S.auto = au.checked; try { localStorage.setItem('ajg_station_auto', S.auto ? '1' : '0'); } catch (e) { /* no storage: the choice lasts for this page only */ } }); }
   setInterval(autoTick, 1000);
+  window.__stFix = root => fixTexts(root);   // called by the tracker code right after it redraws the Update panel
   window.__station = { state: S, sess, pack, pending, zipStore, loadFile, xdReconcile, mem };   // for the tests
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
