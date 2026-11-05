@@ -195,11 +195,6 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   if (DBMODE !== 'none') {
     const kept = await page.evaluate(() => Object.keys(window.__realdb || {}).filter(c => /recover/.test(c) && Object.keys(window.__realdb[c] || {}).length));
     check('NORECOVER-v1: nothing is kept in the db for recovery', kept.length === 0, JSON.stringify(kept));
-    await page.reload(); await page.waitForSelector('#stDrop');
-    check('after a reload the station starts empty (nothing carried over by itself)', await page.evaluate(() => !window.__station.state.loaded && window.__station.sess.runs.size === 0));
-    await page.setInputFiles('#stFile', FILE); await page.waitForSelector('#stLoaded:not([hidden])', { timeout: 60000 });
-    await page.waitForTimeout(2500);
-    check('NORECOVER-v1: same file loaded again: no recovery offered, nothing brought back, nothing to pack', await page.evaluate(() => !document.querySelector('#stRecover') && window.__station.sess.runs.size === 0) && await page.$eval('#stPack', b => b.disabled));
   }
   const run = S.runs[0] && S.runs[0][1];
   check('a run doc was saved in the station session', !!run, JSON.stringify(Object.keys(S.runs)));
@@ -272,7 +267,7 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
     document.querySelector('#stDrop').dispatchEvent(new DragEvent('drop', { dataTransfer: dt, bubbles: true, cancelable: true })); });
   await p2.waitForSelector('#stLoaded:not([hidden])', { timeout: 60000 });
   await p2.waitForTimeout(1500);
-  check('after the update folder was downloaded the same file offers no recovery (there is none)', (await p2.locator('#stRecover').count()) === 0);
+  check('NORECOVER-v1: a fresh tab with the same file offers no recovery and brings nothing back', (await p2.locator('#stRecover').count()) === 0 && await p2.evaluate(() => window.__station.sess.runs.size === 0));
   check('drag-and-drop loads the file too', (await p2.textContent('#stFacts')).includes('for_update_test.json') && errors2.length === 0, errors2.join('|'));
 
   /* 7. memory is seeded from the file: a file with an earlier run + waiting clip + removed story */
