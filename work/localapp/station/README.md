@@ -49,8 +49,8 @@ The station layer adapts around it, without editing it:
 
 ## Persistence, recovery and "packed" (HANDOFF_PC_APP sections 6, 7, 10)
 
-- **Heartbeat (REQ-2).** The tracker code writes its progress run doc at the start and every 25 searches, unmodified. Here those writes go to the in-memory db, and each one is also copied (best effort, one write at a time) to the artifact db, collection `recover`, one document per tracker document, keyed to the loaded file (workbook sha + file date). The documents hold the JSON as a string.
-- **Closed tab.** Load the same file again: the page finds the unfinished session in `recover` and offers **Recover**. Recover puts the documents back through the same in-memory db (so the tracker code sees the run, the finds and the reprints again and does not propose them twice) and they can be packed like any run. A session that was already downloaded is not offered again (`recoverstate/<key>` holds the packed point). Tested: reload, load, Recover, pack; the recovered documents equal the originals. Without a db capability there is nothing to recover from (the old localStorage fallback `jg-runs-pending` only triggers when the tracker's store write fails, which the in-memory store never does).
+- **Heartbeat (REQ-2).** The tracker code writes its progress run doc at the start and every 25 searches, unmodified. Here those writes go to the in-memory db only. NORECOVER-v1 (2026-11-05): nothing is copied to the artifact db for recovery.
+- **Closed tab.** The work is gone; run Update again (NORECOVER-v1: no recovery feature).
 - **Packed runs.** The zip carries each run doc as the tracker wrote it, without `ids` or `sheet.written`, because the PC's save sets those (the saver's write-back). The station does not need them: nothing is reused between uses (the next file brings the memory), and inside one use the packed point (`S.lastPacked`) stops a run being packed twice. A packed but never saved run is re-found by the next Update, which is intended (FORMAT.md, "Fingerprint").
 - **`_text`** (up to 6,000 characters per proposed row) stays in the run doc in the zip. **`searched_to`** advances only when at most 2% of the calls failed: that rule is the tracker's own code (`runAll`), unchanged.
 - **Without `sample`** (not offered or not allowed) a red note appears above the Update panel; the tracker's own message ("Claude couldn't review these ...") follows a run.
@@ -109,8 +109,8 @@ Results on 2026-11-02 (50 checks in empty and stale db modes, 44 in none, all pa
 - loading (picker, and drag and drop in a fresh page): workbook short form `bc21c9fb`, 3,681 stories shown; Update enabled; Update panel with the Since control; Refresh, Spreadsheet and Manage hidden;
 - seeding: a file with an earlier run, a waiting find and a removed story gives Since = searched_to minus 7 days, the "last full update searched up to" line, the run in the log, and nothing from it in the next zip;
 - a run (708 searches, 9 page fetches): 2 new stories (English; Spanish with no byline), the hit whose link is already a story in the file is not added, the same-headline hit becomes a reprint candidate on s04931 with `added` = today, 3 pages docs (2 stories, 1 reprint candidate), a translation doc, an authors doc (Claude split "A; B"), tone in the proposed rows, `searched_to` = today;
-- recovery: reload, same file, Recover, recovered docs equal the originals, then pack;
-- step 3: the zip downloads with the right name; the run is recorded in `packed`; nothing left to pack afterwards; the same file offers no recovery;
+- reload, same file: nothing is brought back and no recovery is offered;
+- step 3: the zip downloads with the right name; the run is recorded in `packed`; nothing left to pack afterwards;
 - db modes: empty db, a db holding stale leftovers (a future `searched_to`, a waiting find, a removal, an old pack note) and no db capability give the same run, the same zip contents and no stale item anywhere;
 - no page errors.
 

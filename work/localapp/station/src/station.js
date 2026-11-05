@@ -29,7 +29,6 @@ function makeMemDb() {
     if (!S.loaded || !(sess[name] || name === 'clips')) return;
     const seq = ++S.seq;
     if (sess[name]) { if (data === null) sess[name].delete(id); else sess[name].set(id, { data: clone(data), seq }); }
-    if (!S.recovering) mirror(name, id, data === null ? null : clone(data), seq);
     updatePackUi();
   };
   const api = {
@@ -168,55 +167,6 @@ window.fetch = function (input, init) {
   return origFetch ? origFetch(input, init) : Promise.reject(new Error('fetch unavailable'));
 };
 
-/* ---------- optional recovery (REQ-2): a closed tab must not lose a run ----------
-   Everything the tracker code writes after the file is loaded is also copied, best effort, to the artifact db (collection "recover", one
-   document per tracker document, keyed to this file). It is scratch: the station never reads it for the button's memory. It is read only
-   to offer "Recover" when the same file is loaded again after a reload. Nothing is deleted; a packed point is kept in "recoverstate". */
-const MIRROR = new Set(PACK_COLLS.concat(['clips']));
-const mirrorQ = new Map(); let mirroring = false, mirrorFail = 0;
-const fileKey = () => S.file.fingerprint.workbook_sha256.slice(0, 12) + '-' + String(S.file.created_at || '').replace(/[^0-9]/g, '');
-function mirror(coll, id, data, seq) {
-  if (!S.realDb || !MIRROR.has(coll) || S.noMirror.has(coll + '.' + id)) return;
-  mirrorQ.set(coll + '.' + id, { coll, id, data, seq });
-  if (!mirroring) drain();
-}
-async function drain() {
-  mirroring = true;
-  try {
-    while (mirrorQ.size) {
-      const [k, v] = mirrorQ.entries().next().value; mirrorQ.delete(k);
-      const doc = S.realDb.collection('recover').doc(fileKey() + '~' + k);
-      try { await doc.set(v.data === null ? { fk: fileKey(), coll: v.coll, id: v.id, seq: v.seq, deleted: true } : { fk: fileKey(), coll: v.coll, id: v.id, seq: v.seq, json: JSON.stringify(v.data) }); }
-      catch (e) { mirrorFail++; }
-    }
-  } finally { mirroring = false; }
-}
-async function offerRecovery() {
-  if (!S.realDb) return;
-  try {
-    const fk = fileKey(), st = await S.realDb.collection('recoverstate').doc(fk).get(), packedTo = st && st.exists && st.data() ? +st.data().lastPackedSeq || 0 : 0;
-    const snap = await S.realDb.collection('recover').get(), got = [];
-    snap.docs.forEach(d => { const x = d.data(); if (x && x.fk === fk && !x.deleted && x.json && x.seq > packedTo) { try { got.push({ coll: x.coll, id: x.id, seq: x.seq, data: JSON.parse(x.json) }); } catch (e) {} } });
-    const dead = new Set(); snap.docs.forEach(d => { const x = d.data(); if (x && x.fk === fk && x.deleted) dead.add(x.coll + '.' + x.id); });
-    const keep = got.filter(g => !dead.has(g.coll + '.' + g.id)).sort((a, b) => a.seq - b.seq);
-    const runs = keep.filter(g => g.coll === 'runs');
-    if (!runs.length) return;
-    S.recoverable = keep;
-    const el = $('#stRecover'); el.hidden = false;
-    if (S.auto) { await recover(); el.hidden = false; $('#stRecoverBtn').hidden = true; $('#stRecoverTxt').textContent = 'Recovered ' + fmtN(runs.length) + (runs.length === 1 ? ' run' : ' runs') + ' that an earlier tab left undownloaded (' + fmtN(keep.length) + ' saved items); they go into the update folder below.'; return; }
-    $('#stRecoverTxt').textContent = 'An earlier tab left ' + fmtN(runs.length) + (runs.length === 1 ? ' run' : ' runs') + ' from this file that was not downloaded (' + fmtN(keep.length) + ' saved items). Recover ' + (runs.length === 1 ? 'it' : 'them') + ' to pack them, or ignore this and press Update again.';
-  } catch (e) { console.warn('recovery check failed', e); }
-}
-async function recover() {
-  const items = S.recoverable || []; if (!items.length) return;
-  S.recovering = true;
-  try {
-    S.seq = Math.max(S.seq, ...items.map(g => g.seq));
-    for (const g of items) { const c = mem.collection(g.coll); if (!sess[g.coll] && g.coll !== 'clips') continue; await c.doc(g.id).set(g.data); }
-  } finally { S.recovering = false; }
-  S.recoverable = null; $('#stRecover').hidden = true; updatePackUi(); xdSoon();
-}
-
 /* ---------- step 1: read the file ---------- */
 function showErr(msg) { const e = $('#stErr'); e.textContent = msg; e.hidden = !msg; }
 function shortSha(s) { return s ? s.slice(0, 8) + '…' : ''; }
@@ -275,7 +225,6 @@ async function loadFile(f) {
   s.textContent = '(function(window){\n' + src.slice(0, cut) + '\n' + nbScope.replace(/<\\\/script/gi, '<' + '/script') + '\n' + src.slice(cut) + '\n})(window.__stationWin);';
   try { document.body.appendChild(s); } catch (e) { S.loaded = false; showErr('The tracker code did not start: ' + (e && e.message ? e.message : e)); return; }
   showLoaded();
-  offerRecovery();
   try { const sm = realClaude && realClaude.use ? await realClaude.use('sample') : null; if (!sm) $('#stSampleNote').hidden = false; } catch (e) { $('#stSampleNote').hidden = false; }
 }
 function showLoaded() {
@@ -377,12 +326,12 @@ document.addEventListener('click', ev => {
 }, true);
 function trackerBusy() { const f = $('#runFind'); return !!(f && (f.getAttribute('aria-busy') === 'true' || f.classList.contains('busy'))) || !!$('#updStop'); }
 /* AUTOSTATION-v1: the station does the next step itself. Nothing here runs on a schedule: it reacts to what the person did (dropped PDFs, pressed Update) while this page is open.
-   1. PDFs read and waiting -> added to the update (after any run that is going finishes); 2. (no automatic download: the person presses "Download the update folder"); 3. an earlier tab's unsaved runs are recovered on load.
+   1. PDFs read and waiting -> added to the update (after any run that is going finishes); 2. (no automatic download: the person presses "Download the update folder"); 
    A step that fails is not retried by itself (the same list of items, the same runs: the signature below); the buttons stay as the manual way. */
 S.auto = (() => { try { return localStorage.getItem('ajg_station_auto') !== '0'; } catch (e) { return true; } })();
 const autoSig = { nb: '', pq: '' };
 function autoTick() {
-  if (!S.auto || !S.loaded || S.recovering) return;
+  if (!S.auto || !S.loaded) return;
   const nb = S.nb, pq = S.pq;
   if (!nb || !pq || nb.busy || nb.reading || pq.busy || pq.reading || S.busyPack || trackerBusy()) return;
   const np = nbPickable(), pp = pqPickable();
@@ -506,7 +455,7 @@ S.xdFolds = []; S.xdNotes = new Map(); S.xdLog = []; let xdTimer = 0, xdBusy = f
 const SRC_LABEL = { nb: 'NewsBank', pq: 'ProQuest', pp: 'a newspaper page', web: 'the web search' };
 const xdSrcOf = row => /newsbank/i.test(row['Data Source'] || '') ? 'nb' : /proquest/i.test(row['Data Source'] || '') ? 'pq' : /^print page/i.test(row['Data Source'] || '') ? 'pp' : 'web';
 const xdBlank = v => v === undefined || v === null || String(v).trim() === '';
-function xdSoon() { if (S.recovering) return; clearTimeout(xdTimer); xdTimer = setTimeout(() => { xdReconcile().catch(e => console.warn('cross-source check failed', e)); }, 400); }
+function xdSoon() { clearTimeout(xdTimer); xdTimer = setTimeout(() => { xdReconcile().catch(e => console.warn('cross-source check failed', e)); }, 400); }
 const xdNoteOf = it => { const c = it && it.r && it.r.id; return c && S.xdNotes.has(c) ? ' ' + S.xdNotes.get(c) : ''; };
 const XD_RM = ['Topic', 'Tone', 'Tone note', 'Tone rated by', 'Bills', '# of reprints', 'Translated Headline', 'Story in English', 'Mentions "Gabriel" in text', 'File name', 'Saved Copy?'];
 async function xdReconcile() {
@@ -576,7 +525,6 @@ async function recordPacked(runIds, filename, zsha, nfiles) {
   try {
     if (!S.realDb && realClaude && realClaude.use) S.realDb = await realClaude.use('db');
     if (!S.realDb) return;
-    await S.realDb.collection('recoverstate').doc(fileKey()).set({ lastPackedSeq: S.seq, at: nowIso(), zip: filename });
     for (const id of runIds) await S.realDb.collection('packed').doc(id).set({ run: id, packed_at: nowIso(), zip: filename, zip_sha256: zsha, files: nfiles, workbook_sha256: S.file.fingerprint.workbook_sha256, station_version: STATION_VERSION });
   } catch (e) { console.warn('could not record the pack in the station db', e); }
 }
@@ -641,7 +589,6 @@ function init() {
   nbWire();
   pqWire();
   $('#stPack').addEventListener('click', () => { pack(); });
-  $('#stRecoverBtn').addEventListener('click', () => { recover(); });
   $('#stPackAgain').addEventListener('click', async () => { if (S.lastZip) await saveFile(S.lastZip.filename, S.lastZip.zip); });
   let moT = 0;
   const mo = new MutationObserver(() => { clearTimeout(moT); moT = setTimeout(() => { fixTexts($('#st')); const t = document.getElementById('toast'); if (t) fixTexts(t); updatePackUi(); }, 150); });
@@ -651,7 +598,7 @@ function init() {
   setInterval(updatePackUi, 1000);
   const au = $('#stAuto'); if (au) { au.checked = S.auto; au.addEventListener('change', () => { S.auto = au.checked; try { localStorage.setItem('ajg_station_auto', S.auto ? '1' : '0'); } catch (e) { /* no storage: the choice lasts for this page only */ } }); }
   setInterval(autoTick, 1000);
-  window.__station = { state: S, sess, pack, pending, zipStore, loadFile, xdReconcile, mem, mirrorBusy: () => mirroring || mirrorQ.size > 0, mirrorFail: () => mirrorFail };   // for the tests
+  window.__station = { state: S, sess, pack, pending, zipStore, loadFile, xdReconcile, mem };   // for the tests
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

@@ -193,22 +193,13 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   const S = await page.evaluate(() => { const o = {}; for (const [c, m] of Object.entries(window.__station.sess)) o[c] = [...m].map(([id, v]) => [id, v.data]); return o; });
   fs.writeFileSync(path.join(OUT, 'session_docs.json'), JSON.stringify(S, null, 1));
   if (DBMODE !== 'none') {
-    await page.waitForFunction(() => !window.__station.mirrorBusy(), null, { timeout: 30000 });
-    const nSess = S.runs.length + S.pages.length + S.reprints.length + S.authors.length + S.translations.length + S.tones.length + S.edits.length;
-    const mirrored = await page.evaluate(() => Object.values(window.__realdb.recover || {}).filter(d => !d.deleted).length);
-    check('documents written after loading are mirrored to the db for recovery (sessions docs + clips)', mirrored >= nSess, mirrored + ' vs ' + nSess);
+    const kept = await page.evaluate(() => Object.keys(window.__realdb || {}).filter(c => /recover/.test(c) && Object.keys(window.__realdb[c] || {}).length));
+    check('NORECOVER-v1: nothing is kept in the db for recovery', kept.length === 0, JSON.stringify(kept));
     await page.reload(); await page.waitForSelector('#stDrop');
     check('after a reload the station starts empty (nothing carried over by itself)', await page.evaluate(() => !window.__station.state.loaded && window.__station.sess.runs.size === 0));
     await page.setInputFiles('#stFile', FILE); await page.waitForSelector('#stLoaded:not([hidden])', { timeout: 60000 });
-    await page.waitForSelector('#stRecover:not([hidden])', { timeout: 20000 });
-    check('same file loaded again: the unfinished run is offered for recovery', /1 run/.test(await page.textContent('#stRecoverTxt')), await page.textContent('#stRecoverTxt'));
-    check('nothing is packable before the user recovers', await page.$eval('#stPack', b => b.disabled));
-    await page.click('#stRecoverBtn');
-    await page.waitForFunction(() => window.__station.sess.runs.size === 1 && window.__station.sess.pages.size >= 3, null, { timeout: 20000 });
-    const S2 = await page.evaluate(() => { const o = {}; for (const [c, m] of Object.entries(window.__station.sess)) o[c] = [...m].map(([id, v]) => [id, v.data]); return o; });
-    check('recovered documents equal the originals', JSON.stringify(S2) === JSON.stringify(S), '');
-    await page.waitForFunction(() => !document.querySelector('#stPack').disabled, null, { timeout: 10000 });
-    check('a recovered run can be packed', true);
+    await page.waitForTimeout(2500);
+    check('NORECOVER-v1: same file loaded again: no recovery offered, nothing brought back, nothing to pack', await page.evaluate(() => !document.querySelector('#stRecover') && window.__station.sess.runs.size === 0) && await page.$eval('#stPack', b => b.disabled));
   }
   const run = S.runs[0] && S.runs[0][1];
   check('a run doc was saved in the station session', !!run, JSON.stringify(Object.keys(S.runs)));
@@ -281,7 +272,7 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
     document.querySelector('#stDrop').dispatchEvent(new DragEvent('drop', { dataTransfer: dt, bubbles: true, cancelable: true })); });
   await p2.waitForSelector('#stLoaded:not([hidden])', { timeout: 60000 });
   await p2.waitForTimeout(1500);
-  check('after the update folder was downloaded the same file offers no recovery', await p2.locator('#stRecover').isHidden());
+  check('after the update folder was downloaded the same file offers no recovery (there is none)', (await p2.locator('#stRecover').count()) === 0);
   check('drag-and-drop loads the file too', (await p2.textContent('#stFacts')).includes('for_update_test.json') && errors2.length === 0, errors2.join('|'));
 
   /* 7. memory is seeded from the file: a file with an earlier run + waiting clip + removed story */

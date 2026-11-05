@@ -171,7 +171,6 @@ const INIT = ({ today, hl }) => {
   check('the book-keeping travels: batch name and sha256 and story number', pdocs.every(d => d.nb.batch.name && /^[0-9a-f]{64}$/.test(d.nb.batch.sha256) && d.nb.batch.index >= 1));
 
   /* NewsBank text never copied to the artifact db */
-  await page.waitForFunction(() => !window.__station.mirrorBusy(), null, { timeout: 30000 });
   const rec = await page.evaluate(() => Object.values(window.__realdb.recover || {}));
   check('no NewsBank run, page, reprint or translation was copied to the artifact db', !rec.some(d => /newsbank|nb\.|jg-|rp-|files\/nb-/.test(JSON.stringify(d)) && !d.deleted) && !rec.some(d => d.coll === 'pages' || d.coll === 'reprints'), JSON.stringify(rec.map(d => d.coll + '.' + d.id)).slice(0, 200));
   const calls = await page.evaluate(() => window.__calls);
