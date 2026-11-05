@@ -88,3 +88,6 @@ One list for everything left. Claude keeps it current after every step and repor
 ## Done and dropped
 - A4 dress rehearsal: skipped (the real run on the PC copy doubled as it).
 - A14 "Access is denied": cause found (Windows briefly holding files); fixed by N1.
+
+## Notes from the real runs (2026-11-05)
+- Fifth station run (folder ajg_update_20261105-1530): all rows right, 12 of 14 pages placed; 2 Oct 25 p.14 pages (Long Beach, Daily News) went to Unlinked print pages because Claude's transcription of the long candidate list left out his paragraph. An outlet+date fallback was offered; Sammy declined ("that's fine"). The folder is cleared for the first real save (A8).
