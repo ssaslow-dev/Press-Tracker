@@ -220,7 +220,8 @@ class PartialFolder(unittest.TestCase):
             r = take(root, z)
             self.assertEqual(r.get('refused'), 'ALREADY_SAVED', r)
         # the library holds each page once
-        self.assertEqual(len(list((root / 'data' / 'library' / '_original_pdf' / '2026').glob('*_p5.pdf'))), 2)
+        had = {f.name for f in (T.BUILD / 'data' / 'library' / '_original_pdf' / '2026').glob('*_p5.pdf')}      # the snapshot library already holds some p5 scans
+        self.assertEqual(len({f.name for f in (root / 'data' / 'library' / '_original_pdf' / '2026').glob('*_p5.pdf')} - had), 2)
 
     def test_not_a_later_folder_is_still_refused(self):
         root = mkwork('pt2')
