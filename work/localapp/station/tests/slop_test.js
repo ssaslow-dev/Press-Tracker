@@ -9,7 +9,7 @@ const C = H.makeChecker(), check = C.check;
   const X = await H.start(path.join(H.ST, 'dist', 'index.html'), () => [], { images: 4 }), page = X.page; await H.loadFile(page, FU);
   const fu = JSON.parse(fs.readFileSync(FU, 'utf8'));
   const st = await page.evaluate(() => ({ since: window.__stationSince, facts: document.getElementById('stFacts').innerText }));
-  check('NEWEST-v1: the search starts the day before the newest story', /^\d{4}-\d\d-\d\d$/.test(st.since || ''), JSON.stringify(st));
+  check('NEWEST-v1 / OVERLAP-v1: the search start date is set', /^\d{4}-\d\d-\d\d$/.test(st.since || ''), JSON.stringify(st));
   console.log('  since', st.since, '|', st.facts.replace(/\n/g, ' / '));
   const run = JSON.parse(fs.readFileSync(RUN, 'utf8'));
   await page.evaluate(d => window.__station.mem.collection('runs').doc('run-test').set(d), run);

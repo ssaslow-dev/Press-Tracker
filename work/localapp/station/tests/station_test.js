@@ -168,7 +168,7 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   check('Refresh from files / Spreadsheet / Manage buttons are hidden', !(await page.locator('#runRefresh').isVisible()) && !(await page.locator('#updRefresh').isVisible()) && !(await page.locator('#updBtn').isVisible()));
   const sinceDef = await page.inputValue('#updSince');
   { const ss = await page.evaluate(() => window.__stationSince), nd = fu.newest_story_date || [...fu.stories.map(r => String(r.date || '').slice(0, 10)), ...fu.rows.rows.filter(r => r[2] !== 'X' && r[2] !== 'P').map(r => String(r[4] || '').slice(0, 10))].filter(d => /^\d{4}-\d\d-\d\d$/.test(d) && d <= TODAY).sort().pop();
-    check('NEWEST-v1: the search starts the day before the newest story in the file', ss === new Date(Date.parse(nd) - 864e5).toISOString().slice(0, 10), ss + ' vs newest ' + nd); }
+    check('NEWEST-v1 / OVERLAP-v1: the search starts two weeks before the newest story in the file', ss === new Date(Date.parse(nd) - 14 * 864e5).toISOString().slice(0, 10), ss + ' vs newest ' + nd); }
   await page.screenshot({ path: path.join(OUT, 'shot_2_loaded.png'), fullPage: true });
 
   /* 4. Update */

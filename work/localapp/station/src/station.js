@@ -240,7 +240,8 @@ function newestDate(j) {
   for (const r of (j && j.rows && j.rows.rows) || []) { const d = String(r[di] || '').slice(0, 10); if (r[ki] !== 'X' && r[ki] !== 'P' && ok(d) && d > best) best = d; }
   return best;
 }
-function stationSince(j) { const n = newestDate(j); return n ? new Date(Date.parse(n) - 864e5).toISOString().slice(0, 10) : ''; }
+const SINCE_OVERLAP_DAYS = 14;   // OVERLAP-v1 (Sammy 2026-11-05): two weeks back, so stories that appear online late are still caught; the tracker-duplicate check drops what is already in
+function stationSince(j) { const n = newestDate(j); return n ? new Date(Date.parse(n) - SINCE_OVERLAP_DAYS * 864e5).toISOString().slice(0, 10) : ''; }
 function showLoaded() {
   const j = S.file, fp = j.fingerprint, m = j.memory || {};
   S.since = stationSince(j); window.__stationSince = S.since;
@@ -545,7 +546,12 @@ function fileDupOf(fx, r) {
   const d = String(r['Date'] || '').slice(0, 10), o = fdNormO((window.__nb && window.__nb.respell && window.__nb.respell(r['Outlet'])) || r['Outlet']);
   const near = e => lead ? (d && e.date && Math.abs(Date.parse(d) - Date.parse(e.date)) <= 14 * 864e5) : (!d || !e.date || Math.abs(Date.parse(d) - Date.parse(e.date)) <= 14 * 864e5);   // first-8-words: both dates needed
   const cand = list.filter(e => e.sid && near(e)); if (!cand.length) return null;
-  const same = cand.find(e => e.o && o && e.o === o);   // exact name after the tracker's spelling ("cbs" is not "cbsnews")
+  const w1 = x => (String(x || '').normalize('NFKC').toLowerCase().replace(/^the\s+/, '').match(/\p{L}+/u) || [''])[0];
+  const fw = w1(r['Outlet']);
+  const same = cand.find(e => e.o && o && e.o === o)   // exact name after the tracker's spelling ("cbs" is not "cbsnews")
+    // the same paper under another name ("Excelsior California" / "Excelsior: Orange County Register weekly"): word-for-word headline, within a day,
+    // and the same distinctive first word in the outlet name (7+ letters, so "Sacramento Bee" and "Sacramento Business Journal" still differ)
+    || (exact && fw.length >= 7 && cand.find(e => w1(e.outlet) === fw && w1(e.outlet) !== 'sacramento' && d && e.date && Math.abs(Date.parse(d) - Date.parse(e.date)) <= 864e5));
   return same ? Object.assign({ same: true }, same) : Object.assign({ same: false }, cand[0]);
 }
 const MON = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, sept: 9, oct: 10, nov: 11, dec: 12 };
