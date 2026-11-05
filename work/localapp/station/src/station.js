@@ -388,7 +388,8 @@ function trPageOf(id) {
   return null;
 }
 async function fullTranslations(warns) {
-  const todo = [...sess.translations].filter(([, v]) => v.data && v.data.lang && !v.data.full);
+  const inFolder = new Set(); for (const [, v] of sess.runs) ((v.data && v.data.stories) || []).forEach(c => inFolder.add(c));   // only stories that go into the folder (2026-11-05: a story the run left out was translated too)
+  const todo = [...sess.translations].filter(([id, v]) => v.data && v.data.lang && !v.data.full && inFolder.has(id));
   if (!todo.length) return;
   let sm = null;
   try { sm = realClaude && realClaude.use ? sampleWatch(await realClaude.use('sample')) : null; } catch (e) { sm = null; }
