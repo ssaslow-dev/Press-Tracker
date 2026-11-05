@@ -40,7 +40,8 @@ AA.patched_copy(pipe / 'date_rules.py', pipe / 'date_rules.py', NBPC / 'patches'
 AA.patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', NBPC / 'patches' / '09_sheet_task_printpages.patch')   # PRINTPAGES-v1 / ORIGCOPIES-v1: print originals, Unlinked print pages rows, extra copies
 AA.patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', REPO / 'work' / 'localapp' / 'app' / 'patches' / '25_sheet_task_otherfiles.patch')   # OTHERFILES-v1: the ONE handler of a run's extra_copies (REVIEW_3 finding 1)
 AA.patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', REPO / 'work' / 'localapp' / 'app' / 'patches' / '28_sheet_task_prcolor.patch')   # PRCOLOR-v1: Press release = Yes rows are purple
-check('patches 01, 02, 03, 07, 08, 09, 25, 28 apply exactly once to the current files', True)
+AA.patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', REPO / 'work' / 'localapp' / 'app' / 'patches' / '29_sheet_task_printnew.patch')   # PRINTNEW-v1: a print-only new story's read text is its saved copy; page scans of new / attached pages are print originals
+check('patches 01, 02, 03, 07, 08, 09, 25, 28, 29 apply exactly once to the current files', True)
 check('patch 03 gives the same module as newsbank_pc/pdftext_pypdf.py', (pipe / 'pdftext_pypdf.py').read_text() == (NBPC / 'pdftext_pypdf.py').read_text())
 
 app = scratch / 'app'; lay = PCLayout(app); lay.workbook.parent.mkdir(parents=True); shutil.copy2(wb, lay.workbook)

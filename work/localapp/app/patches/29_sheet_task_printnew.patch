@@ -1,0 +1,112 @@
+--- a/code/sheet_task.py
++++ b/code/sheet_task.py
+@@ -1623,6 +1623,52 @@
+             if self.nb_kind(p) == 'print_page':
+                 self._print_page(pid, p, prows.get(pid), pages_dir)
+ 
++    def apply_print_new(self, pid, p, aid, r, pages_dir):
++        """PRINTNEW-v1: a newspaper page that carries a NEW story (pages doc nb.kind 'print_page', nb.as 'new'). The pages doc's clean text is only that article's text as
++        Claude read it, headed "Text read from the newspaper page by Claude". It is the story's saved copy, written as the library names a web copy,
++        <year>/ws<Article ID><o|r>-<Story ID>.html (add-only; a row that already has a saved copy is left alone); Saved Copy?, File type, File name and the text-derived
++        counts are filled (blank cells only). The page scan is kept by apply_print_pages as the print original. Word count: the row's own (the station's, from the
++        reading) stays; it is only filled when blank."""
++        import os
++        nb = p.get('nb') or {}
++        html = p.get('clean') or ''
++        suf = {'Original': 'o', 'Reprint': 'r'}.get(self.s.get(r, 'Original or reprint'), '')
++        st = str(self.s.get(r, 'Story ID') or '').strip()
++        fname = f'ws{aid}{suf}' + (f'-{st}' if st else '') + '.html'
++        year = self._year_of(self.s.get(r, 'Date'), self.s.get(r, 'Year'))
++        info = {'page': pid, 'aid': aid, 'file': f'{year}/{fname}', 'url': '', 'source': 'print page read by Claude', 'status': 'print page',
++                'flags': list(nb.get('flags') or []), 'removed': 0, 'words': [None, None], 'header_conflicts': []}
++        have = norm_val(self.s.get(r, 'File name'))
++        if have and have not in (RETRY, BLOCKED):
++            self.res['pages_skipped'].append(dict(info, why='the row already has a saved copy (' + have + '): the read text is not saved'))
++            return
++        lib = getattr(self, 'library_dir', None)
++        if lib and os.path.exists(os.path.join(lib, year, fname)):
++            self.res['pages_skipped'].append(dict(info, why='that file name is already in the library: not replaced'))
++            return
++        self.saved_html[aid] = html
++        if pages_dir:
++            os.makedirs(os.path.join(pages_dir, year), exist_ok=True)
++            with open(os.path.join(pages_dir, year, fname), 'w', encoding='utf-8') as f:
++                f.write(html)
++        if have in (RETRY, BLOCKED):
++            self.res.setdefault('retry_cleared', []).append({'aid': aid, 'was': have, 'file': f'{year}/{fname}'})
++            for col in ('File name', 'Saved Copy?'):
++                self.s.ws.cell(r, self.s.col[col]).value = None
++        self.fill(r, 'Saved Copy?', 'Yes', 'pages', pid)
++        self.fill(r, 'File type', 'HTML', 'pages', pid)
++        self.fill(r, 'File name', fname, 'pages', pid)
++        self.fill_counts(r, {'html': html}, pid, words=blank(self.s.get(r, 'Word count')))
++        self.res['pages'].append(info)
++
++    def _page_aid(self, pid):
++        """the Article ID of the row a pages document belongs to (the same lookup apply_pages uses), or None"""
++        target = self.norm_id(self.page_target.get(pid) or self.ids.get(pid, pid))
++        if target in self.s.rows:
++            return target
++        r = self.s.original_row(self.resolve_sid(target))
++        return self.s.get(r, 'Article ID') if r else None
++
+     def _year_of(self, d, fallback=''):
+         d = norm_val(d)
+         return d[:4] if re.match(r'^\d{4}', d) else (str(fallback)[:4] if re.match(r'^\d{4}', str(fallback)) else self.today[:4])
+@@ -1635,6 +1681,35 @@
+         page = str((nb.get('header') or {}).get('page') or '').strip()
+         page_part = re.sub(r'[^0-9A-Za-z-]', '', page) or 'x'
+         info = {'page': pid, 'as': nb.get('as'), 'url': nb.get('url', '')}
++        if nb.get('as') in ('new', 'attached', 'continuation'):
++            # PRINTNEW-v1: the scan of a page that carries a NEW story, or that goes with a story's record in the same update (attached / a jump page): the print
++            # original of the row it belongs to, <Article ID>_p<page number>.pdf. That row may be one this save has just added (its Article ID exists by now).
++            num = re.search(r'\d{1,4}', page)
++            if not num:
++                self.res.setdefault('print_pages_skipped', []).append(dict(info, why='the page number is not known (' + (page or 'blank') + '): its scan is not saved as a print original'))
++                return
++            if nb.get('as') == 'new':
++                src_pid = pid
++            else:     # the pages doc of the text record this page goes with: same batch file and position (the station's item key sha8#index)
++                item = next((x.get('item') for run in (self.db.get('runs') or {}).values() for x in (run or {}).get('print_pages') or []
++                             if isinstance(x, dict) and x.get('file') == nb.get('file') and x.get('item')), '')
++                src_pid = next((i2 for i2, p2 in (self.db.get('pages') or {}).items()
++                                if i2 != pid and isinstance(p2, dict) and isinstance(p2.get('nb'), dict) and p2['nb'].get('as') not in ('attached', 'continuation', 'unlinked') and p2['nb'].get('batch')
++                                and str(p2['nb']['batch'].get('sha256') or '')[:8] + '#' + str(p2['nb']['batch'].get('index')) == item), '')
++                if not item or not src_pid:
++                    self.res.setdefault('print_pages_skipped', []).append(dict(info, why='the story this page goes with is not in this update (or already had a row): its scan is not saved'))
++                    return
++            aid = self._page_aid(src_pid)
++            if not aid:
++                self.res.setdefault('print_pages_skipped', []).append(dict(info, why='the story this page belongs to was not added by this save: its scan is not saved'))
++                return
++            r = self.s.rows[aid]
++            year = self._year_of(self.s.get(r, 'Date'), self.s.get(r, 'Year'))
++            fname = f'{aid}_p{num.group(0)}.pdf'
++            info.update({'aid': aid, 'file': f'_original_pdf/{year}/{fname}', 'row': 'Coverage'})
++            info['status'] = self._write_original_pdf(pages_dir, year, fname, raw)
++            self.res.setdefault('print_pages_saved', []).append(info)
++            return
+         if nb.get('as') == 'reprint':
+             target = self.norm_id(self.page_target.get(pid) or self.ids.get(pid, pid))
+             aid = target if target in self.s.rows else None
+@@ -1688,8 +1763,8 @@
+             return
+         for pid, p in (self.db.get('pages') or {}).items():
+             p = p or {}
+-            if self.nb_kind(p) == 'print_page':   # PRINTPAGES-v1: handled by apply_print_pages (a print original), not a saved copy
+-                continue
++            if self.nb_kind(p) == 'print_page' and (p.get('nb') or {}).get('as') != 'new':   # PRINTPAGES-v1: handled by apply_print_pages (a print original), not a saved copy
++                continue    # (PRINTNEW-v1: a page that carries a NEW story is that story's text copy here; apply_print_pages then keeps its scan)
+             target = self.norm_id(self.page_target.get(pid) or self.ids.get(pid, pid))   # AUTO-v1: finds that became reprints
+             aid = None
+             if target in self.s.rows:
+@@ -1709,6 +1784,9 @@
+                 continue
+             r = self.s.rows[aid]
+             row = {c: norm_val(self.s.get(r, c)) for c in ('Outlet', 'Date', 'Headline', 'Publisher link', 'NewsBank article link', 'ProQuest link')}
++            if self.nb_kind(p) == 'print_page':   # PRINTNEW-v1: a print-only new story
++                self.apply_print_new(pid, p, aid, r, pages_dir)
++                continue
+             if self.nb_doc(p):   # NEWSBANKPDF-v1
+                 self.apply_nb_pdf(pid, p, aid, r, pages_dir)
+                 continue
