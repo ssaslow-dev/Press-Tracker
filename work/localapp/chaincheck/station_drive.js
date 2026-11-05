@@ -146,13 +146,10 @@ const INIT = ({ hits, yt, pages, classify, ch }) => {
     const tones = rows.filter(r => r['Original or reprint'] === 'Original').map(r => r['Tone']);
     check('tone rated for the new finds', tones.length >= 3 && tones.every(Boolean), JSON.stringify(tones));
 
-    /* ---- automatic mode: the folder downloads by itself once the web run is quiet; PDFs added AFTER that must still end in ONE complete folder ---- */
+    /* ---- automatic mode: nothing downloads by itself (AUTOSTATION-v1 follow-up 2); the PDFs are added by themselves ---- */
     if (!MANUAL) {
-      curStep = '3 automatic download';
-      await page.waitForFunction(() => window.__dl.length >= 1, null, { timeout: 60000 });
-      const first = await page.evaluate(() => ({ name: window.__dl[0].filename, bytes: Array.from(window.__lastDl) }));
-      fs.writeFileSync(path.join(OUT, first.name), Buffer.from(first.bytes)); res.zip_first = path.join(OUT, first.name);
-      check('automatic mode: the update folder downloaded by itself after the web run (no button pressed)', /^ajg_update_/.test(first.name), first.name);
+      await page.waitForTimeout(8000);
+      check('automatic mode: nothing downloaded by itself after the web run', (await page.evaluate(() => window.__dl.length)) === 0);
     }
 
     /* ---- step 3b: a NewsBank PDF, a ProQuest export ---- */
@@ -189,16 +186,20 @@ const INIT = ({ hits, yt, pages, classify, ch }) => {
       await page.click('#stPack');
       await page.waitForFunction(() => window.__dl.length > 0, null, { timeout: 60000 });
     } else {
-      await page.waitForFunction(() => window.__dl.length >= 2, null, { timeout: 90000 });   // the second, complete folder comes by itself
-      await page.waitForTimeout(8000);   // and nothing more after it
+      await page.waitForTimeout(8000);
+      check('automatic mode: still no download after the PDFs were added by themselves', (await page.evaluate(() => window.__dl.length)) === 0);
+      await page.waitForFunction(() => !document.querySelector('#stPack').disabled, null, { timeout: 30000 });
       status = await page.textContent('#stPackStatus'); res.facts.pack_status = status + ' | ' + await page.textContent('#stPackNote');
+      await page.click('#stPack');
+      await page.waitForFunction(() => window.__dl.length > 0, null, { timeout: 60000 });
+      await page.waitForTimeout(3000);
       const nd = await page.evaluate(() => window.__dl.length);
-      check('automatic mode: exactly two downloads (the early one, then one complete folder), the PDFs did not make a third', nd === 2, nd);
+      check('automatic mode: the button gives exactly one folder', nd === 1, nd);
     }
     const dl = await page.evaluate(() => { const i = window.__dl.length - 1; return { name: window.__dl[i].filename, bytes: Array.from(window.__lastDl) }; });
     const zipPath = path.join(OUT, dl.name); fs.writeFileSync(zipPath, Buffer.from(dl.bytes)); res.zip = zipPath;
     check('the zip downloads, named with the workbook short sha', new RegExp('^ajg_update_\\d{8}-\\d{4}_' + fu.fingerprint.workbook_sha256.slice(0, 8) + '(_v\\d+)?\\.zip$').test(dl.name), dl.name);
-    check('step 3 says what it holds (a run, a NewsBank PDF, a ProQuest PDF)', MANUAL ? (/NewsBank/.test(status) && /ProQuest/.test(status)) : /replaces ajg_update_/.test(res.facts.pack_status), status);
+    check('step 3 says what it holds (a run, a NewsBank PDF, a ProQuest PDF)', /NewsBank/.test(status) && /ProQuest/.test(status), status);
     check('no page error, nothing asked of any outside host', errors.length === 0 && outside.length === 0, errors.concat(outside).slice(0, 4).join(' | '));
     res.expect = { web: W.map(a => ({ hl: a.title, url: a.url, mark: a.mark })), rep: { url: REP.url, story: exist2.id, mark: REP.mark }, yt: { url: YT.url, hl: YT.title }, exist1: exist1.id };
     await finish(0);

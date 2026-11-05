@@ -141,9 +141,14 @@ const settle = async page => { await page.waitForTimeout(400); await page.evalua
   await page.setInputFiles('#nbFile', { name: 'auto.png', mimeType: 'image/png', buffer: Buffer.from(await png(page, 'auto'), 'base64') });
   await page.waitForFunction(() => window.__station.state.nb.lastRun, null, { timeout: 120000 });
   await putRun(page, 'run-web', W('run-web', '2026-11-03T10:00:00Z', [R('w1')]));
+  await page.waitForTimeout(8000);
+  const dl0 = await page.evaluate(() => window.__dl.length);
+  await page.waitForFunction(() => !document.querySelector('#stPack').disabled, null, { timeout: 60000 });
+  await page.click('#stPack');
   await page.waitForFunction(() => window.__dl && window.__dl.length > 0, null, { timeout: 120000 });
+  check('automatic mode: nothing downloaded by itself; the button gives exactly one folder', dl0 === 0 && (await page.evaluate(() => window.__dl.length)) === 1, dl0);
   const zr = await page.evaluate(async () => { const runs = [...window.__station.sess.runs].map(([id, v]) => v.data.rows.length + ':' + (v.data.rows[0] ? v.data.rows[0]['Data Source'] : '')); return runs; });
-  check('picture first, web run second, automatic mode on: a single Original is in the update folder that downloads by itself', zr.filter(x => /^1:/.test(x)).length === 1 && zr.some(x => /^1:Web/.test(x)) && zr.filter(x => /^[1-9]/.test(x)).length === 1, JSON.stringify(zr));
+  check('picture first, web run second, automatic mode on: a single Original is in the update folder', zr.filter(x => /^1:/.test(x)).length === 1 && zr.some(x => /^1:Web/.test(x)) && zr.filter(x => /^[1-9]/.test(x)).length === 1, JSON.stringify(zr));
   await X.close();
   console.log(C.failed ? C.failed + ' FAILED' : 'all passed'); process.exit(C.failed ? 1 : 0);
 })().catch(e => { console.error(e); process.exit(2); });
