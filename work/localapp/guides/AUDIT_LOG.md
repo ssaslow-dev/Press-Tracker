@@ -123,3 +123,57 @@ The guide was redone for the newest station (no date to pick, "Search all time",
 - **10 (outlines on PC screenshots):** I cannot redraw the PC panel shots without rerunning the PC tracker, so only station shots got outlines. Zebra-striped table rows were not added.
 - **14 (where the "run notes" are):** I could not find where the PC puts them. The caption now ties the line to the "Items that need a person" list in the preview, and the text says the result lists them again after the save. It does not name a file.
 - **3 (re-stage):** I used the one-line disclaimer, not a full re-stage, because the PC shots need the PC tracker.
+
+## Round 3b: Update station guide, three changes from Sammy (2026-11-05)
+
+The guide is now 17 pages (it was 18). Page references were re-checked: the build resolves every "page N" reference and none is left as "?".
+
+1. **Office-PC block removed.** The whole flow is now on the office PC. Removed:
+   - the "Office PCs can't open the Update station yet" box and its carry-over steps;
+   - the "Find a computer that can open the Update station" item in Before you start;
+   - the "carry it to another computer" and "copy the .zip back to the office PC" wording (overview table, Make step 5, Download step, cheat sheet);
+   - the Problems row about the page not opening on the office PC;
+   - the "office PC can't open the station" sentence in the cheat-sheet Remember box.
+   The Safari/Mac advice was dropped too (download step and the ".zip" Problems row), because the office PCs run Windows and Edge, so it no longer applies.
+2. **Account.** The station link line now says it runs under the office's claude.ai account, ajgdistrict@gmail.com. The sign-in wording (Open the station, Problems row) is "sign in to claude.ai with ajgdistrict@gmail.com". The "New link (if the station moves)" fill-in line stays.
+3. **Cover.** The eyebrow is now "Staff guide · Assemblymember Jesse Gabriel press coverage" (no parenthesis).
+
+Layout: "Make the 'for Update' file" now continues on page 3 instead of starting a new page, so the page left half empty by the removed box is gone. Page 3 is still about half full before the next section.
+
+## Round 4 (User Guide): second blind Fable audit (FABLE_AUDIT_USER_GUIDE_2.md) and Sammy's changes, 2026-11-05
+
+The User Guide went from 38 to 32 pages. I checked every page at 70 dpi. The companion guide was not touched. The test tracker was not rerun; this round used the existing screenshots, recropped where needed.
+
+**Applied**
+
+| Item | Change |
+|---|---|
+| 1 | The "Conflicts left for Sammy" callout is gone, and so is "messages name Sammy" in the word list. A line under the preview table now uses the 4.3 wording: "conflicts left for the keeper to decide". |
+| 2 | The older-workbook warning now leads with the clean fix (Do not use it, new "for Update" file, run the station again). Use it anyway is offered only if you cannot rerun and the only change was your own edit. This is the companion guide's wording, both in the steps and in Problems. |
+| 3 | The refresh screenshot is cut above the old message line. The caption quotes the 4.3 message: "on the shared drive, OneDrive or a USB stick (it can be too big for email or Teams)". |
+| 4 | New block "A new colleague's first copy": unzip, "No workbook yet", the keeper makes a FULL refresh file from Repairs, the colleague brings it in. Also linked from the refresh page, the "No workbook yet" problem row and the cheat sheet. |
+| 5 | Replaced by Sammy's instruction (below). |
+| 6 | A navy "On a Mac" callout covers the first start (Terminal unzip, `bash "AJG Tracker/Start Tracker.command"`, Open Anyway) and the Terminal window. The install page has a Mac line (Install update.command, Return). The cheat sheet names Install update.command. |
+| 7 | Text now says "29 in the picture". The close-up is widened to include Spreadsheet and tag 2, and cropped above the tab bar. |
+| 8 | Page references fixed: Story travel and "What happens to your edits" now have their own anchors. |
+| 9 | The ticked-rows bar is cropped inside its own edges. |
+| 10 | Pages are much fuller. Forced page breaks remain only before Words, Start, Home, Tracker files and the cheat sheet. Panel screenshots now float beside their text at 3.75 in. The preview's top and end crops sit side by side. The full Home shot is split into the tiles crop and the Needs attention crop. The tracker-folder table moved to "Where your files live". |
+| 11 | Each wide screenshot is printed at the width its browser width needs for body text of about 7 pt or more. The Reporters table is no longer shrunk. Captions say "(shown small; nothing in it needs reading)" for the full-page view and "(the table lists the buttons)" for Repairs. |
+| 12 | Three Repairs buttons are marked "(keeper only)", and a line says "On a reader copy, Repairs holds only Rebuild the page." |
+| 13 | Backups: "The newest three are kept; older ones are moved to _to_delete inside backups." |
+| 14 | Both places now say "(or your usual browser if Edge is not on the PC)". |
+| 15 | Problems has new rows for "Another save is running" and "The tracker says the update was already saved". |
+| 16 | The warning caption explains its older fingerprint, with a page reference to the save. |
+| 18 | The QQ…QQ anchors are used only in a check render. They are removed from the final PDF, and its text layer has none (checked with pdftotext). The anchors are positioned so removing them does not move the layout, and the build checks that page numbers stay the same. |
+| 19 | The Views paragraph stays together with the figures after it. The story-panel close-up ends at a word boundary. The lower-panel crop starts at the tone box. |
+
+**Sammy's changes (they override the coordinator's earlier note and audit item 5)**
+- The guide does not say that office PCs can't open the Update station. There is no blocked-address text and no "use another computer" advice.
+- The guide names the station's account: it runs on the office's claude.ai account ajgdistrict@gmail.com, and you sign in with it to open the station. This appears in the word list, the "for Update" step and the cheat sheet.
+- The cover label is now "Staff guide · Assemblymember Jesse Gabriel press coverage".
+
+**Not changed in the guide**
+- Item 17 is about the program's own wording. Manage's "Add saved pages" text says tone and author are saved for everyone, which is not true on the PC. That needs a code change, so I am passing it to the builder.
+- Item 5 is superseded by Sammy's instruction above.
+- Page 4 keeps about a third blank, because Home starts on a new page. Without that break, the Home heading was left alone at the foot of the page.
+- A few panel screenshots still have one line of small gray text at about 6.9 pt (the panel's "small" text). The main text in every screenshot is 7 pt or more.
