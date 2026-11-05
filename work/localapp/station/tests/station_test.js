@@ -156,24 +156,26 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   await page.setInputFiles('#stFile', FILE);
   await page.waitForSelector('#stLoaded:not([hidden])', { timeout: 60000 });
   const facts = await page.textContent('#stFacts');
-  check('file facts shown: workbook short form', facts.includes(fu.fingerprint.workbook_sha256.slice(0, 8)), facts);
+  check('NEWEST-v1: file facts show the newest story and where the search starts', /Newest story/.test(facts) && /Update searches from/.test(facts), facts);
   check('file facts shown: story count', facts.includes(fu.stories.length.toLocaleString('en-US')), facts);
   check('Update button enabled after load', !(await page.$eval('#runFind', b => b.disabled)));
   check('gate opens after load: both PDF boxes enabled, no gate message', !(await page.$eval('#nbFile', i => i.disabled)) && !(await page.$eval('#pqFile', i => i.disabled)) && !(await page.locator('#nbGate').isVisible()) && !(await page.locator('#pqGate').isVisible()));
   { const ageTxt = await page.textContent('#stAge'), ageDays = Math.floor((Date.now() - Date.parse(fu.created_at)) / 864e5), isOld = ageDays > 7;
-    check('file date and age in days shown', await page.locator('#stAge').isVisible() && (ageDays === 0 ? /today/.test(ageTxt) : new RegExp(ageDays + ' days? old').test(ageTxt)), ageTxt);
+    check('file date and age in days shown', await page.locator('#stAge').isVisible() && /Make a new file first/.test(ageTxt), ageTxt);
     check('age warning only when older than 7 days', isOld === /make a fresh one from the PC tracker so stories saved since are not found again/.test(ageTxt), ageTxt); }
   await page.waitForFunction(() => document.querySelector('#updGo'), null, { timeout: 30000 });
-  check('step 2 shows the Update panel with Since control and the tracker’s Update button', await page.locator('#updSince').isVisible() && await page.locator('#updGo').isVisible());
+  check('STREAMLINE-v1: step 2 shows the Update button and no date picker', !(await page.locator('#updSince').isVisible()) && await page.locator('#updGo').isVisible());
   check('Refresh from files / Spreadsheet / Manage buttons are hidden', !(await page.locator('#runRefresh').isVisible()) && !(await page.locator('#updRefresh').isVisible()) && !(await page.locator('#updBtn').isVisible()));
   const sinceDef = await page.inputValue('#updSince');
-  check('Since default comes from the data in the file (newest clip, no earlier run), whatever the db holds', sinceDef === fu.stories.filter(r => r.prec === 'day' && r.date <= TODAY).map(r => r.date).sort().pop(), sinceDef);
+  { const ss = await page.evaluate(() => window.__stationSince), nd = fu.newest_story_date || [...fu.stories.map(r => String(r.date || '').slice(0, 10)), ...fu.rows.rows.filter(r => r[2] !== 'X' && r[2] !== 'P').map(r => String(r[4] || '').slice(0, 10))].filter(d => /^\d{4}-\d\d-\d\d$/.test(d) && d <= TODAY).sort().pop();
+    check('NEWEST-v1: the search starts the day before the newest story in the file', ss === new Date(Date.parse(nd) - 864e5).toISOString().slice(0, 10), ss + ' vs newest ' + nd); }
   await page.screenshot({ path: path.join(OUT, 'shot_2_loaded.png'), fullPage: true });
 
   /* 4. Update */
+  if (process.env.ST_NO_SINCE) await page.evaluate(() => { window.__stationSince = ''; });
   await page.click('#runFind');
   await page.waitForSelector('#rcScrim:not([hidden])');
-  check('header Update button asks “Are you sure?” with the Since field', await page.locator('#rcSince').isVisible());
+  check('STREAMLINE-v1: header Update button asks “Are you sure?” without a date field', !(await page.locator('#rcSince').isVisible()));
   await page.click('#rcYes');
   await page.waitForFunction(() => { const f = document.querySelector('#updBody'); return f && (document.querySelector('#updAdd') || /Added|Nothing new|Stopped|nothing/i.test(f.textContent)) && !document.querySelector('#updStop'); }, null, { timeout: 180000 });
   const searches = await page.evaluate(() => window.__calls.filter(c => c.tool === 'search').length), fetches = await page.evaluate(() => window.__calls.filter(c => c.tool === 'fetch_content').length);
@@ -199,7 +201,7 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   const run = S.runs[0] && S.runs[0][1];
   check('a run doc was saved in the station session', !!run, JSON.stringify(Object.keys(S.runs)));
   check('run doc is final (status done) with searched_to = today or not set by an unclean run', run && run.status === 'done', run && run.status);
-  check('run doc carries searched_to for the next Update (today)', run && run.searched_to === TODAY, run && run.searched_to);
+  check('NEWEST-v1: run doc records the date it searched from', run && run.since === (await page.evaluate(() => window.__stationSince)), run && run.since);
   const storyIds = (run && run.stories) || [];
   check('two new stories added (English + Spanish)', storyIds.length === 2, JSON.stringify(storyIds));
   check('the find that duplicates an existing story (same link) was not added', !JSON.stringify(S).includes('"hl":"' + exist1.hl.replace(/"/g, '\\"') + '"') && !(run.rows || []).some(r => r['Publisher link'] === exist1.link), '');

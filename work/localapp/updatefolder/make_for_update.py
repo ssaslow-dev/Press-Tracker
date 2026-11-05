@@ -191,6 +191,18 @@ def build_blocks(workbook: Path, pipeline: Path, tmp: Path, *, legacy=None, sid_
     return blocks, notes
 
 
+def newest_story_date(stories, rows_block, today: str) -> str:
+    """NEWEST-v1 (Sammy 2026-11-05): the date of the newest story or row in the tracker (YYYY-MM-DD), never later than today (a mistyped future date is ignored); '' when none"""
+    import re
+    ds = [str(x.get('date') or '')[:10] for x in stories or []]
+    if isinstance(rows_block, dict):
+        cols = rows_block.get('cols') or []
+        di, ki = (cols.index('date') if 'date' in cols else 4), (cols.index('kind') if 'kind' in cols else 2)
+        ds += [str(r[di] or '')[:10] for r in rows_block.get('rows') or [] if len(r) > di and (len(r) <= ki or r[ki] not in ('X', 'P'))]
+    ds = [d for d in ds if re.fullmatch(r'\d{4}-\d\d-\d\d', d) and d <= today]
+    return max(ds) if ds else ''
+
+
 def make(workbook, db_dir, pipeline, out_file, *, legacy=None, sid_map=None, insights=None, release_texts=True, now=None) -> dict:
     """Returns {'path', 'bytes', 'workbook_sha256', 'stories', 'notes'}. Never writes next to or into the workbook."""
     workbook, pipeline, out_file = Path(workbook), Path(pipeline), Path(out_file)
@@ -213,10 +225,13 @@ def make(workbook, db_dir, pipeline, out_file, *, legacy=None, sid_map=None, ins
         if isinstance(blocks.get('rows'), dict):
             blocks['rows'] = extend_rows(blocks['rows'], copy)   # PRINTPAGES-v1 (proposal)
     data = [project_story(r) for r in blocks.pop('data')]
+    created = now or F.utc_now_iso()
+    newest = newest_story_date(data, blocks.get('rows'), created[:10])
     body = {
         'format': F.FORMAT_FOR_UPDATE,
         'format_version': F.FORMAT_VERSION,
-        'created_at': now or F.utc_now_iso(),
+        'created_at': created,
+        'newest_story_date': newest,     # NEWEST-v1: the station searches from the day before this (no date to pick)
         'fingerprint': {'workbook_sha256': sha, 'workbook_name': workbook.name, 'workbook_bytes': workbook.stat().st_size},
         'notes': notes,
         'stories': data,

@@ -511,4 +511,16 @@ function xdPlan(runs){
   xdSyndOps(E, gone, ops);
   return ops;
 }
+/* NEWEST-v1 (Sammy 2026-11-05): every Update searches from the day before the newest story in the for-Update file, as a set date (SINCE-v1: nothing older is
+   searched, no all-years outlet sweeps). JUNKURL-v1: listing pages, music pages and board pages are never a story or a reprint (seen in the 2026-11-05 run). */
+let stJunkAdded = false;
+const runAllBase = runAll;
+runAll = function (mode, since) {
+  if (!stJunkAdded && Array.isArray(TF_SKIP_URLS)) { stJunkAdded = true;
+    TF_SKIP_URLS.push(/[?&](page|paged|pg|start|offset)=\d+/i, /\/page\/\d+\/?(\?|#|$)/i, /^https?:\/\/([^/]*\.)?(spotify|soundcloud|apple)\.com\/([a-z-]+\/)?(artist|album|playlist|music)\//i,
+      /\/page\/board\b|[?&]whichrow=/i, /\/(tag|tags|category|categories|topics?|author|authors|search|archives?)\/?(\?|#|$)/i, /\/news\/?(\?|#|$)/i); }
+  const ds = window.__stationSince;
+  if (mode !== 'refresh' && !since && ds && !sinceError(ds)) since = ds;
+  return runAllBase(mode, since);
+};
 window.__nb = { byParts: nbByParts, namesHim: s => NAMES_HIM.test(s), tidy: xdTidy, xdDupes, respell: n => { const h = nbSpellHit(n); return h ? h.n : ''; }, webEnd: () => ({ err: String(U.err || ''), aborted: !!(U.ctl && U.ctl.signal && U.ctl.signal.aborted), phase: U.phase, step: U.step, done: U.done || 0, plan: U.plan || 0, failed: U.failed || 0, cands: U.nCands || 0, found: (U.found || []).length }), candidates: nbPrintCands, hasStory: nbHasStory, xdPlan, xdFold: XD_FOLD, spell: nbSpell, runPage: (items, opts) => nbRun(items, Object.assign({}, opts, { src: NBSRC.pp })), screen: nbScreen, remember: nbRemember, run: nbRun, docrefs: () => nbDocrefs().size, version: 1 };

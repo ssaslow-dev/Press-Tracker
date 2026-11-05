@@ -59,3 +59,15 @@
 .st-how-b { padding: 4px 20px 20px; overflow: auto; max-height: calc(85vh - 60px); font-size: var(--fs-md); line-height: 1.5; }
 .st-how-b h3 { margin: 18px 0 4px; font-size: var(--fs-md); }
 .st-how-b p { margin: 4px 0; color: var(--ink-2); }
+
+/* STREAMLINE-v1 (Sammy 2026-11-05: "streamlined and not complicated; all big paragraph explanations go in the button on the header"). The explanations live in
+   How it works; step 2 shows only the Update button, its progress and its results. The date is not picked: it comes from the for-Update file (NEWEST-v1). */
+#stUpdHost #mgTabs,
+#stUpdHost #updBody > p:first-of-type,
+#stUpdHost .upd-since, #stUpdHost .upd-since + .upd-step,
+#stUpdHost .upd-plan,
+#stUpdHost .upd-rp-h ~ p.upd-rp-h,
+#stUpdHost #updRefresh, #stUpdHost #updSave,
+.mast .hdr-acts #updBtn { display: none !important; }
+#stUpdHost .upd-print > p.upd-rp-h { display: none; }
+#rcSinceWrap { display: none !important; }   /* STREAMLINE-v1: the date is never picked (NEWEST-v1) */

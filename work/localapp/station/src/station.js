@@ -227,15 +227,27 @@ async function loadFile(f) {
   showLoaded();
   try { const sm = realClaude && realClaude.use ? await realClaude.use('sample') : null; if (!sm) $('#stSampleNote').hidden = false; } catch (e) { $('#stSampleNote').hidden = false; }
 }
+/* NEWEST-v1 (Sammy 2026-11-05): no date to pick. The search starts the day before the newest story in the tracker (the for-Update file's newest_story_date;
+   an older file: worked out from its stories and rows). The date counts as a set date (SINCE-v1), so nothing older is searched: no all-years outlet sweeps. */
+function newestDate(j) {
+  if (j && /^\d{4}-\d\d-\d\d$/.test(j.newest_story_date || '')) return j.newest_story_date;
+  const today = new Date().toISOString().slice(0, 10), ok = d => /^\d{4}-\d\d-\d\d$/.test(d) && d <= today;
+  let best = '';
+  for (const x of (j && j.stories) || []) { const d = String(x.date || '').slice(0, 10); if (ok(d) && d > best) best = d; }
+  const cols = (j && j.rows && j.rows.cols) || [], di = cols.indexOf('date') >= 0 ? cols.indexOf('date') : 4, ki = cols.indexOf('kind') >= 0 ? cols.indexOf('kind') : 2;
+  for (const r of (j && j.rows && j.rows.rows) || []) { const d = String(r[di] || '').slice(0, 10); if (r[ki] !== 'X' && r[ki] !== 'P' && ok(d) && d > best) best = d; }
+  return best;
+}
+function stationSince(j) { const n = newestDate(j); return n ? new Date(Date.parse(n) - 864e5).toISOString().slice(0, 10) : ''; }
 function showLoaded() {
   const j = S.file, fp = j.fingerprint, m = j.memory || {};
+  S.since = stationSince(j); window.__stationSince = S.since;
+  const day = d => d ? new Date(d + 'T12:00:00').toLocaleDateString(undefined, { dateStyle: 'medium' }) : '';
   const facts = [
     ['File', esc(S.fileName)],
-    ['Made', esc(j.created_at ? new Date(j.created_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' }) : 'unknown')],
-    ['Workbook', '<code>' + esc(shortSha(fp.workbook_sha256)) + '</code> ' + esc(fp.workbook_name || '')],
-    ['Stories', esc(fmtN(j.stories.length) + ' in the tracker, ' + fmtN(j.rows.rows.length) + ' spreadsheet rows checked for duplicates')],
-    ['Last full update searched to', esc(m.searched_to || 'no record')],
-    ['Earlier finds waiting for a save', esc(fmtN(Object.keys(m.clips || {}).length) + ' stories, ' + fmtN(Object.keys(m.reprints || {}).length) + ' reprints')],
+    ['Stories', esc(fmtN(j.stories.length) + ' in the tracker')],
+    ['Newest story', esc(day(newestDate(j)) || 'none')],
+    ['Update searches from', esc(day(S.since) || 'the usual start')],
   ];
   if ((j.notes || []).length) console.info('for-Update file notes (not shown):', j.notes);
   $('#stFacts').innerHTML = facts.map(([k, v]) => '<dt>' + esc(k) + '</dt><dd>' + v + '</dd>').join('');
@@ -255,7 +267,8 @@ function showAge() {
   const made = j.created_at ? new Date(j.created_at).toLocaleDateString(undefined, { dateStyle: 'medium' }) : '';
   let msg, old = false;
   if (d === null) { msg = 'This file does not say when it was made, so its age is unknown: make a fresh one from the PC tracker so stories saved since are not found again.'; old = true; }
-  else { msg = 'File made ' + made + ' (' + (d === 0 ? 'today' : d === 1 ? '1 day old' : d + ' days old') + ').'; if (d > 7) { msg += ' This file is more than 7 days old: make a fresh one from the PC tracker so stories saved since are not found again.'; old = true; } }
+  else { const t = new Date(j.created_at).toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });   // STREAMLINE-v1: the reminder that matters (2026-11-05: a file made before a save brought the saved stories back)
+    msg = 'File made ' + t + '. Saved in the tracker since then? Make a new file first.'; if (d > 7) old = true; }
   el.textContent = msg; el.classList.toggle('err', old); el.classList.toggle('st-age-old', old); el.hidden = false;
 }
 const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -498,6 +511,54 @@ const xdBlank = v => v === undefined || v === null || String(v).trim() === '';
 function xdSoon() { clearTimeout(xdTimer); xdTimer = setTimeout(() => { xdReconcile().catch(e => console.warn('cross-source check failed', e)); }, 400); }
 const xdNoteOf = it => { const c = it && it.r && it.r.id; return c && S.xdNotes.has(c) ? ' ' + S.xdNotes.get(c) : ''; };
 const XD_RM = ['Topic', 'Tone', 'Tone note', 'Tone rated by', 'Bills', '# of reprints', 'Translated Headline', 'Story in English', 'Mentions "Gabriel" in text', 'File name', 'Saved Copy?'];
+/* FILEDUP-v1 helpers: the for-Update file's rows by full headline (letters and digits of any script, case and spacing ignored) */
+const fdNormH = s => String(s || '').normalize('NFKC').toLowerCase().replace(/[\s\p{P}\p{S}]+/gu, ' ').trim();
+/* the first 8 words of a headline (or its first 24 letters when it has no spaces, as in Chinese): a cut-off search title ("… plan called ...") and a paper's
+   own ending ("… as California lawmakers return") still match the tracker's headline, within 14 days */
+const fdLead = h => { const w = h.split(' '); if (w.length >= 8) return '\u0001' + w.slice(0, 8).join(' '); return !h.includes(' ') && h.length >= 24 ? '\u0001' + h.slice(0, 24) : ''; };
+const fdNormO = s => String(s || '').normalize('NFKC').toLowerCase().replace(/^the\s+|,\s*the$|\s*\(.*?\)\s*/g, '').replace(/[^\p{L}\p{N}]+/gu, '');
+function fileIndex() {
+  if (S.fx && S.fx.file === S.file) return S.fx;
+  const m = new Map(), cols = (S.file.rows && S.file.rows.cols) || [], c = k => cols.indexOf(k);
+  const ai = c('aid'), si = c('sid'), ki = c('kind'), oi = c('outlet'), di = c('date'), hi = c('hl');
+  const codeOf = new Map((S.file.stories || []).map(x => [x.id, x.code || '']));
+  for (const r of (S.file.rows && S.file.rows.rows) || []) {
+    if (hi < 0 || r[ki] === 'X' || r[ki] === 'P') continue;
+    const h = fdNormH(r[hi]); if (h.replace(/ /g, '').length < 15) continue;   // a short headline ("News", "Opinion") never counts
+    const e = { aid: String(r[ai] || ''), sid: String(r[si] || ''), outlet: String(r[oi] || ''), o: fdNormO(r[oi]), date: String(r[di] || '').slice(0, 10) };
+    e.code = codeOf.get(e.sid) || '';
+    (m.get(h) || m.set(h, []).get(h)).push(e);
+    const k8 = fdLead(h); if (k8) (m.get(k8) || m.set(k8, []).get(k8)).push(e);
+  }
+  S.fx = { file: S.file, m };
+  return S.fx;
+}
+function fileDupOf(fx, r) {
+  const h = fdNormH(r['Headline']), list = fx.m.get(h) || fx.m.get(fdLead(h) || '\u0000'); if (!list) return null;
+  const d = String(r['Date'] || '').slice(0, 10), o = fdNormO(r['Outlet']);
+  const near = e => !d || !e.date || Math.abs(Date.parse(d) - Date.parse(e.date)) <= 14 * 864e5;
+  const cand = list.filter(e => e.sid && near(e)); if (!cand.length) return null;
+  const same = cand.find(e => e.o && o && (e.o === o || e.o.includes(o) || o.includes(e.o)));
+  return same ? Object.assign({ same: true }, same) : Object.assign({ same: false }, cand[0]);
+}
+const MON = { jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6, jul: 7, aug: 8, sep: 9, sept: 9, oct: 10, nov: 11, dec: 12 };
+function urlDate(u) {
+  const s = String(u || ''); let m, y, mo, da;
+  if ((m = /\/((?:19|20)\d\d)\/(\d{1,2})\/(\d{1,2})(?:\/|$|[^\d])/.exec(s))) [y, mo, da] = [+m[1], +m[2], +m[3]];
+  else if ((m = /\/((?:19|20)\d\d)\/(jan|feb|mar|apr|may|jun|jul|aug|sept?|oct|nov|dec)[a-z]*\/(\d{1,2})(?:\/|$)/i.exec(s))) [y, mo, da] = [+m[1], MON[m[2].toLowerCase()], +m[3]];
+  else if ((m = /[\/_-]((?:19|20)\d\d)-(\d\d)-(\d\d)(?:[\/_-]|$|\.)/.exec(s))) [y, mo, da] = [+m[1], +m[2], +m[3]];
+  else return '';
+  const iso = y + '-' + String(mo).padStart(2, '0') + '-' + String(da).padStart(2, '0'), t = Date.parse(iso);
+  if (!isFinite(t) || new Date(t).toISOString().slice(0, 10) !== iso || iso > new Date().toISOString().slice(0, 10)) return '';
+  return iso;
+}
+const JUNK_URL = [/[?&](page|paged|pg|start|offset)=\d+/i, /\/page\/\d+\/?([?#]|$)/i, /^https?:\/\/([^/]*\.)?(spotify|soundcloud|apple)\.com\/([a-z-]+\/)?(artist|album|playlist|music)\//i,
+  /\/page\/board\b|[?&]whichrow=/i, /\/(tag|tags|category|categories|topics?|author|authors|search|archives?)\/?([?#]|$)/i, /\/news\/?([?#]|$)/i];
+function storyDate(sid, work) {
+  const fs = (S.file.stories || []).find(x => x.id === sid); if (fs && fs.date) return String(fs.date).slice(0, 10);
+  for (const [, d] of work) for (const r of (d && d.rows) || []) if (r['Story ID'] === sid && (r['Original or reprint'] || 'Original') === 'Original' && r['Date']) return String(r['Date']).slice(0, 10);
+  return '';
+}
 async function xdReconcile() {
   if (xdBusy || !S.loaded || !window.__nb || !window.__nb.xdPlan) return 0;
   if (trackerBusy()) { xdSoon(); return 0; }   // STFIX 5: never rewrite run documents while a web run is going; try again a moment later
@@ -576,6 +637,52 @@ async function xdReconcile() {
     }
     /* FINDINGS 3-4: the tracker's spelling of the outlet; no outlet name or trailing junk as an author */
     for (const [id, d] of work) { if (!d || !Array.isArray(d.rows) || d.status === 'running') continue; for (const r of d.rows) if (window.__nb.tidy(r)) dirty.add(id); }
+    /* FILEDUP-v1 (Sammy 2026-11-05, "a bunch of crazy slop"): a find whose full headline is already in the tracker (same words, within 14 days) is not new.
+       Same outlet: left out (the tracker has it; a NewsBank row has no web link, so the link check could not see it). Another outlet: a reprint of that story.
+       URLDATE-v1: a row with no date takes the date written in its web address (Date source "URL"). */
+    const fx = fileIndex();
+    for (const [id, d] of work) {
+      if (!d || !Array.isArray(d.rows) || d.status === 'running') continue;
+      for (const r of d.rows.slice()) {
+        if (xdBlank(r['Date'])) { const ud = urlDate(r['Publisher link'] || ''); if (ud) { r['Date'] = ud; r['Year'] = +ud.slice(0, 4); r['Date source'] = 'URL'; dirty.add(id); } }
+        /* JUNKURL-v1: a listing, music or board page is never a story; UNDATEDOLD-v1: a reprint with no date of a story older than a month is left out */
+        const isRep = r['Original or reprint'] === 'Reprint', junk = JUNK_URL.some(x => x.test(String(r['Publisher link'] || '')));
+        const oldUndated = isRep && xdBlank(r['Date']) && (() => { const sd = storyDate(r['Story ID'], work); return sd && S.since && Date.parse(sd) < Date.parse(S.since) - 30 * 864e5; })();
+        if (junk || oldUndated) {
+          d.rows = d.rows.filter(x => x !== r);
+          if (!isRep) { const code = String(r['Tracker story code'] || ''); d.stories = (d.stories || []).filter(x => x !== code); if (code) { gone.pages.add(code); gone.authors.add(code); gone.translations.add(code); gone.tones.add(code); } }
+          else { const i = (d.reprints || []).findIndex(x => x && x.outlet === String(r['Outlet'] || '').slice(0, 120)); if (i >= 0) d.reprints.splice(i, 1); if (r._page) gone.pages.add(r._page); }
+          d.left = (d.left || []).concat([{ hl: String(r['Headline'] || '').slice(0, 200), outlet: String(r['Outlet'] || '').slice(0, 120), date: r['Date'] || '', why: junk ? 'a listing, music or board page, not an article' : 'a reprint with no date of a story more than a month old' }]).slice(0, 150);
+          dirty.add(id); continue;
+        }
+        const hit = fileDupOf(fx, r); if (!hit) continue;
+        const isOrig = (r['Original or reprint'] || 'Original') === 'Original', code = String(r['Tracker story code'] || ''), sid = r['Story ID'] || '';
+        const hl = String(r['Headline'] || '').slice(0, 200), why = 'already in the tracker as ' + hit.aid + ' (' + hit.outlet + ', ' + hit.date + ')';
+        if (hit.same || !isOrig) {
+          if (!hit.same) continue;   // a reprint whose headline the tracker has at another outlet: it is a reprint already
+          d.rows = d.rows.filter(x => x !== r);
+          if (isOrig) {
+            d.rows.filter(x => x['Original or reprint'] === 'Reprint' && x['Story ID'] === sid).forEach(x => { x['Story ID'] = hit.sid; });
+            d.stories = (d.stories || []).filter(x => x !== code);
+            (d.reprints || []).forEach(x => { if (x && x.story === code) x.story = hit.code || hit.sid; });
+            if (code) { gone.pages.add(code); gone.authors.add(code); gone.translations.add(code); gone.tones.add(code); }
+          } else if (r._page) gone.pages.add(r._page);
+          d.left = (d.left || []).concat([{ hl, outlet: String(r['Outlet'] || '').slice(0, 120), date: r['Date'] || '', why }]).slice(0, 150);
+          S.xdLog.push('Already in the tracker: ' + hl.slice(0, 120) + ' (' + hit.aid + ')');
+        } else {
+          XD_RM.forEach(c => { delete r[c]; });
+          Object.assign(r, { 'Original or reprint': 'Reprint', 'Story ID': hit.sid, 'Tracker story code': '', _page: r._page || code });
+          delete r._origin; delete r._found_by;
+          r['Team note'] = [r['Team note'], 'same headline as ' + hit.aid + ' (' + hit.outlet + ', ' + hit.date + '): filed as its reprint'].filter(Boolean).join('; ').slice(0, 900);
+          d.rows.filter(x => x !== r && x['Original or reprint'] === 'Reprint' && x['Story ID'] === sid).forEach(x => { x['Story ID'] = hit.sid; });
+          d.stories = (d.stories || []).filter(x => x !== code);
+          d.reprints = (d.reprints || []).filter(x => !(x && x.story === code)).concat([{ story: hit.code || hit.sid, outlet: String(r['Outlet'] || '').slice(0, 120) }]);
+          if (code) { gone.authors.add(code); gone.translations.add(code); gone.tones.add(code); }
+          S.xdLog.push('Filed as a reprint of ' + hit.aid + ': ' + hl.slice(0, 120));
+        }
+        dirty.add(id);
+      }
+    }
     if (!dirty.size) return 0;
     for (const id of dirty) { const d = work.get(id); if (d) await mem.collection('runs').doc(id).set(d); }
     for (const [c, ids] of Object.entries(gone)) for (const id of ids) if (sess[c].has(id)) await mem.collection(c).doc(id).delete();
@@ -646,6 +753,10 @@ function fixTexts(root) {
   // buttons and paragraphs that point at parts the station does not have (Clips tab, Refresh from files, "Write them in now")
   root.querySelectorAll('[data-goclips], [data-logpush]').forEach(e => { e.hidden = true; });
   root.querySelectorAll('#upd p').forEach(p => { if (/^Refresh from files doesn’t search/.test(p.textContent)) p.hidden = true; });
+  /* STREAMLINE-v1: the NewsBank reminder is one short line, and only when a refresh is due (the details are in How it works) */
+  root.querySelectorAll('#upd .upd-msg').forEach(m => { if (!/^NewsBank refresh/.test(m.textContent) || m.dataset.stShort) return;
+    if (!m.classList.contains('err')) { m.hidden = true; return; }
+    const b = m.querySelector('button'); m.dataset.stShort = '1'; m.textContent = 'A NewsBank refresh is due: add new NewsBank PDFs below. '; if (b) m.appendChild(b); });
 }
 
 function init() {
