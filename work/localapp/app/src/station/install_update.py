@@ -117,6 +117,28 @@ def verify_copy(a: Path, b: Path, label: str):
         raise Stop(f'The copy of {label} did not come out the same ({nb} files, {sb} bytes, expected {na} and {sa}). Nothing was changed.')
 
 
+HELD_ADVICE = {
+    'python': 'Something is still using the tracker\'s Python: a tracker window or a leftover copy of it. Restart the PC, then run this before starting the tracker.',
+    'app': 'Something has a file in the tracker\'s app\\ folder open: a File Explorer window inside it, a file open in Notepad, or the virus scanner. Close those (or restart the PC), then run this again.',
+}
+
+
+def move_dir(src: Path, dst: Path, name: str):
+    """rename a whole program folder; Windows can hold one of its files for a while (virus scan), so wait up to about a minute"""
+    try:
+        return FR.rename(src, dst)
+    except PermissionError:
+        say(f'Windows is holding a file in {name}\\; waiting up to a minute for it ...')
+    for attempt in range(25):        # 25 more tries of about 2 s each, plus fs_retry's own short waits
+        try:
+            return FR.rename(src, dst)
+        except PermissionError as e:
+            if attempt == 24:
+                e.held = name
+                raise
+            FR._sleep(2)
+
+
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
     check_only = '--check' in argv
@@ -161,9 +183,9 @@ def main(argv=None):
     try:               # step 5
         for d in items:
             if (t / d).exists():
-                FR.rename(t / d, prev / d)
+                move_dir(t / d, prev / d, d)
                 done.append(('moved', d))
-            FR.rename(new_names[d], t / d)
+            move_dir(new_names[d], t / d, d)
             done.append(('placed', d))
         for f in files:
             if (t / f).exists():
@@ -179,16 +201,19 @@ def main(argv=None):
         for kind, d in reversed(done):
             try:
                 if kind == 'placed':
-                    FR.rename(t / d, t / f'{d}.failed-{stamp}')
+                    move_dir(t / d, t / f'{d}.failed-{stamp}', d)
                 else:
-                    FR.rename(prev / d, t / d)
+                    move_dir(prev / d, t / d, d)
             except OSError:
                 pass
         for tmp in new_names.values():
             if tmp.exists():
                 shutil.rmtree(tmp, ignore_errors=True)
         if isinstance(e, PermissionError):
-            raise Stop('Windows would not let go of a file in the old program. Is the tracker window closed? Wait a minute and run this again. Your data was not touched.')
+            held = getattr(e, 'held', '')
+            raise Stop(f'Windows would not let go of a file in the old program ({held or "app or python"}\\). '
+                       + HELD_ADVICE.get(held, 'Is the tracker window closed? Restart the PC, then run this again.')
+                       + ' The old program was put back; your data was not touched.')
         raise
     # step 6
     want = app_manifest(SRC)

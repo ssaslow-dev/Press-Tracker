@@ -131,7 +131,7 @@ class Install(unittest.TestCase):
 
         def flaky(a, b):
             n.append(1)
-            if len(n) == 3:                                     # python\ cannot be moved: the first two moves worked, undo them
+            if Path(a) == self.tgt / 'python':                 # python\ stays held: the app\ moves worked, undo them
                 raise PermissionError(13, 'Access is denied')
             return real(a, b)
         self.iu.FR.rename = flaky
@@ -140,10 +140,29 @@ class Install(unittest.TestCase):
         finally:
             self.iu.FR.rename = real
         self.assertIn('Windows would not let go', str(r))
+        self.assertIn('(python', str(r))                        # says which folder was held
+        self.assertGreater(len(n), 20)                          # it waited (many tries) before giving up
         self.assertEqual(sha(self.tgt / 'app/station/common.py'), old)      # old program back
         self.assertTrue((self.tgt / 'python').exists())
         self.assertEqual(fingerprint(self.tgt / 'data'), self.data0)
         self.assertEqual([p.name for p in self.tgt.iterdir() if '.new-' in p.name], [])
+
+    def test_held_folder_released_later_is_waited_out(self):
+        real = self.iu.FR.rename
+        n = []
+
+        def slow(a, b):
+            if Path(a) == self.tgt / 'app' and len(n) < 5:      # held for a while (virus scan), then let go
+                n.append(1)
+                raise PermissionError(13, 'Access is denied')
+            return real(a, b)
+        self.iu.FR.rename = slow
+        try:
+            r = self.run_iu(self.tgt)
+        finally:
+            self.iu.FR.rename = real
+        self.assertEqual(r, 0)
+        self.assertEqual(fingerprint(self.tgt / 'data'), self.data0)
 
     def test_windows_vs_mac_refused(self):
         shutil.rmtree(self.src / 'python', ignore_errors=True) if False else None
