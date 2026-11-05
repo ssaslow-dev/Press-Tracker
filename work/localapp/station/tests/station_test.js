@@ -214,7 +214,7 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   check('translation doc for the Spanish find (headline + summary)', S.translations.length === 1 && S.translations[0][1].hl === 'Gabriel introduces housing bill' && S.translations[0][1].lang === 'Spanish', JSON.stringify(S.translations));
   check('author doc for the find whose page had no byline (Claude split “A; B”)', S.authors.length === 1 && /María López; Juan Pérez/.test(S.authors[0][1].author), JSON.stringify(S.authors));
   { /* PRJUDGE-v1: the decision per find, with its reason, on the proposed rows (web finds) */
-    const R = run.rows || [], by = u => R.find(r => r['Publisher link'] === u);
+    const R = run.rows || [], by = u => R.find(r => r['Publisher link'] === u) || { _pr: {} };   // a missing row fails its check instead of stopping the test
     check('PRJUDGE web: the prompt was asked for press_release and the answers reached the rows', R.every(r => r._pr && /^(yes|no)$/.test(r._pr.v)), JSON.stringify(R.map(r => r._pr)));
     check('PRJUDGE web: a newspaper story (Claude no, no release signals) is No: Press release blank', by(ARTICLES.new1.url)._pr.v === 'no' && !by(ARTICLES.new1.url)['Press release'], JSON.stringify(by(ARTICLES.new1.url)._pr));
     check('PRJUDGE web: Claude says "official statement printed word for word" but the outlet is a community news outlet: No (coverage), the reason says so', by(ARTICLES.new2.url)._pr.v === 'no' && !by(ARTICLES.new2.url)['Press release'] && /news outlet: coverage/.test(by(ARTICLES.new2.url)._pr.why), JSON.stringify(by(ARTICLES.new2.url)._pr));
@@ -290,7 +290,7 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   const expectSince = new Date(Date.parse(lastDay) - 7 * 864e5).toISOString().slice(0, 10);
   check('seeded memory: Since default = last searched_to minus 7 days', since3 === expectSince, since3 + ' vs ' + expectSince);
   check('seeded memory: the “last full update searched up to” line shows the run', (await p3.textContent('#updBody')).includes('last full update searched up to ' + lastDay), (await p3.textContent('#updBody')).slice(0, 600));
-  await p3.click('#mgTabs [data-mg="log"]'); await p3.waitForTimeout(300);
+  await p3.evaluate(() => document.querySelector('#mgTabs [data-mg="log"]').click());   // the tabs are hidden in the station (STREAMLINE-v1) await p3.waitForTimeout(300);
   check('seeded memory: run log lists the earlier run', /Update database/.test(await p3.textContent('#mgOther')) && /Seeded story waiting for a save/.test(await p3.textContent('#mgOther')), (await p3.textContent('#mgOther')).slice(0, 300));
   check('seeded run is not packed (only runs made after loading)', await p3.evaluate(() => window.__station.pending().runs.length === 0));
   check('no page errors (seeded page)', errors3.length === 0, errors3.join('|'));
@@ -303,8 +303,8 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
     const old = JSON.parse(JSON.stringify(Object.assign({}, fu, { memory: fu.memory }))); if (days === null) delete old.created_at; else old.created_at = new Date(Date.now() - days * 864e5 - 3600e3).toISOString();
     const f = path.join(OUT, 'aged_' + days + '.json'); fs.writeFileSync(f, JSON.stringify(old));
     const pa = await ctx.newPage(); await pa.goto(base + '/index.html'); await pa.waitForSelector('#stDrop'); await pa.setInputFiles('#stFile', f); await pa.waitForSelector('#stLoaded:not([hidden])', { timeout: 60000 });
-    const t = await pa.textContent('#stAge'), has = /make a fresh one from the PC tracker so stories saved since are not found again/.test(t);
-    check('age line for a file ' + (days === null ? 'with no date' : days + ' days old') + (warn ? ' warns' : ' does not warn'), has === warn && (days === null || new RegExp(days + ' days old').test(t)) && (await pa.locator('#stAge.err').count() === (warn ? 1 : 0)), t);
+    const t = await pa.textContent('#stAge'), has = (await pa.locator('#stAge.err').count()) === 1;   // STREAMLINE-v1: one short reminder line; a file over 7 days old is shown as a warning
+    check('age line for a file ' + (days === null ? 'with no date' : days + ' days old') + (warn ? ' warns' : ' does not warn'), has === warn && /make a new file|make a fresh one/i.test(t), t);
     check('the gate opens for that file too', !(await pa.$eval('#nbFile', i => i.disabled)));
     await pa.close();
   }
