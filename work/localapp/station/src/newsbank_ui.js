@@ -13,9 +13,13 @@ async function nbLoadLibs() {
   if (NBS.libs) return;
   // pdf.js with its worker in this page (a "fake worker"): the artifact page cannot start a worker from another address, so the worker's code is run
   // here first and pdf.js finds it as globalThis.pdfjsWorker. Order matters: the worker, then the library.
-  nbRunScript('vendor-pdfjs-worker-run', nbText('vendor-pdfjs-worker'));
-  nbRunScript('vendor-pdfjs-run', nbText('vendor-pdfjs'));
-  nbRunScript('vendor-pdflib-run', nbText('vendor-pdflib'));
+  // SMALLPAGE-v1: the same pinned versions (vendor/PINS.json) load from cdn.jsdelivr.net, one of the library sites claude.ai pages may use
+  try {
+    const PJ = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@4.10.38/legacy/build/';
+    if (!window.pdfjsWorker) window.pdfjsWorker = await import(PJ + 'pdf.worker.min.mjs');
+    if (!window.pdfjsLib) window.pdfjsLib = await import(PJ + 'pdf.min.mjs');
+    if (!window.PDFLib) await new Promise((res, rej) => { const sc = document.createElement('script'); sc.src = 'https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js'; sc.onload = res; sc.onerror = () => rej(new Error('pdf-lib did not load')); document.head.appendChild(sc); });
+  } catch (e) { throw new Error('the PDF libraries did not load (' + (e && e.message || e) + '). Check the internet connection and reload.'); }
   if (!window.pdfjsLib || !window.pdfjsWorker || !window.PDFLib) throw new Error('the PDF libraries did not start');
   pdfjsLib.GlobalWorkerOptions.workerSrc = 'data:text/javascript,';    // never used: the worker above is found first
   NBS.libs = true;

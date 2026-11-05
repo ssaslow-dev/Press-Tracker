@@ -108,8 +108,9 @@ def main():
     page = re.sub(r'<title>[^<]*</title>', '', page, count=1).strip()
     # ACCOUNT-NEUTRAL-v1 (UPDATESTATION-v1 follow-up 6): no outside code or fonts. The shell's Google Fonts links go; the two fonts the links
     # asked for (Roboto Slab, Public Sans) come back as data: URIs in a style block (LOCALFONTS-v1), so the look is the tracker's own.
-    page, n = re.subn(r'<link rel="(?:preconnect|stylesheet)"[^>]*fonts\.g[^>]*>\s*', '', page)
-    assert n == 3, f'expected 3 font links, removed {n}'
+    # SMALLPAGE-v1 (2026-11-05: claude.ai refused to review the 3.9 MB page for sharing): the shell's Google Fonts links stay (Google Fonts is
+    # allowed in artifacts) instead of 0.3 MB of inlined fonts; the PDF libraries load from cdn.jsdelivr.net when PDFs are first added (newsbank_ui.js)
+    assert len(re.findall(r'<link rel="(?:preconnect|stylesheet)"[^>]*fonts\.g[^>]*>', page)) == 3, 'expected the 3 Google Fonts links in the shell'
     page = once(page, '<script id="data" type="application/json">[]</script>', '<script id="data" type="application/json">[]</script>')
     tail = '<script>\n</script>'
     assert page.rstrip().endswith(tail), 'shell does not end with the empty main <script>'
@@ -147,8 +148,8 @@ def main():
     recall_json = json.dumps(recall_default, separators=(',', ':')).replace('</', '<\\/')
     lib = vendor_pdf_libs()
     page = once(page, '<main class="wrap">', '<main class="wrap">\n' + st_html)
-    fonts_css, nfonts = inline_fonts_css()
-    doc = ('<title>AJG Update Station</title>\n' + page + '\n<style id="station-fonts">\n' + fonts_css + '</style>\n<style id="station-css">\n' + st_css + '</style>\n'
+    fonts_css, nfonts = '', 0
+    doc = ('<title>AJG Update Station</title>\n' + page + '\n<style id="station-css">\n' + st_css + '</style>\n'
            '<script type="text/plain" id="tracker-src">' + body_esc + '</script>\n<script type="text/plain" id="nb-scope-src">' + nb_scope + '</script>\n'
            '<script type="application/json" id="recall-default">' + recall_json + '</script>\n'
            '<script id="nbparse-js">\n' + nb_parse + '</script>\n'
@@ -156,15 +157,10 @@ def main():
            '<script id="names-js">\n' + names_js + '</script>\n'
            '<script id="prjudge-js">\n' + pr_js + '</script>\n'
            '<script id="nbtv-js">\n' + tv_js + '</script>\n'
-           '<script type="text/plain" id="vendor-pdfjs-worker">' + lib['pdfjs_worker'].replace('</script', '<\\/script') + '</script>\n'
-           '<script type="text/plain" id="vendor-pdfjs">' + lib['pdfjs'].replace('</script', '<\\/script') + '</script>\n'
-           '<script type="text/plain" id="vendor-pdflib">' + lib['pdflib'].replace('</script', '<\\/script') + '</script>\n'
            '<script id="station-js">\n' + st_js + '</script>\n')
     # outside references: none in the shell or the station layer; the tracker JS keeps two it never reaches in the station (listed in README)
     outer = doc.replace(body_esc, '')
-    for k in ('pdfjs_worker', 'pdfjs', 'pdflib'):
-        outer = outer.replace(lib[k].replace('</script', '<\\/script'), '')   # the vendored libraries keep some URLs in strings and comments; none is fetched (listed below)
-    for bad in ('fonts.googleapis', 'fonts.gstatic', 'claude.ai/', 'cdnjs.cloudflare', 'jsdelivr', 'unpkg.com'):
+    for bad in ('claude.ai/', 'cdnjs.cloudflare', 'unpkg.com'):
         assert bad not in outer, f'outside reference left in the page: {bad}'
     residual = sorted({m.group(0) for m in re.finditer(r'https://(?:fonts\.googleapis\.com|cdnjs\.cloudflare\.com)[^\s\'"`)]*', body)})
     print('tracker JS keeps (not reachable in the station):', residual)

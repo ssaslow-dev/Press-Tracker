@@ -72,3 +72,6 @@ The "How it works" dialog and the step captions cover: what the page does, makin
 - The unreachable outside PDF.js loader (tracker code) is replaced in the station by its built-in PDF reader (newsbank.js), so no path can load anything from a public site.
 - How it works rewritten to match the current behaviour (two-week window, Search all time, tracker-duplicate and old-find rules, translation at download, PC preview). Published 1793915424-f020.
 
+## SMALLPAGE-v1 (2026-11-05)
+claude.ai refused to review the 3.9 MB page for sharing ("too large or complex"). The page is now 1.2 MB: the two PDF libraries (pdf.js 4.10.38 legacy build, pdf-lib 1.17.1, the same pinned versions as vendor/PINS.json) load from cdn.jsdelivr.net the first time PDFs are added, and the fonts come from Google Fonts. Both are library sources claude.ai artifacts are allowed to use, and neither needs an account, so the page is still self-contained: no account data, no other artifact. Tests serve those files from vendor/ (tests/nb/cdn_local.js). Published 1793917597-4a73.
+

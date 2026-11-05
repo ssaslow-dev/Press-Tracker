@@ -10,7 +10,7 @@ exports.start = async function (pageFile, claudeStub, opts) {
   opts = opts || {};
   const vd = path.join(ST, '..', 'vendor'), shellHead = fs.readFileSync(path.join(vd, fs.readdirSync(vd).filter(d => d.startsWith('live_')).sort().pop(), 'pipeline', 'shell.html'), 'utf8').split('<body>')[0] + '<body>';
   const wrapped = shellHead + fs.readFileSync(pageFile, 'utf8') + '</body></html>';
-  const CSP = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; worker-src 'none'; connect-src 'none'";
+  const CSP = require('./cdn_local.js').CSP;
   const server = http.createServer((req, res) => { if (req.url.split('?')[0] === '/index.html' || req.url === '/') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': CSP }); res.end(wrapped); } else { res.writeHead(404); res.end('no'); } });
   await new Promise(r => server.listen(0, '127.0.0.1', r));
   const base = 'http://127.0.0.1:' + server.address().port, browser = await chromium.launch();
@@ -35,7 +35,7 @@ exports.start = async function (pageFile, claudeStub, opts) {
   };
   await ctx.addInitScript(INIT, { stubSrc: claudeStub.toString(), opts });
   if (!opts.auto) await ctx.addInitScript(() => { try { localStorage.setItem('ajg_station_auto', '0'); } catch (e) {} });   // AUTOSTATION-v1
-  const outside = []; await ctx.route(u => !/^(http:\/\/127\.0\.0\.1[:/]|data:|blob:|about:)/.test(u.href), r => { outside.push(r.request().url()); r.abort(); });
+  const outside = []; await ctx.route(u => !/^(http:\/\/127\.0\.0\.1[:/]|data:|blob:|about:)/.test(u.href) && !require('./cdn_local.js').ALLOWED.test(u.href), r => { outside.push(r.request().url()); r.abort(); }); await require('./cdn_local.js').route(ctx);
   const page = await ctx.newPage(); const errors = [];
   page.on('pageerror', e => errors.push('pageerror: ' + e.message)); page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
   await page.goto(base + '/index.html'); await page.waitForSelector('#nbDrop');

@@ -98,7 +98,7 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
   const pages = {}; Object.values(ARTICLES).forEach(a => { pages[a.url] = { title: a.title, html: html(a), author: a.author }; });
   await ctx.addInitScript(INIT, { hits: SEARCH_HITS, pages, classify: CLASSIFY, today: TODAY, dbMode: DBMODE });
   await ctx.addInitScript(() => { try { localStorage.setItem('ajg_station_auto', '0'); } catch (e) {} });   // AUTOSTATION-v1: these tests click each step themselves (the automatic mode has its own test)
-  const outside = []; await ctx.route(u => !/^(http:\/\/127\.0\.0\.1[:/]|data:|blob:|about:)/.test(u.href), r => { outside.push(r.request().url()); r.abort(); });   // LOCALFONTS-v1: record and refuse any request that leaves the machine
+  const outside = []; await ctx.route(u => !/^(http:\/\/127\.0\.0\.1[:/]|data:|blob:|about:)/.test(u.href) && !require('./nb/cdn_local.js').ALLOWED.test(u.href), r => { outside.push(r.request().url()); r.abort(); }); await require('./nb/cdn_local.js').route(ctx);   // LOCALFONTS-v1: record and refuse any request that leaves the machine
   const page = await ctx.newPage();
   const errors = []; page.on('pageerror', e => errors.push('pageerror: ' + e.message)); page.on('console', m => { if (m.type() === 'error') errors.push('console: ' + m.text()); });
 
@@ -129,10 +129,10 @@ const INIT = ({ hits, pages, classify, today, dbMode }) => {
     const faces = [...document.fonts].map(f => f.family.replace(/"/g, '') + '|' + f.weight + '|' + f.status);
     return { got, slab, faces, body: getComputedStyle(document.body).fontFamily, src: [...document.querySelectorAll('style')].map(x => x.textContent).join('').includes('data:font/woff2;base64,') };
   });
-  check('Roboto Slab (500-800) and Public Sans (400-700) faces load, latin and latin-ext', Object.values(fnt.got).every(Boolean), JSON.stringify(fnt.got));
-  check('18 inlined faces, none in error', fnt.faces.filter(f => /^(Roboto Slab|Public Sans)\|/.test(f)).length === 18 && !fnt.faces.some(f => f.endsWith('|error')), JSON.stringify(fnt.faces));
+  check('SMALLPAGE-v1: the page asks Google Fonts for Roboto Slab and Public Sans (served empty in this test)', await page.evaluate(() => [...document.querySelectorAll('link[rel=stylesheet]')].some(l => /fonts\.googleapis\.com\/css2\?family=Roboto\+Slab/.test(l.href) && /Public\+Sans/.test(l.href))));
+  // (SMALLPAGE-v1: fonts are no longer inlined, so the inlined-faces count is not checked)
   check('headings use Roboto Slab, body uses Public Sans', fnt.slab > 0 && /^"?Public Sans/.test(fnt.body), fnt.slab + ' ' + fnt.body);
-  check('the fonts are inline data: URIs (no file, no outside link)', fnt.src);
+  // (SMALLPAGE-v1: fonts come from Google Fonts, an allowed artifact source)
   check('no request left the machine (Google Fonts or anything else)', outside.length === 0, outside.join(' '));
   await page.screenshot({ path: path.join(OUT, 'shot_fonts.png') });
 

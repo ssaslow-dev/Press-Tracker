@@ -11,7 +11,7 @@ const TODAY = laDay();
 
 const shellHead = (() => { const vd = path.join(__dirname, '..', '..', 'vendor'); return fs.readFileSync(path.join(vd, fs.readdirSync(vd).filter(d => d.startsWith('live_')).sort().pop(), 'pipeline', 'shell.html'), 'utf8').split('<body>')[0] + '<body>'; })();
 const wrapped = shellHead + fs.readFileSync(PAGE, 'utf8') + '</body></html>';
-const CSP = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; font-src data:; worker-src 'none'; connect-src 'none'";
+const CSP = require('./nb/cdn_local.js').CSP;
 const server = http.createServer((req, res) => {
   if (req.url.split('?')[0] === '/index.html' || req.url === '/') { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Content-Security-Policy': CSP }); res.end(wrapped); }
   else { res.writeHead(404); res.end('no'); }
