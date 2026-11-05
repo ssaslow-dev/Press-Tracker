@@ -25,6 +25,8 @@
 - The program itself makes **no** internet or network connections.
 - **One exception, by design:** saved articles added from now on show their photos by linking to the news site's own image address. When someone opens such an article in the tracker, Edge loads those pictures from the news site, the same as ordinary web browsing. No other data leaves the computer, and the request carries no referrer. Older saved articles have their photos built in and load nothing.
 
+**The Update station (a web page, separate from the program):** new stories are found with a private web page on claude.ai, used in the browser like any other website. claude.ai shows such pages from addresses under `claudeusercontent.com`. On the office PCs that address does not resolve (the browser says the server's IP address could not be found), while it works on other computers on the same Wi-Fi. To use the station on an office PC, please allow `claude.ai` and `*.claudeusercontent.com`. The tracker program itself needs neither.
+
 **What it does not do:**
 - Install anything, or need admin rights.
 - Touch the registry.
