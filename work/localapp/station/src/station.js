@@ -244,7 +244,7 @@ function showLoaded() {
   ['#st-step2', '#st-step3', '#st-nb', '#st-pq'].forEach(s => { const el = $(s); if (el) el.classList.remove('st-lock'); });
   ['#nbFile', '#pqFile'].forEach(s => { const el = $(s); if (el) el.disabled = false; });
   showAge();
-  $('#stStep2Cap').textContent = 'Press Update database. It searches the web for new stories about him (about 700 TinyFish searches, 25 minutes or more), checks them against the file, and fills in tone, authors and translations for each new one. Keep this tab open until it finishes.';
+  $('#stStep2Cap').textContent = 'Press Update database. Keep this tab open until it finishes.';
   const f = $('#runFind'); if (f) f.disabled = false;
   updatePackUi();
 }
@@ -613,6 +613,11 @@ function init() {
   if (upd && host) host.appendChild(upd);
   const f = $('#runFind'); if (f) f.disabled = true;
   const sub = $('#subline'); if (sub) sub.innerHTML = 'Update<br>station';
+  { const hb = document.createElement('button'), dlg = $('#stHow'); hb.type = 'button'; hb.className = 'btn'; hb.id = 'stHowBtn'; hb.textContent = 'How it works';
+    const ha = document.querySelector('.mast .hdr-acts'); (ha || $('#st')).prepend(hb);
+    hb.addEventListener('click', () => { if (dlg.showModal) dlg.showModal(); else dlg.setAttribute('open', ''); });
+    $('#stHowX').addEventListener('click', () => { if (dlg.close) dlg.close(); else dlg.removeAttribute('open'); });
+    dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); }); }
   wireStep1();
   nbWire();
   pqWire();

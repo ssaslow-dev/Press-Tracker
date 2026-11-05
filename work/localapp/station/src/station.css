@@ -50,3 +50,12 @@
 .st-lock .st-gate { display: block; }
 .st-lock .st-drop { pointer-events: none; cursor: not-allowed; }
 .st-age-old { font-weight: 600; }
+
+/* How it works: one panel instead of long captions on the page */
+.st-how { max-width: min(720px, calc(100vw - 32px)); max-height: 85vh; padding: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--panel, var(--bg)); color: var(--ink); }
+.st-how::backdrop { background: rgba(0, 0, 0, .45); }
+.st-how-h { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 20px; border-bottom: 1px solid var(--line); position: sticky; top: 0; background: inherit; }
+.st-how-h h2 { margin: 0; font-size: var(--fs-lg, 18px); }
+.st-how-b { padding: 4px 20px 20px; overflow: auto; max-height: calc(85vh - 60px); font-size: var(--fs-md); line-height: 1.5; }
+.st-how-b h3 { margin: 18px 0 4px; font-size: var(--fs-md); }
+.st-how-b p { margin: 4px 0; color: var(--ink-2); }

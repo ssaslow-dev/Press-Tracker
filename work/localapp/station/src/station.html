@@ -1,57 +1,81 @@
 <section class="st" id="st" aria-label="Update station">
+  <dialog class="st-how" id="stHow" aria-labelledby="stHowT">
+    <div class="st-how-h"><h2 id="stHowT">How it works</h2><button class="btn" type="button" id="stHowX" aria-label="Close">Close</button></div>
+    <div class="st-how-b">
+<h3>The whole flow</h3>
+<p>This page finds new stories about Jesse Gabriel and packs them into an update folder (one zip). You drag that zip into the PC tracker with “Bring in update”; the PC tracker checks it and writes the workbook. This page never changes your workbook or your article library.</p>
+<h3>Step 1: the “for Update” file</h3>
+<p>The PC tracker makes this file (“Make for Update file”). It lists the stories already in the tracker (headlines, outlets, dates, links, authors, tone and the like) and no article text. The page reads it in your browser; it is not uploaded or stored online. Every duplicate check, and the decision whether a copy is a reprint, works from this file, so load a fresh one for each session. If the file is old, the page says so. Loading a different file clears the page.</p>
+<h3>Step 2: Update</h3>
+<p>The Update button is the tracker’s own. It runs about 700 searches through TinyFish (25 minutes or more; keep the tab open), drops what the tracker already has, and then Claude reviews each new find: is it a real story about Assemblymember Gabriel, is it a press release, which outlet and date. For each new story Claude also rates tone and topic, splits out the authors and translates a non-English headline. Press releases are judged by who wrote them (an advocacy group’s or an official’s own release is not press). Free sources only: nothing is logged into and no paywall is bypassed. Pressing Update is never automatic.</p>
+<h3>Add NewsBank PDFs and newspaper pages</h3>
+<p>NewsBank “Multiple Articles” PDFs (APA citation format, one to many stories each) are cut into one PDF per story. Each story is checked against the file, rated and translated like a new find, and its publisher’s own web page is looked up with TinyFish (about two calls a story; untick the box to skip). The story’s text becomes the saved copy and the cut-out PDF is kept as its print scan. Files are named with the tracker’s naming rules.</p>
+<p><b>Print pages.</b> A NewsBank “Full Page” is a picture of a newspaper page. Claude reads it in full-size pieces (the page is cut into overlapping tiles so small print stays readable), finds every article that names him and transcribes it. The page is then placed by its own paper, date and page number: it becomes the print original of a row the tracker already has, a print edition (reprint row) of a story already in the tracker, a jump page joined to the page it continues, or a new story. A page that matches a text story in the same batch (same paper, date and page) goes with that story even if Claude finds no article on the picture. A page Claude could not read, or finds no article on, goes to the “Unlinked print pages” list for you to match by hand. Pictures that are byte-for-byte the same are read once. Any other newspaper page (an e-edition PDF, a scan, a photo) is read the same way, with the paper and date taken from the masthead; if they are not clear, the page is only listed and nothing is added.</p>
+<h3>Add ProQuest PDFs</h3>
+<p>One article per PDF, or an export of several articles (up to 20 per PDF is best; more still works, only slower). A PDF with several articles is cut into one article each; an article whose details cannot be read is listed as “needs a look” and the others go on. The details block (title, publication, date, ProQuest document ID) is read, and the story is checked against the tracker by that ID and by headline, outlet and date, then rated, translated and given its own web page like any new find.</p>
+<h3>Duplicates across sources</h3>
+<p>A story found by the web search, in a NewsBank PDF and in a ProQuest PDF is kept once. A copy that ran later under another outlet is a reprint of the story that ran first, and the earlier one is named as the original. The final text-based reprint test runs on the PC at save time.</p>
+<h3>The update folder</h3>
+<p>One zip: the runs, story pages, reprints, authors, translations and tones found since the file was loaded, plus the PDFs and library files, named for the tracker’s library. The PC tracker (“Bring in update”) shows every row for you to review before anything is saved; nothing is written until you save there. If you download again in the same session, the new zip holds everything found so far and replaces the earlier one.</p>
+<h3>Automatic adding, and what is never automatic</h3>
+<p>With automatic mode on, PDFs you drop in are added to the update by themselves (after a run that is going has finished). Never automatic: pressing Update, and downloading the update folder. Nothing is scheduled and nothing runs in the background.</p>
+<h3>Permissions</h3>
+<p>Claude must be allowed for this page (the Permissions menu); it is also what reads print pages, so the page must be allowed to send pictures to Claude. TinyFish must be connected in claude.ai (Settings, Connectors) and allowed for the page; without it the searches and web-page look-ups are skipped. Claude and TinyFish each ask for your consent on first use. The page asks for no logins or keys.</p>
+</div>
+  </dialog>
   <div class="card pad" id="st-step1">
     <div class="st-h"><span class="st-n">Step 1</span><h2 class="sec">Load the “for Update” file</h2></div>
-    <div class="cap">Made by the PC tracker (Make “for Update” file). This page reads it in your browser. It is not uploaded or stored online.</div>
+    <div class="cap">Load the file made by the PC tracker.</div>
     <label class="st-drop" id="stDrop" for="stFile" tabindex="0">Drop the file here, or click to choose it</label>
     <input type="file" id="stFile" accept=".json,application/json" hidden>
     <div class="upd-msg err st-msg" id="stErr" role="alert" hidden></div>
     <div class="upd-msg st-msg" id="stAge" role="status" hidden></div>
     <div id="stLoaded" hidden>
       <dl class="st-facts" id="stFacts"></dl>
-      <div class="st-acts"><button class="btn" type="button" id="stAnother">Load a different file</button><span class="st-note" id="stAnotherNote" hidden>This clears this page, including any run not yet downloaded. Click again to confirm.</span></div>
+      <div class="st-acts"><button class="btn" type="button" id="stAnother">Load a different file</button><span class="st-note" id="stAnotherNote" hidden>Clears this page, including runs not yet downloaded. Click again to confirm.</span></div>
     </div>
   </div>
   <div class="card pad st-lock" id="st-step2">
     <div class="st-h"><span class="st-n">Step 2</span><h2 class="sec">Update</h2></div>
-    <div class="cap" id="stStep2Cap">Load the file in step 1 first. The Update button stays off until then.</div>
-    <div class="upd-msg err st-msg" id="stSampleNote" hidden>Claude is not available on this page, or you did not allow it. New finds cannot be reviewed or rated without it. Allow Claude for this page (use the page’s Permissions menu), then reload it.</div>
+    <div class="cap" id="stStep2Cap">Load the file in step 1 first.</div>
+    <div class="upd-msg err st-msg" id="stSampleNote" hidden>Claude is not allowed on this page. Allow it in the Permissions menu, then reload.</div>
     <div class="upd-msg err st-msg" id="stEndNote" role="alert" hidden></div>
     <div id="stUpdHost"></div>
   </div>
   <div class="card pad st-lock" id="st-nb">
     <div class="st-h"><span class="st-n">Also</span><h2 class="sec">Add NewsBank PDFs and newspaper pages</h2></div>
-    <div class="cap">Also takes a picture or PDF of any newspaper page (an e-edition, a scan, a photo): Claude reads the paper, the date and the page from the masthead and the articles that name him, and files them like a NewsBank full page; a page whose paper or date is not clear is only listed. For the “NewsBank Multiple Articles” PDFs the interns download (any number of stories per PDF, from one to many; citation format APA). Each story is cut out into a PDF of its own, checked against the tracker, rated and translated like any new find, and its publisher’s own page is looked up. The PDFs are read in this browser and kept only in this tab until you download the update folder in step 3.</div>
-    <div class="upd-msg err st-msg st-gate" id="nbGate">Load the for Update file first (step 1). Stories are checked against it and the files are named from it.</div>
-    <label class="st-drop" id="nbDrop" for="nbFile" tabindex="0">Drop NewsBank PDFs or newspaper pages (a PDF, JPEG or PNG) here, or click to choose them (one or many)</label>
+    <div class="cap">NewsBank PDFs, or a picture or PDF of any newspaper page.</div>
+    <div class="upd-msg err st-msg st-gate" id="nbGate">Load the for Update file first (step 1).</div>
+    <label class="st-drop" id="nbDrop" for="nbFile" tabindex="0">Drop NewsBank PDFs or newspaper pages here, or click to choose</label>
     <input type="file" id="nbFile" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" multiple hidden disabled>
     <div class="upd-msg err st-msg" id="nbMsg" role="alert" hidden></div>
     <ul class="st-list nb-files" id="nbFiles"></ul>
     <div class="upd-msg st-msg" id="nbSummary" hidden></div>
     <div class="nb-tblwrap"><table class="nb-tbl" id="nbTbl" hidden><thead><tr><th></th><th>What it is</th><th>Date</th><th>Outlet</th><th>Headline</th><th>Note</th></tr></thead><tbody id="nbBody"></tbody></table></div>
-    <label class="nb-opt" id="nbLinksRow" hidden><input type="checkbox" id="nbLinks" checked> Also look for each story’s own web page (TinyFish: about two calls per story, 30 a minute)</label>
+    <label class="nb-opt" id="nbLinksRow" hidden><input type="checkbox" id="nbLinks" checked> Look up each story’s own web page</label>
     <div class="st-acts"><button class="btn primary" type="button" id="nbAdd" disabled>Add to the update</button></div>
     <div class="upd-msg st-msg" id="nbProg" hidden></div>
     <ul class="st-list" id="nbWarn" hidden></ul>
   </div>
   <div class="card pad st-lock" id="st-pq">
     <div class="st-h"><span class="st-n">Also</span><h2 class="sec">Add ProQuest PDFs</h2></div>
-    <div class="cap">For ProQuest article PDFs: one article per PDF, or a ProQuest export of several articles in one PDF (save up to 20 articles per PDF; a bigger export still works, only slower). As many PDFs as you like at once. A PDF with several articles is cut into one article each; an article whose details cannot be read is listed as “needs a look” and the others go on. Each PDF’s details block (title, publication, date, ProQuest document ID) is read, the story is checked against the tracker by its ProQuest document ID and by headline, outlet and date, rated and translated like any new find, and its publisher’s own page is looked up. The text becomes the saved copy and the PDF is kept with it. A PDF whose details cannot be read is listed as “needs a look” and is not added. The PDFs are read in this browser and kept only in this tab until you download the update folder in step 3.</div>
-    <div class="upd-msg err st-msg st-gate" id="pqGate">Load the for Update file first (step 1). Stories are checked against it and the files are named from it.</div>
-    <label class="st-drop" id="pqDrop" for="pqFile" tabindex="0">Drop ProQuest PDFs here, or click to choose them (one or many; up to 20 articles per PDF)</label>
+    <div class="cap">ProQuest article PDFs.</div>
+    <div class="upd-msg err st-msg st-gate" id="pqGate">Load the for Update file first (step 1).</div>
+    <label class="st-drop" id="pqDrop" for="pqFile" tabindex="0">Drop ProQuest PDFs here, or click to choose</label>
     <input type="file" id="pqFile" accept=".pdf,application/pdf" multiple hidden disabled>
     <div class="upd-msg err st-msg" id="pqMsg" role="alert" hidden></div>
     <ul class="st-list nb-files" id="pqFiles"></ul>
     <div class="upd-msg st-msg" id="pqSummary" hidden></div>
     <div class="nb-tblwrap"><table class="nb-tbl" id="pqTbl" hidden><thead><tr><th></th><th>What it is</th><th>Date</th><th>Outlet</th><th>Headline</th><th>Note</th></tr></thead><tbody id="pqBody"></tbody></table></div>
-    <label class="nb-opt" id="pqLinksRow" hidden><input type="checkbox" id="pqLinks" checked> Also look for each story’s own web page (TinyFish: about two calls per story, 30 a minute)</label>
+    <label class="nb-opt" id="pqLinksRow" hidden><input type="checkbox" id="pqLinks" checked> Look up each story’s own web page</label>
     <div class="st-acts"><button class="btn primary" type="button" id="pqAdd" disabled>Add to the update</button></div>
     <div class="upd-msg st-msg" id="pqProg" hidden></div>
     <ul class="st-list" id="pqWarn" hidden></ul>
   </div>
   <div class="card pad st-lock" id="st-step3">
     <div class="st-h"><span class="st-n">Step 3</span><h2 class="sec">Download the update folder</h2></div>
-    <div class="cap">One zip with the runs made since the file was loaded. Drag it into the PC tracker with Bring in update.</div>
-    <label class="nb-opt"><input type="checkbox" id="stAuto" checked> Automatic mode: PDFs you drop in are added to the update by themselves (after a run that is going has finished). The update folder downloads only when you press "Download the update folder" in step 3.</label>
+    <div class="cap">The runs made since the file was loaded, as one zip.</div>
+    <label class="nb-opt"><input type="checkbox" id="stAuto" checked> Automatic mode: add dropped PDFs by themselves</label>
     <div id="stPackStatus" class="upd-msg">Nothing to download yet.</div>
     <ul class="st-list" id="stDupNote" hidden></ul>
     <div class="st-acts"><button class="btn primary" type="button" id="stPack" disabled>Download update folder</button><button class="btn" type="button" id="stPackAgain" hidden>Download the last one again</button></div>
