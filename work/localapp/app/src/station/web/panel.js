@@ -467,7 +467,7 @@
       if (!r.ok) { state.rmMsg = el('div', { class: 'ajgf-bad', text: r.line || 'The refresh file could not be made.' }); render(); return; }
       var href = '/_local/station/refresh_out/' + encodeURIComponent(r.name) + '?t=' + encodeURIComponent(TOKEN);
       var a = el('a', { href: href, download: r.name }); document.body.appendChild(a); a.click(); a.remove();
-      state.rmMsg = el('div', { class: 'ajgf-ok' }, [el('div', { text: r.line }), el('div', {}, [el('small', { text: 'It downloads to your Downloads folder. A copy is kept in data\\refresh_out. Pass it to the others (shared drive, email or Teams).' })])]);
+      state.rmMsg = el('div', { class: 'ajgf-ok' }, [el('div', { text: r.line }), el('div', {}, [el('small', { text: 'It downloads to your Downloads folder. A copy is kept in data\\refresh_out. Pass it to the others on the shared drive, OneDrive or a USB stick (it can be too big for email or Teams).' })])]);
       render();
     });
   }

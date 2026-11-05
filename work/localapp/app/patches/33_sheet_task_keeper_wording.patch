@@ -1,0 +1,11 @@
+--- a/code/sheet_task.py
++++ b/code/sheet_task.py
+@@ -1788,1 +1788,1 @@
+-                                  f"{c.get('Outlet', '')} ({RR.tier(c, credited=cred, home=home_for(c))[1]}): {ch['why']}; the existing Original was kept (date-only difference): Sammy to decide")
++                                  f"{c.get('Outlet', '')} ({RR.tier(c, credited=cred, home=home_for(c))[1]}): {ch['why']}; the existing Original was kept (date-only difference): the keeper decides")
+@@ -1791,1 +1791,1 @@
+-                              f"({RR.tier(c, credited=cred)[1]}); the existing Original was kept (cells are never changed): Sammy to decide")
++                              f"({RR.tier(c, credited=cred)[1]}); the existing Original was kept (cells are never changed): the keeper decides")
+@@ -4711,1 +4711,1 @@
+-    add(n('conflicts'), f"{n('conflicts')} conflicts left for Sammy")
++    add(n('conflicts'), f"{n('conflicts')} conflicts left for the keeper to decide")

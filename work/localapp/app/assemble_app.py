@@ -294,6 +294,7 @@ def copy_app_code(root: Path, pb: Path, info: dict):
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '30_sheet_task_printread_ocr.patch')         # PRINTREAD-v2 follow-up: a row whose text Claude read from a newspaper page is tested with the OCR-tolerant verdict
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '31_sheet_task_originals_links.patch')      # ORIGLINKS-v1: rebuilding Originals keeps its hyperlinks (switch-over added 43; the save's check refused their loss)
     patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '32_sheet_task_own_credits.patch')           # OWNCREDIT-v1: a find's credit signal is its own credits, not the whole run's
+    patched_copy(pipe / 'sheet_task.py', pipe / 'sheet_task.py', ap_ / '33_sheet_task_keeper_wording.patch')       # the save's messages name the keeper, not Sammy (colleagues read them too)
     shutil.copy2(LOCALAPP / 'station' / 'data' / 'proquest_outlets.json', pipe / 'proquest_outlets.json')    # PROQUESTPDF-v1 answer 2 (one source: the station's data)
     patched_copy(pipe / 'shell.html', pipe / 'shell.html', ap_ / '08_shell_localfonts.patch')
     patched_copy(pipe / 'tracker.js', pipe / 'tracker.js', ap_ / '07_tracker_js_localfonts.patch')

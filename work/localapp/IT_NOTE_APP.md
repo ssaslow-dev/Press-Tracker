@@ -40,4 +40,4 @@
 
 **Source:** full source, build scripts and checksums are available on request.
 
-**Fingerprint:** SHA-256 of the delivered zip `AJG_Tracker_windows_v4.2.zip` (132.2 MB): `281c6c5ee0de3a436582de8bfbb0da89fced33863e6f27a69be135edb2f5a2c3`
+**Fingerprint:** SHA-256 of the delivered zip `AJG_Tracker_windows_v4.3.zip` (132.2 MB): `1c7f3001227f3e08725a9ffbc923b51086b8d7e53bb676dae8e0be2b842af620`
