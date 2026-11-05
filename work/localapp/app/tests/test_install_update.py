@@ -156,9 +156,11 @@ class InstallOverVersion1Layout(unittest.TestCase):
             (self.tgt / rel).unlink(missing_ok=True)          # a version-1 folder has no installer
         for d in ('workbook', 'state', 'db'):
             (self.tgt / 'data' / d).mkdir(parents=True, exist_ok=True)
-        (self.tgt / 'data' / 'workbook' / 'AJG Coverage - NewsBank.xlsx').write_bytes(b'workbook-bytes' * 50)
-        (self.tgt / 'data' / 'state' / 'switchover.json').write_text(json.dumps({'finished_at': '2026-11-03T12:00:00'}))
-        (self.tgt / 'data' / 'state' / 'ledger.jsonl').write_text('{"verb": "init"}\n')
+        for rel, content in (('data/workbook/AJG Coverage - NewsBank.xlsx', b'workbook-bytes' * 50), ('data/state/switchover.json', json.dumps({'finished_at': '2026-11-03T12:00:00'}).encode()),
+                             ('data/state/ledger.jsonl', b'{"verb": "init"}\n')):
+            p = self.tgt / rel
+            p.unlink(missing_ok=True)       # the copy is made of hard links: never write into a file that is also the build's
+            p.write_bytes(content)
         for rel in ('app/station/station_cli.py', 'app/station/rename_files.py'):      # the two hand-replaced files
             p = self.tgt / rel
             b = p.read_bytes()
