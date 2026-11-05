@@ -59,7 +59,7 @@ Next steps:
 2. Fable checkpoint 3 done (work/saver/REVIEW_2.md); findings fixed. PCEDITS-v1 built (Manage edits saved with updates or via "Save my edits").
 3. Station final checks after Sammy's additions; publish it on the office claude.ai account.
 4. Switch-over with Sammy (SWITCHOVER-v1): replace the snapshot with the current Mac master and library, then the Switch-over changes screen (file renames, PRJUDGE-v2, data-check fixes), first real save, full refresh files for readers.
-5. PC tracker version 4 (2026-11-05: version 3 plus the typo-tolerant reprint test for text Claude read from print pages, PRINTREAD-v2 follow-up) is the current build: install over the current tracker with Install update; then the first real update with the fixed station.
+5. PC tracker version 4.1 (2026-11-05: version 4 plus the installer fixes, ORIGLINKS-v1 and OWNCREDIT-v1; zip fingerprints in FINISH_LIST) is the current build. The office PC runs it from `Desktop\AJG_v4\AJG Tracker` (installed by hand; the old folder is a backup).
 
 Importing the old workspace's change bundles: docs/CHANGES_*.md. Copy code/ and build/ files as they come, keep the repo-only changes listed in docs/REPO_LOCAL_CHANGES.md, place new DECISIONS entries before the marker line, never commit bundle workbooks (SWITCHOVER-v1 follow-up), then rebuild js_merged.js, re-apply PC patches, rebuild and republish the station.
 
