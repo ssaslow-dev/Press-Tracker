@@ -520,9 +520,14 @@ runAll = function (mode, since) {
     TF_SKIP_URLS.push(/[?&](page|paged|pg|start|offset)=\d+/i, /\/page\/\d+\/?(\?|#|$)/i, /^https?:\/\/([^/]*\.)?(spotify|soundcloud|apple)\.com\/([a-z-]+\/)?(artist|album|playlist|music)\//i,
       /\/page\/board\b|[?&]whichrow=/i, /\/(tag|tags|category|categories|topics?|author|authors|search|archives?)\/?(\?|#|$)/i, /\/news\/?(\?|#|$)/i); }
   const ds = window.__stationSince;
+  if (window.__stationAllTime && mode !== 'refresh') return runAllBase(mode, '');   // ALLTIME-v1: no set date, every search without a date filter (tfPlan below)
   if (mode !== 'refresh' && !since && ds && !sinceError(ds)) since = ds;
   return runAllBase(mode, since);
 };
+/* ALLTIME-v1 (Sammy 2026-11-05: "an 'all time' button that searches all time"): while an all-time run is going, every planned search is an all-years search
+   (no date filter, results of any date kept); the tracker-duplicate check in the station leaves out what the tracker already has */
+const tfPlanBase = tfPlan;
+tfPlan = function () { const P = tfPlanBase.apply(this, arguments); if (window.__stationAllTime) (Array.isArray(P) ? P : []).forEach(it => { it.alltime = true; it.keepDate = false; delete it.minDate; }); return P; };
 /* STREAMLINE-v1 (guide writer's finding): the Update panel is redrawn many times a second during a run, so the station's text clean-up (debounced) never caught up;
    it now runs right after every redraw */
 const drawUpdBase = drawUpd;

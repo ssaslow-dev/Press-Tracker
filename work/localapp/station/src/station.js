@@ -41,7 +41,7 @@ function makeMemDb() {
           return {
             id, path: name + '/' + id,
             async get() { const has = c.docs.has(id); return { id, exists: has, data: () => (has ? clone(c.docs.get(id)) : undefined) }; },
-            async set(data) { const d = clone(data); if (name === 'runs' && d && d.mode === 'find' && d.status === 'done' && S.loaded) markEnd(d); if (name === 'runs' && d && Array.isArray(d.rows)) prAnnotateRows(d.rows, pg => col('pages').docs.get(pg)); c.docs.set(id, d); track(name, id, d); notify(c); if (name === 'runs' && d && d.status === 'done' && S.loaded) xdSoon(); },
+            async set(data) { const d = clone(data); if (name === 'runs' && d && d.mode === 'find' && window.__stationAllTime && !d.all_time) d.all_time = true; if (name === 'runs' && d && d.mode === 'find' && d.status === 'done' && S.loaded) { markEnd(d); if (d.all_time) setTimeout(() => { window.__stationAllTime = false; updateAllTimeUi(); }, 0); } if (name === 'runs' && d && Array.isArray(d.rows)) prAnnotateRows(d.rows, pg => col('pages').docs.get(pg)); c.docs.set(id, d); track(name, id, d); notify(c); if (name === 'runs' && d && d.status === 'done' && S.loaded) xdSoon(); },
             async update(data) { const d = Object.assign({}, c.docs.get(id) || {}, clone(data)); c.docs.set(id, d); track(name, id, d); notify(c); },
             async delete() { c.docs.delete(id); track(name, id, null); notify(c); },
             onSnapshot(cb) { const f = c.subs.add(cb) && (() => c.subs.delete(cb)); queueMicrotask(() => { try { cb({ id, exists: c.docs.has(id), data: () => clone(c.docs.get(id)) }); } catch (e) {} }); return f; },
@@ -355,7 +355,13 @@ function autoTick() {
   if (pp.length) { const sg = pp.map(x => x.key).join('|'); if (sg !== autoSig.pq) { autoSig.pq = sg; pqAdd(); } return; }
   /* Sammy 2026-11-05: the update folder is never downloaded by itself; the person presses "Download the update folder" (step 3). */
 }
+function updateAllTimeUi() {   // ALLTIME-v1
+  const at = $('#stAllTime'); if (!at) return;
+  at.disabled = !S.loaded || trackerBusy();
+  if (!at.dataset.sure) at.textContent = window.__stationAllTime ? 'Searching all time…' : 'Search all time';
+}
 function updatePackUi() {
+  updateAllTimeUi();
   if (!S.loaded) return;
   const p = pending(), busy = trackerBusy();
   const parts = [];
@@ -666,9 +672,9 @@ async function xdReconcile() {
         if (xdBlank(r['Date'])) { const ud = urlDate(r['Publisher link'] || ''); if (ud) { r['Date'] = ud; r['Year'] = +ud.slice(0, 4); r['Date source'] = 'URL'; r._date_src = 'url'; dirty.add(id); } }
         /* JUNKURL-v1: a listing, music or board page is never a story; UNDATEDOLD-v1: a reprint with no date of a story older than a month is left out */
         const isRep = r['Original or reprint'] === 'Reprint', junk = JUNK_URL.some(x => x.test(String(r['Publisher link'] || '')));
-        const oldUndated = isRep && !r._filedup && xdBlank(r['Date']) && (() => { const sd = storyDate(r['Story ID'], work); return sd && S.since && Date.parse(sd) < Date.parse(S.since) - 30 * 864e5; })();
+        const oldUndated = !d.all_time && isRep && !r._filedup && xdBlank(r['Date']) && (() => { const sd = storyDate(r['Story ID'], work); return sd && S.since && Date.parse(sd) < Date.parse(S.since) - 30 * 864e5; })();
         /* OLDFIND-v1 (Fable review 3): a web find dated more than 30 days before the search start is an old story, not new coverage (NewsBank, ProQuest and print rows keep their dates) */
-        const tooOld = !isRep && (d.mode || 'find') === 'find' && S.since && !xdBlank(r['Date']) && !/NewsBank|ProQuest/i.test(String(r['Data Source'] || '')) && Date.parse(String(r['Date']).slice(0, 10)) < Date.parse(S.since) - 30 * 864e5;
+        const tooOld = !d.all_time && !isRep && (d.mode || 'find') === 'find' && S.since && !xdBlank(r['Date']) && !/NewsBank|ProQuest/i.test(String(r['Data Source'] || '')) && Date.parse(String(r['Date']).slice(0, 10)) < Date.parse(S.since) - 30 * 864e5;
         if (junk || oldUndated || tooOld) {
           d.rows = d.rows.filter(x => x !== r);
           if (!isRep) { const code = String(r['Tracker story code'] || ''); d.stories = (d.stories || []).filter(x => x !== code); if (code) { gone.pages.add(code); gone.authors.add(code); gone.translations.add(code); gone.tones.add(code); } }
@@ -807,6 +813,12 @@ function init() {
   nbWire();
   pqWire();
   $('#stPack').addEventListener('click', () => { pack(); });
+  const at = $('#stAllTime'); if (at) at.addEventListener('click', () => {   // ALLTIME-v1
+    if (trackerBusy()) return;
+    if (!at.dataset.sure) { at.dataset.sure = '1'; at.textContent = 'Search all time: press again to start'; setTimeout(() => { delete at.dataset.sure; updateAllTimeUi(); }, 6000); return; }
+    delete at.dataset.sure; window.__stationAllTime = true; updateAllTimeUi();
+    const b = document.getElementById('updGo'); if (b) b.click(); else window.__stationAllTime = false;
+  });
   $('#stPackAgain').addEventListener('click', async () => { if (S.lastZip) await saveFile(S.lastZip.filename, S.lastZip.zip); });
   let moT = 0;
   const mo = new MutationObserver(() => { clearTimeout(moT); moT = setTimeout(() => { fixTexts($('#st')); const t = document.getElementById('toast'); if (t) fixTexts(t); updatePackUi(); }, 150); });
