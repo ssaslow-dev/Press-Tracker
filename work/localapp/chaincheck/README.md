@@ -42,6 +42,7 @@ Python 3.11+ with `openpyxl`, `pandas`, `reportlab`, `pypdf` (the same as the ap
 - `--pc-build DIR`: reuse an assembled Linux test build (`AJG Tracker` folder, or the `--out` folder holding `linux/AJG Tracker`). Default: assemble a fresh one from `--workbook` (a copy of the workbook is made; the original is never written; its sha256 is re-checked at the end).
 - `--station-html FILE`: the station page to test. Default `work/localapp/station/dist/index.html`. A file that is a whole page (starts with `<!doctype` or `<html`) is served as it is; the build output is a fragment and is wrapped in the skeleton the Artifact tool adds.
 - `--published`: marks the run as against a copy of the PUBLISHED page (see below); the file is served unwrapped.
+- `--station-manual`: drive the station with automatic mode off (buttons pressed by hand). Default: automatic mode on, as a person finds it: the folder downloads by itself after the web run, the PDFs are added by themselves, and a second, complete folder replaces the first (checked, and the PC refuses the early one once the complete one is saved).
 - `--scratch DIR`: working folder (default the session scratchpad, or `$CHAINCHECK_SCRATCH`).
 
 ## Testing the published page

@@ -338,11 +338,12 @@ function runPackable(d) {
   return true;
 }
 function pending() {
-  const runs = [...sess.runs].filter(([id, v]) => v.seq > S.lastPacked && runPackable(v.data));
+  /* AUTOSTATION-v1 follow-up (CHAINFIX): a folder always holds EVERYTHING this session found, not only what came after the last download. A person who adds a PDF after the automatic download gets a new complete folder (it says it replaces the earlier one), never a partial one. `fresh` = runs saved since the last download. */
+  const runs = [...sess.runs].filter(([id, v]) => runPackable(v.data)), fresh = runs.filter(([, v]) => v.seq > S.lastPacked).length;
   const stories = runs.reduce((a, [, v]) => a + ((v.data.stories || []).length), 0), reprints = runs.reduce((a, [, v]) => a + ((v.data.reprints || []).length), 0);
   const rows = runs.reduce((a, [, v]) => a + ((v.data.rows || []).length), 0);
   const running = runs.filter(([, v]) => v.data.status === 'running').length;
-  return { runs, stories, reprints, rows, running };
+  return { runs, stories, reprints, rows, running, fresh };
 }
 function trackerBusy() { const f = $('#runFind'); return !!(f && (f.getAttribute('aria-busy') === 'true' || f.classList.contains('busy'))) || !!$('#updStop'); }
 /* AUTOSTATION-v1: the station does the next step itself. Nothing here runs on a schedule: it reacts to what the person did (dropped PDFs, pressed Update) while this page is open.
@@ -358,7 +359,7 @@ function autoTick() {
   if (np.length) { const sg = np.map(x => x.key).join('|'); if (sg !== autoSig.nb) { autoSig.nb = sg; nbAdd(); } return; }
   if (pp.length) { const sg = pp.map(x => x.key).join('|'); if (sg !== autoSig.pq) { autoSig.pq = sg; pqAdd(); } return; }
   const p = pending();
-  if (!p.runs.length || p.running) { autoSig.pack = ''; return; }
+  if (!p.fresh || p.running) { autoSig.pack = ''; return; }
   const sg = p.runs.map(([id, v]) => id + ':' + v.seq).join('|');
   if (sg !== autoSig.pack) { autoSig.pack = sg; autoSig.packAt = Date.now(); return; }
   if (Date.now() - autoSig.packAt >= 6000 && sg !== autoSig.packed) { autoSig.packed = sg; pack(); }
@@ -367,20 +368,21 @@ function updatePackUi() {
   if (!S.loaded) return;
   const p = pending(), busy = trackerBusy();
   const parts = [];
-  const nbN = S.nb ? [...sess.pages].filter(([, v]) => v.seq > S.lastPacked && v.data && v.data.nb && v.data.nb.file).length : 0;
-  const pqN = S.pq ? [...sess.pages].filter(([, v]) => v.seq > S.lastPacked && v.data && v.data.pq && v.data.pq.header).length : 0;   // PROQUESTPDF-v1: story text copies from ProQuest PDFs
+  const nbN = S.nb ? [...sess.pages].filter(([, v]) => v.data && v.data.nb && v.data.nb.file).length : 0;
+  const pqN = S.pq ? [...sess.pages].filter(([, v]) => v.data && v.data.pq && v.data.pq.header).length : 0;   // PROQUESTPDF-v1: story text copies from ProQuest PDFs
   if (p.runs.length) parts.push(fmtN(p.runs.length) + (p.runs.length === 1 ? ' run' : ' runs') + (nbN ? ' (' + fmtN(nbN) + ' NewsBank story PDFs)' : '') + (pqN ? ' (' + fmtN(pqN) + ' ProQuest PDFs)' : '') + ': ' + fmtN(p.stories) + ' new ' + (p.stories === 1 ? 'story' : 'stories') + ', ' + fmtN(p.reprints) + (p.reprints === 1 ? ' reprint' : ' reprints') + ' (' + fmtN(p.rows) + ' spreadsheet rows)');
-  let msg = p.runs.length ? 'Ready: ' + parts.join('') + '.' : (S.lastZip ? 'The last update folder was downloaded. Nothing new since.' : 'Nothing to download yet. Press Update database in step 2.');
+  let msg = p.fresh ? 'Ready: ' + parts.join('') + '.' + (S.lastZip ? ' Something was added since the last download, so this folder is made again with everything in it; it replaces ' + S.lastZip.filename + '.' : '') : (S.lastZip ? 'The last update folder was downloaded. Nothing new since.' : 'Nothing to download yet. Press Update database in step 2.');
   if (busy) msg = 'A run is going. Download the update folder when it is done.';
   if (p.running && !busy) msg += ' One run was left unfinished; it is included as far as it got.';
   const st = $('#stPackStatus'); if (st.textContent !== msg) st.textContent = msg;
-  $('#stPack').disabled = busy || S.busyPack || !p.runs.length;
+  $('#stPack').disabled = busy || S.busyPack || !p.fresh;
   $('#stPackAgain').hidden = !S.lastZip;
 }
 async function pack() {
   if (S.busyPack) return null;
   try { await xdReconcile(); } catch (e) { console.warn('cross-source check failed', e); }   // N7: a story two sources found is in the folder once
-  const p = pending(); if (!p.runs.length) return null;
+  const p = pending(); if (!p.fresh) return null;
+  const replaces = S.lastZip ? S.lastZip.filename : '';
   S.busyPack = true; updatePackUi(); $('#stPackWarn').hidden = true; $('#stPackWarn').innerHTML = '';
   const warns = [];
   try {
@@ -405,7 +407,7 @@ async function pack() {
     const runIds = [];
     for (const [id, v] of p.runs) if (add('runs', id, v.data)) runIds.push(id);
     if (!runIds.length) throw new Error('No run could be packed.');
-    for (const c of PACK_COLLS.filter(x => x !== 'runs')) for (const [id, v] of sess[c]) if (v.seq > S.lastPacked) {
+    for (const c of PACK_COLLS.filter(x => x !== 'runs')) for (const [id, v] of sess[c]) {
       let data = v.data;
       const srcKey = data && data.nb && data.nb.file ? 'nb' : data && data.pq && data.pq.file ? 'pq' : '';   // PROQUESTPDF-v1: a ProQuest story's own PDF travels the same way (pages doc pq.file)
       if (c === 'pages' && srcKey) {
@@ -422,11 +424,12 @@ async function pack() {
     const files = {};
     for (const b of blobs) files[b.name] = Object.assign({ sha256: await sha256Hex(b.bytes), bytes: b.bytes.length }, b.kind ? { kind: b.kind } : {});
     const manifest = { format: 'ajg-update-folder', format_version: 1, created_at: nowIso(), source: { workbook_sha256: S.file.fingerprint.workbook_sha256 },
-      runs: runIds.slice().sort(), files, names: names.block, station_version: STATION_VERSION, for_update_created_at: S.file.created_at || '', for_update_name: S.fileName || '' };
+      runs: runIds.slice().sort(), files, names: names.block, station_version: STATION_VERSION, replaces, folder_number: (S.packN || 0) + 1, for_update_created_at: S.file.created_at || '', for_update_name: S.fileName || '' };
     const entries = [{ name: 'manifest.json', bytes: enc.encode(JSON.stringify(manifest, null, 1) + '\n') }].concat(blobs);
     const zip = zipStore(entries), zsha = await sha256Hex(zip);
     const stamp = manifest.created_at.replace(/[-:]/g, '').replace('T', '-').slice(0, 13);
-    const filename = 'ajg_update_' + stamp + '_' + S.file.fingerprint.workbook_sha256.slice(0, 8) + '.zip';
+    S.packN = (S.packN || 0) + 1;
+    const filename = 'ajg_update_' + stamp + '_' + S.file.fingerprint.workbook_sha256.slice(0, 8) + (S.packN > 1 ? '_v' + S.packN : '') + '.zip';
     S.lastZip = { filename, zip, sha256: zsha, files: blobs.length, runs: runIds, manifest };
     S.lastPacked = S.seq;
     S.packedInfo = { at: manifest.created_at, runs: runIds, zip: filename };
@@ -434,7 +437,7 @@ async function pack() {
     await recordPacked(runIds, filename, zsha, blobs.length);
     const w = $('#stPackWarn'); if (warns.length) { w.innerHTML = warns.map(x => '<li>' + esc(x) + '</li>').join(''); w.hidden = false; }
     const n = $('#stPackNote'); n.hidden = false;
-    n.textContent = filename + ' · ' + fmtN(Math.round(zip.length / 1024)) + ' KB · ' + blobs.length + ' files · made from workbook ' + shortSha(S.file.fingerprint.workbook_sha256) + '. If your browser asked, confirm the save.';
+    n.textContent = filename + ' · ' + fmtN(Math.round(zip.length / 1024)) + ' KB · ' + blobs.length + ' files · made from workbook ' + shortSha(S.file.fingerprint.workbook_sha256) + '. If your browser asked, confirm the save.' + (replaces ? ' This folder holds everything found so far and replaces ' + replaces + ': bring in this one, not the earlier one. If the earlier one is already saved in the tracker, the tracker refuses this one (same runs, so nothing is added twice): make a new “for Update” file and run again.' : '');
     return S.lastZip;
   } catch (e) {
     const w = $('#stPackWarn'); w.innerHTML = '<li>' + esc('The update folder could not be made: ' + (e && e.message ? e.message : e)) + '</li>'; w.hidden = false;

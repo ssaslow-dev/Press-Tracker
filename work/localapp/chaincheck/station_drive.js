@@ -6,6 +6,7 @@
 const { chromium } = require(process.env.PLAYWRIGHT_MODULE || '/opt/node-tools/node_modules/playwright');
 const http = require('http'), fs = require('fs'), path = require('path');
 const arg = k => { const i = process.argv.indexOf('--' + k); return i > 0 ? process.argv[i + 1] : null; };
+const MANUAL = arg('mode') === 'manual';   // default: automatic mode on, as a person finds it (AUTOSTATION-v1)
 const PAGE = arg('page'), FILE = arg('file'), IN = arg('inputs'), OUT = arg('out'), WRAP = arg('wrap') || 'auto';
 fs.mkdirSync(OUT, { recursive: true });
 const checks = []; let curStep = '';
@@ -97,6 +98,7 @@ const INIT = ({ hits, yt, pages, classify, ch }) => {
   const base = 'http://127.0.0.1:' + server.address().port;
   const browser = await chromium.launch();
   const ctx = await browser.newContext({ viewport: { width: 1300, height: 1100 }, acceptDownloads: true });
+  if (MANUAL) await ctx.addInitScript(() => { try { localStorage.setItem('ajg_station_auto', '0'); } catch (e) {} });
   await ctx.addInitScript(INIT, { hits: HITS, yt: YT_HITS, pages: PAGES, classify: CLASSIFY, ch: { [YT.id]: YT.channel } });
   const outside = []; await ctx.route(u => !/^(http:\/\/127\.0\.0\.1[:/]|data:|blob:|about:)/.test(u.href), r => { outside.push(r.request().url()); r.abort(); });
   const page = await ctx.newPage(); const errors = [];
@@ -144,6 +146,15 @@ const INIT = ({ hits, yt, pages, classify, ch }) => {
     const tones = rows.filter(r => r['Original or reprint'] === 'Original').map(r => r['Tone']);
     check('tone rated for the new finds', tones.length >= 3 && tones.every(Boolean), JSON.stringify(tones));
 
+    /* ---- automatic mode: the folder downloads by itself once the web run is quiet; PDFs added AFTER that must still end in ONE complete folder ---- */
+    if (!MANUAL) {
+      curStep = '3 automatic download';
+      await page.waitForFunction(() => window.__dl.length >= 1, null, { timeout: 60000 });
+      const first = await page.evaluate(() => ({ name: window.__dl[0].filename, bytes: Array.from(window.__lastDl) }));
+      fs.writeFileSync(path.join(OUT, first.name), Buffer.from(first.bytes)); res.zip_first = path.join(OUT, first.name);
+      check('automatic mode: the update folder downloaded by itself after the web run (no button pressed)', /^ajg_update_/.test(first.name), first.name);
+    }
+
     /* ---- step 3b: a NewsBank PDF, a ProQuest export ---- */
     curStep = '3 NewsBank PDF';
     await page.setInputFiles('#nbFile', path.join(IN, 'nb.pdf'));
@@ -154,7 +165,7 @@ const INIT = ({ hits, yt, pages, classify, ch }) => {
     const inew = nbi.find(i => i.hl === plan.nb.new.hl), iknown = nbi.find(i => (i.docref || '').toUpperCase().endsWith(plan.nb.known.docref));
     check('the new NewsBank story is new, with its own cut PDF', inew && inew.st === 'new' && inew.pdf > 1000 && inew.date === plan.nb.new.date, JSON.stringify(inew));
     check('the story the tracker already has (same docref) is recognised and not added', iknown && iknown.st === 'known', JSON.stringify(iknown));
-    await page.click('#nbAdd');
+    if (MANUAL) await page.click('#nbAdd');   // automatic mode adds them by itself
     await page.waitForFunction(() => /Added:|Stopped/.test(document.querySelector('#nbProg').textContent), null, { timeout: 240000 });
     const nbp = await page.textContent('#nbProg'); res.facts.nb_prog = nbp;
     check('added to the update (1 story)', /Added:/.test(nbp) && !/Stopped/.test(nbp), nbp);
@@ -164,21 +175,30 @@ const INIT = ({ hits, yt, pages, classify, ch }) => {
     await page.waitForFunction(() => window.__station.state.pq.files.length === 1 && window.__station.state.pq.files[0].status !== 'reading' && !window.__station.state.pq.reading, null, { timeout: 180000 });
     const pqi = await page.evaluate(() => window.__station.state.pq.items.map(it => ({ st: it.screen.status, why: it.screen.why, hl: it.p.headline, docid: it.p.docid, date: it.p.date, pdf: it.pdf && it.pdf.bytes })));
     check('the export is read: 1 new article with its own PDF', pqi.length === 1 && pqi[0].st === 'new' && pqi[0].docid === plan.pq.docid && pqi[0].pdf > 1000, JSON.stringify(pqi));
-    await page.click('#pqAdd');
+    if (MANUAL) await page.click('#pqAdd');
     await page.waitForFunction(() => /Added:|Stopped/.test(document.querySelector('#pqProg').textContent), null, { timeout: 240000 });
     const pqp = await page.textContent('#pqProg'); res.facts.pq_prog = pqp;
     check('added to the update (1 story)', /Added:/.test(pqp) && !/Stopped/.test(pqp), pqp);
 
     /* ---- step 3c: the update folder ---- */
     curStep = '3 update folder (zip)';
-    await page.waitForFunction(() => !document.querySelector('#stPack').disabled, null, { timeout: 20000 });
-    const status = await page.textContent('#stPackStatus'); res.facts.pack_status = status;
-    await page.click('#stPack');
-    await page.waitForFunction(() => window.__dl.length > 0, null, { timeout: 60000 });
-    const dl = await page.evaluate(() => ({ name: window.__dl[0].filename, bytes: Array.from(window.__lastDl) }));
+    let status;
+    if (MANUAL) {
+      await page.waitForFunction(() => !document.querySelector('#stPack').disabled, null, { timeout: 20000 });
+      status = await page.textContent('#stPackStatus'); res.facts.pack_status = status;
+      await page.click('#stPack');
+      await page.waitForFunction(() => window.__dl.length > 0, null, { timeout: 60000 });
+    } else {
+      await page.waitForFunction(() => window.__dl.length >= 2, null, { timeout: 90000 });   // the second, complete folder comes by itself
+      await page.waitForTimeout(8000);   // and nothing more after it
+      status = await page.textContent('#stPackStatus'); res.facts.pack_status = status + ' | ' + await page.textContent('#stPackNote');
+      const nd = await page.evaluate(() => window.__dl.length);
+      check('automatic mode: exactly two downloads (the early one, then one complete folder), the PDFs did not make a third', nd === 2, nd);
+    }
+    const dl = await page.evaluate(() => { const i = window.__dl.length - 1; return { name: window.__dl[i].filename, bytes: Array.from(window.__lastDl) }; });
     const zipPath = path.join(OUT, dl.name); fs.writeFileSync(zipPath, Buffer.from(dl.bytes)); res.zip = zipPath;
-    check('the zip downloads, named with the workbook short sha', new RegExp('^ajg_update_\\d{8}-\\d{4}_' + fu.fingerprint.workbook_sha256.slice(0, 8) + '\\.zip$').test(dl.name), dl.name);
-    check('step 3 says what it holds (a run, a NewsBank PDF, a ProQuest PDF)', /NewsBank/.test(status) && /ProQuest/.test(status), status);
+    check('the zip downloads, named with the workbook short sha', new RegExp('^ajg_update_\\d{8}-\\d{4}_' + fu.fingerprint.workbook_sha256.slice(0, 8) + '(_v\\d+)?\\.zip$').test(dl.name), dl.name);
+    check('step 3 says what it holds (a run, a NewsBank PDF, a ProQuest PDF)', MANUAL ? (/NewsBank/.test(status) && /ProQuest/.test(status)) : /replaces ajg_update_/.test(res.facts.pack_status), status);
     check('no page error, nothing asked of any outside host', errors.length === 0 && outside.length === 0, errors.concat(outside).slice(0, 4).join(' | '));
     res.expect = { web: W.map(a => ({ hl: a.title, url: a.url, mark: a.mark })), rep: { url: REP.url, story: exist2.id, mark: REP.mark }, yt: { url: YT.url, hl: YT.title }, exist1: exist1.id };
     await finish(0);

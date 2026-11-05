@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """CHAINCHECK-v1: one automated end-to-end check that the PC tracker and the Update station still work together.
 
-    python3 -I work/localapp/chaincheck/run_chaincheck.py [--pc-build DIR] [--station-html FILE] [--workbook FILE] [--published] [--scratch DIR]
+    python3 -I work/localapp/chaincheck/run_chaincheck.py [--pc-build DIR] [--station-html FILE] [--workbook FILE] [--published] [--station-manual] [--scratch DIR]
 
 Steps (README.md has the details):
   1  PC tracker: "Make for Update file" in the page, the downloaded JSON is captured
@@ -180,6 +180,8 @@ def step23(info, S, work):
     shutil.rmtree(st_out, ignore_errors=True)
     env = dict(os.environ, PLAYWRIGHT_MODULE=pc.NODE_MODULES)
     cmd = ['node', HERE / 'station_drive.js', '--page', info['page'], '--file', info['fu_path'], '--inputs', inputs, '--out', st_out]
+    if info.get('station_manual'):
+        cmd += ['--mode', 'manual']
     if info['published']:
         cmd += ['--wrap', 'no']
     p = run(cmd, env=env, timeout=1800)
@@ -210,6 +212,11 @@ def step23(info, S, work):
     need = [x for i in items for x in (i['copy'], i['raw'], i['pdf']) if x]
     check('names block: every library file it lists is in the zip, nothing else under library/', sorted(need) == sorted(n for n in names if n.startswith('library/')), (sorted(need), [n for n in names if n.startswith('library/')]))
     kinds = sorted((i['fmt'], i['kind']) for i in items)
+    zf = res.get('zip_first')
+    if zf:
+        m1 = json.loads(zipfile.ZipFile(zf).read('manifest.json'))
+        check('automatic mode: the early folder held the web run only; the final one is complete and says it replaces the early one',
+              len(m1['runs']) == 1 and set(m1['runs']) < set(man['runs']) and len(man['runs']) >= 3 and man.get('replaces') == Path(zf).name, (m1['runs'], man['runs'], man.get('replaces')))
     check('names: 3 web stories + 1 reprint (ws), 1 NewsBank (nb), 1 ProQuest (pq)', kinds == [('nb', 'o'), ('pq', 'o'), ('ws', 'o'), ('ws', 'o'), ('ws', 'o'), ('ws', 'r')], kinds)
     nx = info['fu']['rows']['next']
     check('names: numbers run on from the file\'s rows.next', [int(i['aid']) for i in items] == list(range(nx['aid'], nx['aid'] + len(items))), [i['aid'] for i in items])
@@ -313,6 +320,9 @@ def step4(info, S, work):
     info['final'] = final
     check('the run docs reached the PC db (runs)', len(list((root / 'data' / 'db' / 'runs').glob('run-*.json'))) >= 3, list((root / 'data' / 'db').glob('*')))
     check('the same zip cannot be taken in twice', second_take_refused(K, zp), '')
+    zf = info['station_res'].get('zip_first')
+    if zf:   # automatic mode: the early folder (web run only) was downloaded first; the complete one replaced it
+        check('the earlier, partial folder is refused once the complete one is saved (same runs: nothing is added twice)', second_take_refused(K, Path(zf)), zf)
     return True
 
 
@@ -381,7 +391,7 @@ def report(info, S, started, crash=None):
              f'- run: {time.strftime("%Y-%m-%d %H:%M:%S")} ({int(time.time() - started)} s)',
              f'- workbook copy: {info.get("workbook_source", "(build as given)")}; sha256 in the PC build `{info.get("wb0", "?")[:8]}`',
              f'- PC build: {info.get("build_how", "?")}', f'- station page: {info.get("station_how", "?")} (sha256 {info.get("page_sha", "?")[:12]})',
-             f'- mode: {"PUBLISHED copy" if info.get("published") else "local dist build"}']
+             f'- mode: {"PUBLISHED copy" if info.get("published") else "local dist build"}, station {"manual (automatic mode off)" if info.get("station_manual") else "automatic mode on"}']
     if crash:
         lines += ['', f'**The check could not finish:** {crash}']
     lines += ['', '| Step | Result | Checks |', '|---|---|---|']
@@ -417,6 +427,7 @@ def main():
     ap.add_argument('--station-html', help='the station page to test (default work/localapp/station/dist/index.html, built if missing)')
     ap.add_argument('--workbook', help='the workbook copy to build the PC test build from (default: SCRATCH/../wb_0bccc1fc.xlsx). It is copied, never written.')
     ap.add_argument('--published', action='store_true', help='--station-html is a copy of the PUBLISHED page (saved with the Artifact tool\'s read action); it is served as it is, not wrapped (see README)')
+    ap.add_argument('--station-manual', action='store_true', help='drive the station with automatic mode OFF (buttons pressed by hand); default: automatic mode on, as a person finds it')
     ap.add_argument('--live-site'); ap.add_argument('--legacy')
     ap.add_argument('--scratch', help='working folder (default ' + str(DEFAULT_SCRATCH) + ' or $CHAINCHECK_SCRATCH)')
     a = ap.parse_args()
@@ -425,7 +436,7 @@ def main():
         print('--published needs --station-html FILE: save the published page first (README, "Testing the published page")', file=sys.stderr)
         return 2
     started = time.time()
-    info = {'published': a.published}
+    info = {'published': a.published, 'station_manual': a.station_manual}
     crash = None
     work = S / 'work'
     try:
